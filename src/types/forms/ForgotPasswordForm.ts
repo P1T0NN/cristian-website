@@ -1,0 +1,3 @@
+type ForgotPasswordForm = {
+    email: string;
+}

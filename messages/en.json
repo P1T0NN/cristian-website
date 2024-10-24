@@ -1,0 +1,205 @@
+{
+    "Header": {
+        "newMatch": "New match"
+    },
+    
+    "HomePage": {
+        "title": "Hello world!"
+    },
+
+    "LoginPage": {
+        "title": "Log in",
+        "forgotPassword": "Forgot password?",
+        "loggingIn": "Logging in...",
+        "logIn": "Log in",
+        "notAMember": "Not a member yet?",
+        "register": "Register",
+        "emailPlaceholder": "Email",
+        "passwordPlaceholder": "Password"
+    },
+
+    "RegisterPage": {
+        "title": "Create an Account",
+        "emailPlaceholder": "Email",
+        "firstNamePlaceholder": "First Name",
+        "lastNamePlaceholder": "Last Name",
+        "phoneNumberPlaceholder": "Phone Number",
+        "genderPlaceholder": "Gender",
+        "Male": "Male",
+        "Female": "Female",
+        "Other": "Other",
+        "passwordPlaceholder": "Password",
+        "confirmPasswordPlaceholder": "Confirm password",
+        "signUp": "Sign up",
+        "signingUp": "Signing up...",
+        "alreadyUsing": "Already using an account?",
+        "logIn": "Log in"
+    },
+
+    "ForgotPasswordPage": {
+        "title": "Forgot password",
+        "description": "Enter the email address you registered with and we will send you a password reset link.",
+        "emailPlaceholder": "Email",
+        "sending": "Sending...",
+        "sendResetLink": "Send reset password link",
+        "backToLogin": "← Back to log in"
+    },
+
+    "ResetPasswordPage": {
+        "validatingLink": "Validating reset link...",
+        "resetSuccess": "Password reset successful. Redirecting to login page in 2 seconds...",
+        "resetPassword": "Reset Password",
+        "resetting": "Resetting...",
+        "resetPasswordButton": "Reset Password",
+        "newPasswordPlaceholder": "New Password",
+        "confirmNewPasswordPlaceholder": "Confirm New Password"
+    },
+
+    "AddMatchPage": {
+        "hello": "Hello,",
+        "description": "To add a new match, fill in the informations below",
+        "locationPlaceholder": "Enter match location",
+        "pricePlaceholder": "Enter match price",
+        "team1NamePlaceholder": "Enter Team 1 name",
+        "team2NamePlaceholder": "Enter Team 2 name",
+        "matchTypePlaceholder": "Enter match type",
+        "matchGenderPlaceholder": "Enter match gender",
+        "adding": "Adding...",
+        "addMatch": "Add Match"
+    },
+
+    "VerifyEmail": {
+        "verifyingEmail": "Verifying your email...",
+        "verificationSuccess": "Your email has been successfully verified! Redirecting to login page...",
+        "verificationError": "There was an error verifying your email. Please try again or contact support.",
+        "invalidLink": "Invalid verification link",
+        "unexpectedError": "An unexpected error occurred"
+    },
+
+    "GenericMessages": {
+        "USER_CREATED": "If user with that email doesn't exist already, we have sent you an email verification link!",
+        "USER_ALREADY_EXISTS": "If user with that email doesn't exist already, we have sent you an email verification link!",
+        "LOGIN_SUCCESSFUL": "Logged in successfully!",
+        "LOGOUT_SUCCESSFUL": "Logged out successfully!",
+        "USER_VERIFIED": "User is successfully verified. Now you can login!",
+        "USER_DOESNT_EXIST": "If user with this email exists, we have sent a verification email!",
+        "USER_NOT_FOUND": "User not found!",
+        "EMAIL_REQUIRED": "Email is required!",
+        "EMAIL_AND_USERID_REQUIRED": "Email and ID are required!",
+        "VERIFICATION_EMAIL_COOLDOWN": "Please wait {time} seconds before requesting another verification email.",
+        "ACCOUNT_NOT_VERIFIED_RESENT": "Email not verified. A new verification email has been sent.",
+        "ACCOUNT_NOT_VERIFIED_RATE_LIMIT": "Email not verified. Please wait 5 minutes before requesting another verification email.",
+        "ACCOUNT_NOT_VERIFIED_FAILED": "Email not verified. Failed to resend verification email.",
+        "ERROR_CHECKING_USER_EXISTENCE": "There was an error checking user existence. Please try again!",
+        "ERROR_FINDING_USER": "We couldn't find user after registration!",
+        "ERROR_REGISTER_VERIFICATION_TOKEN_EXPIRED": "This verification link has expired. Please request a new one by trying to login again!",
+        "FAILED_REGISTRATION": "Failed to register user. Please try again!",
+        "FAILED_TO_GET_ID": "Failed to retrieve user ID",
+        "FAILED_TO_CREATE_VERIFICATION_TOKEN": "Failed to create verification token!",
+        "FAILED_TO_VERIFY_USER": "Failed to verify user. Please try again!",
+        "INVALID_LOGIN": "Invalid login credentials. Please try again.",
+        "INVALID_REGISTER": "Registration failed. Please check your information and try again.",
+        "INVALID_LOGOUT": "An error occurred during logout. Please try again.",
+        "INVALID_REGISTER_VERIFICATION_TOKEN": "Invalid verification link!",
+
+        "INVALID_JWT_TOKEN": "Invalid authentication token. Please log in again.",
+        "NO_JWT_FOUND": "No authentication token found. Please log in.",
+        "JWT_DECODE_ERROR": "Error processing authentication token. Please log in again.",
+        "JWT_VERIFIED": "Authentication token successfully verified.",
+        "JWT_EXPIRED": "Your session has expired. Please log in again!",
+        "JWT_REFRESHED": "Authentication token successfully refreshed!",
+        "JWT_INVALID_DATA": "Invalid authentication token data!",
+
+        "REFRESH_TOKEN_NOT_FOUND": "Refresh token is not found!",
+        "REFRESH_TOKEN_INVALID": "Refresh token is invalid!",
+        "REFRESH_TOKEN_SESSION_EXPIRED": "Your session has expired. Please log in again!",
+
+        "CSRF_TOKEN_GENERATED": "CSRF Token generated successfully!",
+        "MISSING_CSRF_TOKEN": "Missing CSRF token",
+        "FAILED_TO_GET_CSRF_TOKEN": "Failed to get CSRF Token!",
+
+        "PASSWORD_RESET_REQUEST_FAILED": "Failed to request password reset. Please try again later.",
+        "PASSWORD_RESET_LINK_SENT": "If an account exists for that email, we have sent a password reset link.",
+        "PASSWORD_RESET_FAILED": "Failed to reset password. The link may be invalid or expired. Please request a new password reset.",
+        "PASSWORD_RESET_SUCCESS": "Your password has been successfully reset. You can now log in with your new password.",
+        "PASSWORD_RESET_TOKEN_GENERATED": "Successfully generated reset password token!",
+        "INVALID_RESET_PASSWORD_TOKEN": "Reset password link is invalid or expired",
+        "RESET_PASSWORD_TOKEN_VALID": "Reset password link is valid",
+        "PASSWORD_RESET_RATE_LIMITED": "Please wait 5 minutes before requesting another password reset",
+
+        "REGISTER_VERIFICATION_TOKEN_EMAIL_SENT": "Verification email sent successfully. Please check your email!",
+        "REGISTER_VERIFICATION_EMAIL_FAILED": "Failed to send verification email. Please try again later.",
+
+        "MATCH_CREATION_FAILED": "Failed to create a match. Please try again!",
+        "MATCH_CREATED": "Match has been created successfully!",
+        "MATCH_CREATION_RATE_LIMITED": "Please wait 5 minutes before creating another match",
+
+        "REDIS_CONNECTION_ERROR": "Unable to connect to the database. Please try again later.",
+        "REDIS_DISCONNECTION_ERROR": "Error occurred while disconnecting from the database.",
+        "REDIS_GET_ERROR": "Unable to retrieve data from the cache. Please try again.",
+        "REDIS_SET_ERROR": "Unable to store data in the cache. Please try again.",
+        "REDIS_DELETE_ERROR": "Unable to delete data from the cache. Please try again.",
+        "REDIS_SCAN_ERROR": "Unable to scan data from the cache. Please try again.",
+        "REDIS_CLIENT_ERROR": "An error occurred with the database client. Please try again later.",
+
+        "RATE_LIMIT_EXCEEDED": "Too many requests, please try again in a minute!",
+        "LOGIN_RATE_LIMIT": "Too many login attempts, please try again after a minute",
+        "REGISTER_RATE_LIMIT": "Too many registration attempts, please try again after a minute",
+        "VERIFY_EMAIL_RATE_LIMIT": "Too many verification attempts, please try again after a minute",
+
+        "IP_UNKNOWN": "Unable to determine IP",
+        "NETWORK_ERROR": "A network error occurred. Please check your connection and try again.",
+        "UNKNOWN_ERROR": "An unexpected error occurred. Please try again later.",
+        "INVALID_SERVER_RESPONSE": "Invalid response from server",
+        "DATABASE_ERROR": "Database error occurred",
+        "UNAUTHORIZED": "You are forbidden to do this. Please try to refresh the page or relog.",
+        "AUTHORIZED": "You are authorized for this action!"
+    },
+
+    "FetchMessages": {
+        "USER_DATA_FAILED_TO_FETCH": "Failed to fetch user data!",
+        "USER_DATA_SUCCESSFULLY_FETCHED": "Fetched user data successfully!"
+    },
+
+    "ZodErrors": {
+        "INVALID_EMAIL": "Invalid email address",
+        "PASSWORD_TOO_SHORT": "Password must be at least 6 characters long",
+        "FIRST_NAME_REQUIRED": "First name is required",
+        "FIRST_NAME_TOO_LONG": "First name cannot be more than 50 characters",
+        "LAST_NAME_REQUIRED": "Last name is required",
+        "LAST_NAME_TOO_LONG": "Last name cannot be more than 50 characters",
+        "PHONE_NUMBER_REQUIRED": "Phone number is required",
+        "PHONE_NUMBER_TOO_LONG": "Phone number cannot be more than 20 characters",
+        "PICK_CORRECT_GENDER": "Gender must be Male, Female, or Other",
+        "PASSWORDS_DO_NOT_MATCH": "Passwords do not match!",
+        "LOCATION_REQUIRED": "Location is required",
+        "PRICE_REQUIRED": "Price must be a positive value",
+        "TEAM1_NAME_REQUIRED": "Team 1 name is required",
+        "TEAM2_NAME_REQUIRED": "Team 2 name is required",
+        "TEAM_NAME_TOO_LONG": "Team name cannot be more than 255 characters",
+        "START_DAY_REQUIRED": "Start day is required",
+        "START_HOUR_REQUIRED": "Start hour is required",
+        "MATCH_TYPE_REQUIRED": "Match type is required",
+        "MATCH_TYPE_TOO_LONG": "Match type cannot be more than 100 characters",
+        "MATCH_GENDER_REQUIRED": "Match gender must be Male, Female, or Other"
+    },
+
+    "EmailTemplateMessages": {
+        "EMAIL_VERIFICATION_SUBJECT": "Verify your Cris Futbol account",
+        "EMAIL_PASSWORD_RESET_SUBJECT": "Reset Your GameInfiny Password",
+
+        "WELCOME_MESSAGE": "welcome to Cris Futbol!",
+        "REGISTRATION_THANK_YOU": "Thank you for signing up. To complete your registration, please verify your email address.",
+        "VERIFY_YOUR_EMAIL": "Verify Your Email",
+        "BUTTON_NOT_WORKING": "If the button above does not work, you can also copy and paste the following link into your browser:",
+        "IGNORE_IF_NOT_SIGNED_UP": "If you did not sign up for Cris Futbol, you can safely ignore this email.",
+        "BEST_REGARDS": "Best regards,",
+        "TEAM_NAME": "The Cris Futbol Team",
+
+        "PASSWORD_RESET_REQUEST_RECEIVED": "We received a request to reset your password. If you did not make this request, you can safely ignore this email.",
+        "CLICK_BUTTON_RESET_PASSWORD": "To reset your password, click the button below:",
+        "RESET_YOUR_PASSWORD": "Reset Your Password",
+        "PASSWORD_RESET_LINK_EXPIRY": "This password reset link will expire in 30 minutes for security reasons.",
+        "CONTACT_SUPPORT_IF_NOT_REQUESTED": "If you did not request a password reset, please contact our support team immediately."
+    }
+}
