@@ -31,7 +31,7 @@ export async function POST(request: Request): Promise<NextResponse<APIResponse>>
         return NextResponse.json({ success: false, message: t('INVALID_REGISTER') }, { status: 400 });
     }
 
-    const { email, firstName, lastName, phoneNumber, gender, password } = result.data;
+    const { email, fullName, phoneNumber, gender, password } = result.data;
 
     // Check if user already exists
     const { existingUser, error: existingUserError } = await checkUserExists(email);
@@ -56,8 +56,7 @@ export async function POST(request: Request): Promise<NextResponse<APIResponse>>
     // Save the user in the database
     const userInsertError = await insertUser({
         email,
-        firstName,
-        lastName,
+        fullName,
         phoneNumber,
         gender,
         password: hashedPassword,
@@ -98,8 +97,7 @@ export async function POST(request: Request): Promise<NextResponse<APIResponse>>
         },
         body: JSON.stringify({
             email,
-            firstName,
-            lastName,
+            fullName,
             verificationToken,
         }),
     });

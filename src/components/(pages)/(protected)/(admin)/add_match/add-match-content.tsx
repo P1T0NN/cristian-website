@@ -4,6 +4,12 @@
 import { useTransition } from "react";
 import { useTranslations } from "next-intl";
 
+// NEXTJS IMPORTS
+import { useRouter } from "next/navigation";
+
+// CONFIG
+import { PAGE_ENDPOINTS } from "@/config";
+
 // COMPONENTS
 import {
     Card,
@@ -36,6 +42,8 @@ export const AddMatchContent = ({
 }: HomeContentProps) => {
     const t = useTranslations("AddMatchPage");
 
+    const router = useRouter();
+
     const [isPending, startTransition] = useTransition();
 
     const { addMatchSchema } = useZodSchemas();
@@ -50,13 +58,14 @@ export const AddMatchContent = ({
             starts_at_hour: "",
             match_type: "",
             match_gender: "",
-            added_by: serverUserData.email
+            added_by: serverUserData.fullName
         },
         validationSchema: addMatchSchema,
         onSubmit: async (values) => {
             startTransition(async () => {
                 const result = await addMatch(values);
                 if (result.success) {
+                    router.push(PAGE_ENDPOINTS.HOME_PAGE);
                     toast.success(result.message);
                 } else {
                     toast.error(result.message);
@@ -69,7 +78,7 @@ export const AddMatchContent = ({
         <div className="flex w-full h-full items-center justify-center">
             <Card>
                 <CardHeader>
-                    <CardTitle>{t("hello")} {serverUserData.firstName} {serverUserData.lastName}</CardTitle>
+                    <CardTitle>{t("hello")} {serverUserData.fullName}</CardTitle>
                     <CardDescription>{t("description")}</CardDescription>
                 </CardHeader>
 

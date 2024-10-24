@@ -7,11 +7,14 @@ import { useTranslations } from 'next-intl';
 // COMPONENTS
 import { Input } from "@/components/ui/input";
 
+// TYPES
+import type { typesLoginForm } from "@/types/forms/LoginForm";
+
 // LUCIDE ICONS
 import { Mail, LockKeyhole } from "lucide-react";
 
 type LoginFormProps = {
-    formData: LoginForm;
+    formData: typesLoginForm;
     errors: Record<string, string>;
     handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }

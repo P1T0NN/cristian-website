@@ -14,8 +14,7 @@ export const useZodSchemas = () => {
 
     const registerSchema = z.object({
         email: z.string().email(t('INVALID_EMAIL')),
-        firstName: z.string().min(1, t('FIRST_NAME_REQUIRED')).max(50, t('FIRST_NAME_TOO_LONG')),
-        lastName: z.string().min(1, t('LAST_NAME_REQUIRED')).max(50, t('LAST_NAME_TOO_LONG')),
+        fullName: z.string().min(1, t('FULL_NAME_REQUIRED')).max(50, t('FULL_NAME_TOO_LONG')),
         phoneNumber: z.string().min(1, t('PHONE_NUMBER_REQUIRED')).max(20, t('PHONE_NUMBER_TOO_LONG')),
         gender: z.enum(['Male', 'Female', 'Other'], {
             errorMap: () => ({ message: t('PICK_CORRECT_GENDER') })
@@ -53,11 +52,20 @@ export const useZodSchemas = () => {
         added_by: z.string()
     });
 
+    const addDebtSchema = z.object({
+        player_name: z.string().min(1, { message: t('PLAYER_NAME_REQUIRED') }),
+        player_debt: z.number().min(0, { message: t('PLAYER_DEBT_REQUIRED') }),
+        cristian_debt: z.number().min(0, { message: t('CRISTIAN_DEBT_REQUIRED') }),
+        reason: z.string().optional(),
+        added_by: z.string()
+    });    
+
     return {
         loginSchema,
         registerSchema,
         resetPasswordSchema,
         forgotPasswordSchema,
-        addMatchSchema
+        addMatchSchema,
+        addDebtSchema
     };
 };

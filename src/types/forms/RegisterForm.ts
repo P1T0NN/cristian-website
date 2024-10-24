@@ -1,7 +1,6 @@
 export type typesRegisterForm = {
     email: string;
-    firstName: string;
-    lastName: string;
+    fullName: string;
     phoneNumber: string;
     gender: string;
     password: string;

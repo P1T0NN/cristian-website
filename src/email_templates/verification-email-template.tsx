@@ -6,13 +6,11 @@ import { getTranslations } from 'next-intl/server';
 
 type VerificationEmailTemplateProps = {
   verificationUrl: string;
-  firstName?: string;
-  lastName?: string;
+  fullName?: string;
 }
 
 export const VerificationEmailTemplate: React.FC<Readonly<VerificationEmailTemplateProps>> = async ({
-  firstName,
-  lastName,
+  fullName,
   verificationUrl,
 }) => {
   const t = await getTranslations('EmailTemplateMessages');
@@ -20,7 +18,7 @@ export const VerificationEmailTemplate: React.FC<Readonly<VerificationEmailTempl
   return (
     <div style={{ fontFamily: 'Arial, sans-serif', lineHeight: 1.5, color: '#333' }}>
       <h1 style={{ color: '#4a4a4a' }}>
-        {firstName} {lastName}, {t('WELCOME_MESSAGE')}
+        {fullName}, {t('WELCOME_MESSAGE')}
       </h1>
       <p>{t('REGISTRATION_THANK_YOU')}</p>
       <div style={{ margin: '30px 0' }}>

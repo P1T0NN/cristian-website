@@ -57,29 +57,14 @@ export const RegisterForm = ({
                     <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                     <Input
                         type="text"
-                        name="firstName"
+                        name="fullName"
                         className="pl-12 w-full"
-                        placeholder={t('firstNamePlaceholder')}
-                        value={formData.firstName}
+                        placeholder={t('fullNamePlaceholder')}
+                        value={formData.fullName}
                         onChange={handleInputChange}
                     />
                 </div>
-                {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName}</p>}
-            </div>
-
-            <div className="relative w-[350px] h-[35px] space-y-1">
-                <div className="flex flex-col">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    <Input
-                        type="text"
-                        name="lastName"
-                        className="pl-12 w-full"
-                        placeholder={t('lastNamePlaceholder')}
-                        value={formData.lastName}
-                        onChange={handleInputChange}
-                    />
-                </div>
-                {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName}</p>}
+                {errors.fullName && <p className="text-red-500 text-sm">{errors.fullName}</p>}
             </div>
 
             <div className="relative w-[350px] h-[35px] space-y-1">

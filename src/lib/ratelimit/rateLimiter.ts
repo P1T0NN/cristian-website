@@ -14,8 +14,9 @@ const registerThreshold = 3;
 const verifyEmailThreshold = 5;
 const resetPasswordThreshold = 6;
 const addMatchThreshold = 20;
+const addDebtThreshold = 50;
 
-export const applyRateLimit = async (request: Request, limitType: 'login' | 'register' | 'verifyEmail' | 'resetPassword' | 'addMatch'): Promise<{ success: boolean; message?: string }> => {
+export const applyRateLimit = async (request: Request, limitType: 'login' | 'register' | 'verifyEmail' | 'resetPassword' | 'addMatch' | 'addDebt'): Promise<{ success: boolean; message?: string }> => {
     const ip = getIP(request);
     if (!ip) {
         return { success: false, message: GenericMessages.IP_UNKNOWN };
@@ -37,6 +38,9 @@ export const applyRateLimit = async (request: Request, limitType: 'login' | 'reg
             break;
         case 'addMatch':
             threshold = addMatchThreshold;
+            break;
+        case 'addDebt':
+            threshold = addDebtThreshold;
             break;
         default:
             return { success: false, message: 'Invalid limit type' };

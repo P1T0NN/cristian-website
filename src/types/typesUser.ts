@@ -1,8 +1,7 @@
 export type typesUser = {
     id: string;
     email: string;
-    firstName: string;
-    lastName: string;
+    fullName: string;
     phoneNumber: string;
     is_verified: boolean;
     isAdmin: boolean;
@@ -13,8 +12,7 @@ export type typesUser = {
 export type typesLoginUser = {
     email: string;
     password: string;
-    firstName: string;
-    lastName: string;
+    fullName: string;
     phoneNumber: string;
     is_verified: boolean;
 }
@@ -24,8 +22,7 @@ export type typesLoginUser = {
 export type typesNewUser = {
     email: string;
     password: string;
-    firstName: string;
-    lastName: string;
+    fullName: string;
     phoneNumber: string;
     gender: string;
 }

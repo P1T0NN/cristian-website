@@ -21,8 +21,7 @@
     "RegisterPage": {
         "title": "Create an Account",
         "emailPlaceholder": "Email",
-        "firstNamePlaceholder": "First Name",
-        "lastNamePlaceholder": "Last Name",
+        "fullNamePlaceholder": "Full Name",
         "phoneNumberPlaceholder": "Phone Number",
         "genderPlaceholder": "Gender",
         "Male": "Male",
@@ -65,7 +64,24 @@
         "matchTypePlaceholder": "Enter match type",
         "matchGenderPlaceholder": "Enter match gender",
         "adding": "Adding...",
-        "addMatch": "Add Match"
+        "addMatch": "Add match"
+    },
+
+    "AddDebtPage": {
+        "hello": "Hello,",
+        "description": "To add a new debt, fill in the informations below",
+        "playerName": "Player name",
+        "playerNamePlaceholder": "Write player name",
+        "selectDebtType": "Select debt type",
+        "debt": "Debt",
+        "playerDebtPlaceholder": "Select how much does a player owe you",
+        "cristianDebtPlaceholder": "Select how much you owe a player",
+        "reason": "Reason",
+        "reasonPlaceholder": "Write the reason to why you are adding debt",
+        "playerOwes": "Player Owes",
+        "iOwe": "I Owe",
+        "adding": "Adding...",
+        "addDebt": "Add debt"
     },
 
     "VerifyEmail": {
@@ -134,6 +150,10 @@
         "MATCH_CREATED": "Match has been created successfully!",
         "MATCH_CREATION_RATE_LIMITED": "Please wait 5 minutes before creating another match",
 
+        "DEBT_CREATION_FAILED": "Failed to add a debt. Please try again!",
+        "DEBT_CREATED": "Debt has been added successfully!",
+        "DEBT_CREATION_RATE_LIMITED": "Please wait 5 minutes before adding another debt",
+
         "REDIS_CONNECTION_ERROR": "Unable to connect to the database. Please try again later.",
         "REDIS_DISCONNECTION_ERROR": "Error occurred while disconnecting from the database.",
         "REDIS_GET_ERROR": "Unable to retrieve data from the cache. Please try again.",
@@ -158,16 +178,18 @@
 
     "FetchMessages": {
         "USER_DATA_FAILED_TO_FETCH": "Failed to fetch user data!",
-        "USER_DATA_SUCCESSFULLY_FETCHED": "Fetched user data successfully!"
+        "USER_DATA_SUCCESSFULLY_FETCHED": "Fetched user data successfully!",
+
+        "NO_SEARCH_TERM": "No search term provided",
+        "FAILED_TO_SEARCH_USERS": "Failed to search users",
+        "USERS_FETCHED": "Users fetched successfully"
     },
 
     "ZodErrors": {
         "INVALID_EMAIL": "Invalid email address",
         "PASSWORD_TOO_SHORT": "Password must be at least 6 characters long",
-        "FIRST_NAME_REQUIRED": "First name is required",
-        "FIRST_NAME_TOO_LONG": "First name cannot be more than 50 characters",
-        "LAST_NAME_REQUIRED": "Last name is required",
-        "LAST_NAME_TOO_LONG": "Last name cannot be more than 50 characters",
+        "FULL_NAME_REQUIRED": "Full name is required",
+        "FULL_NAME_TOO_LONG": "Full name cannot be more than 100 characters",
         "PHONE_NUMBER_REQUIRED": "Phone number is required",
         "PHONE_NUMBER_TOO_LONG": "Phone number cannot be more than 20 characters",
         "PICK_CORRECT_GENDER": "Gender must be Male, Female, or Other",
@@ -181,7 +203,12 @@
         "START_HOUR_REQUIRED": "Start hour is required",
         "MATCH_TYPE_REQUIRED": "Match type is required",
         "MATCH_TYPE_TOO_LONG": "Match type cannot be more than 100 characters",
-        "MATCH_GENDER_REQUIRED": "Match gender must be Male, Female, or Other"
+        "MATCH_GENDER_REQUIRED": "Match gender must be Male, Female, or Other",
+        "PLAYER_NAME_REQUIRED": "You must select a player",
+        "PLAYER_DEBT_REQUIRED": "Player debt must be a non-negative decimal",
+        "CRISTIAN_DEBT_REQUIRED": "Cristian debt must be a non-negative decimal",
+        "REASON_REQUIRED": "Reason for the debt is required",
+        "REASON_TOO_LONG": "Reason cannot exceed 255 characters"
     },
 
     "EmailTemplateMessages": {

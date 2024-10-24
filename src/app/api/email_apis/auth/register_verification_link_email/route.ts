@@ -13,8 +13,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 type SendRegisterVerificationEmailProps = {
     email: string;
-    firstName: string;
-    lastName: string;
+    fullName: string;
     verificationToken: string;
 };
 
@@ -24,7 +23,7 @@ export async function POST(request: Request): Promise<NextResponse<APIResponse>>
 
     const body = await request.json();
     
-    const { email, firstName, lastName, verificationToken }: SendRegisterVerificationEmailProps = body;
+    const { email, fullName, verificationToken }: SendRegisterVerificationEmailProps = body;
 
     // Construct the verification link
     const verificationUrl = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/verify_email?token=${verificationToken}`;
@@ -33,7 +32,7 @@ export async function POST(request: Request): Promise<NextResponse<APIResponse>>
         from: 'Cris Futbol <onboarding@resend.dev>',
         to: email,
         subject: emailTemplateMessages('EMAIL_VERIFICATION_SUBJECT'),
-        react: VerificationEmailTemplate({ verificationUrl, firstName, lastName }),
+        react: VerificationEmailTemplate({ verificationUrl, fullName }),
     });
 
     if (response.error) {

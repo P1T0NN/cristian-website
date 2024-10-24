@@ -1,0 +1,32 @@
+// NEXTJS IMPORTS
+import { NextResponse } from 'next/server';
+
+// LIBRARIES
+import { getTranslations } from 'next-intl/server';
+import { supabase } from '@/lib/supabase/supabase';
+
+// TYPES
+import type { APIResponse } from '@/types/responses/APIResponse';
+
+export async function GET(request: Request): Promise<NextResponse<APIResponse>> {
+    const t = await getTranslations("FetchMessages");
+    
+    const { searchParams } = new URL(request.url);
+    const search = searchParams.get('search');
+
+    if (!search) {
+        return NextResponse.json({ success: true, message: t('NO_SEARCH_TERM'), data: [] });
+    }
+
+    const { data, error } = await supabase
+        .from('users')
+        .select('fullName')
+        .ilike('fullName', `${search}%`)
+        .limit(7);
+
+    if (error) {
+        return NextResponse.json({ success: false, message: t('FAILED_TO_SEARCH_USERS') }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, message: t('USERS_FETCHED'), data: data });
+}

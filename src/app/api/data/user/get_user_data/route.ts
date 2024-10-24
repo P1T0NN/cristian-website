@@ -29,7 +29,7 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
 
     const { data, error: supabaseError } = await supabase
         .from('users')
-        .select('id, email, firstName, lastName, phoneNumber, created_at, is_verified, isAdmin')
+        .select('id, email, fullName, phoneNumber, created_at, is_verified, isAdmin')
         .eq('id', userId) 
         .single();
 

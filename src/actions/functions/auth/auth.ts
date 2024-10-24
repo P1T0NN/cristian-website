@@ -4,6 +4,7 @@ import { GenericMessages } from '@/utils/genericMessages';
 
 // TYPES
 import type { typesRegisterForm } from '@/types/forms/RegisterForm';
+import type { LoginForm } from '@/types/forms/LoginForm';
 
 type AuthResult = {
     success: boolean;

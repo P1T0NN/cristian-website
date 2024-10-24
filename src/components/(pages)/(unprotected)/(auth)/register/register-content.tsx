@@ -36,8 +36,7 @@ export const RegisterContent = () => {
     const { formData, errors, handleInputChange, handleSubmit } = useForm({
         initialValues: {
             email: "",
-            firstName: "",
-            lastName: "",
+            fullName: "",
             phoneNumber: "",
             gender: "",
             password: "",
