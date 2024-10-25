@@ -65,6 +65,9 @@ export const GenericMessages = {
     // Add Debt Page Messages
     DEBT_CREATION_FAILED: "Failed to add debt. Please try again!",
 
+    // Add Location Page Messages
+    LOCATION_CREATION_FAILED: "Failed to add location. Please try again!",
+
     // Redis Messages
     REDIS_CONNECTION_ERROR: "Unable to connect to the database. Please try again later.",
     REDIS_DISCONNECTION_ERROR: "Error occurred while disconnecting from the database.",

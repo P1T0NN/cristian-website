@@ -18,6 +18,8 @@ const PROTECTED_PAGES = [
 
 const ADMIN_PROTECTED_PAGES = [
     PAGE_ENDPOINTS.ADD_MATCH_PAGE,
+    PAGE_ENDPOINTS.ADD_DEBT_PAGE,
+    PAGE_ENDPOINTS.ADD_LOCATION_PAGE
 ]
 
 async function redirectToLogin(req: NextRequest) {
@@ -151,6 +153,8 @@ export const config = {
     matcher: [
         '/home', 
         '/settings',
-        '/add_match'
+        '/add_match',
+        '/add_debt',
+        '/add_location'
     ],
 };

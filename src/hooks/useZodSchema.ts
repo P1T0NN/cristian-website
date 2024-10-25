@@ -46,7 +46,7 @@ export const useZodSchemas = () => {
         starts_at_day: z.string().min(1, { message: t('START_DAY_REQUIRED') }),
         starts_at_hour: z.string().min(1, { message: t('START_HOUR_REQUIRED') }),
         match_type: z.string().min(1, { message: t('MATCH_TYPE_REQUIRED') }).max(100, { message: t('MATCH_TYPE_TOO_LONG') }),
-        match_gender: z.enum(['Male', 'Female', 'Other'], {
+        match_gender: z.enum(['Male', 'Female', 'Mixed', 'Other'], {
             errorMap: () => ({ message: t('MATCH_GENDER_REQUIRED') })
         }),
         added_by: z.string()
@@ -60,12 +60,17 @@ export const useZodSchemas = () => {
         added_by: z.string()
     });    
 
+    const addLocationSchema = z.object({
+        location_name: z.string().min(1, { message: t('LOCATION_NAME_REQUIRED') })
+    });
+
     return {
         loginSchema,
         registerSchema,
         resetPasswordSchema,
         forgotPasswordSchema,
         addMatchSchema,
-        addDebtSchema
+        addDebtSchema,
+        addLocationSchema
     };
 };

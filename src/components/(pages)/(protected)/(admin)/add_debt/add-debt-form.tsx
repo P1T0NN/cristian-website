@@ -12,6 +12,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SearchDropdown } from "@/components/ui/search-dropdown/search-dropdown";
 
+// ACTIONS
+import { client_fetchUsers } from "@/actions/functions/data/client/debt/client_fetchUsers";
+
 // TYPES
 import type { typesAddDebtForm } from "@/types/forms/AddDebtForm";
 
@@ -23,6 +26,10 @@ type AddDebtFormProps = {
     selectedOption: 'player' | 'cristian';
     setSelectedOption: React.Dispatch<React.SetStateAction<'player' | 'cristian'>>;
 };
+
+type User = {
+    fullName: string;
+}
 
 export const AddDebtForm = ({
     authToken,
@@ -80,13 +87,16 @@ export const AddDebtForm = ({
                 {errors.player_name && (
                     <p className="text-red-500 text-sm">{errors.player_name}</p>
                 )}
-                
-                <SearchDropdown
+
+                <SearchDropdown<User>
                     authToken={authToken}
                     searchTerm={formData.player_name}
                     isDropdownOpen={showDropdown}
                     setIsDropdownOpen={setShowDropdown}
                     onSelect={handleUserSelect}
+                    fetchData={client_fetchUsers}
+                    getDisplayValue={(user) => user.fullName}
+                    queryKey="users"
                 />
             </div>
 
@@ -114,7 +124,7 @@ export const AddDebtForm = ({
                     <Input
                         type="number"
                         name="player_debt"
-                        value={formData.player_debt}
+                        value={formData.player_debt === 0 ? '' : formData.player_debt.toString()}
                         onChange={handleInputChange}
                         placeholder={t("playerDebtPlaceholder")}
                     />
@@ -128,7 +138,7 @@ export const AddDebtForm = ({
                     <Input
                         type="number"
                         name="cristian_debt"
-                        value={formData.cristian_debt}
+                        value={formData.cristian_debt === 0 ? '' : formData.cristian_debt.toString()}
                         onChange={handleInputChange}
                         placeholder={t("cristianDebtPlaceholder")}
                     />

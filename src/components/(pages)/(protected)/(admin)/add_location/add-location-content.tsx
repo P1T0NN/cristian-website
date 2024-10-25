@@ -19,53 +19,44 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { AddMatchForm } from "./add-match-form";
 
 // HOOKS
 import { useForm } from "@/hooks/useForm";
 import { useZodSchemas } from "@/hooks/useZodSchema";
 
 // ACTIONS
-import { addMatch } from "@/actions/functions/queries/add-match";
+import { addLocation } from "@/actions/functions/queries/add-location";
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
 
-type AddMatchContentProps = {
-    authToken: string;
+type AddLocationProps = {
     serverUserData: typesUser;
 }
 
-export const AddMatchContent = ({
-    authToken,
+export const AddLocationContent = ({ 
     serverUserData 
-}: AddMatchContentProps) => {
-    const t = useTranslations("AddMatchPage");
+}: AddLocationProps) => {
+    const t = useTranslations("AddLocationPage");
 
     const router = useRouter();
 
     const [isPending, startTransition] = useTransition();
 
-    const { addMatchSchema } = useZodSchemas();
+    const { addLocationSchema } = useZodSchemas();
 
     const { formData, errors, handleInputChange, handleSubmit } = useForm({
         initialValues: {
-            location: "",
-            price: 0,
-            team1_name: "",
-            team2_name: "",
-            starts_at_day: "",
-            starts_at_hour: "",
-            match_type: "",
-            match_gender: "",
-            added_by: serverUserData.fullName
+            location_name: ""
         },
-        validationSchema: addMatchSchema,
+        validationSchema: addLocationSchema,
         onSubmit: async (values) => {
             startTransition(async () => {
-                const result = await addMatch(values);
+                const result = await addLocation(values);
                 if (result.success) {
                     router.push(PAGE_ENDPOINTS.HOME_PAGE);
                     toast.success(result.message);
@@ -85,17 +76,24 @@ export const AddMatchContent = ({
                 </CardHeader>
 
                 <CardContent>
-                    <AddMatchForm
-                        authToken={authToken}
-                        formData={formData}
-                        errors={errors}
-                        handleInputChange={handleInputChange}
-                     />
+                    <div className="flex flex-col space-y-4">
+                        <div className="relative w-[450px] space-y-1">
+                            <Label htmlFor="location">{t("location")}</Label>
+                            <Input
+                                type="text"
+                                name="location_name"
+                                value={formData.location_name}
+                                onChange={handleInputChange}
+                                placeholder={t('locationPlaceholder')}
+                            />
+                            {errors.location_name && <p className="text-sm text-red-500">{errors.location_name}</p>}
+                        </div>
+                    </div>
                 </CardContent>
 
                 <CardFooter>
                     <Button disabled={isPending} className="w-[150px] font-bold" onClick={handleSubmit}>
-                        {isPending ? t('adding') : t('addMatch')}
+                        {isPending ? t('adding') : t('addLocation')}
                     </Button>
                 </CardFooter>
             </Card>

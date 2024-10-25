@@ -10,5 +10,7 @@ export const PAGE_ENDPOINTS = {
 
     // ADMIN PROTECTED PAGES (JWT REQUIRED AND isAdmin TO TRUE)
 
-    ADD_MATCH_PAGE:         "/add_match"
+    ADD_MATCH_PAGE:         "/add_match",
+    ADD_DEBT_PAGE:          "/add_debt",
+    ADD_LOCATION_PAGE:      "/add_location"
 }

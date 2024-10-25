@@ -57,12 +57,23 @@
     "AddMatchPage": {
         "hello": "Hello,",
         "description": "To add a new match, fill in the informations below",
+        "location": "Location",
         "locationPlaceholder": "Enter match location",
+        "price": "Price",
         "pricePlaceholder": "Enter match price",
+        "team1Name": "Name of team 1",
         "team1NamePlaceholder": "Enter Team 1 name",
+        "team2Name": "Name of team 2",
         "team2NamePlaceholder": "Enter Team 2 name",
+        "date": "Date of match",
+        "time": "Time of match",
+        "matchType": "Type of match",
         "matchTypePlaceholder": "Enter match type",
+        "matchGender": "Match gender",
         "matchGenderPlaceholder": "Enter match gender",
+        "genderMale": "Male",
+        "genderFemale": "Female",
+        "genderMixed": "Mixed",
         "adding": "Adding...",
         "addMatch": "Add match"
     },
@@ -82,6 +93,15 @@
         "iOwe": "I Owe",
         "adding": "Adding...",
         "addDebt": "Add debt"
+    },
+
+    "AddLocationPage": {
+        "hello": "Hello,",
+        "description": "To add a new location, fill in the input below",
+        "location": "Location",
+        "locationPlaceholder": "Write location name",
+        "adding": "Adding...",
+        "addLocation": "Add location"
     },
 
     "VerifyEmail": {
@@ -154,6 +174,11 @@
         "DEBT_CREATED": "Debt has been added successfully!",
         "DEBT_CREATION_RATE_LIMITED": "Please wait 5 minutes before adding another debt",
 
+        "LOCATION_NAME_REQUIRED": "Location name is required",
+        "LOCATION_CREATION_FAILED": "Failed to add location. Please try again!",
+        "LOCATION_ALREADY_EXISTS": "Location already exists!",
+        "LOCATION_CREATED": "Location added successfully!",
+
         "REDIS_CONNECTION_ERROR": "Unable to connect to the database. Please try again later.",
         "REDIS_DISCONNECTION_ERROR": "Error occurred while disconnecting from the database.",
         "REDIS_GET_ERROR": "Unable to retrieve data from the cache. Please try again.",
@@ -181,8 +206,12 @@
         "USER_DATA_SUCCESSFULLY_FETCHED": "Fetched user data successfully!",
 
         "NO_SEARCH_TERM": "No search term provided",
+
         "FAILED_TO_SEARCH_USERS": "Failed to search users",
-        "USERS_FETCHED": "Users fetched successfully"
+        "USERS_FETCHED": "Users fetched successfully",
+
+        "FAILED_TO_FETCH_LOCATIONS": "Failed to search locations",
+        "LOCATIONS_FETCHED": "Locations fetched successfully"
     },
 
     "ZodErrors": {
@@ -208,7 +237,8 @@
         "PLAYER_DEBT_REQUIRED": "Player debt must be a non-negative decimal",
         "CRISTIAN_DEBT_REQUIRED": "Cristian debt must be a non-negative decimal",
         "REASON_REQUIRED": "Reason for the debt is required",
-        "REASON_TOO_LONG": "Reason cannot exceed 255 characters"
+        "REASON_TOO_LONG": "Reason cannot exceed 255 characters",
+        "LOCATION_NAME_REQUIRED": "Location name is required"
     },
 
     "EmailTemplateMessages": {

@@ -15,7 +15,6 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ToggleMode } from "@/components/ui/toggle-mode/toggle-mode";
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
@@ -84,8 +83,6 @@ export const HeaderProtected = async ({
                         <DropdownMenuItem><LogOut /> Logout</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
-
-                <ToggleMode />
             </div>
         </nav>
     )

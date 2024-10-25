@@ -21,13 +21,18 @@ export const useForm = <T extends Record<string, unknown>>({
     const [formData, setFormData] = useState<T>(initialValues);
     const [errors, setErrors] = useState<Record<string, string>>({});
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value, type } = e.target;
-    
-        // Convert value to number if the input type is "number"
-        const parsedValue = type === "number" ? parseFloat(value) : value;
-    
-        setFormData({ ...formData, [name]: parsedValue });
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value, type } = event.target;
+        
+        // For number inputs, convert empty string to 0 or parse the number
+        const finalValue = type === 'number' 
+            ? value === '' ? 0 : parseFloat(value)
+            : value;
+            
+        setFormData(prev => ({
+            ...prev,
+            [name]: finalValue
+        }));
     };
 
     const handleSubmit = () => {
