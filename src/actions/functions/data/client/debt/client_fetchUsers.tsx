@@ -9,5 +9,9 @@ export async function client_fetchUsers(authToken: string, searchTerm: string): 
         }
     });
 
+    if(!response.ok) {
+        return { success: false, message: "Error fetching users" };
+    }
+
     return response.json();
 }

@@ -7,6 +7,9 @@ import { useTranslations } from "next-intl";
 // NEXTJS IMPORTS
 import { useRouter } from "next/navigation";
 
+// LIBRARIES
+import { useQueryClient } from "@tanstack/react-query";
+
 // CONFIG
 import { PAGE_ENDPOINTS } from "@/config";
 
@@ -45,6 +48,7 @@ export const AddMatchContent = ({
     const t = useTranslations("AddMatchPage");
 
     const router = useRouter();
+    const queryClient = useQueryClient();
 
     const [isPending, startTransition] = useTransition();
 
@@ -68,6 +72,7 @@ export const AddMatchContent = ({
                 const result = await addMatch(values);
                 if (result.success) {
                     router.push(PAGE_ENDPOINTS.HOME_PAGE);
+                    queryClient.invalidateQueries({ queryKey: ["matches"] });
                     toast.success(result.message);
                 } else {
                     toast.error(result.message);

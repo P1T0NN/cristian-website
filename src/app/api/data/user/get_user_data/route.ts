@@ -6,8 +6,14 @@ import { jwtVerify } from 'jose';
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
+// SERVICES
+import { redisCacheService } from '@/services/server/redis-cache.service';
+
 // TYPES
 import type { APIResponse } from '@/types/responses/APIResponse';
+
+const CACHE_TTL = 300; // 5 minutes in seconds
+const CACHE_KEY_PREFIX = 'user:';
 
 export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
     const genericMessages = await getTranslations("GenericMessages");
@@ -26,16 +32,27 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
     }
 
     const userId = payload.sub;
+    const cacheKey = `${CACHE_KEY_PREFIX}${userId}`;
 
+    // Try to get user data from cache first
+    const cachedResult = await redisCacheService.get(cacheKey);
+    if (cachedResult.success && cachedResult.data) {
+        return NextResponse.json({ success: true, message: fetchMessages('USER_DATA_SUCCESSFULLY_FETCHED'), data: cachedResult.data });
+    }
+
+    // If not in cache or cache error, fetch from database
     const { data, error: supabaseError } = await supabase
         .from('users')
         .select('id, email, fullName, phoneNumber, created_at, is_verified, isAdmin')
-        .eq('id', userId) 
+        .eq('id', userId)
         .single();
 
     if (supabaseError) {
         return NextResponse.json({ success: false, message: genericMessages('USER_DATA_FAILED_TO_FETCH') }, { status: 500 });
     }
+
+    // Store the fetched data in cache
+    await redisCacheService.set(cacheKey, data, CACHE_TTL);
 
     return NextResponse.json({ success: true, message: fetchMessages('USER_DATA_SUCCESSFULLY_FETCHED'), data });
 }

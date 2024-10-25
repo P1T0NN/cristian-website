@@ -211,7 +211,11 @@
         "USERS_FETCHED": "Users fetched successfully",
 
         "FAILED_TO_FETCH_LOCATIONS": "Failed to search locations",
-        "LOCATIONS_FETCHED": "Locations fetched successfully"
+        "LOCATIONS_FETCHED": "Locations fetched successfully",
+
+        "NO_MATCHES_FOUND": "There are no matches active",
+        "MATCHES_FAILED_TO_FETCH": "Failed to get matches",
+        "MATCHES_SUCCESSFULLY_FETCHED": "Matches fetched successfully"
     },
 
     "ZodErrors": {

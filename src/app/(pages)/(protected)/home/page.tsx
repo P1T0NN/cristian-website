@@ -1,6 +1,9 @@
 // REACTJS IMPORTS
 import { Suspense } from 'react';
 
+// NEXTJS IMPORTS
+import { cookies } from "next/headers";
+
 // COMPONENTS
 import { HeaderProtected } from '@/components/ui/header/header_protected';
 import { HomeContent } from '@/components/(pages)/(protected)/home/home-content';
@@ -13,6 +16,9 @@ import { server_fetchUserData } from '@/actions/functions/data/server/server_fet
 import type { typesUser } from '@/types/typesUser';
 
 export default async function HomePage() {
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get('auth_token')?.value as string;
+
     const result = await server_fetchUserData();
     
     if (!result.success) {
@@ -26,7 +32,7 @@ export default async function HomePage() {
             <HeaderProtected serverUserData={userData} />
             
             <Suspense fallback={<p>Loading...</p>}>
-                <HomeContent serverUserData={userData} />
+                <HomeContent authToken={authToken} serverUserData={userData} />
             </Suspense>
         </main>
     );
