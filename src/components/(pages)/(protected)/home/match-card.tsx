@@ -1,5 +1,13 @@
+"use client"
+
 // REACTJS IMPORTS
 import { memo } from "react";
+
+// NEXTJS IMPORTS
+import { useRouter } from "next/navigation";
+
+// CONFIG
+import { PAGE_ENDPOINTS } from "@/config";
 
 // LIBRARIES
 import { useTranslations } from 'next-intl';
@@ -25,6 +33,12 @@ export const MatchCard = memo(({
     serverUserData
 }: MatchCardProps) => {
     const t = useTranslations("MatchCardComponent");
+
+    const router = useRouter();
+
+    const handleEditMatch = () => {
+        router.push(`${PAGE_ENDPOINTS.EDIT_MATCH_PAGE}/${match.id}`);
+    };
 
     return (
         <Card className="w-[250px] mb-4">
@@ -55,6 +69,13 @@ export const MatchCard = memo(({
                         className="bg-green-500 hover:bg-green-500/80 w-full"
                     >
                         Finish match
+                    </Button>
+
+                    <Button
+                        className="bg-blue-500 hover:bg-blue-500/80 w-full"
+                        onClick={handleEditMatch}
+                    >
+                        Edit match
                     </Button>
 
                     <Button 

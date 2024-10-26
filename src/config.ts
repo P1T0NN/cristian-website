@@ -12,5 +12,6 @@ export const PAGE_ENDPOINTS = {
 
     ADD_MATCH_PAGE:         "/add_match",
     ADD_DEBT_PAGE:          "/add_debt",
-    ADD_LOCATION_PAGE:      "/add_location"
+    ADD_LOCATION_PAGE:      "/add_location",
+    EDIT_MATCH_PAGE:        "/edit_match"
 }

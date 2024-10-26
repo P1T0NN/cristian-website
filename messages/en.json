@@ -252,7 +252,12 @@
 
         "NO_MATCHES_FOUND": "There are no matches active",
         "MATCHES_FAILED_TO_FETCH": "Failed to get matches",
-        "MATCHES_SUCCESSFULLY_FETCHED": "Matches fetched successfully"
+        "MATCHES_SUCCESSFULLY_FETCHED": "Matches fetched successfully",
+
+        "MATCH_FAILED_TO_FETCH": "Failed to get match",
+        "MATCH_NOT_FOUND": "Match has not been found",
+        "MATCH_SUCCESSFULLY_FETCHED": "Match fetched successfully",
+        "MATCH_FETCH_INVALID_REQUEST": "No match ID found!"
     },
 
     "ZodErrors": {
