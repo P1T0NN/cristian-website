@@ -2,84 +2,72 @@
 import { memo } from "react";
 
 // LIBRARIES
-import { format, isToday, isTomorrow } from 'date-fns';
+import { useTranslations } from 'next-intl';
 
 // COMPONENTS
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+
+// UTILS
+import { formatTime, formatDate } from "@/utils/dateUtils";
 
 // TYPES
 import type { typesMatch } from "@/types/typesMatch";
+import type { typesUser } from "@/types/typesUser";
 
 type MatchCardProps = {
     match: typesMatch;
+    serverUserData: typesUser;
 };
 
 export const MatchCard = memo(({ 
-    match 
+    match,
+    serverUserData
 }: MatchCardProps) => {
-    const formatTime = (timeStr: string) => {
-        return format(new Date(`2000-01-01T${timeStr}`), 'HH:mm');
-    };
-
-    const formatDate = (dateStr: string) => {
-        const date = new Date(dateStr);
-        if (isToday(date)) return 'Today';
-        if (isTomorrow(date)) return 'Tomorrow';
-        return format(date, 'do MMMM'); // Will output like "22nd April"
-    };
+    const t = useTranslations("MatchCardComponent");
 
     return (
-        <Card className="mb-4">
-            <CardContent className="p-4">
-                <div className="grid grid-cols-2 gap-4">
+        <Card className="w-[250px] mb-4">
+            <CardContent className="py-4">
+                <div className="flex flex-col space-y-5">
                     <div>
-                        <h3 className="font-semibold text-lg">Match Details</h3>
-                        <dl className="space-y-1">
-                            <div>
-                                <dt className="inline font-medium">Location:</dt>
-                                <dd className="inline ml-2">{match.location}</dd>
-                            </div>
-
-                            <div>
-                                <dt className="inline font-medium">Price:</dt>
-                                <dd className="inline ml-2">{match.price}e</dd>
-                            </div>
-
-                            <div>
-                                <dt className="inline font-medium">Type:</dt>
-                                <dd className="inline ml-2">{match.match_type}</dd>
-                            </div>
-
-                            <div>
-                                <dt className="inline font-medium">Date:</dt>
-                                <dd className="inline ml-2">{formatDate(match.starts_at_day)}</dd>
-                            </div>
-
-                            <div>
-                                <dt className="inline font-medium">Time:</dt>
-                                <dd className="inline ml-2">{formatTime(match.starts_at_hour)}</dd>
-                            </div>
-                        </dl>
+                        <h1 className="text-center font-bold text-xl">{match.location} - {match.price}e</h1>
+                        <p className="text-center text-sm">{formatDate(match.starts_at_day)} - {formatTime(match.starts_at_hour)}h</p>
                     </div>
-                    <div className="space-y-4">
-                        <div>
-                            <h4 className="font-medium">Team 1</h4>
-                            <p>{match.team1_name}</p>
-                            <p className="text-sm text-gray-600">{match.team1_players}</p>
+
+                    <div className="flex flex-col space-y-1">
+                        <div className="flex">
+                            <h1 className="inline font-medium">{t("gender")}</h1>
+                            <p className="inline ml-2">{match.match_gender}</p>
                         </div>
-                        <div>
-                            <h4 className="font-medium">Team 2</h4>
-                            <p>{match.team2_name}</p>
-                            <p className="text-sm text-gray-600">{match.team2_players}</p>
+
+                        <div className="flex">
+                            <h1 className="inline font-medium">{t("type")}</h1>
+                            <p className="inline ml-2">{match.match_type}</p>
                         </div>
                     </div>
-                </div>
-                
-                <div className="mt-2 text-sm text-gray-500">
-                    <p>Added by: {match.added_by}</p>
-                    <p>Created: {format(new Date(match.created_at), 'PPP')}</p>
                 </div>
             </CardContent>
+
+            {serverUserData.isAdmin ? (
+                <CardFooter className="flex flex-col mt-5 space-y-2">
+                    <Button 
+                        className="bg-green-500 hover:bg-green-500/80 w-full"
+                    >
+                        Finish match
+                    </Button>
+
+                    <Button 
+                        className="bg-red-500 hover:bg-red-500/80 w-full"
+                    >
+                        Delete match
+                    </Button>
+                </CardFooter>
+            ): (
+                <CardFooter className="flex flex-col mt-5 space-y-2">
+                    <CardDescription>{t("checkAvailability")}</CardDescription>
+                </CardFooter>
+            )}
         </Card>
     );
 });

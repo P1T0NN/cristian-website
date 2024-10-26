@@ -10,5 +10,6 @@ export type typesMatch = {
     starts_at_day: string;
     starts_at_hour: string;
     match_type: string;
+    match_gender: string;
     created_at: Date;
 }

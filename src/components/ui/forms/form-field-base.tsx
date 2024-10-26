@@ -9,7 +9,7 @@ type FormFieldBaseProps = {
 };
 
 export const FormFieldBase = ({ label, name, error, children }: FormFieldBaseProps) => (
-    <div className="relative w-[450px] h-[80px] space-y-1">
+    <div className="relative flex flex-col space-y-1">
         <Label htmlFor={name}>{label}</Label>
         {children}
         {error && <p className="text-sm text-red-500">{error}</p>}

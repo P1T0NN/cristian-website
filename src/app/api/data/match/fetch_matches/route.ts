@@ -41,6 +41,7 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
             starts_at_day,
             starts_at_hour,
             match_type,
+            match_gender,
             created_at
         `)
         .order('created_at', { ascending: false })

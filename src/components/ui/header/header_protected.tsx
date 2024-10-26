@@ -26,10 +26,25 @@ type HeaderProps = {
     serverUserData: typesUser;
 }
 
+const getInitials = (fullName: string): string => {
+    // Split the name into words and filter out empty strings
+    const words = fullName.split(' ').filter(word => word.length > 0);
+    
+    if (words.length === 1) {
+        // If only one word, return first letter
+        return words[0].charAt(0).toUpperCase();
+    } else {
+        // Take first letter of first word and first letter of last word
+        // This handles cases of 2 or more words
+        return (words[0].charAt(0) + words[words.length - 1].charAt(0)).toUpperCase();
+    }
+};
+
 export const HeaderProtected = async ({
     serverUserData
 }: HeaderProps) => {
     //const authToken = cookies().get('auth_token')?.value;
+    const initials = getInitials(serverUserData.fullName);
 
     return (
         <nav className="flex w-full py-2 px-10 items-center justify-between bg-transparent border-b border-bg-primary space-x-3">
@@ -64,8 +79,10 @@ export const HeaderProtected = async ({
                 </Button>
 
                 <DropdownMenu>
-                    <DropdownMenuTrigger className="py-2 px-4 bg-secondary rounded">
-                        <Settings size={21} strokeWidth={1.25} />
+                    <DropdownMenuTrigger>
+                        <div className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-secondary">
+                            {initials}
+                        </div>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                         <DropdownMenuLabel>My Account</DropdownMenuLabel>

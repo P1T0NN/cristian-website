@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 // LIBRARIES
 import { useTranslations } from "next-intl";
@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { LocationField } from "./location-field";
 import { FormInputField } from "@/components/ui/forms/form-input-field";
 import { FormSelectField } from "@/components/ui/forms/form-select-field";
+import { FormDateField } from "@/components/ui/forms/form-date-field";
 
 // TYPES
 import type { typesAddMatchForm } from "@/types/forms/AddMatchForm";
@@ -19,10 +20,10 @@ type AddMatchContentProps = {
 }
 
 export const AddMatchForm = ({
-  formData,
-  errors,
-  handleInputChange,
-  authToken
+    formData,
+    errors,
+    handleInputChange,
+    authToken
 }: AddMatchContentProps) => {
     const t = useTranslations("AddMatchPage");
   
@@ -34,9 +35,9 @@ export const AddMatchForm = ({
 
     // Example match type options
     const matchTypeOptions = [
-        { value: 'f7', label: 'f7'},
-        { value: 'f8', label: 'f8'},
-        { value: 'f11', label: 'f11' },
+        { value: 'F7', label: 'F7'},
+        { value: 'F8', label: 'F8'},
+        { value: 'F11', label: 'F11' },
     ];
 
     // Example match gender options
@@ -85,12 +86,13 @@ export const AddMatchForm = ({
                 error={errors.team2_name}
             />
     
-            <FormInputField
+            <FormDateField
                 label={t("date")}
                 name="starts_at_day"
-                type="date"
                 value={formData.starts_at_day}
-                onChange={handleInputChange}
+                onChange={(date) => handleInputChange({
+                    target: { name: "starts_at_day", value: date as string }
+                } as React.ChangeEvent<HTMLInputElement>)}
                 error={errors.starts_at_day}
             />
     

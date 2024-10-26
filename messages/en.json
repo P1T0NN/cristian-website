@@ -4,7 +4,15 @@
     },
     
     "HomePage": {
-        "title": "Hello world!"
+        "welcome": "Welcome, {name}!",
+        "filteredMatches": "Filtered matches",
+        "allMatches": "All matches",
+        "filteredMessage": "Showing matches based on your selected filters",
+        "allAvailableMessage": "Showing all available matches",
+        "noMatchesFound": "No matches found.",
+        "todayMatches": "Today's Matches",
+        "tomorrowMatches": "Tomorrow's Matches",
+        "upcomingMatches": "Upcoming Matches"
     },
 
     "LoginPage": {
@@ -110,6 +118,35 @@
         "verificationError": "There was an error verifying your email. Please try again or contact support.",
         "invalidLink": "Invalid verification link",
         "unexpectedError": "An unexpected error occurred"
+    },
+
+    "FilterModalComponent": {
+        "title": "Filter matches",
+        "description": "Filter changes here. Click save when you are done.",
+        "location": "Location",
+        "price": "Price",
+        "date": "Date",
+        "timeFrom": "Time From",
+        "timeTo": "Time To",
+        "gender": "Gender",
+        "matchType": "Match Type",
+        "clearFilters": "Clear Filters",
+        "saveChanges": "Save changes",
+        "selectGenderPlaceholder": "Select gender",
+        "selectMatchTypePlaceholder": "Select match type",
+        "enterLocationPlaceholder": "Enter location...",
+        "enterMaxPricePlaceholder": "Enter max price...",
+        "timeFormatPlaceholder": "HH:mm"
+    },
+
+    "FormDateFieldComponent": {
+        "pickDate": "Pick a date"
+    },
+
+    "MatchCardComponent": {
+        "gender": "Gender:",
+        "type": "Type:",
+        "checkAvailability": "Check availability"
     },
 
     "GenericMessages": {
