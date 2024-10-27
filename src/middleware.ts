@@ -13,7 +13,8 @@ import type { typesUser } from '@/types/typesUser';
 
 const PROTECTED_PAGES = [
     PAGE_ENDPOINTS.HOME_PAGE,
-    PAGE_ENDPOINTS.SETTINGS_PAGE
+    PAGE_ENDPOINTS.SETTINGS_PAGE,
+    PAGE_ENDPOINTS.MATCH_PAGE
 ];
 
 const ADMIN_PROTECTED_PAGES = [
@@ -157,6 +158,7 @@ export const config = {
         '/add_match',
         '/add_debt',
         '/add_location',
-        '/edit_match/:path*'
+        '/edit_match/:path*',
+        '/match/:path*'
     ],
 };

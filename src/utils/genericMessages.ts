@@ -59,6 +59,9 @@ export const GenericMessages = {
     REGISTER_VERIFICATION_TOKEN_EMAIL_SENT: "Verification email sent successfully. Please check your email!",
     REGISTER_VERIFICATION_EMAIL_FAILED: "Failed to send verification email. Please try again later.",
 
+    // Home Page Messages
+    MATCH_DELETION_FAILED: "Failed to delete match. Please try again!",
+
     // Add Match Page Messages
     MATCH_CREATION_FAILED: "Failed to create a match. Please try again!",
 
@@ -67,6 +70,9 @@ export const GenericMessages = {
 
     // Add Location Page Messages
     LOCATION_CREATION_FAILED: "Failed to add location. Please try again!",
+
+    // Edit Match Page Messages
+    MATCH_EDIT_FAILED: "Failed to edit match. Please try again!",
 
     // Redis Messages
     REDIS_CONNECTION_ERROR: "Unable to connect to the database. Please try again later.",

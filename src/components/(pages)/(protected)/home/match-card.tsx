@@ -11,10 +11,16 @@ import { PAGE_ENDPOINTS } from "@/config";
 
 // LIBRARIES
 import { useTranslations } from 'next-intl';
+import { useQueryClient } from "@tanstack/react-query";
 
 // COMPONENTS
 import { Card, CardContent, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { DeleteMatchButton } from "./delete-match-button";
+import { toast } from "sonner";
+
+// ACTIONS
+import { deleteMatch } from "@/actions/functions/queries/delete-match";
 
 // UTILS
 import { formatTime, formatDate } from "@/utils/dateUtils";
@@ -34,14 +40,36 @@ export const MatchCard = memo(({
 }: MatchCardProps) => {
     const t = useTranslations("MatchCardComponent");
 
+    const queryClient = useQueryClient();
     const router = useRouter();
 
+    const handleViewMatch = () => {
+        router.push(`${PAGE_ENDPOINTS.MATCH_PAGE}/${match.id}`);
+    }
+
+    const handleFinishMatch = () => {
+
+    };
+    
     const handleEditMatch = () => {
         router.push(`${PAGE_ENDPOINTS.EDIT_MATCH_PAGE}/${match.id}`);
     };
+    
+    const handleDeleteMatch = async () => {
+        const result = await deleteMatch(match.id);
+        
+        if (result.success) {
+            queryClient.invalidateQueries({ queryKey: ['matches'] });
+            toast.success(result.message);
+        } else {
+            toast.error(result.message);
+        }
+    };
 
     return (
-        <Card className="w-[250px] mb-4">
+        <Card
+            className="w-[250px] mb-4"
+        >
             <CardContent className="py-4">
                 <div className="flex flex-col space-y-5">
                     <div>
@@ -66,23 +94,27 @@ export const MatchCard = memo(({
             {serverUserData.isAdmin ? (
                 <CardFooter className="flex flex-col mt-5 space-y-2">
                     <Button 
-                        className="bg-green-500 hover:bg-green-500/80 w-full"
+                        className="w-full"
+                        onClick={handleViewMatch}
                     >
-                        Finish match
+                        {t('viewMatch')}
+                    </Button>
+
+                    <Button 
+                        className="bg-green-500 hover:bg-green-500/80 w-full"
+                        onClick={handleFinishMatch}
+                    >
+                        {t('finishMatch')}
                     </Button>
 
                     <Button
                         className="bg-blue-500 hover:bg-blue-500/80 w-full"
                         onClick={handleEditMatch}
                     >
-                        Edit match
+                        {t('editMatch')}
                     </Button>
 
-                    <Button 
-                        className="bg-red-500 hover:bg-red-500/80 w-full"
-                    >
-                        Delete match
-                    </Button>
+                    <DeleteMatchButton handleDeleteMatch={handleDeleteMatch} />
                 </CardFooter>
             ): (
                 <CardFooter className="flex flex-col mt-5 space-y-2">

@@ -7,6 +7,7 @@ export const PAGE_ENDPOINTS = {
 
     HOME_PAGE:              "/home",
     SETTINGS_PAGE:          "/settings",
+    MATCH_PAGE:             "/match",
 
     // ADMIN PROTECTED PAGES (JWT REQUIRED AND isAdmin TO TRUE)
 

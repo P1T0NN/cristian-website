@@ -112,6 +112,14 @@
         "addLocation": "Add location"
     },
 
+    "EditMatchPage": {
+        "editMatch": "Edit Match",
+        "noMatchFound": "No match found",
+        "cancel": "Cancel",
+        "updating": "Updating...",
+        "updateMatch": "Update match"
+    },
+
     "VerifyEmail": {
         "verifyingEmail": "Verifying your email...",
         "verificationSuccess": "Your email has been successfully verified! Redirecting to login page...",
@@ -146,7 +154,15 @@
     "MatchCardComponent": {
         "gender": "Gender:",
         "type": "Type:",
-        "checkAvailability": "Check availability"
+        "checkAvailability": "Check availability",
+        "viewMatch": "View match",
+        "finishMatch": "Finish match",
+        "editMatch": "Edit match",
+        "deleteMatch": "Delete Match",
+        "deleteMatchTitle": "Confirm Deletion",
+        "deleteMatchConfirmation": "Are you sure you want to delete this match? This action cannot be undone.",
+        "cancel": "Cancel",
+        "delete": "Delete"
     },
 
     "GenericMessages": {
@@ -199,13 +215,22 @@
         "INVALID_RESET_PASSWORD_TOKEN": "Reset password link is invalid or expired",
         "RESET_PASSWORD_TOKEN_VALID": "Reset password link is valid",
         "PASSWORD_RESET_RATE_LIMITED": "Please wait 5 minutes before requesting another password reset",
+        "MATCH_CREATION_RATE_LIMITED": "Please wait 5 minutes before creating another match",
+        "MATCH_EDIT_RATE_LIMITED": "Please wait 5 minutes before updating match again",
+        "MATCH_DELETION_RATE_LIMITED": "Please wait 5 minutes before deleting match again",
 
         "REGISTER_VERIFICATION_TOKEN_EMAIL_SENT": "Verification email sent successfully. Please check your email!",
         "REGISTER_VERIFICATION_EMAIL_FAILED": "Failed to send verification email. Please try again later.",
 
         "MATCH_CREATION_FAILED": "Failed to create a match. Please try again!",
         "MATCH_CREATED": "Match has been created successfully!",
-        "MATCH_CREATION_RATE_LIMITED": "Please wait 5 minutes before creating another match",
+
+        "MATCH_EDIT_FAILED": "Failed to edit match. Please try again!",
+        "MATCH_UPDATED": "Match updated successfully!",
+        "MATCH_ID_INVALID": "Invalid match!",
+
+        "MATCH_DELETION_FAILED": "Failed to delete match. Please try again!",
+        "MATCH_DELETED": "Match deleted successfully!",
 
         "DEBT_CREATION_FAILED": "Failed to add a debt. Please try again!",
         "DEBT_CREATED": "Debt has been added successfully!",
