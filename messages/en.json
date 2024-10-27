@@ -112,6 +112,14 @@
         "addLocation": "Add location"
     },
 
+    "MatchPage": {
+        "noMatchFound": "No match found",
+        "type": "Type",
+        "gender": "Gender",
+        "leaveTeam": "Leave Team",
+        "joinTeam": "Join Team"
+    },
+
     "EditMatchPage": {
         "editMatch": "Edit Match",
         "noMatchFound": "No match found",
@@ -232,6 +240,9 @@
         "MATCH_DELETION_FAILED": "Failed to delete match. Please try again!",
         "MATCH_DELETED": "Match deleted successfully!",
 
+        "PLAYER_JOINED_SUCCESSFULLY": "Player joined successfully!",
+        "PLAYER_LEFT_SUCCESSFULLY": "Player left successfully!",
+
         "DEBT_CREATION_FAILED": "Failed to add a debt. Please try again!",
         "DEBT_CREATED": "Debt has been added successfully!",
         "DEBT_CREATION_RATE_LIMITED": "Please wait 5 minutes before adding another debt",
@@ -260,7 +271,8 @@
         "INVALID_SERVER_RESPONSE": "Invalid response from server",
         "DATABASE_ERROR": "Database error occurred",
         "UNAUTHORIZED": "You are forbidden to do this. Please try to refresh the page or relog.",
-        "AUTHORIZED": "You are authorized for this action!"
+        "AUTHORIZED": "You are authorized for this action!",
+        "OPERATION_FAILED": "Failed to do this action!"
     },
 
     "FetchMessages": {
@@ -282,7 +294,7 @@
         "MATCH_FAILED_TO_FETCH": "Failed to get match",
         "MATCH_NOT_FOUND": "Match has not been found",
         "MATCH_SUCCESSFULLY_FETCHED": "Match fetched successfully",
-        "MATCH_FETCH_INVALID_REQUEST": "No match ID found!"
+        "MATCH_FETCH_INVALID_REQUEST": "Invalid match request!"
     },
 
     "ZodErrors": {

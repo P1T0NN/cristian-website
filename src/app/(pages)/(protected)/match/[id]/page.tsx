@@ -34,7 +34,7 @@ export default async function MatchPage({
         <main>
             <HeaderProtected serverUserData={userData} />
 
-            <MatchContent matchId={id} authToken={authToken} />
+            <MatchContent matchId={id} authToken={authToken} currentUserId={userData.id} />
         </main>
     )
 }

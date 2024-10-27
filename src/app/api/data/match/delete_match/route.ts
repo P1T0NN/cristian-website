@@ -9,6 +9,13 @@ import { applyRateLimit } from '@/lib/ratelimit/rateLimiter';
 // TYPES
 import type { APIResponse } from '@/types/responses/APIResponse';
 
+// In match_players table when we delete match we run this SQL:
+//  ALTER TABLE match_players
+//  ADD CONSTRAINT fk_match_players_match
+//  FOREIGN KEY (match_id) REFERENCES matches(id)
+//  ON DELETE CASCADE;
+// So now when we delete match all associated rows will be deleted, so do not worry about cleaning up in code manually other tables (rows)
+
 export async function DELETE(req: Request): Promise<NextResponse<APIResponse>> {
     const genericMessages = await getTranslations("GenericMessages");
 

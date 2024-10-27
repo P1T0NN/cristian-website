@@ -22,7 +22,7 @@ import { EditMatchForm } from "./edit-match-form";
 import { toast } from "sonner";
 
 // ACTIONS
-import { client_fetchMatch } from "@/actions/functions/data/client/match/client_fetchMatch";
+import { client_fetchMatchForEdit } from "@/actions/functions/data/client/match/client_fetchMatchForEdit";
 import { editMatch } from "@/actions/functions/queries/edit-match";
 
 // TYPES
@@ -45,7 +45,7 @@ export const EditMatchContent = ({
 
     const { data: matchData, isLoading } = useQuery({
         queryKey: ['match', matchId],
-        queryFn: () => client_fetchMatch(authToken, matchId),
+        queryFn: () => client_fetchMatchForEdit(authToken, matchId),
         enabled: !!matchId && !!authToken,
     });
 
