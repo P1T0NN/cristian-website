@@ -11,21 +11,23 @@ import { Button } from "@/components/ui/button";
 // LUCIDE ICONS
 import { ChevronUp, ChevronDown } from 'lucide-react';
 
-interface CustomTimeInputProps {
+type FormTimeFieldProps = {
     label: string
     name: string
     value: string
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
     error?: string
+    disableArrows?: boolean
 }
 
-export const FormTimeField: React.FC<CustomTimeInputProps> = ({
+export const FormTimeField = ({
     label,
     name,
     value,
     onChange,
-    error
-}) => {
+    error,
+    disableArrows = false
+}: FormTimeFieldProps) => {
     const [hours, setHours] = useState(value.split(':')[0] || '00')
     const [minutes, setMinutes] = useState(value.split(':')[1] || '00')
 
@@ -55,42 +57,74 @@ export const FormTimeField: React.FC<CustomTimeInputProps> = ({
     const incrementMinutes = () => handleMinutesChange((parseInt(minutes) + 1).toString())
     const decrementMinutes = () => handleMinutesChange((parseInt(minutes) - 1).toString())
 
-  return (
+    return (
         <div className="space-y-2">
-            <Label htmlFor={name}>{label}</Label>
-            <div className="flex items-center space-x-2">
-                <div className="flex flex-col items-center">
-                    <Button type="button" size="sm" variant="outline" onClick={incrementHours}>
-                        <ChevronUp className="h-4 w-4" />
-                    </Button>
+            <Label htmlFor={name} className="text-sm font-medium">{label}</Label>
+            <div className={`flex items-center justify-center ${disableArrows ? 'space-x-2' : 'space-x-4'}`}>
+                <div className={`flex ${disableArrows ? 'flex-row space-x-2' : 'flex-col items-center space-y-2'}`}>
+                    {!disableArrows && (
+                        <Button 
+                            type="button" 
+                            size="sm" 
+                            variant="outline" 
+                            onClick={incrementHours}
+                            className="w-8 h-8"
+                        >
+                            <ChevronUp className="h-4 w-4" />
+                        </Button>
+                    )}
                     <Input
                         type="text"
                         id={`${name}-hours`}
                         value={hours}
                         onChange={(e) => handleHoursChange(e.target.value)}
-                        className="w-14 text-center"
+                        className={`${disableArrows ? 'w-12 h-10' : 'w-14 h-12'} text-center text-lg`}
                     />
-                    <Button type="button" size="sm" variant="outline" onClick={decrementHours}>
-                        <ChevronDown className="h-4 w-4" />
-                    </Button>
+                    {!disableArrows && (
+                        <Button 
+                            type="button" 
+                            size="sm" 
+                            variant="outline" 
+                            onClick={decrementHours}
+                            className="w-8 h-8"
+                        >
+                            <ChevronDown className="h-4 w-4" />
+                        </Button>
+                    )}
                 </div>
 
-                <span className="text-2xl">:</span>
+                <span className="text-2xl font-semibold">:</span>
 
-                <div className="flex flex-col items-center">
-                    <Button type="button" size="sm" variant="outline" onClick={incrementMinutes}>
-                        <ChevronUp className="h-4 w-4" />
-                    </Button>
+                <div className={`flex ${disableArrows ? 'flex-row space-x-2' : 'flex-col items-center space-y-2'}`}>
+                    {!disableArrows && (
+                        <Button 
+                            type="button" 
+                            size="sm" 
+                            variant="outline" 
+                            onClick={incrementMinutes}
+                            className="w-8 h-8"
+                        >
+                            <ChevronUp className="h-4 w-4" />
+                        </Button>
+                    )}
                     <Input
                         type="text"
                         id={`${name}-minutes`}
                         value={minutes}
                         onChange={(e) => handleMinutesChange(e.target.value)}
-                        className="w-14 text-center"
+                        className={`${disableArrows ? 'w-12 h-10' : 'w-14 h-12'} text-center text-lg`}
                     />
-                    <Button type="button" size="sm" variant="outline" onClick={decrementMinutes}>
-                        <ChevronDown className="h-4 w-4" />
-                    </Button>
+                    {!disableArrows && (
+                        <Button 
+                            type="button" 
+                            size="sm" 
+                            variant="outline" 
+                            onClick={decrementMinutes}
+                            className="w-8 h-8"
+                        >
+                            <ChevronDown className="h-4 w-4" />
+                        </Button>
+                    )}
                 </div>
             </div>
             {error && <p className="text-sm text-red-500 mt-1">{error}</p>}

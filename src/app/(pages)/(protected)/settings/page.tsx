@@ -1,3 +1,6 @@
+// NEXTJS IMPORTS
+import { cookies } from "next/headers";
+
 // COMPONENTS
 import { HeaderProtected } from "@/components/ui/header/header_protected";
 import { SettingsContent } from "@/components/(pages)/(protected)/settings/settings-content";
@@ -10,6 +13,9 @@ import { server_fetchUserData } from "@/actions/functions/data/server/server_fet
 import type { typesUser } from "@/types/typesUser";
 
 export default async function SettingsPage() {
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get('auth_token')?.value as string;
+
     const result = await server_fetchUserData();
     
     if (!result.success) {
@@ -22,7 +28,7 @@ export default async function SettingsPage() {
         <main>
             <HeaderProtected serverUserData={userData} />
 
-            <SettingsContent />
+            <SettingsContent serverUserData={userData} authToken={authToken} />
         </main>
     )
 }

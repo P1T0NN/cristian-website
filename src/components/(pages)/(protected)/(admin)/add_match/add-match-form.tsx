@@ -9,6 +9,7 @@ import { FormInputField } from "@/components/ui/forms/form-input-field";
 import { FormSelectField } from "@/components/ui/forms/form-select-field";
 import { FormDateField } from "@/components/ui/forms/form-date-field";
 import { FormTimeField } from "@/components/ui/forms/form-time-field";
+import { Separator } from "@/components/ui/separator";
 
 // TYPES
 import type { typesAddMatchForm } from "@/types/forms/AddMatchForm";
@@ -34,14 +35,12 @@ export const AddMatchForm = ({
         } as React.ChangeEvent<HTMLInputElement>);
     };
 
-    // Example match type options
     const matchTypeOptions = [
         { value: 'F7', label: 'F7'},
         { value: 'F8', label: 'F8'},
         { value: 'F11', label: 'F11' },
     ];
 
-    // Example match gender options
     const matchGenderOptions = [
         { value: 'Male', label: t('genderMale') },
         { value: 'Female', label: t('genderFemale') },
@@ -49,81 +48,93 @@ export const AddMatchForm = ({
     ];
 
     return (
-        <div className="flex flex-col space-y-4">
-            <LocationField
-                value={formData.location}
-                onChange={handleInputChange}
-                error={errors.location}
-                authToken={authToken}
-            />
+        <div className="space-y-8">
+            <div className="space-y-4">
+                <h3 className="text-lg font-semibold">{t("matchDetails")}</h3>
+                <LocationField
+                    value={formData.location}
+                    onChange={handleInputChange}
+                    error={errors.location}
+                    authToken={authToken}
+                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormInputField
+                        label={t("price")}
+                        name="price"
+                        type="number"
+                        value={formData.price}
+                        onChange={handleInputChange}
+                        placeholder={t('pricePlaceholder')}
+                        error={errors.price}
+                    />
+                    <FormSelectField
+                        label={t("matchType")}
+                        name="match_type"
+                        value={formData.match_type}
+                        onChange={handleSelectChange('match_type')}
+                        options={matchTypeOptions}
+                        placeholder={t('matchTypePlaceholder')}
+                        error={errors.match_type}
+                    />
+                </div>
+                <FormSelectField
+                    label={t("matchGender")}
+                    name="match_gender"
+                    value={formData.match_gender}
+                    onChange={handleSelectChange('match_gender')}
+                    options={matchGenderOptions}
+                    placeholder={t('matchGenderPlaceholder')}
+                    error={errors.match_gender}
+                />
+            </div>
 
-            <FormInputField
-                label={t("price")}
-                name="price"
-                type="number"
-                value={formData.price}
-                onChange={handleInputChange}
-                placeholder={t('pricePlaceholder')}
-                error={errors.price}
-            />
+            <Separator />
 
-            <FormInputField
-                label={t("team1Name")}
-                name="team1_name"
-                type="text"
-                value={formData.team1_name}
-                onChange={handleInputChange}
-                placeholder={t('team1NamePlaceholder')}
-                error={errors.team1_name}
-            />
-    
-            <FormInputField
-                label={t("team2Name")}
-                name="team2_name"
-                type="text"
-                value={formData.team2_name}
-                onChange={handleInputChange}
-                placeholder={t('team2NamePlaceholder')}
-                error={errors.team2_name}
-            />
-    
-            <FormDateField
-                label={t("date")}
-                name="starts_at_day"
-                value={formData.starts_at_day}
-                onChange={(date) => handleInputChange({
-                    target: { name: "starts_at_day", value: date as string }
-                } as React.ChangeEvent<HTMLInputElement>)}
-                error={errors.starts_at_day}
-            />
-    
-            <FormTimeField
-                label={t("time")}
-                name="starts_at_hour"
-                value={formData.starts_at_hour}
-                onChange={handleInputChange}
-                error={errors.starts_at_hour}
-            />
+            <div className="space-y-4">
+                <h3 className="text-lg font-semibold">{t("teamNames")}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormInputField
+                        label={t("team1Name")}
+                        name="team1_name"
+                        type="text"
+                        value={formData.team1_name}
+                        onChange={handleInputChange}
+                        placeholder={t('team1NamePlaceholder')}
+                        error={errors.team1_name}
+                    />
+                    <FormInputField
+                        label={t("team2Name")}
+                        name="team2_name"
+                        type="text"
+                        value={formData.team2_name}
+                        onChange={handleInputChange}
+                        placeholder={t('team2NamePlaceholder')}
+                        error={errors.team2_name}
+                    />
+                </div>
+            </div>
 
-            <FormSelectField
-                label={t("matchType")}
-                name="match_type"
-                value={formData.match_type}
-                onChange={handleSelectChange('match_type')}
-                options={matchTypeOptions}
-                placeholder={t('matchTypePlaceholder')}
-                error={errors.match_type}
-            />
+            <Separator />
 
-            <FormSelectField
-                label={t("matchGender")}
-                name="match_gender"
-                value={formData.match_gender}
-                onChange={handleSelectChange('match_gender')}
-                options={matchGenderOptions}
-                placeholder={t('matchGenderPlaceholder')}
-                error={errors.match_gender}
-            />
+            <div className="space-y-4">
+                <h3 className="text-lg font-semibold">{t("dateAndTime")}</h3>
+                <FormDateField
+                    label={t("date")}
+                    name="starts_at_day"
+                    value={formData.starts_at_day}
+                    onChange={(date) => handleInputChange({
+                        target: { name: "starts_at_day", value: date as string }
+                    } as React.ChangeEvent<HTMLInputElement>)}
+                    error={errors.starts_at_day}
+                />
+                <FormTimeField
+                    label={t("time")}
+                    name="starts_at_hour"
+                    value={formData.starts_at_hour}
+                    onChange={handleInputChange}
+                    error={errors.starts_at_hour}
+                />
+            </div>
         </div>
     );
 };

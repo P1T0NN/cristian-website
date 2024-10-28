@@ -26,6 +26,9 @@ import { useZodSchemas } from "@/hooks/useZodSchema";
 // ACTIONS
 import { loginUser } from "@/actions/functions/auth/auth";
 
+// TYPES
+import { typesLoginForm } from "@/types/forms/LoginForm";
+
 export const LoginContent = () => {
     const t = useTranslations('LoginPage');
     const router = useRouter();
@@ -34,7 +37,7 @@ export const LoginContent = () => {
     
     const { loginSchema } = useZodSchemas();
 
-    const { formData, errors, handleInputChange, handleSubmit } = useForm<LoginForm>({
+    const { formData, errors, handleInputChange, handleSubmit } = useForm<typesLoginForm>({
         initialValues: { email: '', password: '' },
         validationSchema: loginSchema,
         onSubmit: async (values) => {

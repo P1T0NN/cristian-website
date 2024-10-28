@@ -83,7 +83,11 @@
         "genderFemale": "Female",
         "genderMixed": "Mixed",
         "adding": "Adding...",
-        "addMatch": "Add match"
+        "addMatch": "Add match",
+        "teamNames": "Team Names",
+        "dateAndTime": "Date and Time",
+        "matchDetails": "Match Details",
+        "addNewLocation": "Location"
     },
 
     "AddDebtPage": {
@@ -130,6 +134,40 @@
         "updateMatch": "Update match"
     },
 
+    "SettingsPage": {
+        "title": "Settings",
+        "account": "Account",
+        "appearance": "Appearance",
+        "notifications": "Notifications",
+        "security": "Security",
+        "accountSettings": "Account Settings",
+        "manageYourAccount": "Manage your account information and preferences.",
+        "name": "Name",
+        "email": "Email",
+        "language": "Language",
+        "selectLanguage": "Select a language",
+        "english": "English",
+        "spanish": "Spanish",
+        "saving": "Saving...",
+        "saveChanges": "Save Changes",
+        "appearanceSettings": "Appearance Settings",
+        "customizeAppearance": "Customize the look and feel of the application.",
+        "theme": "Theme",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System",
+        "notificationSettings": "Notification Settings",
+        "manageNotifications": "Manage how you receive notifications.",
+        "emailNotifications": "Email Notifications",
+        "receiveEmailNotifications": "Receive notifications via email",
+        "securitySettings": "Security Settings",
+        "manageSecuritySettings": "Manage your account's security settings.",
+        "currentPassword": "Current Password",
+        "newPassword": "New Password",
+        "confirmPassword": "Confirm New Password",
+        "updatePassword": "Update Password"
+    },
+
     "VerifyEmail": {
         "verifyingEmail": "Verifying your email...",
         "verificationSuccess": "Your email has been successfully verified! Redirecting to login page...",
@@ -149,7 +187,6 @@
         "gender": "Gender",
         "matchType": "Match Type",
         "clearFilters": "Clear Filters",
-        "saveChanges": "Save changes",
         "selectGenderPlaceholder": "Select gender",
         "selectMatchTypePlaceholder": "Select match type",
         "enterLocationPlaceholder": "Enter location...",
@@ -160,7 +197,11 @@
         "mixed": "Mixed",
         "f7": "F7",
         "f8": "F8",
-        "f11": "F11"
+        "f11": "F11",
+        "locationAndPrice": "Location and Price",
+        "dateAndTime": "Date and Time",
+        "matchDetails": "Match Details",
+        "applyFilters": "Apply filters"
     },
 
     "FormDateFieldComponent": {
@@ -190,6 +231,7 @@
         "USER_DOESNT_EXIST": "If user with this email exists, we have sent a verification email!",
         "USER_NOT_FOUND": "User not found!",
         "EMAIL_REQUIRED": "Email is required!",
+        "FULL_NAME_REQUIRED": "Full name is required!",
         "EMAIL_AND_USERID_REQUIRED": "Email and ID are required!",
         "VERIFICATION_EMAIL_COOLDOWN": "Please wait {time} seconds before requesting another verification email.",
         "ACCOUNT_NOT_VERIFIED_RESENT": "Email not verified. A new verification email has been sent.",
@@ -230,10 +272,12 @@
         "PASSWORD_RESET_TOKEN_GENERATED": "Successfully generated reset password token!",
         "INVALID_RESET_PASSWORD_TOKEN": "Reset password link is invalid or expired",
         "RESET_PASSWORD_TOKEN_VALID": "Reset password link is valid",
+
         "PASSWORD_RESET_RATE_LIMITED": "Please wait 5 minutes before requesting another password reset",
         "MATCH_CREATION_RATE_LIMITED": "Please wait 5 minutes before creating another match",
         "MATCH_EDIT_RATE_LIMITED": "Please wait 5 minutes before updating match again",
         "MATCH_DELETION_RATE_LIMITED": "Please wait 5 minutes before deleting match again",
+        "UPDATE_FULL_NAME_RATE_LIMIT": "Please wait 5 minutes before updating your full name again",
 
         "REGISTER_VERIFICATION_TOKEN_EMAIL_SENT": "Verification email sent successfully. Please check your email!",
         "REGISTER_VERIFICATION_EMAIL_FAILED": "Failed to send verification email. Please try again later.",
@@ -259,6 +303,9 @@
         "LOCATION_CREATION_FAILED": "Failed to add location. Please try again!",
         "LOCATION_ALREADY_EXISTS": "Location already exists!",
         "LOCATION_CREATED": "Location added successfully!",
+
+        "USER_UPDATE_FAILED": "Failed to update user settings. Please try again!",
+        "USER_FULL_NAME_UPDATED": "Full name updated successfully!",
 
         "REDIS_CONNECTION_ERROR": "Unable to connect to the database. Please try again later.",
         "REDIS_DISCONNECTION_ERROR": "Error occurred while disconnecting from the database.",

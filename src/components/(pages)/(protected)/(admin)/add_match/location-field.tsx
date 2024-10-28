@@ -41,11 +41,8 @@ export const LocationField = ({
     authToken, 
 }: LocationFieldProps) => {
     const t = useTranslations("AddMatchPage");
-
     const router = useRouter();
-
     const [showDropdown, setShowDropdown] = useState(false);
-
     const searchTimeoutRef = useRef<NodeJS.Timeout>();
 
     const handleRedirectToAddLocation = () => {
@@ -56,24 +53,24 @@ export const LocationField = ({
         onChange(event);
         
         if (searchTimeoutRef.current) {
-        clearTimeout(searchTimeoutRef.current);
+            clearTimeout(searchTimeoutRef.current);
         }
 
         if (event.target.value.length > 0) {
-        searchTimeoutRef.current = setTimeout(() => {
-            setShowDropdown(true);
-        }, 500);
+            searchTimeoutRef.current = setTimeout(() => {
+                setShowDropdown(true);
+            }, 500);
         } else {
-        setShowDropdown(false);
+            setShowDropdown(false);
         }
     };
 
     const handleLocationSelect = (locationName: string) => {
         const event = {
-        target: {
-            name: 'location',
-            value: locationName
-        }
+            target: {
+                name: 'location',
+                value: locationName
+            }
         } as React.ChangeEvent<HTMLInputElement>;
         
         onChange(event);
@@ -81,38 +78,43 @@ export const LocationField = ({
     };
 
     return (
-        <div className="relative w-[450px] h-[80px] space-y-1">
-            <div className="flex items-center space-x-3">
-                <Label htmlFor="location">{t("location")}</Label>
+        <div className="relative space-y-2">
+            <div className="flex items-center justify-between">
+                <Label htmlFor="location" className="text-sm font-medium">{t("location")}</Label>
                 <Button 
                     variant="outline" 
-                    className="w-[30px] h-[30px]"
+                    size="sm"
                     onClick={handleRedirectToAddLocation}
+                    className="flex items-center space-x-1"
                 >
-                    <Plus />
+                    <Plus className="w-4 h-4" />
+                    <span>{t("addNewLocation")}</span>
                 </Button>
             </div>
 
-            <Input
-                type="text"
-                name="location"
-                value={value}
-                onChange={handleLocationSearch}
-                placeholder={t('locationPlaceholder')}
-                autoComplete="off"
-            />
-            {error && <p className="text-sm text-red-500">{error}</p>}
-
-            <SearchDropdown<typesLocation>
-                authToken={authToken}
-                searchTerm={value}
-                isDropdownOpen={showDropdown}
-                setIsDropdownOpen={setShowDropdown}
-                onSelect={handleLocationSelect}
-                fetchData={client_fetchLocations}
-                getDisplayValue={(location) => location.location_name}
-                queryKey="locations"
-            />
+            <div className="relative">
+                <Input
+                    type="text"
+                    id="location"
+                    name="location"
+                    value={value}
+                    onChange={handleLocationSearch}
+                    placeholder={t('locationPlaceholder')}
+                    autoComplete="off"
+                    className="w-full"
+                />
+                <SearchDropdown<typesLocation>
+                    authToken={authToken}
+                    searchTerm={value}
+                    isDropdownOpen={showDropdown}
+                    setIsDropdownOpen={setShowDropdown}
+                    onSelect={handleLocationSelect}
+                    fetchData={client_fetchLocations}
+                    getDisplayValue={(location) => location.location_name}
+                    queryKey="locations"
+                />
+            </div>
+            {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
         </div>
     );
 };
