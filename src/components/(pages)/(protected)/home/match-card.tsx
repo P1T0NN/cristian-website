@@ -14,7 +14,7 @@ import { useTranslations } from 'next-intl';
 import { useQueryClient } from "@tanstack/react-query";
 
 // COMPONENTS
-import { Card, CardContent, CardDescription, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DeleteMatchButton } from "./delete-match-button";
 import { toast } from "sonner";
@@ -29,6 +29,9 @@ import { formatTime, formatDate } from "@/utils/dateUtils";
 import type { typesMatch } from "@/types/typesMatch";
 import type { typesUser } from "@/types/typesUser";
 
+// LUCIDE ICONS
+import { MapPin, Clock, Users, Dumbbell } from 'lucide-react';
+
 type MatchCardProps = {
     match: typesMatch;
     serverUserData: typesUser;
@@ -39,7 +42,6 @@ export const MatchCard = memo(({
     serverUserData
 }: MatchCardProps) => {
     const t = useTranslations("MatchCardComponent");
-
     const queryClient = useQueryClient();
     const router = useRouter();
 
@@ -48,7 +50,7 @@ export const MatchCard = memo(({
     }
 
     const handleFinishMatch = () => {
-
+        // Implement finish match logic
     };
     
     const handleEditMatch = () => {
@@ -67,58 +69,63 @@ export const MatchCard = memo(({
     };
 
     return (
-        <Card
-            className="w-[250px] mb-4"
-        >
-            <CardContent className="py-4">
-                <div className="flex flex-col space-y-5">
-                    <div>
-                        <h1 className="text-center font-bold text-xl">{match.location} - {match.price}e</h1>
-                        <p className="text-center text-sm">{formatDate(match.starts_at_day)} - {formatTime(match.starts_at_hour)}h</p>
+        <Card className="w-full h-full hover:shadow-lg transition-shadow duration-300">
+            <CardContent className="p-6">
+                <div className="flex flex-col space-y-4">
+                    <div className="space-y-2">
+                        <h3 className="text-2xl font-bold text-primary">{match.price}€</h3>
+                        <div className="flex items-center text-sm text-muted-foreground">
+                            <MapPin className="w-4 h-4 mr-1" />
+                            <span>{match.location}</span>
+                        </div>
+                        <div className="flex items-center text-sm text-muted-foreground">
+                            <Clock className="w-4 h-4 mr-1" />
+                            <span>{formatDate(match.starts_at_day)} - {formatTime(match.starts_at_hour)}h</span>
+                        </div>
                     </div>
 
-                    <div className="flex flex-col space-y-1">
-                        <div className="flex">
-                            <h1 className="inline font-medium">{t("gender")}</h1>
-                            <p className="inline ml-2">{match.match_gender}</p>
+                    <div className="flex flex-col space-y-2">
+                        <div className="flex items-center">
+                            <Users className="w-4 h-4 mr-2" />
+                            <span className="font-medium mr-1">{t("gender")}</span>
+                            <span>{match.match_gender}</span>
                         </div>
-
-                        <div className="flex">
-                            <h1 className="inline font-medium">{t("type")}</h1>
-                            <p className="inline ml-2">{match.match_type}</p>
+                        <div className="flex items-center">
+                            <Dumbbell className="w-4 h-4 mr-2" />
+                            <span className="font-medium mr-1">{t("type")}</span>
+                            <span>{match.match_type}</span>
                         </div>
                     </div>
                 </div>
             </CardContent>
 
             {serverUserData.isAdmin ? (
-                <CardFooter className="flex flex-col mt-5 space-y-2">
+                <CardFooter className="flex flex-col p-6 pt-0 space-y-2">
                     <Button 
                         className="w-full"
                         onClick={handleViewMatch}
                     >
                         {t('viewMatch')}
                     </Button>
-
                     <Button 
-                        className="bg-green-500 hover:bg-green-500/80 w-full"
+                        className="w-full bg-green-500 hover:bg-green-600"
                         onClick={handleFinishMatch}
                     >
                         {t('finishMatch')}
                     </Button>
-
                     <Button
-                        className="bg-blue-500 hover:bg-blue-500/80 w-full"
+                        className="w-full bg-blue-500 hover:bg-blue-600"
                         onClick={handleEditMatch}
                     >
                         {t('editMatch')}
                     </Button>
-
                     <DeleteMatchButton handleDeleteMatch={handleDeleteMatch} />
                 </CardFooter>
-            ): (
-                <CardFooter className="flex flex-col mt-5 space-y-2">
-                    <CardDescription>{t("checkAvailability")}</CardDescription>
+            ) : (
+                <CardFooter className="p-6 pt-0">
+                    <Button className="w-full" onClick={handleViewMatch}>
+                        {t("checkAvailability")}
+                    </Button>
                 </CardFooter>
             )}
         </Card>

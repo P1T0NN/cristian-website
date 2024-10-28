@@ -3,7 +3,7 @@
 // REACTJS IMPORTS
 import { useState } from 'react';
 
-// LIBRARIES
+// NEXTJS IMPORTS
 import { useTranslations } from 'next-intl';
 
 // COMPONENTS
@@ -38,11 +38,13 @@ export type FilterValues = {
 type FilterModalProps = {
     onFilterChange: (filters: FilterValues) => void;
     onClearFilters: () => void;
+    children?: React.ReactNode;
 };
 
 export const FilterModal = ({ 
     onFilterChange, 
-    onClearFilters 
+    onClearFilters,
+    children
 }: FilterModalProps) => {
     const t = useTranslations("FilterModalComponent");
 
@@ -83,10 +85,12 @@ export const FilterModal = ({
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="outline" className="gap-2">
-                    <SlidersHorizontal className="h-4 w-4" />
-                    {t("title")}
-                </Button>
+                {children || (
+                    <Button variant="outline" className="gap-2">
+                        <SlidersHorizontal className="h-4 w-4" />
+                        {t("title")}
+                    </Button>
+                )}
             </DialogTrigger>
 
             <DialogContent className="sm:max-w-[425px]">
@@ -126,7 +130,7 @@ export const FilterModal = ({
                         <FormInputField
                             label={t("timeFrom")}
                             name="timeFrom"
-                            type="text"
+                            type="time"
                             value={filters.timeFrom}
                             onChange={(e) => handleFilterChange('timeFrom', e.target.value)}
                             placeholder={t("timeFormatPlaceholder")}
@@ -135,7 +139,7 @@ export const FilterModal = ({
                         <FormInputField
                             label={t("timeTo")}
                             name="timeTo"
-                            type="text"
+                            type="time"
                             value={filters.timeTo}
                             onChange={(e) => handleFilterChange('timeTo', e.target.value)}
                             placeholder={t("timeFormatPlaceholder")}
@@ -148,9 +152,9 @@ export const FilterModal = ({
                         value={filters.gender}
                         onChange={(value) => handleFilterChange('gender', value)}
                         options={[
-                            { value: "Male", label: "Male" },
-                            { value: "Female", label: "Female" },
-                            { value: "Mixed", label: "Mixed" }
+                            { value: "Male", label: t("male") },
+                            { value: "Female", label: t("female") },
+                            { value: "Mixed", label: t("mixed") }
                         ]}
                         placeholder={t("selectGenderPlaceholder")}
                     />
@@ -160,19 +164,16 @@ export const FilterModal = ({
                         value={filters.matchType}
                         onChange={(value) => handleFilterChange('matchType', value)}
                         options={[
-                            { value: "F7", label: "F7" },
-                            { value: "F8", label: "F8" },
-                            { value: "F11", label: "F11" }
+                            { value: "F7", label: t("f7") },
+                            { value: "F8", label: t("f8") },
+                            { value: "F11", label: t("f11") }
                         ]}
                         placeholder={t("selectMatchTypePlaceholder")}
                     />
                 </div>
                 
                 <DialogFooter className='flex w-full justify-between'>
-                    <DialogClose asChild>
-                        <Button variant="outline" onClick={clearFilters}>{t("clearFilters")}</Button>
-                    </DialogClose>
-
+                    <Button variant="outline" onClick={clearFilters}>{t("clearFilters")}</Button>
                     <DialogClose asChild>
                         <Button onClick={handleSave}>{t("saveChanges")}</Button>
                     </DialogClose>

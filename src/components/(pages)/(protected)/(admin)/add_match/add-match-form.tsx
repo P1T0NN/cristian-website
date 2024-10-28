@@ -8,6 +8,7 @@ import { LocationField } from "./location-field";
 import { FormInputField } from "@/components/ui/forms/form-input-field";
 import { FormSelectField } from "@/components/ui/forms/form-select-field";
 import { FormDateField } from "@/components/ui/forms/form-date-field";
+import { FormTimeField } from "@/components/ui/forms/form-time-field";
 
 // TYPES
 import type { typesAddMatchForm } from "@/types/forms/AddMatchForm";
@@ -96,10 +97,9 @@ export const AddMatchForm = ({
                 error={errors.starts_at_day}
             />
     
-            <FormInputField
+            <FormTimeField
                 label={t("time")}
                 name="starts_at_hour"
-                type="time"
                 value={formData.starts_at_hour}
                 onChange={handleInputChange}
                 error={errors.starts_at_hour}

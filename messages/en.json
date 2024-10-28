@@ -117,7 +117,9 @@
         "type": "Type",
         "gender": "Gender",
         "leaveTeam": "Leave Team",
-        "joinTeam": "Join Team"
+        "joinTeam": "Join Team",
+        "players": "Players",
+        "player": "Player"
     },
 
     "EditMatchPage": {
@@ -152,7 +154,13 @@
         "selectMatchTypePlaceholder": "Select match type",
         "enterLocationPlaceholder": "Enter location...",
         "enterMaxPricePlaceholder": "Enter max price...",
-        "timeFormatPlaceholder": "HH:mm"
+        "timeFormatPlaceholder": "HH:mm",
+        "male": "Male",
+        "female": "Female",
+        "mixed": "Mixed",
+        "f7": "F7",
+        "f8": "F8",
+        "f11": "F11"
     },
 
     "FormDateFieldComponent": {
