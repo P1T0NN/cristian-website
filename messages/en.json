@@ -1,6 +1,14 @@
 {
     "Header": {
-        "newMatch": "New match"
+        "searchPlaceholder": "Search matches...",
+        "myAccount": "My Account",
+        "settings": "Settings",
+        "logout": "Logout",
+        "notifications": "Notifications",
+        "newMatch": "New match",
+        "loading": "Loading...",
+        "error": "There was an error...",
+        "noResults": "No results found"
     },
     
     "HomePage": {

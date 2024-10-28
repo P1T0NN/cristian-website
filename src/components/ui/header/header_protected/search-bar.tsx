@@ -5,13 +5,17 @@ import { useState, useRef, useEffect, useMemo, useCallback, useTransition } from
 
 // LIBRARIES
 import debounce from 'lodash/debounce'; 
+import { useTranslations } from 'next-intl';
 
 // COMPONENTS
 import { Input } from "@/components/ui/input";
 import { UserSearchResult } from "./user-search-result";
 
 // HOOKS
-import { useSearchUsers } from "@/hooks/data/useSearchUsers";
+import { useSearchUsers } from "@/hooks/useSearchUsers";
+
+// TYPES
+import { typesUser } from "@/types/typesUser";
 
 // LUCIDE ICONS
 import { Search } from "lucide-react";
@@ -22,12 +26,13 @@ type SearchBarProps = {
 
 type CachedResult = {
     term: string;
-    results: any[];
+    results: typesUser[];
 }
 
 export const SearchBar = ({
     authToken
 }: SearchBarProps) => {
+    const t = useTranslations('Header');
     const searchRef = useRef<HTMLDivElement | null>(null);
 
     const [isPending, startTransition] = useTransition();
@@ -38,11 +43,11 @@ export const SearchBar = ({
     const [cachedResults, setCachedResults] = useState<CachedResult[]>([]);
 
     const getCachedResults = useCallback((term: string) => {
-        const cachedEntry = cachedResults.find(cache => term.startsWith(cache.term));
+        const lowerTerm = term.toLowerCase();
+        const cachedEntry = cachedResults.find(cache => lowerTerm.startsWith(cache.term.toLowerCase()));
         if (cachedEntry) {
-            // Filter cached results based on the current search term
             return cachedEntry.results.filter(user => 
-                user.username.toLowerCase().includes(term.toLowerCase())
+                user.fullName.toLowerCase().includes(lowerTerm)
             );
         }
         return null;
@@ -52,7 +57,7 @@ export const SearchBar = ({
 
     const { data: searchResults, isLoading, error } = useSearchUsers(
         shouldFetch ? debouncedSearchTerm : '', 
-        5, 
+        7, 
         authToken
     );
 
@@ -84,8 +89,8 @@ export const SearchBar = ({
     }, []);
 
     useEffect(() => {
-        if (searchResults && shouldFetch) {
-            setCachedResults(prev => [...prev, { term: debouncedSearchTerm, results: searchResults.search_users }]);
+        if (searchResults && searchResults.success && shouldFetch) {
+            setCachedResults(prev => [...prev, { term: debouncedSearchTerm, results: searchResults.data }]);
         }
     }, [searchResults, debouncedSearchTerm, shouldFetch]);
 
@@ -99,31 +104,29 @@ export const SearchBar = ({
         setSearchTerm('');
     };
 
-    const displayResults = getCachedResults(debouncedSearchTerm) || (searchResults?.search_users || []);
+    const displayResults = getCachedResults(debouncedSearchTerm) || (searchResults?.success ? searchResults.data : []);
 
     return (
-        <div className="relative w-full xl:w-[450px]" ref={searchRef}>
-            <Search 
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
-                size={25} 
-            />
-
-            <Input
-                type="text"
-                className="text-white text-md bg-gray-800 rounded-xl w-full h-[50px] pl-12 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-gray-500"
-                placeholder="Search"
-                value={searchTerm}
-                onChange={handleSearchChange}
-            />
+        <div ref={searchRef} className="relative w-full max-w-xl">
+            <div className="flex items-center">
+                <Input
+                    type="search"
+                    className="w-full pl-10 pr-4 py-2 text-sm md:text-base h-10 md:h-12"
+                    placeholder={t('searchPlaceholder')}
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                />
+                <Search className="absolute left-3 h-5 w-5 text-muted-foreground" />
+            </div>
 
             {isOpen && searchTerm.length > 1 && (
-                <div className="absolute z-10 w-full mt-1 bg-gray-800 rounded-md shadow-lg">
+                <div className="absolute z-10 w-full mt-1 bg-background border border-border rounded-md shadow-lg">
                     {isPending || isLoading ? (
-                        <div className="p-2 text-white">Loading...</div>
+                        <div className="p-3 text-sm">{t('loading')}</div>
                     ) : error ? (
-                        <div className="p-2 text-red-500">Error: {error}</div>
+                        <div className="p-3 text-sm text-destructive">{t('error')}</div>
                     ) : displayResults && displayResults.length > 0 ? (
-                        displayResults.map((user) => (
+                        displayResults.map((user: typesUser) => (
                             <UserSearchResult 
                                 key={user.id} 
                                 user={user} 
@@ -132,7 +135,7 @@ export const SearchBar = ({
                         ))
                     ) : ( 
                         !isLoading && debouncedSearchTerm.length >= 2 ? ( 
-                            <div className="p-2 text-white">No results found</div>
+                            <div className="p-3 text-sm">{t('noResults')}</div>
                         ) : null
                     )}
                 </div>

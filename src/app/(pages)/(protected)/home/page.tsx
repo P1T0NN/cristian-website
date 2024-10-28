@@ -29,7 +29,7 @@ export default async function HomePage() {
 
     return (
         <main>
-            <HeaderProtected serverUserData={userData} />
+            <HeaderProtected serverUserData={userData} authToken={authToken} />
             
             <Suspense fallback={<p>Loading...</p>}>
                 <HomeContent authToken={authToken} serverUserData={userData} />

@@ -18,7 +18,11 @@ import { refreshAccessToken } from '@/utils/auth/refreshAccessToken';
 import type { typesUser } from '@/types/typesUser';
 
 // Define protected and admin pages
-const PROTECTED_PAGES = [PAGE_ENDPOINTS.HOME_PAGE, PAGE_ENDPOINTS.SETTINGS_PAGE];
+const PROTECTED_PAGES = [
+    PAGE_ENDPOINTS.HOME_PAGE, 
+    PAGE_ENDPOINTS.SETTINGS_PAGE
+];
+
 const ADMIN_PROTECTED_PAGES = [
     PAGE_ENDPOINTS.ADD_MATCH_PAGE,
     PAGE_ENDPOINTS.ADD_DEBT_PAGE,
@@ -26,7 +30,9 @@ const ADMIN_PROTECTED_PAGES = [
     PAGE_ENDPOINTS.EDIT_MATCH_PAGE,
     '/edit_match/[id]',
     PAGE_ENDPOINTS.MATCH_PAGE,
-    '/match/[id]'
+    '/match/[id]',
+    PAGE_ENDPOINTS.PLAYER_PAGE,
+    '/player/[id]'
 ];
 
 // Helper functions
@@ -67,7 +73,11 @@ export async function middleware(req: NextRequest) {
         }
     }
 
-    const isProtectedPage = PROTECTED_PAGES.includes(pathname) || pathname.startsWith('/match/') || pathname.startsWith('/edit_match/');
+    const isProtectedPage = PROTECTED_PAGES.includes(pathname) || 
+                            pathname.startsWith('/match/') || 
+                            pathname.startsWith('/edit_match/') ||
+                            pathname.startsWith('/player/');
+
     const isAdminPage = ADMIN_PROTECTED_PAGES.includes(pathname);
 
     if (isProtectedPage || isAdminPage) {
@@ -124,6 +134,7 @@ export const config = {
         '/add_debt',
         '/add_location',
         '/edit_match/:path*',
-        '/match/:path*'
+        '/match/:path*',
+        '/player/:path*'
     ],
 };

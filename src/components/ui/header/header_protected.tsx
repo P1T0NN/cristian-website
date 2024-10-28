@@ -15,6 +15,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { SearchBar } from "./header_protected/search-bar";
 
 // UTILS
 import { getInitials } from "@/utils/getNameInitials";
@@ -27,69 +28,72 @@ import { Bell, Settings, LogOut } from "lucide-react";
 
 type HeaderProps = {
     serverUserData: typesUser;
+    authToken: string;
 }
 
-export const HeaderProtected = async ({
-    serverUserData
+export const HeaderProtected = ({ 
+    serverUserData, 
+    authToken 
 }: HeaderProps) => {
-    //const authToken = cookies().get('auth_token')?.value;
     const initials = getInitials(serverUserData.fullName);
 
     return (
-        <nav className="flex w-full py-2 px-10 items-center justify-between bg-transparent border-b border-bg-primary space-x-3">
-            {/*When user resizes window display it this way*/}
-            <div className="xl:hidden flex w-full items-center space-x-5">
-                <Link href={PAGE_ENDPOINTS.HOME_PAGE}>
-                    <h1 className="text-xl font-bold tracking-[2px]">Cris Futbol</h1>
-                </Link>
-
-                {/*<SearchBar authToken={authToken} />*/}
-            </div>
-
-            {/*When window is the largest display it this way*/}
-            <Link href={PAGE_ENDPOINTS.HOME_PAGE}>
-                <h1 className="hidden text-xl font-bold tracking-[2px] xl:block">Cris Futbol</h1>
-            </Link>
-
-            {/*<div className="hidden xl:block">
-                <SearchBar authToken={authToken} />
-            </div>*/}
-
-            <div className="flex items-center space-x-3">
-                {serverUserData.isAdmin && (
-                    <AddMatchButton />
-                )}
-
-                <Button
-                    variant="secondary"
-                    size="icon"
-                >
-                    <Bell />
-                </Button>
-
-                <DropdownMenu>
-                    <DropdownMenuTrigger>
-                        <div className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-secondary">
-                            {initials}
-                        </div>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-
-                        <DropdownMenuSeparator />
-
-                        <Link href={PAGE_ENDPOINTS.SETTINGS_PAGE}>
-                            <DropdownMenuItem>
-                                    <Settings /> Settings
-                            </DropdownMenuItem>
+        <header className="w-full bg-transparent border-b border-bg-primary">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex items-center justify-between h-20">
+                    <div className="flex items-center">
+                        <Link href={PAGE_ENDPOINTS.HOME_PAGE}>
+                            <h1 className="text-xl font-bold tracking-[2px]">Cris Futbol</h1>
                         </Link>
+                    </div>
 
-                        <DropdownMenuSeparator />
+                    {serverUserData.isAdmin && (
+                        <div className="hidden md:block flex-grow mx-4 max-w-xl">
+                            <SearchBar authToken={authToken} />
+                        </div>
+                    )}
 
-                        <DropdownMenuItem><LogOut /> Logout</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                    <div className="flex items-center space-x-3">
+                        {serverUserData.isAdmin && (
+                            <AddMatchButton />
+                        )}
+
+                        <Button
+                            variant="secondary"
+                            size="icon"
+                        >
+                            <Bell />
+                        </Button>
+
+                        <DropdownMenu>
+                            <DropdownMenuTrigger>
+                                <div className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-secondary">
+                                    {initials}
+                                </div>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <Link href={PAGE_ENDPOINTS.SETTINGS_PAGE}>
+                                    <DropdownMenuItem>
+                                        <Settings className="mr-2" /> Settings
+                                    </DropdownMenuItem>
+                                </Link>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem>
+                                    <LogOut className="mr-2" /> Logout
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                </div>
             </div>
-        </nav>
-    )
-}
+
+            {serverUserData.isAdmin && (
+                <div className="md:hidden px-4 py-3">
+                    <SearchBar authToken={authToken} />
+                </div>
+            )}
+        </header>
+    );
+};
