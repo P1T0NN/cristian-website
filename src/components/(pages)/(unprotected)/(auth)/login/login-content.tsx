@@ -1,57 +1,45 @@
 "use client"
 
-// REACTJS IMPORTS
-import { useTransition } from "react";
-
-// NEXTJS IMPORTS
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-
-// LIBRARIES
-import { useTranslations } from 'next-intl';
-
-// CONFIG
-import { PAGE_ENDPOINTS } from "@/config";
-
-// COMPONENTS
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
+import { useTransition } from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useTranslations } from 'next-intl'
+import { PAGE_ENDPOINTS } from "@/config"
+import { Separator } from "@/components/ui/separator"
+import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { LoginForm } from "./login-form";
-
-// HOOKS
-import { useForm } from "@/hooks/useForm";
-import { useZodSchemas } from "@/hooks/useZodSchema";
-
-// ACTIONS
-import { loginUser } from "@/actions/functions/auth/auth";
-
-// TYPES
-import { typesLoginForm } from "@/types/forms/LoginForm";
+import { LoginForm } from "./login-form"
+import { useForm } from "@/hooks/useForm"
+import { useZodSchemas } from "@/hooks/useZodSchema"
+import { loginUser } from "@/actions/functions/auth/auth"
+import type { typesLoginForm } from "@/types/forms/LoginForm"
 
 export const LoginContent = () => {
-    const t = useTranslations('LoginPage');
-    const router = useRouter();
-
-    const [isPending, startTransition] = useTransition();
-    
-    const { loginSchema } = useZodSchemas();
+    const t = useTranslations('LoginPage')
+    const router = useRouter()
+    const [isPending, startTransition] = useTransition()
+    const { loginSchema } = useZodSchemas()
 
     const { formData, errors, handleInputChange, handleSubmit } = useForm<typesLoginForm>({
         initialValues: { email: '', password: '' },
         validationSchema: loginSchema,
         onSubmit: async (values) => {
             startTransition(async () => {
-                const result = await loginUser(values);
-                if (result.success) {
-                    toast.success(result.message);
-                    router.replace(PAGE_ENDPOINTS.HOME_PAGE);
-                } else {
-                    toast.error(result.message);
+                try {
+                    const result = await loginUser(values)
+                    if (result.success) {
+                        toast.success(result.message)
+                        router.replace(PAGE_ENDPOINTS.HOME_PAGE)
+                    } else {
+                        toast.error(result.message)
+                    }
+                } catch (error) {
+                    console.error('Login error:', error)
+                    toast.error(t('loginError'))
                 }
-            });
+            })
         },
-    });
+    })
     
     return (
         <section className="flex w-full min-h-screen justify-center">
@@ -70,7 +58,12 @@ export const LoginContent = () => {
                             {t('forgotPassword')}
                         </Link>
 
-                        <Button disabled={isPending} className="w-[150px] font-bold" onClick={handleSubmit}>
+                        <Button 
+                            disabled={isPending} 
+                            className="w-[150px] font-bold" 
+                            onClick={handleSubmit}
+                            aria-busy={isPending}
+                        >
                             {isPending ? t('loggingIn') : t('logIn')}
                         </Button>
                     </div>
@@ -84,5 +77,5 @@ export const LoginContent = () => {
                 </div>
             </div>
         </section>
-    );
-};
+    )
+}
