@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { SearchDropdown } from "@/components/ui/search-dropdown/search-dropdown";
 
 // ACTIONS
-import { client_fetchLocations } from "@/actions/functions/data/client/location/client_fetchLocations";
+import { client_searchLocations } from "@/actions/functions/data/client/location/client_searchLocations";
 
 // TYPES
 import type { typesLocation } from "@/types/typesLocation";
@@ -28,21 +28,24 @@ import type { typesLocation } from "@/types/typesLocation";
 import { Plus } from "lucide-react";
 
 type LocationFieldProps = {
-    value: string;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    locationName: string;
+    locationUrl: string;
+    onLocationChange: (locationName: string, locationUrl: string) => void;
     error?: string;
     authToken: string;
 };
 
 export const LocationField = ({ 
-    value, 
-    onChange, 
+    locationName, 
+    locationUrl,
+    onLocationChange, 
     error, 
     authToken, 
 }: LocationFieldProps) => {
     const t = useTranslations("AddMatchPage");
     const router = useRouter();
     const [showDropdown, setShowDropdown] = useState(false);
+    const [isLocationSelected, setIsLocationSelected] = useState(false);
     const searchTimeoutRef = useRef<NodeJS.Timeout>();
 
     const handleRedirectToAddLocation = () => {
@@ -50,7 +53,8 @@ export const LocationField = ({
     };
 
     const handleLocationSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-        onChange(event);
+        onLocationChange(event.target.value, locationUrl);
+        setIsLocationSelected(false);
         
         if (searchTimeoutRef.current) {
             clearTimeout(searchTimeoutRef.current);
@@ -65,20 +69,18 @@ export const LocationField = ({
         }
     };
 
-    const handleLocationSelect = (locationName: string) => {
-        const event = {
-            target: {
-                name: 'location',
-                value: locationName
-            }
-        } as React.ChangeEvent<HTMLInputElement>;
-        
-        onChange(event);
+    const handleLocationUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        onLocationChange(locationName, event.target.value);
+    };
+
+    const handleLocationSelect = (location: typesLocation) => {
+        onLocationChange(location.location_name, location.location_url);
         setShowDropdown(false);
+        setIsLocationSelected(true);
     };
 
     return (
-        <div className="relative space-y-2">
+        <div className="relative space-y-4">
             <div className="flex items-center justify-between">
                 <Label htmlFor="location" className="text-sm font-medium">{t("location")}</Label>
                 <Button 
@@ -97,7 +99,7 @@ export const LocationField = ({
                     type="text"
                     id="location"
                     name="location"
-                    value={value}
+                    value={locationName}
                     onChange={handleLocationSearch}
                     placeholder={t('locationPlaceholder')}
                     autoComplete="off"
@@ -105,16 +107,30 @@ export const LocationField = ({
                 />
                 <SearchDropdown<typesLocation>
                     authToken={authToken}
-                    searchTerm={value}
+                    searchTerm={locationName}
                     isDropdownOpen={showDropdown}
                     setIsDropdownOpen={setShowDropdown}
                     onSelect={handleLocationSelect}
-                    fetchData={client_fetchLocations}
+                    fetchData={client_searchLocations}
                     getDisplayValue={(location) => location.location_name}
                     queryKey="locations"
                 />
             </div>
             {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+
+            <div>
+                <Label htmlFor="location_url" className="text-sm font-medium">{t("locationUrl")}</Label>
+                <Input
+                    type="text"
+                    id="location_url"
+                    name="location_url"
+                    value={locationUrl}
+                    onChange={handleLocationUrlChange}
+                    readOnly={isLocationSelected}
+                    className={`w-full mt-1 ${isLocationSelected ? 'bg-gray-100' : ''}`}
+                    placeholder={t('locationUrlPlaceholder')}
+                />
+            </div>
         </div>
     );
 };

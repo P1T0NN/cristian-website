@@ -6,9 +6,16 @@ import { jwtVerify } from 'jose';
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
+// SERVICES
+import { redisCacheService } from '@/services/server/redis-cache.service';
+
 // TYPES
 import type { APIResponse } from '@/types/responses/APIResponse';
 import type { typesMatch } from '@/types/typesMatch';
+
+const ALL_MATCHES_CACHE_KEY = 'all_matches';
+const MATCH_CACHE_KEY_PREFIX = 'match_';
+const CACHE_TTL = 60 * 60 * 12; // 12 hours in seconds
 
 export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
     const genericMessages = await getTranslations("GenericMessages");
@@ -26,29 +33,36 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
         return NextResponse.json({ success: false, message: genericMessages('JWT_DECODE_ERROR') }, { status: 401 });
     }
 
-    // Fetch matches data directly from database
-    const { data: matches, error: supabaseError } = await supabase
-        .from('matches')
-        .select(`
-            id,
-            added_by,
-            location,
-            price,
-            team1_name,
-            team1_players,
-            team2_name,
-            team2_players,
-            starts_at_day,
-            starts_at_hour,
-            match_type,
-            match_gender,
-            created_at
-        `)
-        .order('created_at', { ascending: false })
-        .returns<typesMatch[]>();
+    // Try to get data from Redis cache
+    const cacheResult = await redisCacheService.get<typesMatch[]>(ALL_MATCHES_CACHE_KEY);
 
-    if (supabaseError) {
-        return NextResponse.json({ success: false, message: fetchMessages('MATCHES_FAILED_TO_FETCH') }, { status: 500 });
+    let matches: typesMatch[] | null = null;
+
+    if (cacheResult.success && cacheResult.data) {
+        matches = cacheResult.data;
+    } else {
+        // If not in cache or cache retrieval failed, fetch from database
+        const { data: dbMatches, error: supabaseError } = await supabase
+            .from('matches')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .returns<typesMatch[]>();
+
+        if (supabaseError) {
+            return NextResponse.json({ success: false, message: fetchMessages('MATCHES_FAILED_TO_FETCH') }, { status: 500 });
+        }
+
+        matches = dbMatches;
+
+        // Store in Redis cache
+        if (matches && matches.length > 0) {
+            await redisCacheService.set(ALL_MATCHES_CACHE_KEY, matches, CACHE_TTL);
+
+            // Cache individual matches
+            for (const match of matches) {
+                await redisCacheService.set(`${MATCH_CACHE_KEY_PREFIX}${match.id}`, match, CACHE_TTL);
+            }
+        }
     }
 
     if (!matches || matches.length === 0) {

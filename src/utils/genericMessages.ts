@@ -77,6 +77,9 @@ export const GenericMessages = {
     // Settings Page Messages
     USER_UPDATE_FAILED: "Failed to update new changes to settings. Please try again!",
 
+    // Player Page Messages
+    DEBT_DELETION_FAILED: "Failed to delete debt. Please try again",
+
     // Redis Messages
     REDIS_CONNECTION_ERROR: "Unable to connect to the database. Please try again later.",
     REDIS_DISCONNECTION_ERROR: "Error occurred while disconnecting from the database.",

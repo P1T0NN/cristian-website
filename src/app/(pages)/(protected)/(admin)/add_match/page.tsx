@@ -38,7 +38,7 @@ export default async function AddMatchPage() {
 
     return (
         <main className="flex flex-col w-full min-h-screen">
-            <HeaderProtected serverUserData={userData} />
+            <HeaderProtected serverUserData={userData} authToken={authToken} />
 
             <Suspense fallback={<p>Loading...</p>}>
                 <AddMatchContent authToken={authToken} serverUserData={userData} />

@@ -57,6 +57,7 @@ export const AddMatchContent = ({
     const { formData, errors, handleInputChange, handleSubmit } = useForm({
         initialValues: {
             location: "",
+            location_url: "",
             price: 0,
             team1_name: "",
             team2_name: "",

@@ -1,13 +1,16 @@
 // TYPES
 import type { APIResponse } from '@/types/responses/APIResponse';
+import type { typesLocation } from '@/types/typesLocation';
 
-export async function client_fetchLocations(authToken: string, searchTerm: string): Promise<APIResponse> {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/data/location/search_locations?search=${encodeURIComponent(searchTerm)}`, {
+export const client_fetchLocations = async (): Promise<typesLocation[]> => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/data/location/fetch_locations`, {
         method: 'GET',
         headers: {
-            'Authorization': authToken ? `Bearer ${authToken}` : '',
-        }
+            'Content-Type': 'application/json',
+        },
     });
 
-    return response.json();
-}
+    const result: APIResponse = await response.json();
+
+    return result.data as typesLocation[];
+};

@@ -3,6 +3,10 @@ import { Suspense } from 'react';
 
 // NEXTJS IMPORTS
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
+// CONFIG
+import { PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
 import { HeaderProtected } from '@/components/ui/header/header_protected';
@@ -33,12 +37,16 @@ export default async function PlayerPage({
 
     const userData = result.data as typesUser;
 
+    if (!userData.isAdmin) {
+        redirect(PAGE_ENDPOINTS.HOME_PAGE);
+    }
+
     return (
         <main>
             <HeaderProtected serverUserData={userData} authToken={authToken} />
             
             <Suspense fallback={<p>Loading...</p>}>
-                <PlayerContent authToken={authToken} playerId={id} />
+                <PlayerContent authToken={authToken} playerId={id} currentUserData={userData} />
             </Suspense>
         </main>
     );

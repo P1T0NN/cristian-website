@@ -1,3 +1,6 @@
+// TYPES
+import type { typesDebt } from "./typesDebt";
+
 export type typesUser = {
     id: string;
     email: string;
@@ -5,8 +8,11 @@ export type typesUser = {
     phoneNumber: string;
     is_verified: boolean;
     isAdmin: boolean;
+    player_debt: number;
+    cristian_debt: number;
     created_at: Date;
-}
+    debts?: typesDebt[];
+};
 
 // FOR LOGGING IN
 export type typesLoginUser = {

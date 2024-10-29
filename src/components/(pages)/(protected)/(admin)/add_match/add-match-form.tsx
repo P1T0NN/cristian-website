@@ -35,6 +35,15 @@ export const AddMatchForm = ({
         } as React.ChangeEvent<HTMLInputElement>);
     };
 
+    const handleLocationChange = (locationName: string, locationUrl: string) => {
+        handleInputChange({
+            target: { name: 'location', value: locationName }
+        } as React.ChangeEvent<HTMLInputElement>);
+        handleInputChange({
+            target: { name: 'location_url', value: locationUrl }
+        } as React.ChangeEvent<HTMLInputElement>);
+    };
+
     const matchTypeOptions = [
         { value: 'F7', label: 'F7'},
         { value: 'F8', label: 'F8'},
@@ -52,8 +61,9 @@ export const AddMatchForm = ({
             <div className="space-y-4">
                 <h3 className="text-lg font-semibold">{t("matchDetails")}</h3>
                 <LocationField
-                    value={formData.location}
-                    onChange={handleInputChange}
+                    locationName={formData.location}
+                    locationUrl={formData.location_url}
+                    onLocationChange={handleLocationChange}
                     error={errors.location}
                     authToken={authToken}
                 />

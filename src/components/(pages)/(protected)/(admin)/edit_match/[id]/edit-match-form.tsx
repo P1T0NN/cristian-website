@@ -8,6 +8,7 @@ import { LocationField } from "@/components/(pages)/(protected)/(admin)/add_matc
 import { FormInputField } from "@/components/ui/forms/form-input-field";
 import { FormSelectField } from "@/components/ui/forms/form-select-field";
 import { FormDateField } from "@/components/ui/forms/form-date-field";
+import { FormTimeField } from "@/components/ui/forms/form-time-field";
 import { Button } from "@/components/ui/button";
 
 // HOOKS
@@ -38,6 +39,7 @@ export const EditMatchForm = ({
     const { formData, errors, handleInputChange, handleSubmit } = useForm({
         initialValues: {
             location: matchData.location || "",
+            location_url: matchData.location_url || "",
             price: matchData.price || 0,
             team1_name: matchData.team1_name || "",
             team2_name: matchData.team2_name || "",
@@ -57,6 +59,15 @@ export const EditMatchForm = ({
         } as React.ChangeEvent<HTMLInputElement>);
     };
 
+    const handleLocationChange = (locationName: string, locationUrl: string) => {
+        handleInputChange({
+            target: { name: 'location', value: locationName }
+        } as React.ChangeEvent<HTMLInputElement>);
+        handleInputChange({
+            target: { name: 'location_url', value: locationUrl }
+        } as React.ChangeEvent<HTMLInputElement>);
+    };
+
     const matchTypeOptions = [
         { value: 'F7', label: 'F7'},
         { value: 'F8', label: 'F8'},
@@ -72,8 +83,9 @@ export const EditMatchForm = ({
     return (
         <div className="flex flex-col space-y-4">
             <LocationField
-                value={formData.location}
-                onChange={handleInputChange}
+                locationName={formData.location}
+                locationUrl={formData.location_url}
+                onLocationChange={handleLocationChange}
                 error={errors.location}
                 authToken={authToken}
             />
@@ -118,13 +130,13 @@ export const EditMatchForm = ({
                 error={errors.starts_at_day}
             />
     
-            <FormInputField
+            <FormTimeField
                 label={t("time")}
                 name="starts_at_hour"
-                type="time"
                 value={formData.starts_at_hour}
                 onChange={handleInputChange}
                 error={errors.starts_at_hour}
+                disableArrows={false}
             />
 
             <FormSelectField

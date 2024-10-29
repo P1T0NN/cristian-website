@@ -26,7 +26,7 @@ export default async function SettingsPage() {
 
     return (
         <main>
-            <HeaderProtected serverUserData={userData} />
+            <HeaderProtected serverUserData={userData} authToken={authToken} />
 
             <SettingsContent serverUserData={userData} authToken={authToken} />
         </main>

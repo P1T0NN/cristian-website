@@ -5,7 +5,7 @@ import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 
 // NEXTJS IMPORTS
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 // CONFIG
 import { PAGE_ENDPOINTS } from "@/config";
@@ -45,6 +45,8 @@ export const AddDebtContent = ({
     const t = useTranslations("AddDebtPage");
 
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const playerName = searchParams.get('playerName') || '';
 
     const [isPending, startTransition] = useTransition();
     const [selectedOption, setSelectedOption] = useState<'player' | 'cristian'>('player');
@@ -53,7 +55,7 @@ export const AddDebtContent = ({
 
     const { formData, errors, handleInputChange, handleSubmit } = useForm({
         initialValues: {
-            player_name: "",
+            player_name: playerName,
             player_debt: 0,
             cristian_debt: 0,
             reason: "",
@@ -89,6 +91,7 @@ export const AddDebtContent = ({
                         selectedOption={selectedOption}
                         setSelectedOption={setSelectedOption}
                         handleInputChange={handleInputChange}
+                        initialPlayerName={playerName}
                     />
                 </CardContent>
 

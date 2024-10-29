@@ -17,7 +17,7 @@ type SearchDropdownProps<T> = {
     searchTerm: string;
     isDropdownOpen: boolean;
     setIsDropdownOpen: (value: boolean) => void;
-    onSelect: (value: string) => void;
+    onSelect: (value: T) => void;
     fetchData: (authToken: string, searchTerm: string) => Promise<APIResponse>;
     getDisplayValue: (item: T) => string;
     queryKey: string;
@@ -35,19 +35,26 @@ export const SearchDropdown = <T,>({
 }: SearchDropdownProps<T>) => {
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    const { data, isLoading, error } = useQuery<APIResponse>({
-        queryKey: [queryKey, searchTerm.charAt(0)],
-        queryFn: () => fetchData(authToken, searchTerm.charAt(0)),
-        enabled: searchTerm.length > 0 && isDropdownOpen,
+    const { data, isLoading, error } = useQuery<APIResponse, Error>({
+        queryKey: [queryKey, searchTerm && searchTerm.charAt(0)],
+        queryFn: async () => {
+            if (!searchTerm) {
+                return { success: false, message: "No search term", data: [] };
+            }
+            return fetchData(authToken, searchTerm.charAt(0));
+        },
+        enabled: !!searchTerm && searchTerm.length > 0 && isDropdownOpen,
         staleTime: 30000,
         gcTime: 300000,
     });
 
     const filteredItems = useMemo(() => {
         const items = (data?.data as T[]) || [];
-        return items.filter(item => 
-            getDisplayValue(item).toLowerCase().startsWith(searchTerm.toLowerCase())
-        );
+        return searchTerm
+            ? items.filter(item => 
+                getDisplayValue(item).toLowerCase().startsWith(searchTerm.toLowerCase())
+              )
+            : [];
     }, [data, searchTerm, getDisplayValue]);
 
     useEffect(() => {
@@ -61,7 +68,7 @@ export const SearchDropdown = <T,>({
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [setIsDropdownOpen]);
 
-    if (!isDropdownOpen) return null;
+    if (!isDropdownOpen || !searchTerm) return null;
 
     return (
         <Card 
@@ -78,7 +85,7 @@ export const SearchDropdown = <T,>({
                         <div
                             key={index}
                             className="px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
-                            onClick={() => onSelect(getDisplayValue(item))}
+                            onClick={() => onSelect(item)}
                         >
                             {getDisplayValue(item)}
                         </div>

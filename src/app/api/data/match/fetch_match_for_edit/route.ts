@@ -6,8 +6,15 @@ import { jwtVerify } from 'jose';
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
+// SERVICES
+import { redisCacheService } from '@/services/server/redis-cache.service';
+
 // TYPES
 import type { APIResponse } from '@/types/responses/APIResponse';
+import type { typesMatch } from '@/types/typesMatch';
+
+const MATCH_CACHE_KEY_PREFIX = 'match_';
+const CACHE_TTL = 60 * 60 * 12; // 12 hours in seconds
 
 export async function POST(req: Request): Promise<NextResponse<APIResponse>> {
     const genericMessages = await getTranslations("GenericMessages");
@@ -25,36 +32,42 @@ export async function POST(req: Request): Promise<NextResponse<APIResponse>> {
         return NextResponse.json({ success: false, message: genericMessages('JWT_DECODE_ERROR') }, { status: 401 });
     }
 
-    // Get matchId from request body
     const { matchId } = await req.json();
 
     if (!matchId) {
         return NextResponse.json({ success: false, message: fetchMessages('MATCH_FETCH_INVALID_REQUEST') }, { status: 400 });
     }
 
-    // Fetch single match data from database
-    const { data: match, error: supabaseError } = await supabase
-        .from('matches')
-        .select(`
-            id,
-            added_by,
-            location,
-            price,
-            team1_name,
-            team2_name,
-            starts_at_day,
-            starts_at_hour,
-            match_type,
-            match_gender,
-            created_at
-        `)
-        .eq('id', matchId)
-        .single();
+    // Try to get match data from Redis cache
+    const cacheResult = await redisCacheService.get<typesMatch>(`${MATCH_CACHE_KEY_PREFIX}${matchId}`);
 
-    if (supabaseError) {
-        return NextResponse.json({ success: false, message: fetchMessages('MATCH_FAILED_TO_FETCH') }, { status: 500 });
+    let match: typesMatch | null = null;
+
+    if (cacheResult.success && cacheResult.data) {
+        match = cacheResult.data;
+    } else {
+        // If not in cache or cache retrieval failed, fetch from database
+        const { data: dbMatch, error: matchError } = await supabase
+            .from('matches')
+            .select('*')
+            .eq('id', matchId)
+            .single();
+
+        if (matchError) {
+            return NextResponse.json({ success: false, message: fetchMessages('MATCH_FAILED_TO_FETCH') }, { status: 500 });
+        }
+
+        if (!dbMatch) {
+            return NextResponse.json({ success: false, message: fetchMessages('MATCH_NOT_FOUND') }, { status: 404 });
+        }
+
+        match = dbMatch;
+
+        // Store in Redis cache
+        await redisCacheService.set(`${MATCH_CACHE_KEY_PREFIX}${matchId}`, match, CACHE_TTL);
     }
 
+    // Check if match is null after all attempts to fetch it
     if (!match) {
         return NextResponse.json({ success: false, message: fetchMessages('MATCH_NOT_FOUND') }, { status: 404 });
     }

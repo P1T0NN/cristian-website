@@ -20,7 +20,7 @@ export async function GET(request: Request): Promise<NextResponse<APIResponse>> 
 
     const { data, error } = await supabase
         .from('locations')
-        .select('location_name')
+        .select('location_name, location_url')
         .ilike('location_name', `${search}%`)
         .limit(3);
 

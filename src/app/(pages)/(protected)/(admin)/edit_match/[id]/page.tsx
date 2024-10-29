@@ -1,5 +1,9 @@
 // NEXTJS IMPORTS
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
+// CONFIG
+import { PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
 import { HeaderProtected } from "@/components/ui/header/header_protected";
@@ -30,9 +34,13 @@ export default async function EditMatchPage({
 
     const userData = result.data as typesUser;
 
+    if (!userData.isAdmin) {
+        redirect(PAGE_ENDPOINTS.HOME_PAGE);
+    }
+
     return (
         <main>
-            <HeaderProtected serverUserData={userData} />
+            <HeaderProtected serverUserData={userData} authToken={authToken} />
 
             <EditMatchContent matchId={id} authToken={authToken} />
         </main>

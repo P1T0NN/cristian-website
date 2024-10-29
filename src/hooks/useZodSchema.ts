@@ -40,6 +40,7 @@ export const useZodSchemas = () => {
 
     const addMatchSchema = z.object({
         location: z.string().min(1, { message: t('LOCATION_REQUIRED') }),
+        location_url: z.string().min(1, { message: t('LOCATION_URL_REQUIRED') }),
         price: z.number().min(0, { message: t('PRICE_REQUIRED') }),
         team1_name: z.string().min(1, { message: t('TEAM1_NAME_REQUIRED') }).max(255, { message: t('TEAM_NAME_TOO_LONG') }),
         team2_name: z.string().min(1, { message: t('TEAM2_NAME_REQUIRED') }).max(255, { message: t('TEAM_NAME_TOO_LONG') }),
@@ -61,7 +62,8 @@ export const useZodSchemas = () => {
     });    
 
     const addLocationSchema = z.object({
-        location_name: z.string().min(1, { message: t('LOCATION_NAME_REQUIRED') })
+        location_name: z.string().min(1, { message: t('LOCATION_NAME_REQUIRED') }),
+        location_url: z.string().min(1, { message: t('LOCATION_URL_REQUIRED') })
     });
 
     return {

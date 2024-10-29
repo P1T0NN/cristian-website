@@ -2,6 +2,7 @@ export type typesMatch = {
     id: string;
     added_by: string;
     location: string;
+    location_url: string;
     price: number;
     team1_name: string;
     team2_name: string;

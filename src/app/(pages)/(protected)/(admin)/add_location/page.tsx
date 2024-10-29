@@ -2,6 +2,7 @@
 import { Suspense } from "react";
 
 // NEXTJS IMPORTS
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 // CONFIG
@@ -19,6 +20,9 @@ import { server_fetchUserData } from '@/actions/functions/data/server/server_fet
 import type { typesUser } from "@/types/typesUser";
 
 export default async function AddLocationPage() {
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get('auth_token')?.value as string;
+
     const result = await server_fetchUserData();
     
     if (!result.success) {
@@ -34,10 +38,10 @@ export default async function AddLocationPage() {
 
     return (
         <main className="flex flex-col w-full min-h-screen">
-            <HeaderProtected serverUserData={userData} />
+            <HeaderProtected serverUserData={userData} authToken={authToken} />
 
             <Suspense fallback={<p>Loading...</p>}>
-                <AddLocationContent serverUserData={userData} />
+                <AddLocationContent />
             </Suspense>
         </main>
     )

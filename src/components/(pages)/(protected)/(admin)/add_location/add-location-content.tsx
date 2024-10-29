@@ -1,102 +1,34 @@
 "use client"
 
-// REACTJS IMPORTS
-import { useTransition } from "react";
+// LIBRARIES
 import { useTranslations } from "next-intl";
-
-// NEXTJS IMPORTS
-import { useRouter } from "next/navigation";
-
-// CONFIG
-import { PAGE_ENDPOINTS } from "@/config";
+import { useQuery } from "@tanstack/react-query";
 
 // COMPONENTS
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-
-// HOOKS
-import { useForm } from "@/hooks/useForm";
-import { useZodSchemas } from "@/hooks/useZodSchema";
+import { LocationTable } from "./location-table";
+import { AddLocationDialog } from "./add-location-dialog";
 
 // ACTIONS
-import { addLocation } from "@/actions/functions/queries/add-location";
+import { client_fetchLocations } from "@/actions/functions/data/client/location/client_fetchLocations";
 
 // TYPES
-import type { typesUser } from "@/types/typesUser";
+import type { typesLocation } from "@/types/typesLocation";
 
-type AddLocationProps = {
-    serverUserData: typesUser;
-}
-
-export const AddLocationContent = ({ 
-    serverUserData 
-}: AddLocationProps) => {
+export const AddLocationContent = () => {
     const t = useTranslations("AddLocationPage");
 
-    const router = useRouter();
-
-    const [isPending, startTransition] = useTransition();
-
-    const { addLocationSchema } = useZodSchemas();
-
-    const { formData, errors, handleInputChange, handleSubmit } = useForm({
-        initialValues: {
-            location_name: ""
-        },
-        validationSchema: addLocationSchema,
-        onSubmit: async (values) => {
-            startTransition(async () => {
-                const result = await addLocation(values);
-                if (result.success) {
-                    router.push(PAGE_ENDPOINTS.HOME_PAGE);
-                    toast.success(result.message);
-                } else {
-                    toast.error(result.message);
-                }
-            });
-        },
+    const { data: locations, isLoading, error } = useQuery<typesLocation[]>({
+        queryKey: ['locations'],
+        queryFn: client_fetchLocations,
     });
-    
+
     return (
-        <div className="flex w-full h-full py-10 justify-center">
-            <Card>
-                <CardHeader>
-                    <CardTitle>{t("hello")} {serverUserData.fullName}</CardTitle>
-                    <CardDescription>{t("description")}</CardDescription>
-                </CardHeader>
-
-                <CardContent>
-                    <div className="flex flex-col space-y-4">
-                        <div className="relative w-[450px] space-y-1">
-                            <Label htmlFor="location">{t("location")}</Label>
-                            <Input
-                                type="text"
-                                name="location_name"
-                                value={formData.location_name}
-                                onChange={handleInputChange}
-                                placeholder={t('locationPlaceholder')}
-                            />
-                            {errors.location_name && <p className="text-sm text-red-500">{errors.location_name}</p>}
-                        </div>
-                    </div>
-                </CardContent>
-
-                <CardFooter>
-                    <Button disabled={isPending} className="w-[150px] font-bold" onClick={handleSubmit}>
-                        {isPending ? t('adding') : t('addLocation')}
-                    </Button>
-                </CardFooter>
-            </Card>
+        <div className="container mx-auto py-10">
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-3xl font-bold">{t("locations")}</h1>
+                <AddLocationDialog />
+            </div>
+            <LocationTable locations={locations || []} isLoading={isLoading} error={error} />
         </div>
-    )
+    );
 };

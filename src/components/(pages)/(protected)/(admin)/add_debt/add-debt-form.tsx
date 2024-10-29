@@ -1,7 +1,7 @@
 "use client";
 
 // REACTJS IMPORTS
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 // LIBRARIES
 import { useTranslations } from "next-intl";
@@ -25,6 +25,7 @@ type AddDebtFormProps = {
     handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     selectedOption: 'player' | 'cristian';
     setSelectedOption: React.Dispatch<React.SetStateAction<'player' | 'cristian'>>;
+    initialPlayerName: string;
 };
 
 type User = {
@@ -38,10 +39,17 @@ export const AddDebtForm = ({
     selectedOption,
     setSelectedOption,
     handleInputChange,
+    initialPlayerName,
 }: AddDebtFormProps) => {
     const t = useTranslations("AddDebtPage");
     const [showDropdown, setShowDropdown] = useState(false);
     const searchTimeoutRef = useRef<NodeJS.Timeout>();
+
+    useEffect(() => {
+        if (initialPlayerName) {
+            setShowDropdown(false);
+        }
+    }, [initialPlayerName]);
 
     const handleUserSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
@@ -83,21 +91,24 @@ export const AddDebtForm = ({
                     onChange={handleUserSearch}
                     placeholder={t("playerNamePlaceholder")}
                     autoComplete="off"
+                    disabled={!!initialPlayerName}
                 />
                 {errors.player_name && (
                     <p className="text-red-500 text-sm">{errors.player_name}</p>
                 )}
 
-                <SearchDropdown<User>
-                    authToken={authToken}
-                    searchTerm={formData.player_name}
-                    isDropdownOpen={showDropdown}
-                    setIsDropdownOpen={setShowDropdown}
-                    onSelect={handleUserSelect}
-                    fetchData={client_fetchUsers}
-                    getDisplayValue={(user) => user.fullName}
-                    queryKey="users"
-                />
+                {!initialPlayerName && (
+                    <SearchDropdown<User>
+                        authToken={authToken}
+                        searchTerm={formData.player_name}
+                        isDropdownOpen={showDropdown}
+                        setIsDropdownOpen={setShowDropdown}
+                        onSelect={handleUserSelect}
+                        fetchData={client_fetchUsers}
+                        getDisplayValue={(user) => user.fullName}
+                        queryKey="users"
+                    />
+                )}
             </div>
 
             <div className="flex flex-col space-y-2">

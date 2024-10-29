@@ -13,18 +13,18 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { typesUser } from "@/types/typesUser";
 
 type UserSearchResultProps = {
-    user: typesUser;
+    player: typesUser;
     onClick: () => void;
 };
 
 export const UserSearchResult= ({ 
-    user,
+    player,
     onClick
 }: UserSearchResultProps) => {
     const router = useRouter();
 
     const handleRedirectToProfile = () => {
-        router.push(`${PAGE_ENDPOINTS.PLAYER_PAGE}/${user.id}`);
+        router.push(`${PAGE_ENDPOINTS.PLAYER_PAGE}/${player.id}`);
         onClick();
     };
 
@@ -34,10 +34,10 @@ export const UserSearchResult= ({
             onClick={handleRedirectToProfile}
         >
             <Avatar>
-                <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${user.fullName}`} />
-                <AvatarFallback>{user.fullName.charAt(0)}</AvatarFallback>
+                <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${player.fullName}`} />
+                <AvatarFallback>{player.fullName.charAt(0)}</AvatarFallback>
             </Avatar>
-            <p>{user.fullName}</p>
+            <p>{player.fullName}</p>
         </div>
     );
 };

@@ -38,7 +38,7 @@ export default async function AddDebtPage() {
 
     return (
         <main className="flex flex-col w-full h-screen">
-            <HeaderProtected serverUserData={userData} />
+            <HeaderProtected serverUserData={userData} authToken={authToken} />
 
             <Suspense fallback={<p>Loading...</p>}>
                 <AddDebtContent authToken={authToken} serverUserData={userData} />

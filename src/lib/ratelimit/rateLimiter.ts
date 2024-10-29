@@ -18,6 +18,7 @@ const addDebtThreshold = 50;
 const editMatchThreshold = 20;
 const deleteMatchThreshold = 50;
 const updateFullNameThreshold = 5;
+const deleteDebtThreshold = 50;
 
 export const applyRateLimit = async (
     request: Request, 
@@ -30,7 +31,8 @@ export const applyRateLimit = async (
         'addDebt' | 
         'editMatch' |
         'deleteMatch' |
-        'updateFullName'
+        'updateFullName' |
+        'deleteDebt'
 ): Promise<{ success: boolean; message?: string }> => {
     const ip = getIP(request);
     if (!ip) {
@@ -65,6 +67,9 @@ export const applyRateLimit = async (
             break;
         case 'updateFullName':
             threshold = updateFullNameThreshold;
+            break;
+        case 'deleteDebt':
+            threshold = deleteDebtThreshold;
             break;
         default:
             return { success: false, message: 'Invalid limit type' };

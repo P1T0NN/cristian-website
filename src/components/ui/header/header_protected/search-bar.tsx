@@ -126,10 +126,10 @@ export const SearchBar = ({
                     ) : error ? (
                         <div className="p-3 text-sm text-destructive">{t('error')}</div>
                     ) : displayResults && displayResults.length > 0 ? (
-                        displayResults.map((user: typesUser) => (
+                        displayResults.map((player: typesUser) => (
                             <UserSearchResult 
-                                key={user.id} 
-                                user={user} 
+                                key={player.id} 
+                                player={player} 
                                 onClick={handleResultClick} 
                             />
                         ))
