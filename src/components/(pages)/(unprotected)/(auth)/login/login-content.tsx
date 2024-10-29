@@ -26,15 +26,15 @@ export const LoginContent = () => {
         onSubmit: async (values) => {
             startTransition(async () => {
                 try {
-                    console.log('Attempting to log in with:', values.email)
+                    console.log('Starting login process');
                     const result = await loginUser(values)
-                    console.log('Login result:', result)
+                    console.log('Login result:', result);
                     if (result.success) {
-                        console.log('Login successful, redirecting to home page')
+                        console.log('Login successful, redirecting');
                         toast.success(result.message)
                         router.replace(PAGE_ENDPOINTS.HOME_PAGE)
                     } else {
-                        console.error('Login failed:', result.message)
+                        console.error('Login failed:', result.message);
                         toast.error(result.message)
                     }
                 } catch (error) {

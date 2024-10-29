@@ -41,23 +41,36 @@ export async function registerUser(userData: typesRegisterForm): Promise<AuthRes
 }
 
 export async function loginUser(credentials: typesLoginForm): Promise<AuthResult> {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/login`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-        credentials: 'include',
-    });
+    console.log('Attempting to log in with:', credentials.email);
+    console.log('API URL:', `${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/login`);
 
-    const data = await response.json();
+    try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(credentials),
+            credentials: 'include',
+        });
 
-    if (!response.ok) {
-        return { success: false, message: data.message };
+        console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
+
+        const data = await response.json();
+        console.log('Response data:', data);
+
+        if (!response.ok) {
+            console.error('Login failed:', data.message);
+            return { success: false, message: data.message };
+        }
+
+        console.log('Login successful');
+        return { success: true, message: data.message, token: data.token, refresh_token: data.refresh_token, csrf_token: data.csrf_token };
+    } catch (error) {
+        console.error('Error during login:', error);
+        return { success: false, message: 'An unexpected error occurred during login.' };
     }
-
-    logInfo('Login successful');
-    return { success: true, message: data.message, token: data.token, refresh_token: data.refresh_token, csrf_token: data.csrf_token };
 }
 
 export async function logoutUser(): Promise<AuthResult> {
