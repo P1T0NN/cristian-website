@@ -1,40 +1,37 @@
 // NEXTJS IMPORTS
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
+
+// LIBRARIES
+import { getTranslations } from 'next-intl/server';
+import { applyRateLimit } from '@/lib/ratelimit/rateLimiter';
 
 // UTILS
 import { clearAuthCookies } from '@/utils/cookies/cookies';
 import { GenericMessages } from '@/utils/genericMessages';
 
-export async function POST() {
-    try {
-        const cookieStore = await cookies();
-        const refreshToken = cookieStore.get('rtok')?.value;
-        const csrfToken = cookieStore.get('csrftoken')?.value;
+// TYPES
+import type { APIResponse } from '@/types/responses/APIResponse';
 
-        if (!csrfToken) {
-            return NextResponse.json({ message: GenericMessages.MISSING_CSRF_TOKEN }, { status: 403 });
-        }
+export async function POST(request: NextRequest): Promise<NextResponse<APIResponse>> {
+    const t = await getTranslations('GenericMessages');
 
-        if (refreshToken) {
-            await fetch(`${process.env.NEXT_PUBLIC_ELIXIR_BACKEND_URL}/api/users/logout`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-Token': csrfToken,
-                },
-                body: JSON.stringify({ refresh_token: refreshToken }),
-            });
-        }
-
-        // Create a response object
-        const response = NextResponse.json({ message: GenericMessages.LOGOUT_SUCCESSFUL }, { status: 200 });
-
-        // Clear cookies after successful backend logout
-        clearAuthCookies(response);
-
-        return response;
-    } catch {
-        return NextResponse.json({ message: GenericMessages.UNKNOWN_ERROR }, { status: 500 });
+    const rateLimitResult = await applyRateLimit(request, 'logout');
+    if (!rateLimitResult.success) {
+        return NextResponse.json({ success: false, message: t('LOGOUT_RATE_LIMIT') }, { status: 429 });
     }
+
+    const cookieStore = await cookies();
+    const csrfToken = cookieStore.get('csrftoken')?.value;
+
+    if (!csrfToken) {
+        return NextResponse.json({ success: false, message: GenericMessages.MISSING_CSRF_TOKEN }, { status: 403 });
+    }
+
+    const response = NextResponse.json({ success: true, message: t('LOGOUT_SUCCESSFUL') }, { status: 200 });
+
+    // Clear cookies
+    clearAuthCookies(response);
+
+    return response;
 }

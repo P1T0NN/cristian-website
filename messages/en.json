@@ -246,7 +246,8 @@
         "deleteMatchTitle": "Confirm Deletion",
         "deleteMatchConfirmation": "Are you sure you want to delete this match? This action cannot be undone.",
         "cancel": "Cancel",
-        "delete": "Delete"
+        "delete": "Delete",
+        "deleting": "Deleting..."
     },
 
     "GenericMessages": {
@@ -308,6 +309,7 @@
         "MATCH_DELETION_RATE_LIMITED": "Please wait 5 minutes before deleting match again",
         "UPDATE_FULL_NAME_RATE_LIMIT": "Please wait 5 minutes before updating your full name again",
         "DEBT_DELETION_RATE_LIMITED": "Please wait 5 minutes before deleting another debt",
+        "LOGOUT_RATE_LIMITED": "Please wait 5 minutes before doing a logout again",
 
         "REGISTER_VERIFICATION_TOKEN_EMAIL_SENT": "Verification email sent successfully. Please check your email!",
         "REGISTER_VERIFICATION_EMAIL_FAILED": "Failed to send verification email. Please try again later.",

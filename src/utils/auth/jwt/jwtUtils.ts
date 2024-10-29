@@ -6,7 +6,7 @@ import type { typesJWTPayload } from '@/types/typesJWTPayload';
 
 export async function generateJWT(userId: string): Promise<string> {
     const iat = Math.floor(Date.now() / 1000);
-    const exp = iat + 15;
+    const exp = iat + 30 * 60; // 30 minutes in seconds
 
     const payload: typesJWTPayload = {
         type: 'access',

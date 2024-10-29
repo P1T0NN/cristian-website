@@ -24,7 +24,7 @@ const defaultOptions: CookieOptions = {
 export function setAuthTokenCookie(res: NextResponse, token: string): void {
     res.cookies.set('auth_token', token, {
         ...defaultOptions,
-        maxAge: 15, // 30 minutes
+        maxAge: 30 * ONE_MINUTE, // 30 minutes
     });
 }
 

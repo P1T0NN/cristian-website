@@ -16,6 +16,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SearchBar } from "./header_protected/search-bar";
+import { LogoutButton } from "./header_protected/logout-button";
 
 // UTILS
 import { getInitials } from "@/utils/getNameInitials";
@@ -24,7 +25,7 @@ import { getInitials } from "@/utils/getNameInitials";
 import type { typesUser } from "@/types/typesUser";
 
 // LUCIDE ICONS
-import { Bell, Settings, LogOut } from "lucide-react";
+import { Bell, Settings } from "lucide-react";
 
 type HeaderProps = {
     serverUserData: typesUser;
@@ -80,9 +81,7 @@ export const HeaderProtected = ({
                                     </DropdownMenuItem>
                                 </Link>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem>
-                                    <LogOut className="mr-2" /> Logout
-                                </DropdownMenuItem>
+                                <LogoutButton />
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>

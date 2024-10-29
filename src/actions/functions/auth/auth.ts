@@ -1,6 +1,5 @@
 // UTILS
 import { logError, logInfo } from '@/utils/logging/logger';
-import { GenericMessages } from '@/utils/genericMessages';
 
 // TYPES
 import type { typesRegisterForm } from '@/types/forms/RegisterForm';
@@ -41,55 +40,38 @@ export async function registerUser(userData: typesRegisterForm): Promise<AuthRes
 }
 
 export async function loginUser(credentials: typesLoginForm): Promise<AuthResult> {
-    console.log('Attempting to log in with:', credentials.email);
-    console.log('API URL:', `${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/login`);
+    const response = await fetch(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(credentials),
+        credentials: 'include',
+    });
 
-    try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(credentials),
-            credentials: 'include',
-        });
+    const data = await response.json();
 
-        console.log('Response status:', response.status);
-        console.log('Response headers:', response.headers);
-
-        const data = await response.json();
-        console.log('Response data:', data);
-
-        if (!response.ok) {
-            console.error('Login failed:', data.message);
-            return { success: false, message: data.message };
-        }
-
-        console.log('Login successful');
-        return { success: true, message: data.message, token: data.token, refresh_token: data.refresh_token, csrf_token: data.csrf_token };
-    } catch (error) {
-        console.error('Error during login:', error);
-        return { success: false, message: 'An unexpected error occurred during login.' };
+    if (!response.ok) {
+        return { success: false, message: data.message };
     }
+
+    logInfo('Login successful');
+    return { success: true, message: data.message, token: data.token, refresh_token: data.refresh_token, csrf_token: data.csrf_token };
 }
 
 export async function logoutUser(): Promise<AuthResult> {
-    try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/logout`, {
-            method: 'POST',
-            credentials: 'include',
-        });
+    const response = await fetch(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+    });
 
-        if (!response.ok) {
-            logError('logoutUser', 'INVALID_LOGOUT', { status: response.status });
-            return { success: false, message: GenericMessages.INVALID_LOGOUT };
-        }
+    const data = await response.json();
 
-        return { success: true, message: GenericMessages.LOGOUT_SUCCESSFUL };
-    } catch (error) {
-        logError('logoutUser', 'NETWORK_ERROR', error);
-        return { success: false, message: GenericMessages.NETWORK_ERROR };
+    if (!response.ok) {
+        return { success: false, message: data.message };
     }
+
+    return { success: true, message: data.message };
 }
 
 ///////////////////////////////////////// RESEND EMAIL VERIFICATIN TOKEN /////////////////////////////////////////

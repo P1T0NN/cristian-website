@@ -1,7 +1,17 @@
 "use client"
 
+// REACTJS IMPORTS
+import { useState, useTransition } from "react"
+import { useTranslations } from "next-intl"
+
+// NEXTJS IMPORTS
+import { useRouter } from "next/navigation"
+
 // LIBRARIES
-import { useTranslations } from "next-intl";
+import { useQueryClient } from "@tanstack/react-query"
+
+// CONFIG
+import { PAGE_ENDPOINTS } from "@/config"
 
 // COMPONENTS
 import { 
@@ -14,25 +24,56 @@ import {
     AlertDialogAction,
     AlertDialogFooter, 
     AlertDialogCancel 
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/alert-dialog"
+import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
+
+// ACTIONS
+import { deleteMatch } from "@/actions/functions/queries/delete-match"
+
+// TYPES
+import type { typesMatch } from "@/types/typesMatch"
 
 type DeleteMatchButtonProps = {
-    handleDeleteMatch: () => Promise<void>;
+    match: typesMatch
 }
 
 export const DeleteMatchButton = ({
-    handleDeleteMatch
+    match
 }: DeleteMatchButtonProps) => {
-    const t = useTranslations("MatchCardComponent");
+    const t = useTranslations("MatchCardComponent")
+    const router = useRouter()
+    const queryClient = useQueryClient()
+
+    const [isPending, startTransition] = useTransition()
+    const [isOpen, setIsOpen] = useState(false)
+
+    const handleDeleteMatch = async () => {
+        startTransition(async () => {
+            try {
+                const result = await deleteMatch(match.id)
+                if (result.success) {
+                    queryClient.invalidateQueries({ queryKey: ["matches"] })
+                    toast.success(result.message)
+                    router.push(PAGE_ENDPOINTS.HOME_PAGE)
+                } else {
+                    toast.error(result.message)
+                }
+            } finally {
+                setIsOpen(false)
+            }
+        })
+    }
 
     return (
-        <AlertDialog>
+        <AlertDialog open={isOpen} onOpenChange={(open) => !isPending && setIsOpen(open)}>
             <AlertDialogTrigger asChild>
                 <Button 
                     className="bg-red-500 hover:bg-red-500/80 w-full"
+                    onClick={() => setIsOpen(true)}
+                    disabled={isPending}
                 >
-                    {t('deleteMatch')}
+                    {isPending ? t('deleting') : t('deleteMatch')}
                 </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
@@ -43,12 +84,13 @@ export const DeleteMatchButton = ({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isPending}>{t('cancel')}</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDeleteMatch}
                         className="bg-red-500 hover:bg-red-500/80"
+                        disabled={isPending}
                     >
-                        {t('delete')}
+                        {isPending ? t('deleting') : t('delete')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

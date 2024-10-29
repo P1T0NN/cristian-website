@@ -11,16 +11,11 @@ import { PAGE_ENDPOINTS } from "@/config";
 
 // LIBRARIES
 import { useTranslations } from 'next-intl';
-import { useQueryClient } from "@tanstack/react-query";
 
 // COMPONENTS
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DeleteMatchButton } from "./delete-match-button";
-import { toast } from "sonner";
-
-// ACTIONS
-import { deleteMatch } from "@/actions/functions/queries/delete-match";
 
 // UTILS
 import { formatTime, formatDate } from "@/utils/dateUtils";
@@ -42,7 +37,6 @@ export const MatchCard = memo(({
     serverUserData
 }: MatchCardProps) => {
     const t = useTranslations("MatchCardComponent");
-    const queryClient = useQueryClient();
     const router = useRouter();
 
     const handleViewMatch = () => {
@@ -55,17 +49,6 @@ export const MatchCard = memo(({
     
     const handleEditMatch = () => {
         router.push(`${PAGE_ENDPOINTS.EDIT_MATCH_PAGE}/${match.id}`);
-    };
-    
-    const handleDeleteMatch = async () => {
-        const result = await deleteMatch(match.id);
-        
-        if (result.success) {
-            queryClient.invalidateQueries({ queryKey: ['matches'] });
-            toast.success(result.message);
-        } else {
-            toast.error(result.message);
-        }
     };
 
     return (
@@ -119,7 +102,7 @@ export const MatchCard = memo(({
                     >
                         {t('editMatch')}
                     </Button>
-                    <DeleteMatchButton handleDeleteMatch={handleDeleteMatch} />
+                    <DeleteMatchButton match={match} />
                 </CardFooter>
             ) : (
                 <CardFooter className="p-6 pt-0">
