@@ -1,15 +1,14 @@
-// LIBRARIES
 import log from 'loglevel';
-
-// UTILS
 import { GenericMessages } from '@/utils/genericMessages';
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
-// Set log level based on environment
 log.setLevel(isDevelopment ? 'debug' : 'warn');
 
-export function logError(context: string, errorType: keyof typeof GenericMessages, originalError?: any) {
+type ErrorType = keyof typeof GenericMessages;
+type LogFunction = (message: string, meta?: Record<string, unknown>) => void;
+
+export function logError(context: string, errorType: ErrorType, originalError?: unknown) {
     const genericMessage = GenericMessages[errorType];
 
     if (isDevelopment) {
@@ -19,12 +18,12 @@ export function logError(context: string, errorType: keyof typeof GenericMessage
         log.error(`Error in ${context}: ${genericMessage}`, {
             context,
             errorType,
-            originalError, // Include the original error for production logging
+            originalError,
         });
     }
 }
 
-export function logInfo(message: string, meta?: any) {
+export function logInfo(message: string, meta?: Record<string, unknown>) {
     if (isDevelopment) {
         console.log(message, meta);
     } else {
@@ -32,7 +31,7 @@ export function logInfo(message: string, meta?: any) {
     }
 }
 
-export function logWarning(message: string, meta?: any) {
+export function logWarning(message: string, meta?: Record<string, unknown>) {
     if (isDevelopment) {
         console.warn(message, meta);
     } else {
@@ -40,7 +39,7 @@ export function logWarning(message: string, meta?: any) {
     }
 }
 
-export function logDebug(message: string, meta?: any) {
+export function logDebug(message: string, meta?: Record<string, unknown>) {
     if (isDevelopment) {
         console.debug(message, meta);
     } else {
@@ -48,8 +47,7 @@ export function logDebug(message: string, meta?: any) {
     }
 }
 
-// Utility function for sampling logs
-export function sampleLog(chance: number, logFunction: Function, ...args: any[]) {
+export function sampleLog(chance: number, logFunction: LogFunction, ...args: [string, Record<string, unknown>?]) {
     if (Math.random() < chance) {
         logFunction(...args);
     }

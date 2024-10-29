@@ -4,7 +4,7 @@ import { GenericMessages } from '@/utils/genericMessages';
 
 // TYPES
 import type { typesRegisterForm } from '@/types/forms/RegisterForm';
-import type { LoginForm } from '@/types/forms/LoginForm';
+import type { typesLoginForm } from '@/types/forms/LoginForm';
 
 type AuthResult = {
     success: boolean;
@@ -40,7 +40,7 @@ export async function registerUser(userData: typesRegisterForm): Promise<AuthRes
     return { success: true, message: data.message, data };
 }
 
-export async function loginUser(credentials: LoginForm): Promise<AuthResult> {
+export async function loginUser(credentials: typesLoginForm): Promise<AuthResult> {
     const response = await fetch(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/login`, {
         method: 'POST',
         headers: {

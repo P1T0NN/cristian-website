@@ -1,12 +1,12 @@
 // NEXTJS IMPORTS
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
 // UTILS
 import { clearAuthCookies } from '@/utils/cookies/cookies';
 import { GenericMessages } from '@/utils/genericMessages';
 
-export async function POST(req: NextRequest) {
+export async function POST() {
     try {
         const cookieStore = await cookies();
         const refreshToken = cookieStore.get('rtok')?.value;
@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
         }
 
         if (refreshToken) {
-            const backendResponse = await fetch(`${process.env.NEXT_PUBLIC_ELIXIR_BACKEND_URL}/api/users/logout`, {
+            await fetch(`${process.env.NEXT_PUBLIC_ELIXIR_BACKEND_URL}/api/users/logout`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -25,10 +25,6 @@ export async function POST(req: NextRequest) {
                 },
                 body: JSON.stringify({ refresh_token: refreshToken }),
             });
-
-            if (!backendResponse.ok) {
-                return NextResponse.json({ message: GenericMessages.BACKEND_LOGOUT_FAILED }, { status: 500 });
-            }
         }
 
         // Create a response object
@@ -38,7 +34,7 @@ export async function POST(req: NextRequest) {
         clearAuthCookies(response);
 
         return response;
-    } catch (error) {
+    } catch {
         return NextResponse.json({ message: GenericMessages.UNKNOWN_ERROR }, { status: 500 });
     }
 }

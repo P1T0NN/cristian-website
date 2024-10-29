@@ -1,5 +1,5 @@
 // NEXTJS IMPORTS
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 
 // LIBRARIES
 import { jwtVerify } from 'jose';
@@ -17,7 +17,7 @@ import type { typesMatchWithPlayers } from '@/types/typesMatchWithPlayers';
 const MATCH_CACHE_KEY_PREFIX = 'match_';
 const CACHE_TTL = 60 * 60 * 12; // 12 hours in seconds
 
-export async function POST(req: Request): Promise<NextResponse<APIResponse>> {
+export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>> {
     const genericMessages = await getTranslations("GenericMessages");
     const fetchMessages = await getTranslations("FetchMessages");
 

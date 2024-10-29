@@ -7,11 +7,14 @@ import { useTranslations } from 'next-intl';
 // COMPONENTS
 import { Input } from "@/components/ui/input";
 
+// TYPES
+import type { typesResetPasswordForm } from "@/types/forms/ResetPasswordForm";
+
 // LUCIDE ICONS
 import { LockKeyhole } from "lucide-react";
 
 type ResetPasswordFormProps = {
-    formData: ResetPasswordForm;
+    formData: typesResetPasswordForm;
     errors: Record<string, string>;
     handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }

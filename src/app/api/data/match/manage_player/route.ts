@@ -1,5 +1,5 @@
 // NEXTJS IMPORTS
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 
 // LIBRARIES
 import { jwtVerify } from 'jose';
@@ -9,7 +9,7 @@ import { getTranslations } from 'next-intl/server';
 // TYPERS
 import type { APIResponse } from '@/types/responses/APIResponse';
 
-export async function POST(req: Request): Promise<NextResponse<APIResponse>> {
+export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>> {
     const genericMessages = await getTranslations("GenericMessages");
 
     const token = req.headers.get('authorization')?.split(' ')[1];

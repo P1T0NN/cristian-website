@@ -19,7 +19,7 @@ import type { typesUser } from "@/types/typesUser";
 export default async function EditMatchPage({
     params,
 }: {
-    params: { id: string }
+    params: Promise<{ id: string }>
 }) {
     const cookieStore = await cookies();
     const authToken = cookieStore.get('auth_token')?.value as string;

@@ -1,7 +1,7 @@
 "use client"
 
 // REACTJS IMPORTS
-import { useEffect, useTransition, useState, useCallback } from "react";
+import { useTransition, useState, useCallback } from "react";
 
 // NEXTJS IMPORTS
 import { useRouter, useSearchParams } from "next/navigation";
@@ -24,26 +24,25 @@ import { useZodSchemas } from "@/hooks/useZodSchema";
 // UTILS
 import { resetPassword, isResetTokenValid } from "@/actions/functions/auth/auth";
 
-export const ResetPasswordContent = () => {
-    const t = useTranslations('ResetPasswordPage');
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const token = searchParams.get('token');
+export function ResetPasswordContent() {
+    const t = useTranslations('ResetPasswordPage')
+    const router = useRouter()
+    const searchParams = useSearchParams()
+    const token = searchParams.get('token')
 
-    const [isPending, startTransition] = useTransition();
-    
-    const [isValidToken, setIsValidToken] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isSuccess, setIsSuccess] = useState(false);
+    const [isPending, startTransition] = useTransition()
+    const [isValidToken, setIsValidToken] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
+    const [isSuccess, setIsSuccess] = useState(false)
 
     const handleSuccessAndRedirect = useCallback(() => {
-        setIsSuccess(true);
+        setIsSuccess(true)
         setTimeout(() => {
-            router.replace(PAGE_ENDPOINTS.LOGIN_PAGE);
-        }, 2000); // 2 seconds delay
-    }, [router]);
+            router.replace(PAGE_ENDPOINTS.LOGIN_PAGE)
+        }, 2000)
+    }, [router])
 
-    const { resetPasswordSchema } = useZodSchemas();
+    const { resetPasswordSchema } = useZodSchemas()
 
     const { formData, errors, handleInputChange, handleSubmit } = useForm({
         initialValues: { password: '', confirmPassword: '' },
@@ -51,50 +50,43 @@ export const ResetPasswordContent = () => {
         onSubmit: async (values) => {
             startTransition(async () => {
                 if (!token) {
-                    return;
+                    return
                 }
-                const result = await resetPassword(token, values.password);
+                const result = await resetPassword(token, values.password)
                 if (result.success) {
-                    toast.success(result.message);
-                    handleSuccessAndRedirect();
+                    toast.success(result.message)
+                    handleSuccessAndRedirect()
                 } else {
-                    toast.error(result.message);
+                    toast.error(result.message)
                 }
-            });
+            })
         },
-    });
+    })
 
-    useEffect(() => {
-        async function validateToken() {
-            if (!token) {
-                router.replace(PAGE_ENDPOINTS.LOGIN_PAGE);
-                return;
-            }
-    
-            const result = await isResetTokenValid(token);
-    
-            if (result.success) {
-                setIsValidToken(true);
-            } else {
-                toast.error(result.message);
-                router.push(PAGE_ENDPOINTS.LOGIN_PAGE);
-            }
-            setIsLoading(false);
-        }
-    
-        validateToken();
-    }, [token, router]);
+    if (!token) {
+        router.replace(PAGE_ENDPOINTS.LOGIN_PAGE)
+        return null
+    }
 
     if (isLoading) {
-        return <h1 className='font-bold text-2xl text-center pt-16'>{t('validatingLink')}</h1>;
+        isResetTokenValid(token).then((result) => {
+            if (result.success) {
+                setIsValidToken(true)
+            } else {
+                toast.error(result.message)
+                router.push(PAGE_ENDPOINTS.LOGIN_PAGE)
+            }
+            setIsLoading(false)
+        })
+        return <h1 className='font-bold text-2xl text-center pt-16'>{t('validatingLink')}</h1>
     }
 
     if (isSuccess) {
-        return <h1 className='font-bold text-green-500 text-2xl text-center pt-16'>{t('resetSuccess')}</h1>;
+        return <h1 className='font-bold text-green-500 text-2xl text-center pt-16'>{t('resetSuccess')}</h1>
     }
 
     if (!isValidToken) {
-        return null; // The user will be redirected in the useEffect
+        return null
     }
 
     return (
@@ -115,5 +107,5 @@ export const ResetPasswordContent = () => {
                 </div>
             </div>
         </section>
-    );
-};
+    )
+}

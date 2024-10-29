@@ -82,19 +82,17 @@ export async function middleware(req: NextRequest) {
 
     if (isProtectedPage || isAdminPage) {
         // Handle missing authToken and try to refresh
-        if (!authToken) {
-            if (refreshToken) {
-                const newAuthToken = await refreshAuthToken(refreshToken, response);
-                if (newAuthToken) {
-                    return response;
-                }
+        if (!authToken && refreshToken) {
+            const newAuthToken = await refreshAuthToken(refreshToken, response);
+            if (newAuthToken) {
+                return response;
             }
             clearAuthCookies(response);
             return redirectToLogin(req);
         }
 
         // Verify and decode JWT
-        const verifiedToken = await jwtVerify(authToken, new TextEncoder().encode(process.env.JWT_SECRET)).catch(() => null);
+        const verifiedToken = await jwtVerify(authToken as string, new TextEncoder().encode(process.env.JWT_SECRET)).catch(() => null);
 
         if (!verifiedToken) {
             clearAuthCookies(response); // Clear cookies if token is invalid
@@ -103,14 +101,12 @@ export async function middleware(req: NextRequest) {
 
         const isTokenExpired = verifiedToken.payload.exp && verifiedToken.payload.exp < Math.floor(Date.now() / 1000);
 
-        if (isTokenExpired) {
+        if (isTokenExpired && refreshToken) {
             // Handle expired token
-            if (refreshToken) {
-                const newAuthToken = await refreshAuthToken(refreshToken, response);
-                if (newAuthToken) {
-                    setAuthTokenCookie(response, newAuthToken);
-                    return response; // Return with the new token
-                }
+            const newAuthToken = await refreshAuthToken(refreshToken, response);
+            if (newAuthToken) {
+                setAuthTokenCookie(response, newAuthToken);
+                return response; // Return with the new token
             }
             clearAuthCookies(response); // Clear cookies if no refresh token
             return redirectToLogin(req); // Redirect to login

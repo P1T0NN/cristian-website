@@ -28,6 +28,9 @@ import { requestPasswordReset } from "@/actions/functions/auth/auth";
 // UTILS
 import { executeWithMinimumDuration } from "@/utils/timeoutForFunctions";
 
+// TYPES
+import { typesForgotPasswordForm } from "@/types/forms/ForgotPasswordForm";
+
 // LUCIDE ICONS
 import { Mail } from "lucide-react";
 
@@ -37,7 +40,7 @@ export const ForgotPasswordContent = () => {
     const { forgotPasswordSchema } = useZodSchemas();
     const t = useTranslations('ForgotPasswordPage');
 
-    const { formData, errors, handleInputChange, handleSubmit } = useForm<ForgotPasswordForm>({
+    const { formData, errors, handleInputChange, handleSubmit } = useForm<typesForgotPasswordForm>({
         initialValues: { email: '' },
         validationSchema: forgotPasswordSchema,
         onSubmit: async (values) => {

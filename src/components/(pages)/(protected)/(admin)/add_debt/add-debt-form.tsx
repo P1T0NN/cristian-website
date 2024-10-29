@@ -30,6 +30,7 @@ type AddDebtFormProps = {
 
 type User = {
     fullName: string;
+    // Add other properties of User if needed
 }
 
 export const AddDebtForm = ({
@@ -68,11 +69,11 @@ export const AddDebtForm = ({
         }
     };
 
-    const handleUserSelect = (userName: string) => {
+    const handleUserSelect = (user: User) => {
         const event = {
             target: {
                 name: 'player_name',
-                value: userName
+                value: user.fullName
             }
         } as React.ChangeEvent<HTMLInputElement>;
         
@@ -111,6 +112,7 @@ export const AddDebtForm = ({
                 )}
             </div>
 
+            {/* Rest of the component remains unchanged */}
             <div className="flex flex-col space-y-2">
                 <Label htmlFor="selectDebtType">{t("selectDebtType")}</Label>
                 <div className="flex space-x-4">

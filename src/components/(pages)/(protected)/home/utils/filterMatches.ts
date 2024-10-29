@@ -1,6 +1,6 @@
 // TYPES
 import type { typesMatch } from "@/types/typesMatch";
-import type { FilterValues } from "./filter-modal";
+import type { FilterValues } from "../filter-modal";
 
 export const filterMatches = (matches: typesMatch[], filters: FilterValues): typesMatch[] => {
     return matches.filter(match => {

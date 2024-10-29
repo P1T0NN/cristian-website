@@ -1,4 +1,4 @@
-type ResetPasswordForm = {
+export type typesResetPasswordForm = {
     password: string;
     confirmPassword: string;
 }
