@@ -26,15 +26,24 @@ export const LoginContent = () => {
         onSubmit: async (values) => {
             startTransition(async () => {
                 try {
+                    console.log('Attempting to log in with:', values.email)
                     const result = await loginUser(values)
+                    console.log('Login result:', result)
                     if (result.success) {
+                        console.log('Login successful, redirecting to home page')
                         toast.success(result.message)
                         router.replace(PAGE_ENDPOINTS.HOME_PAGE)
                     } else {
+                        console.error('Login failed:', result.message)
                         toast.error(result.message)
                     }
                 } catch (error) {
-                    console.error('Login error:', error)
+                    console.error('Unexpected error during login:', error)
+                    if (error instanceof Error) {
+                        console.error('Error name:', error.name)
+                        console.error('Error message:', error.message)
+                        console.error('Error stack:', error.stack)
+                    }
                     toast.error(t('loginError'))
                 }
             })
