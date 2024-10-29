@@ -1,54 +1,57 @@
 "use client"
 
-import { useTransition } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useTranslations } from 'next-intl'
-import { PAGE_ENDPOINTS } from "@/config"
-import { Separator } from "@/components/ui/separator"
-import { Button } from "@/components/ui/button"
+// REACTJS IMPORTS
+import { useTransition } from "react";
+
+// NEXTJS IMPORTS
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+// LIBRARIES
+import { useTranslations } from 'next-intl';
+
+// CONFIG
+import { PAGE_ENDPOINTS } from "@/config";
+
+// COMPONENTS
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner"
-import { LoginForm } from "./login-form"
-import { useForm } from "@/hooks/useForm"
-import { useZodSchemas } from "@/hooks/useZodSchema"
-import { loginUser } from "@/actions/functions/auth/auth"
-import type { typesLoginForm } from "@/types/forms/LoginForm"
+import { LoginForm } from "./login-form";
+
+// HOOKS
+import { useForm } from "@/hooks/useForm";
+import { useZodSchemas } from "@/hooks/useZodSchema";
+
+// ACTIONS
+import { loginUser } from "@/actions/functions/auth/auth";
+
+// TYPES
+import { typesLoginForm } from "@/types/forms/LoginForm";
 
 export const LoginContent = () => {
-    const t = useTranslations('LoginPage')
-    const router = useRouter()
-    const [isPending, startTransition] = useTransition()
-    const { loginSchema } = useZodSchemas()
+    const t = useTranslations('LoginPage');
+    const router = useRouter();
+
+    const [isPending, startTransition] = useTransition();
+    
+    const { loginSchema } = useZodSchemas();
 
     const { formData, errors, handleInputChange, handleSubmit } = useForm<typesLoginForm>({
         initialValues: { email: '', password: '' },
         validationSchema: loginSchema,
         onSubmit: async (values) => {
             startTransition(async () => {
-                try {
-                    console.log('Starting login process');
-                    const result = await loginUser(values)
-                    console.log('Login result:', result);
-                    if (result.success) {
-                        console.log('Login successful, redirecting');
-                        toast.success(result.message)
-                        router.replace(PAGE_ENDPOINTS.HOME_PAGE)
-                    } else {
-                        console.error('Login failed:', result.message);
-                        toast.error(result.message)
-                    }
-                } catch (error) {
-                    console.error('Unexpected error during login:', error)
-                    if (error instanceof Error) {
-                        console.error('Error name:', error.name)
-                        console.error('Error message:', error.message)
-                        console.error('Error stack:', error.stack)
-                    }
-                    toast.error(t('loginError'))
+                const result = await loginUser(values);
+                if (result.success) {
+                    toast.success(result.message);
+                    router.replace(PAGE_ENDPOINTS.HOME_PAGE);
+                } else {
+                    toast.error(result.message);
                 }
-            })
+            });
         },
-    })
+    });
     
     return (
         <section className="flex w-full min-h-screen justify-center">
@@ -67,12 +70,7 @@ export const LoginContent = () => {
                             {t('forgotPassword')}
                         </Link>
 
-                        <Button 
-                            disabled={isPending} 
-                            className="w-[150px] font-bold" 
-                            onClick={handleSubmit}
-                            aria-busy={isPending}
-                        >
+                        <Button disabled={isPending} className="w-[150px] font-bold" onClick={handleSubmit}>
                             {isPending ? t('loggingIn') : t('logIn')}
                         </Button>
                     </div>
@@ -86,5 +84,5 @@ export const LoginContent = () => {
                 </div>
             </div>
         </section>
-    )
-}
+    );
+};
