@@ -10,6 +10,8 @@ export type typesUser = {
     isAdmin: boolean;
     player_debt: number;
     cristian_debt: number;
+    player_level: number;
+    player_position: string;
     created_at: Date;
     debts?: typesDebt[];
 };

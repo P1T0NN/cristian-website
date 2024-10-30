@@ -1,10 +1,13 @@
 "use client"
 
 // REACTJS IMPORTS
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 
 // LIBRARIES
 import { useTranslations } from 'next-intl';
+
+// SERVICES
+import { setUserLocale } from '@/services/server/locale';
 
 // COMPONENTS
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,20 +23,24 @@ import { updateUserFullName } from '@/actions/functions/queries/update-user-full
 
 // TYPES
 import type { typesUser } from '@/types/typesUser';
+import type { Locale } from '@/i18n/config';
 
 type AccountSettingsProps = {
     serverUserData: typesUser;
     authToken: string;
+    currentLocale: string;
 }
 
 export const AccountSettings = ({ 
     serverUserData,
-    authToken
+    authToken,
+    currentLocale
 }: AccountSettingsProps) => {
     const t = useTranslations('SettingsPage');
 
     const [fullName, setFullName] = useState(serverUserData.fullName);
     const [isLoading, setIsLoading] = useState(false);
+    const [isPending, startTransition] = useTransition();
 
     const handleSave = async () => {
         setIsLoading(true);
@@ -45,6 +52,18 @@ export const AccountSettings = ({
         } else {
             toast.error(result.message);
         }
+    };
+
+    const handleLanguageChange = (newLocale: string) => {
+        startTransition(async () => {
+            try {
+                await setUserLocale(newLocale as Locale);
+                // Refresh the page to apply the new locale
+                window.location.reload();
+            } catch {
+                toast.error('Failed to update language preference');
+            }
+        });
     };
 
     return (
@@ -74,8 +93,12 @@ export const AccountSettings = ({
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="language">{t('language')}</Label>
-                    <Select defaultValue="en">
-                        <SelectTrigger id="language">
+                    <Select 
+                        defaultValue={currentLocale}
+                        onValueChange={handleLanguageChange}
+                        disabled={isPending}
+                    >
+                        <SelectTrigger id="language" className={isPending ? 'opacity-50' : ''}>
                             <SelectValue placeholder={t('selectLanguage')} />
                         </SelectTrigger>
                         <SelectContent>

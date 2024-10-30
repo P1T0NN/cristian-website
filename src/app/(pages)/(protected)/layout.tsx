@@ -44,9 +44,9 @@ export default async function ProtectedLayout({
             enableSystem
             disableTransitionOnChange
         >
-        <HeaderProtected serverUserData={userData} authToken={authToken} />
-        {children}
-      </ThemeProvider>
+          <HeaderProtected serverUserData={userData} authToken={authToken} />
+          {children}
+        </ThemeProvider>
     </>
   );
 }

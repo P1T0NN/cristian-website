@@ -1,7 +1,7 @@
 "use client"
 
 // LIBRARIES
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 // COMPONENTS
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -23,6 +23,7 @@ export const SettingsContent = ({
     authToken
 }: SettingsContentProps) => {
     const t = useTranslations('SettingsPage');
+    const locale = useLocale();
 
     return (
         <div className="container mx-auto py-10">
@@ -37,7 +38,11 @@ export const SettingsContent = ({
                 </TabsList>
 
                 <TabsContent value="account">
-                    <AccountSettings serverUserData={serverUserData} authToken={authToken} />
+                    <AccountSettings 
+                        serverUserData={serverUserData} 
+                        authToken={authToken} 
+                        currentLocale={locale} 
+                    />
                 </TabsContent>
 
                 <TabsContent value="appearance">
