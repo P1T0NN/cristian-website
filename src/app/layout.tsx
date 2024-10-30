@@ -17,7 +17,6 @@ import { ReactQueryClientProvider } from "@/providers/react-query-client-provide
 // COMPONENTS
 import { Toaster } from "@/components/ui/sonner";
 import { HeaderProtected } from "@/components/ui/header/header_protected";
-import { HeaderUnprotected } from "@/components/ui/header/header_unprotected";
 
 // ACTIONS
 import { server_fetchUserData } from "@/actions/functions/data/server/server_fetchUserData";
@@ -57,10 +56,8 @@ export default async function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
-              {authToken && userData ? (
+              {authToken && userData && (
                 <HeaderProtected serverUserData={userData} authToken={authToken} />
-              ) : (
-                <HeaderUnprotected />
               )}
 
               {children}
