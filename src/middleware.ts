@@ -17,6 +17,15 @@ import { refreshAccessToken } from '@/utils/auth/refreshAccessToken';
 // TYPES
 import type { typesUser } from '@/types/typesUser';
 
+const PUBLIC_PAGES = [
+    PAGE_ENDPOINTS.LOGIN_PAGE,
+    PAGE_ENDPOINTS.REGISTER_PAGE,
+    PAGE_ENDPOINTS.FORGOT_PASSWORD_PAGE,
+    PAGE_ENDPOINTS.VERIFY_EMAIL_PAGE,
+    PAGE_ENDPOINTS.RESET_PASSWORD_PAGE
+    // Add other public pages here
+];
+
 // Define protected and admin pages
 const PROTECTED_PAGES = [
     PAGE_ENDPOINTS.HOME_PAGE, 
@@ -73,12 +82,17 @@ export async function middleware(req: NextRequest) {
         }
     }
 
+    const isPublicPage = PUBLIC_PAGES.includes(pathname);
     const isProtectedPage = PROTECTED_PAGES.includes(pathname) || 
                             pathname.startsWith('/match/') || 
                             pathname.startsWith('/edit_match/') ||
                             pathname.startsWith('/player/');
-
     const isAdminPage = ADMIN_PROTECTED_PAGES.includes(pathname);
+
+    // Redirect authenticated users away from public pages
+    if (isPublicPage && (authToken || refreshToken)) {
+        return redirectToHome(req);
+    }
 
     if (isProtectedPage || isAdminPage) {
         // Handle missing authToken and try to refresh
@@ -124,13 +138,6 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
     matcher: [
-        '/home', 
-        '/settings',
-        '/add_match',
-        '/add_debt',
-        '/add_location',
-        '/edit_match/:path*',
-        '/match/:path*',
-        '/player/:path*'
+        '/((?!api|_next/static|_next/image|favicon.ico).*)',
     ],
 };
