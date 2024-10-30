@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 // COMPONENTS
 import { Card, CardContent } from "@/components/ui/card";
-import { LoadingSkeleton } from './loading-skeleton';
+import { HomeLoading } from './home-loading';
 import { FilterModal, type FilterValues } from './filter-modal';
 import { MatchesRow } from './matches-row';
 import { Button } from "@/components/ui/button";
@@ -120,7 +120,7 @@ export const HomeContent = ({
                 </CardContent>
             </Card>
     
-            {isLoading && <LoadingSkeleton />}
+            {isLoading && <HomeLoading />}
     
             <AnimatePresence>
                 {!isLoading && !isError && filteredMatches.length === 0 && (

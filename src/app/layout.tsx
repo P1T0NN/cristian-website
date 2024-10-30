@@ -1,5 +1,9 @@
+// NEXTJS IMPORTS
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { cookies } from "next/headers";
+
+// STYLES
 import "./globals.css";
 
 // LIBRARIES
@@ -12,6 +16,13 @@ import { ReactQueryClientProvider } from "@/providers/react-query-client-provide
 
 // COMPONENTS
 import { Toaster } from "@/components/ui/sonner";
+import { HeaderProtected } from "@/components/ui/header/header_protected";
+
+// ACTIONS
+import { server_fetchUserData } from "@/actions/functions/data/server/server_fetchUserData";
+
+// TYPES
+import type { typesUser } from "@/types/typesUser";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,6 +42,12 @@ export default async function RootLayout({
   // side is the easiest way to get started
   const messages = await getMessages();
 
+  const cookieStore = await cookies();
+  const authToken = cookieStore.get('auth_token')?.value as string | undefined;
+
+  const result = await server_fetchUserData();
+  const userData: typesUser | undefined = result.success ? result.data as typesUser : undefined;
+
   return (
     <ReactQueryClientProvider>
       <html lang={locale}>
@@ -42,6 +59,8 @@ export default async function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
+              <HeaderProtected serverUserData={userData} authToken={authToken} />
+
               {children}
 
               <Toaster />

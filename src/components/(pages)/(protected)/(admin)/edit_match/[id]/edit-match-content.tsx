@@ -17,7 +17,7 @@ import { useQueryClient } from "@tanstack/react-query";
 // COMPONENTS
 import { Card, CardTitle, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { EditMatchLoadingSkeleton } from "./edit-match-loading-skeleton";
+import { EditMatchLoading } from "./edit-match-loading";
 import { EditMatchForm } from "./edit-match-form";
 import { toast } from "sonner";
 
@@ -64,7 +64,7 @@ export const EditMatchContent = ({
     };
 
     if (isLoading) {
-        return <EditMatchLoadingSkeleton />;
+        return <EditMatchLoading />;
     }
 
     if (!matchData) {

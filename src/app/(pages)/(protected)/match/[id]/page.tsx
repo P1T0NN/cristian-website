@@ -1,10 +1,13 @@
+// REACTJS IMPORTS
+import { Suspense } from 'react';
+
 // NEXTJS IMPORTS
 import { cookies } from "next/headers";
 
 // COMPONENTS
-import { HeaderProtected } from "@/components/ui/header/header_protected";
 import { ErrorMessage } from "@/components/ui/errors/error-message";
 import { MatchContent } from "@/components/(pages)/(protected)/match/[id]/match-content";
+import { MatchLoading } from "@/components/(pages)/(protected)/match/[id]/match-loading";
 
 // ACTIONS
 import { server_fetchUserData } from "@/actions/functions/data/server/server_fetchUserData";
@@ -12,9 +15,9 @@ import { server_fetchUserData } from "@/actions/functions/data/server/server_fet
 // TYPES
 import type { typesUser } from "@/types/typesUser";
 
-export default async function MatchPage({
-    params,
-}: {
+async function MatchPageContent({ 
+    params 
+}: { 
     params: Promise<{ id: string }>
 }) {
     const cookieStore = await cookies();
@@ -25,16 +28,30 @@ export default async function MatchPage({
     const result = await server_fetchUserData();
     
     if (!result.success) {
-        return <ErrorMessage message={result.message} />;
+        return (
+            <main className="flex flex-col w-full min-h-screen">
+                <ErrorMessage message={result.message} />
+            </main>
+        );
     }
 
     const userData = result.data as typesUser;
 
     return (
         <main>
-            <HeaderProtected serverUserData={userData} authToken={authToken} />
-
             <MatchContent matchId={id} authToken={authToken} currentUserId={userData.id} />
         </main>
-    )
+    );
+}
+
+export default function MatchPage({ 
+    params 
+}: { 
+    params: Promise<{ id: string }>
+}) {
+    return (
+        <Suspense fallback={<MatchLoading />}>
+            <MatchPageContent params={params} />
+        </Suspense>
+    );
 }

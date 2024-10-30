@@ -150,7 +150,9 @@
         "players": "Players",
         "player": "Player",
         "viewMap": "View Map",
-        "errorFetchingMatch": "Error fetching match"
+        "errorFetchingMatch": "Error fetching match",
+        "leaving": "Leaving...",
+        "joiningTeam": "Joining..."
     },
 
     "EditMatchPage": {

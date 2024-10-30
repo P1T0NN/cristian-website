@@ -1,25 +1,30 @@
+
+
+// REACTJS IMPORTS
+import { Suspense } from "react";
+
 // NEXTJS IMPORTS
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
 // CONFIG
 import { PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
-import { HeaderProtected } from "@/components/ui/header/header_protected";
-import { ErrorMessage } from "@/components/ui/errors/error-message";
 import { EditMatchContent } from "@/components/(pages)/(protected)/(admin)/edit_match/[id]/edit-match-content";
+import { ErrorMessage } from "@/components/ui/errors/error-message";
+import { EditMatchLoading } from "@/components/(pages)/(protected)/(admin)/edit_match/[id]/edit-match-loading";
 
 // ACTIONS
-import { server_fetchUserData } from "@/actions/functions/data/server/server_fetchUserData";
+import { server_fetchUserData } from '@/actions/functions/data/server/server_fetchUserData';
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
 
-export default async function EditMatchPage({
-    params,
-}: {
-    params: Promise<{ id: string }>
+async function EditMatchPageContent({ 
+    params 
+}: { 
+    params: Promise<{ id: string }> 
 }) {
     const cookieStore = await cookies();
     const authToken = cookieStore.get('auth_token')?.value as string;
@@ -39,10 +44,20 @@ export default async function EditMatchPage({
     }
 
     return (
-        <main>
-            <HeaderProtected serverUserData={userData} authToken={authToken} />
-
+        <main className="flex flex-col w-full min-h-screen">
             <EditMatchContent matchId={id} authToken={authToken} />
         </main>
-    )
+    );
+}
+
+export default function EditMatchPage({ 
+    params 
+}: { 
+    params: Promise<{ id: string }>
+}) {
+    return (
+        <Suspense fallback={<EditMatchLoading />}>
+            <EditMatchPageContent params={params} />
+        </Suspense>
+    );
 }

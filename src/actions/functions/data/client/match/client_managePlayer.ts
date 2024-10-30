@@ -1,10 +1,13 @@
+// TYPES
+import type { APIResponse } from "@/types/responses/APIResponse";
+
 export const client_managePlayer = async (
     authToken: string,
     matchId: string,
     userId: string,
     teamNumber: 1 | 2,
     action: 'join' | 'leave'
-): Promise<void> => {
+): Promise<APIResponse> => {
     const response = await fetch(
         `${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/data/match/manage_player`,
         {
@@ -18,6 +21,5 @@ export const client_managePlayer = async (
     );
 
     const result = await response.json();
-
-    return result.data;
+    return result;
 };

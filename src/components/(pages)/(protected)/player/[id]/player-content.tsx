@@ -18,7 +18,7 @@ import type { APIResponse } from '@/types/responses/APIResponse';
 
 // COMPONENTS
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { PlayerLoadingSkeleton } from './player-loading-skeleton';
+import { PlayerLoading } from './player-loading';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -51,7 +51,7 @@ export const PlayerContent = ({
 
     if (isLoading) {
         return (
-            <PlayerLoadingSkeleton />
+            <PlayerLoading />
         )
     }
 

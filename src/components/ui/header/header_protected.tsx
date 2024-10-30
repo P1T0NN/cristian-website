@@ -28,15 +28,15 @@ import type { typesUser } from "@/types/typesUser";
 import { Bell, Settings } from "lucide-react";
 
 type HeaderProps = {
-    serverUserData: typesUser;
-    authToken: string;
+    serverUserData: typesUser | undefined;
+    authToken: string | undefined;
 }
 
 export const HeaderProtected = ({ 
     serverUserData, 
     authToken 
 }: HeaderProps) => {
-    const initials = getInitials(serverUserData.fullName);
+    const initials = serverUserData ? getInitials(serverUserData.fullName) : '';
 
     return (
         <header className="w-full bg-transparent border-b border-bg-primary">
@@ -48,14 +48,14 @@ export const HeaderProtected = ({
                         </Link>
                     </div>
 
-                    {serverUserData.isAdmin && (
+                    {serverUserData?.isAdmin && authToken && (
                         <div className="hidden md:block flex-grow mx-4 max-w-xl">
                             <SearchBar authToken={authToken} />
                         </div>
                     )}
 
                     <div className="flex items-center space-x-3">
-                        {serverUserData.isAdmin && (
+                        {serverUserData?.isAdmin && (
                             <AddMatchButton />
                         )}
 
@@ -66,29 +66,33 @@ export const HeaderProtected = ({
                             <Bell />
                         </Button>
 
-                        <DropdownMenu>
-                            <DropdownMenuTrigger>
-                                <div className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-secondary">
-                                    {initials}
-                                </div>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <Link href={PAGE_ENDPOINTS.SETTINGS_PAGE}>
-                                    <DropdownMenuItem>
-                                        <Settings className="mr-2" /> Settings
-                                    </DropdownMenuItem>
-                                </Link>
-                                <DropdownMenuSeparator />
-                                <LogoutButton />
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        {serverUserData ? (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger>
+                                    <div className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-secondary">
+                                        {initials}
+                                    </div>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent>
+                                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    <Link href={PAGE_ENDPOINTS.SETTINGS_PAGE}>
+                                        <DropdownMenuItem>
+                                            <Settings className="mr-2" /> Settings
+                                        </DropdownMenuItem>
+                                    </Link>
+                                    <DropdownMenuSeparator />
+                                    <LogoutButton />
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        ) : (
+                            <div className="h-[40px] w-[40px] rounded-full bg-secondary animate-pulse" />
+                        )}
                     </div>
                 </div>
             </div>
 
-            {serverUserData.isAdmin && (
+            {serverUserData?.isAdmin && authToken && (
                 <div className="md:hidden px-4 py-3">
                     <SearchBar authToken={authToken} />
                 </div>

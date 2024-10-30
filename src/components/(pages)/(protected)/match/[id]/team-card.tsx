@@ -1,5 +1,8 @@
 "use client"
 
+// REACT IMPORTS
+import { useTransition } from "react";
+
 // LIBRARIES
 import { useTranslations } from "next-intl";
 
@@ -7,9 +10,11 @@ import { useTranslations } from "next-intl";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlayerItem } from "./player-item";
+import { toast } from "sonner";
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
+import type { APIResponse } from "@/types/responses/APIResponse";
 
 type TeamCardProps = {
     teamName: string;
@@ -17,7 +22,7 @@ type TeamCardProps = {
     teamNumber: 1 | 2;
     currentUserId: string;
     userTeamNumber: number | null;
-    onTogglePlayer: (teamNumber: 1 | 2, action: 'join' | 'leave') => void;
+    onTogglePlayer: (teamNumber: 1 | 2, action: 'join' | 'leave') => Promise<APIResponse>;
 }
 
 export const TeamCard = ({
@@ -29,6 +34,18 @@ export const TeamCard = ({
     onTogglePlayer
 }: TeamCardProps) => {
     const t = useTranslations("MatchPage");
+    const [isPending, startTransition] = useTransition();
+
+    const handleTogglePlayer = (action: 'join' | 'leave') => {
+        startTransition(async () => {
+            const result = await onTogglePlayer(teamNumber, action);
+            if (result.success) {
+                toast.success(result.message);
+            } else {
+                toast.error(result.message);
+            }
+        });
+    };
 
     return (
         <Card>
@@ -43,16 +60,18 @@ export const TeamCard = ({
                             key={player.id}
                             player={player}
                             isCurrentUser={player.id === currentUserId}
-                            onLeave={() => onTogglePlayer(teamNumber, 'leave')}
+                            onLeave={() => handleTogglePlayer('leave')}
+                            isPending={isPending}
                         />
                     ))}
                     {(players?.length ?? 0) < 11 && !userTeamNumber && (
                         <Button
                             variant="outline"
                             className="w-full"
-                            onClick={() => onTogglePlayer(teamNumber, 'join')}
+                            onClick={() => handleTogglePlayer('join')}
+                            disabled={isPending}
                         >
-                            {t('joinTeam')}
+                            {isPending ? t('joiningTeam') : t('joinTeam')}
                         </Button>
                     )}
                 </div>

@@ -6,7 +6,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 // COMPONENTS
 import { Card, CardContent } from "@/components/ui/card";
-import { MatchLoadingSkeleton } from "./match-loading-skeleton";
+import { MatchLoading } from "./match-loading";
 import { MatchDetails } from "./match-details";
 import { TeamCard } from "./team-card";
 
@@ -18,6 +18,7 @@ import { client_managePlayer } from "@/actions/functions/data/client/match/clien
 import type { typesUser } from "@/types/typesUser";
 import type { typesMatch } from "@/types/typesMatch";
 import type { typesMatchWithPlayers } from "@/types/typesMatchWithPlayers";
+import type { APIResponse } from "@/types/responses/APIResponse";
 
 type MatchContentProps = {
     matchId: string;
@@ -73,13 +74,29 @@ export const MatchContent = ({
             queryClient.invalidateQueries({ queryKey: ['match', matchId] });
         },
     });
-
-    const handleTogglePlayer = (teamNumber: 1 | 2, action: 'join' | 'leave') => {
-        togglePlayer({ teamNumber, action });
+    
+    const handleTogglePlayer = async (teamNumber: 1 | 2, action: 'join' | 'leave') => {
+        return new Promise<APIResponse>((resolve) => {
+            togglePlayer(
+                { teamNumber, action },
+                {
+                    onSuccess: (response) => {
+                        resolve(response);
+                    },
+                    onError: () => {
+                        resolve({
+                            success: false,
+                            message: t('errorManagingPlayer'),
+                            data: null
+                        });
+                    }
+                }
+            );
+        });
     };
 
     if (isLoading) {
-        return <MatchLoadingSkeleton />;
+        return <MatchLoading />;
     }
 
     if (error) {

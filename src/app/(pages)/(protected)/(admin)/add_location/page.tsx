@@ -2,16 +2,15 @@
 import { Suspense } from "react";
 
 // NEXTJS IMPORTS
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 // CONFIG
 import { PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
-import { HeaderProtected } from "@/components/ui/header/header_protected";
 import { AddLocationContent } from "@/components/(pages)/(protected)/(admin)/add_location/add-location-content";
 import { ErrorMessage } from "@/components/ui/errors/error-message";
+import { AddLocationLoading } from "@/components/(pages)/(protected)/(admin)/add_location/add-location-loading";
 
 // ACTIONS
 import { server_fetchUserData } from '@/actions/functions/data/server/server_fetchUserData';
@@ -19,14 +18,15 @@ import { server_fetchUserData } from '@/actions/functions/data/server/server_fet
 // TYPES
 import type { typesUser } from "@/types/typesUser";
 
-export default async function AddLocationPage() {
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get('auth_token')?.value as string;
-
+async function AddLocationPageContent() {
     const result = await server_fetchUserData();
     
     if (!result.success) {
-        return <ErrorMessage message={result.message} />;
+        return (
+            <main className="flex flex-col w-full min-h-screen">
+                <ErrorMessage message={result.message} />
+            </main>
+        );
     }
 
     const userData = result.data as typesUser;
@@ -37,12 +37,16 @@ export default async function AddLocationPage() {
     }
 
     return (
-        <main className="flex flex-col w-full min-h-screen">
-            <HeaderProtected serverUserData={userData} authToken={authToken} />
-
-            <Suspense fallback={<p>Loading...</p>}>
-                <AddLocationContent />
-            </Suspense>
+        <main>
+            <AddLocationContent />
         </main>
-    )
+    );
+}
+
+export default function AddLocationPage() {
+    return (
+        <Suspense fallback={<AddLocationLoading />}>
+            <AddLocationPageContent />
+        </Suspense>
+    );
 }

@@ -9,9 +9,9 @@ import { redirect } from "next/navigation";
 import { PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
-import { HeaderProtected } from '@/components/ui/header/header_protected';
 import { PlayerContent } from '@/components/(pages)/(protected)/player/[id]/player-content';
 import { ErrorMessage } from '@/components/ui/errors/error-message';
+import { PlayerLoading } from '@/components/(pages)/(protected)/player/[id]/player-loading';
 
 // ACTIONS
 import { server_fetchUserData } from '@/actions/functions/data/server/server_fetchUserData';
@@ -19,10 +19,10 @@ import { server_fetchUserData } from '@/actions/functions/data/server/server_fet
 // TYPES
 import type { typesUser } from '@/types/typesUser';
 
-export default async function PlayerPage({
-    params,
-}: {
-    params: Promise<{ id: string }>
+async function PlayerPageContent({ 
+    params 
+}: { 
+    params: Promise<{ id: string }> 
 }) {
     const cookieStore = await cookies();
     const authToken = cookieStore.get('auth_token')?.value as string;
@@ -32,7 +32,11 @@ export default async function PlayerPage({
     const result = await server_fetchUserData();
     
     if (!result.success) {
-        return <ErrorMessage message={result.message} />;
+        return (
+            <main className="flex flex-col w-full min-h-screen">
+                <ErrorMessage message={result.message} />
+            </main>
+        );
     }
 
     const userData = result.data as typesUser;
@@ -43,11 +47,19 @@ export default async function PlayerPage({
 
     return (
         <main>
-            <HeaderProtected serverUserData={userData} authToken={authToken} />
-            
-            <Suspense fallback={<p>Loading...</p>}>
-                <PlayerContent authToken={authToken} playerId={id} currentUserData={userData} />
-            </Suspense>
+            <PlayerContent authToken={authToken} playerId={id} currentUserData={userData} />
         </main>
+    );
+}
+
+export default function PlayerPage({ 
+    params 
+}: { 
+    params: Promise<{ id: string }> 
+}) {
+    return (
+        <Suspense fallback={<PlayerLoading />}>
+            <PlayerPageContent params={params} />
+        </Suspense>
     );
 }
