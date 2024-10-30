@@ -17,6 +17,7 @@ import { ReactQueryClientProvider } from "@/providers/react-query-client-provide
 // COMPONENTS
 import { Toaster } from "@/components/ui/sonner";
 import { HeaderProtected } from "@/components/ui/header/header_protected";
+import { HeaderUnprotected } from "@/components/ui/header/header_unprotected";
 
 // ACTIONS
 import { server_fetchUserData } from "@/actions/functions/data/server/server_fetchUserData";
@@ -37,9 +38,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const locale = await getLocale();
- 
-  // Providing all messages to the client
-  // side is the easiest way to get started
   const messages = await getMessages();
 
   const cookieStore = await cookies();
@@ -59,7 +57,11 @@ export default async function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
-              <HeaderProtected serverUserData={userData} authToken={authToken} />
+              {authToken && userData ? (
+                <HeaderProtected serverUserData={userData} authToken={authToken} />
+              ) : (
+                <HeaderUnprotected />
+              )}
 
               {children}
 
