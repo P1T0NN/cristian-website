@@ -152,7 +152,16 @@
         "viewMap": "View Map",
         "errorFetchingMatch": "Error fetching match",
         "leaving": "Leaving...",
-        "joiningTeam": "Joining..."
+        "joiningTeam": "Joining...",
+        "whiteShirt": "White Shirt",
+        "blackShirt": "Black Shirt",
+        "swapColors": "Switch team colors",
+        "enterInstructions": "Enter match instructions...",
+        "noInstructions": "No instructions provided for this match.",
+        "editInstructions": "Edit instructions",
+        "saving": "Saving...",
+        "save": "Save",
+        "cancel": "Cancel"
     },
 
     "EditMatchPage": {
@@ -312,6 +321,8 @@
         "UPDATE_FULL_NAME_RATE_LIMIT": "Please wait 5 minutes before updating your full name again",
         "DEBT_DELETION_RATE_LIMITED": "Please wait 5 minutes before deleting another debt",
         "LOGOUT_RATE_LIMITED": "Please wait 5 minutes before doing a logout again",
+        "COLOR_TOGGLE_RATE_LIMITED": "Please wait 5 minutes before switching team color again",
+        "MATCH_INSTRUCTIONS_EDIT_RATE_LIMITED": "Please wait 5 minutes before editing match instructions again",
 
         "REGISTER_VERIFICATION_TOKEN_EMAIL_SENT": "Verification email sent successfully. Please check your email!",
         "REGISTER_VERIFICATION_EMAIL_FAILED": "Failed to send verification email. Please try again later.",
@@ -322,6 +333,8 @@
         "MATCH_EDIT_FAILED": "Failed to edit match. Please try again!",
         "MATCH_UPDATED": "Match updated successfully!",
         "MATCH_ID_INVALID": "Invalid match!",
+        "MATCH_INSTRUCTIONS_EDIT_FAILED": "Failed to update match instructions. Please try again.",
+        "MATCH_INSTRUCTIONS_UPDATED": "Match instructions updated successfully.",
 
         "MATCH_DELETION_FAILED": "Failed to delete match. Please try again!",
         "MATCH_DELETED": "Match deleted successfully!",
@@ -344,6 +357,9 @@
         "LOCATION_CREATED": "Location added successfully!",
         "LOCATION_DELETION_FAILED": "Failed to delete location. Please try again!",
         "LOCATION_DELETED": "Location deleted successfully!",
+
+        "COLOR_TOGGLE_FAILED": "Failed to switch team colors. Please try again!",
+        "COLOR_TOGGLED": "Switched team colors!",
 
         "USER_UPDATE_FAILED": "Failed to update user settings. Please try again!",
         "USER_FULL_NAME_UPDATED": "Full name updated successfully!",

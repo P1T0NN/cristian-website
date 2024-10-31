@@ -19,6 +19,7 @@ import { DeleteMatchButton } from "./delete-match-button";
 
 // UTILS
 import { formatTime, formatDate } from "@/utils/dateUtils";
+import { getGenderLabel } from "@/utils/next-intl/getGenderLable";
 
 // TYPES
 import type { typesMatch } from "@/types/typesMatch";
@@ -30,13 +31,16 @@ import { MapPin, Clock, Users, Dumbbell } from 'lucide-react';
 type MatchCardProps = {
     match: typesMatch;
     serverUserData: typesUser;
+    locale: string;
 };
 
 export const MatchCard = memo(({ 
     match,
-    serverUserData
+    serverUserData,
+    locale
 }: MatchCardProps) => {
     const t = useTranslations("MatchCardComponent");
+
     const router = useRouter();
 
     const handleViewMatch = () => {
@@ -63,7 +67,7 @@ export const MatchCard = memo(({
                         </div>
                         <div className="flex items-center text-sm text-muted-foreground">
                             <Clock className="w-4 h-4 mr-1" />
-                            <span>{formatDate(match.starts_at_day)} - {formatTime(match.starts_at_hour)}h</span>
+                            <span>{formatDate(locale, match.starts_at_day)} - {formatTime(match.starts_at_hour)}h</span>
                         </div>
                     </div>
 
@@ -71,7 +75,7 @@ export const MatchCard = memo(({
                         <div className="flex items-center">
                             <Users className="w-4 h-4 mr-2" />
                             <span className="font-medium mr-1">{t("gender")}</span>
-                            <span>{match.match_gender}</span>
+                            <span>{getGenderLabel(locale, match.match_gender)}</span>
                         </div>
                         <div className="flex items-center">
                             <Dumbbell className="w-4 h-4 mr-2" />

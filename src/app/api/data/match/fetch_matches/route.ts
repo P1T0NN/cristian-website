@@ -13,8 +13,7 @@ import { redisCacheService } from '@/services/server/redis-cache.service';
 import type { APIResponse } from '@/types/responses/APIResponse';
 import type { typesMatch } from '@/types/typesMatch';
 
-const ALL_MATCHES_CACHE_KEY = 'all_matches';
-const MATCH_CACHE_KEY_PREFIX = 'match_';
+const MATCHES_CACHE_PREFIX = 'match:';
 const CACHE_TTL = 60 * 60 * 12; // 12 hours in seconds
 
 export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
@@ -33,41 +32,37 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
         return NextResponse.json({ success: false, message: genericMessages('JWT_DECODE_ERROR') }, { status: 401 });
     }
 
-    // Try to get data from Redis cache
-    const cacheResult = await redisCacheService.get<typesMatch[]>(ALL_MATCHES_CACHE_KEY);
+    // Fetch matches from database
+    const { data: dbMatches, error: supabaseError } = await supabase
+        .from('matches')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .returns<typesMatch[]>();
 
-    let matches: typesMatch[] | null = null;
-
-    if (cacheResult.success && cacheResult.data) {
-        matches = cacheResult.data;
-    } else {
-        // If not in cache or cache retrieval failed, fetch from database
-        const { data: dbMatches, error: supabaseError } = await supabase
-            .from('matches')
-            .select('*')
-            .order('created_at', { ascending: false })
-            .returns<typesMatch[]>();
-
-        if (supabaseError) {
-            return NextResponse.json({ success: false, message: fetchMessages('MATCHES_FAILED_TO_FETCH') }, { status: 500 });
-        }
-
-        matches = dbMatches;
-
-        // Store in Redis cache
-        if (matches && matches.length > 0) {
-            await redisCacheService.set(ALL_MATCHES_CACHE_KEY, matches, CACHE_TTL);
-
-            // Cache individual matches
-            for (const match of matches) {
-                await redisCacheService.set(`${MATCH_CACHE_KEY_PREFIX}${match.id}`, match, CACHE_TTL);
-            }
-        }
+    if (supabaseError) {
+        return NextResponse.json({ success: false, message: fetchMessages('MATCHES_FAILED_TO_FETCH') }, { status: 500 });
     }
 
-    if (!matches || matches.length === 0) {
+    // If no matches found
+    if (!dbMatches || dbMatches.length === 0) {
         return NextResponse.json({ success: true, message: fetchMessages('NO_MATCHES_FOUND'), data: [] });
     }
 
-    return NextResponse.json({ success: true, message: fetchMessages('MATCHES_SUCCESSFULLY_FETCHED'), data: matches });
+    // Cache each match individually
+    const cachedMatches = await Promise.all(dbMatches.map(async (match) => {
+        const cacheKey = `${MATCHES_CACHE_PREFIX}${match.id}`;
+        
+        // Try to get from cache first
+        const cachedMatch = await redisCacheService.get<typesMatch>(cacheKey);
+        
+        if (cachedMatch.success && cachedMatch.data) {
+            return cachedMatch.data;
+        }
+        
+        // If not in cache, cache the match
+        await redisCacheService.set(cacheKey, match, CACHE_TTL);
+        return match;
+    }));
+
+    return NextResponse.json({ success: true, message: fetchMessages('MATCHES_SUCCESSFULLY_FETCHED'), data: cachedMatches });
 }

@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 
 // UTILS
 import { formatDate, formatTime } from "@/utils/dateUtils";
+import { getGenderLabel } from "@/utils/next-intl/getGenderLable";
 
 // TYPES
 import type { typesMatch } from "@/types/typesMatch";
@@ -18,10 +19,12 @@ import { MapPin, Calendar, Clock, Coins, ExternalLink } from 'lucide-react';
 
 type MatchDetailsProps = {
     match: typesMatch;
+    locale: string;
 }
 
 export const MatchDetails = ({ 
-    match 
+    match,
+    locale 
 }: MatchDetailsProps) => {
     const t = useTranslations("MatchPage");
 
@@ -35,7 +38,7 @@ export const MatchDetails = ({
                             {match.match_type}
                         </Badge>
                         <Badge variant="secondary">
-                            {match.match_gender}
+                            {getGenderLabel(locale, match.match_gender)}
                         </Badge>
                     </div>
                 </div>
@@ -59,7 +62,7 @@ export const MatchDetails = ({
                     </div>
                     <div className="flex flex-col items-center">
                         <Calendar className="h-5 w-5 text-muted-foreground mb-2" />
-                        <span className="text-sm font-medium">{formatDate(match.starts_at_day)}</span>
+                        <span className="text-sm font-medium">{formatDate(locale, match.starts_at_day)}</span>
                     </div>
                     <div className="flex flex-col items-center">
                         <Clock className="h-5 w-5 text-muted-foreground mb-2" />

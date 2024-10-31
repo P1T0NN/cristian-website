@@ -35,11 +35,13 @@ const CACHE_TIME = 10 * 60 * 1000;
 type HomeContentProps = {
     authToken: string;
     serverUserData: typesUser;
+    locale: string;
 }
 
 export const HomeContent = ({ 
     authToken,
-    serverUserData 
+    serverUserData,
+    locale
 }: HomeContentProps) => {
     const t = useTranslations("HomePage");
     const [activeFilters, setActiveFilters] = useState<FilterValues>({
@@ -144,9 +146,9 @@ export const HomeContent = ({
                     transition={{ staggerChildren: 0.1 }}
                     className="flex flex-col items-center space-y-8"
                 >
-                    <MatchesRow title={t('todayMatches')} matches={groupedMatches.today} serverUserData={serverUserData} />
-                    <MatchesRow title={t('tomorrowMatches')} matches={groupedMatches.tomorrow} serverUserData={serverUserData} />
-                    <MatchesRow title={t('upcomingMatches')} matches={sortedFutureMatches} serverUserData={serverUserData} />
+                    <MatchesRow title={t('todayMatches')} matches={groupedMatches.today} serverUserData={serverUserData} locale={locale} />
+                    <MatchesRow title={t('tomorrowMatches')} matches={groupedMatches.tomorrow} serverUserData={serverUserData} locale={locale} />
+                    <MatchesRow title={t('upcomingMatches')} matches={sortedFutureMatches} serverUserData={serverUserData} locale={locale} />
                 </motion.div>
             )}
         </section>

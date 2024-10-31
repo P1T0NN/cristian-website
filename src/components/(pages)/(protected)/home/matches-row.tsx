@@ -12,12 +12,14 @@ type MatchesRowProps = {
     title: string;
     matches: typesMatch[];
     serverUserData: typesUser;
+    locale: string;
 }
 
 export const MatchesRow = ({ 
     title, 
     matches,
-    serverUserData
+    serverUserData,
+    locale
 }: MatchesRowProps) => {
     if (matches.length === 0) return null;
 
@@ -40,6 +42,7 @@ export const MatchesRow = ({
                         <MatchCard 
                             match={match} 
                             serverUserData={serverUserData}
+                            locale={locale}
                         />
                     </motion.div>
                 ))}

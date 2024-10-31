@@ -145,14 +145,23 @@
         "noMatchFound": "No se encontró el partido",
         "type": "Tipo",
         "gender": "Género",
-        "leaveTeam": "Abandonar equipo",
+        "leaveTeam": "Salir del equipo",
         "joinTeam": "Unirse al equipo",
         "players": "Jugadores",
         "player": "Jugador",
         "viewMap": "Ver mapa",
         "errorFetchingMatch": "Error al obtener el partido",
         "leaving": "Saliendo...",
-        "joiningTeam": "Uniéndose..."
+        "joiningTeam": "Uniéndose...",
+        "whiteShirt": "Camiseta blanca",
+        "blackShirt": "Camiseta negra",
+        "swapColors": "Cambiar colores del equipo",
+        "enterInstructions": "Ingresar instrucciones del partido...",
+        "noInstructions": "No se proporcionaron instrucciones para este partido.",
+        "editInstructions": "Editar instrucciones",
+        "saving": "Guardando...",
+        "save": "Guardar",
+        "cancel": "Cancelar"
     },
 
     "EditMatchPage": {
@@ -312,6 +321,8 @@
         "UPDATE_FULL_NAME_RATE_LIMIT": "Espera 5 minutos antes de actualizar tu nombre completo nuevamente",
         "DEBT_DELETION_RATE_LIMITED": "Espera 5 minutos antes de eliminar otra deuda",
         "LOGOUT_RATE_LIMITED": "Espera 5 minutos antes de hacer otro cierre de sesión",
+        "COLOR_TOGGLE_RATE_LIMITED": "Por favor, espera 5 minutos antes de cambiar el color del equipo nuevamente.",
+        "MATCH_INSTRUCTIONS_EDIT_RATE_LIMITED": "Por favor, espera 5 minutos antes de editar las instrucciones del partido nuevamente.",
 
         "REGISTER_VERIFICATION_TOKEN_EMAIL_SENT": "Correo de verificación enviado exitosamente. ¡Revisa tu correo!",
         "REGISTER_VERIFICATION_EMAIL_FAILED": "Error al enviar el correo de verificación. Inténtalo de nuevo más tarde.",
@@ -322,6 +333,8 @@
         "MATCH_EDIT_FAILED": "Error al editar el partido. ¡Inténtalo de nuevo!",
         "MATCH_UPDATED": "¡Partido actualizado exitosamente!",
         "MATCH_ID_INVALID": "¡Partido inválido!",
+        "MATCH_INSTRUCTIONS_EDIT_FAILED": "Error al actualizar las instrucciones del partido. Por favor, inténtalo de nuevo.",
+        "MATCH_INSTRUCTIONS_UPDATED": "Instrucciones del partido actualizadas con éxito.",
 
         "MATCH_DELETION_FAILED": "Error al eliminar el partido. ¡Inténtalo de nuevo!",
         "MATCH_DELETED": "¡Partido eliminado exitosamente!",
@@ -344,6 +357,9 @@
         "LOCATION_CREATED": "Ubicación añadida exitosamente.",
         "LOCATION_DELETION_FAILED": "Error al eliminar la ubicación. ¡Inténtalo de nuevo!",
         "LOCATION_DELETED": "Ubicación eliminada exitosamente.",
+
+        "COLOR_TOGGLE_FAILED": "Error al cambiar los colores del equipo. ¡Por favor, inténtalo de nuevo!",
+        "COLOR_TOGGLED": "¡Colores del equipo cambiados!",
 
         "USER_UPDATE_FAILED": "Error al actualizar la configuración del usuario. ¡Inténtalo de nuevo!",
         "USER_FULL_NAME_UPDATED": "Nombre completo actualizado exitosamente.",

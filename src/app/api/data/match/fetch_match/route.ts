@@ -14,7 +14,7 @@ import type { APIResponse } from '@/types/responses/APIResponse';
 import type { typesMatch } from '@/types/typesMatch';
 import type { typesMatchWithPlayers } from '@/types/typesMatchWithPlayers';
 
-const MATCH_CACHE_KEY_PREFIX = 'match_';
+const MATCH_CACHE_KEY_PREFIX = 'match:';
 const CACHE_TTL = 60 * 60 * 12; // 12 hours in seconds
 
 export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>> {

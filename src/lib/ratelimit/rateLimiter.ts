@@ -20,6 +20,8 @@ const deleteMatchThreshold = 50;
 const updateFullNameThreshold = 5;
 const deleteDebtThreshold = 50;
 const logoutThreshold = 10;
+const toggleTeamColorThreshold = 30;
+const editMatchInstructions = 30;
 
 export const applyRateLimit = async (
     request: Request, 
@@ -34,7 +36,9 @@ export const applyRateLimit = async (
         'deleteMatch' |
         'updateFullName' |
         'deleteDebt' |
-        'logout'
+        'logout' |
+        'toggleTeamColor' |
+        'editMatchInstructions'
 ): Promise<{ success: boolean; message?: string }> => {
     const ip = getIP(request);
     if (!ip) {
@@ -75,6 +79,12 @@ export const applyRateLimit = async (
             break;
         case 'logout':
             threshold = logoutThreshold;
+            break;
+        case 'toggleTeamColor':
+            threshold = toggleTeamColorThreshold;
+            break;
+        case 'editMatchInstructions':
+            threshold = editMatchInstructions;
             break;
         default:
             return { success: false, message: 'Invalid limit type' };

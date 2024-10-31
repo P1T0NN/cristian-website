@@ -56,13 +56,7 @@ export const AccountSettings = ({
 
     const handleLanguageChange = (newLocale: string) => {
         startTransition(async () => {
-            try {
-                await setUserLocale(newLocale as Locale);
-                // Refresh the page to apply the new locale
-                window.location.reload();
-            } catch {
-                toast.error('Failed to update language preference');
-            }
+            await setUserLocale(newLocale as Locale);
         });
     };
 

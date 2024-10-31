@@ -4,6 +4,9 @@ import { Suspense } from 'react';
 // NEXTJS IMPORTS
 import { cookies } from "next/headers";
 
+// SERVICES
+import { getUserLocale } from '@/services/server/locale';
+
 // COMPONENTS
 import { ErrorMessage } from "@/components/ui/errors/error-message";
 import { MatchContent } from "@/components/(pages)/(protected)/match/[id]/match-content";
@@ -20,6 +23,7 @@ async function MatchPageContent({
 }: { 
     params: Promise<{ id: string }>
 }) {
+    const locale = await getUserLocale();
     const cookieStore = await cookies();
     const authToken = cookieStore.get('auth_token')?.value as string;
 
@@ -39,7 +43,7 @@ async function MatchPageContent({
 
     return (
         <main>
-            <MatchContent matchId={id} authToken={authToken} currentUserId={userData.id} />
+            <MatchContent matchId={id} authToken={authToken} serverUserData={userData} locale={locale} />
         </main>
     );
 }

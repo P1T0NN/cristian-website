@@ -22,7 +22,7 @@ export const PlayerItem = ({
     player, 
     isCurrentUser, 
     onLeave,
-    isPending = false
+    isPending
 }: PlayerItemProps) => {
     const t = useTranslations("MatchPage");
 

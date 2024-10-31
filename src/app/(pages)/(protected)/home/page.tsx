@@ -4,6 +4,9 @@ import { Suspense } from 'react';
 // NEXTJS IMPORTS
 import { cookies } from "next/headers";
 
+// SERVICES
+import { getUserLocale } from '@/services/server/locale';
+
 // COMPONENTS
 import { HomeContent } from '@/components/(pages)/(protected)/home/home-content';
 import { ErrorMessage } from '@/components/ui/errors/error-message';
@@ -16,6 +19,7 @@ import { server_fetchUserData } from '@/actions/functions/data/server/server_fet
 import type { typesUser } from '@/types/typesUser';
 
 async function HomePageContent() {
+    const locale = await getUserLocale();
     const cookieStore = await cookies();
     const authToken = cookieStore.get('auth_token')?.value as string;
 
@@ -33,7 +37,7 @@ async function HomePageContent() {
 
     return (
         <main>
-            <HomeContent authToken={authToken} serverUserData={userData} />
+            <HomeContent authToken={authToken} serverUserData={userData} locale={locale} />
         </main>
     );
 }
