@@ -4,6 +4,9 @@
 import { useState } from 'react';
 
 // NEXTJS IMPORTS
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+
+// LIBRARIES
 import { useTranslations } from 'next-intl';
 
 // COMPONENTS
@@ -38,26 +41,26 @@ export type FilterValues = {
 };
 
 type FilterModalProps = {
-    onFilterChange: (filters: FilterValues) => void;
-    onClearFilters: () => void;
     children?: React.ReactNode;
 };
 
 export const FilterModal = ({ 
-    onFilterChange, 
-    onClearFilters,
     children
 }: FilterModalProps) => {
     const t = useTranslations("FilterModalComponent");
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
 
+    // Initialize filters from current URL search params
     const [filters, setFilters] = useState<FilterValues>({
-        location: '',
-        price: '',
-        date: '',
-        timeFrom: '',
-        timeTo: '',
-        gender: '',
-        matchType: '',
+        location: searchParams.get('location') || '',
+        price: searchParams.get('price') || '',
+        date: searchParams.get('date') || '',
+        timeFrom: searchParams.get('timeFrom') || '',
+        timeTo: searchParams.get('timeTo') || '',
+        gender: searchParams.get('gender') || '',
+        matchType: searchParams.get('matchType') || '',
     });
 
     const handleFilterChange = (key: keyof FilterValues, value: string) => {
@@ -68,10 +71,22 @@ export const FilterModal = ({
     };
 
     const handleSave = () => {
-        onFilterChange(filters);
+        // Create URL search params
+        const params = new URLSearchParams();
+        
+        // Only add non-empty filters to the URL
+        (Object.keys(filters) as Array<keyof FilterValues>).forEach(key => {
+            if (filters[key]) {
+                params.set(key, filters[key]);
+            }
+        });
+
+        // Navigate with new search params
+        router.push(`${pathname}?${params.toString()}`);
     };
 
-    const clearFilters = () => {
+    const handleClearFilters = () => {
+        // Reset local state
         setFilters({
             location: '',
             price: '',
@@ -81,7 +96,9 @@ export const FilterModal = ({
             gender: '',
             matchType: '',
         });
-        onClearFilters();
+        
+        // Remove all search params
+        router.push(pathname);
     };
 
     return (
@@ -185,7 +202,7 @@ export const FilterModal = ({
                 </div>
                 
                 <DialogFooter className='flex w-full justify-between'>
-                    <Button variant="outline" onClick={clearFilters}>{t("clearFilters")}</Button>
+                    <Button variant="outline" onClick={handleClearFilters}>{t("clearFilters")}</Button>
                     <DialogClose asChild>
                         <Button onClick={handleSave}>{t("applyFilters")}</Button>
                     </DialogClose>

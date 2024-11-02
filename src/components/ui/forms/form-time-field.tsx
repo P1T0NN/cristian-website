@@ -59,7 +59,7 @@ export const FormTimeField = ({
 
     return (
         <div className="space-y-2">
-            <Label htmlFor={name} className="text-sm font-medium">{label}</Label>
+            <Label htmlFor={name} className="text-sm font-medium text-gray-700">{label}</Label>
             <div className={`flex items-center justify-center ${disableArrows ? 'space-x-2' : 'space-x-4'}`}>
                 <div className={`flex ${disableArrows ? 'flex-row space-x-2' : 'flex-col items-center space-y-2'}`}>
                     {!disableArrows && (
@@ -68,7 +68,7 @@ export const FormTimeField = ({
                             size="sm" 
                             variant="outline" 
                             onClick={incrementHours}
-                            className="w-8 h-8"
+                            className="w-8 h-8 hover:bg-primary hover:text-primary-foreground transition-colors duration-200"
                         >
                             <ChevronUp className="h-4 w-4" />
                         </Button>
@@ -78,7 +78,7 @@ export const FormTimeField = ({
                         id={`${name}-hours`}
                         value={hours}
                         onChange={(e) => handleHoursChange(e.target.value)}
-                        className={`${disableArrows ? 'w-12 h-10' : 'w-14 h-12'} text-center text-lg`}
+                        className={`${disableArrows ? 'w-12 h-10' : 'w-14 h-12'} text-center text-lg transition-all duration-200 ease-in-out focus:ring-2 focus:ring-primary focus:border-transparent`}
                     />
                     {!disableArrows && (
                         <Button 
@@ -86,7 +86,7 @@ export const FormTimeField = ({
                             size="sm" 
                             variant="outline" 
                             onClick={decrementHours}
-                            className="w-8 h-8"
+                            className="w-8 h-8 hover:bg-primary hover:text-primary-foreground transition-colors duration-200"
                         >
                             <ChevronDown className="h-4 w-4" />
                         </Button>
@@ -102,7 +102,7 @@ export const FormTimeField = ({
                             size="sm" 
                             variant="outline" 
                             onClick={incrementMinutes}
-                            className="w-8 h-8"
+                            className="w-8 h-8 hover:bg-primary hover:text-primary-foreground transition-colors duration-200"
                         >
                             <ChevronUp className="h-4 w-4" />
                         </Button>
@@ -112,7 +112,7 @@ export const FormTimeField = ({
                         id={`${name}-minutes`}
                         value={minutes}
                         onChange={(e) => handleMinutesChange(e.target.value)}
-                        className={`${disableArrows ? 'w-12 h-10' : 'w-14 h-12'} text-center text-lg`}
+                        className={`${disableArrows ? 'w-12 h-10' : 'w-14 h-12'} text-center text-lg transition-all duration-200 ease-in-out focus:ring-2 focus:ring-primary focus:border-transparent`}
                     />
                     {!disableArrows && (
                         <Button 
@@ -120,14 +120,14 @@ export const FormTimeField = ({
                             size="sm" 
                             variant="outline" 
                             onClick={decrementMinutes}
-                            className="w-8 h-8"
+                            className="w-8 h-8 hover:bg-primary hover:text-primary-foreground transition-colors duration-200"
                         >
                             <ChevronDown className="h-4 w-4" />
                         </Button>
                     )}
                 </div>
             </div>
-            {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+            {error && <p className="text-sm text-red-500 mt-1 animate-fadeIn">{error}</p>}
         </div>
     )
 }

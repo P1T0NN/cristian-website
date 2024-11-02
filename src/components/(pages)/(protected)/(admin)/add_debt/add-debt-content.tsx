@@ -27,8 +27,11 @@ import { AddDebtForm } from "./add-debt-form";
 import { useForm } from "@/hooks/useForm";
 import { useZodSchemas } from "@/hooks/useZodSchema";
 
+// SERVER ACTIONS
+import { addDebt } from "@/actions/server_actions/mutations/debt/addDebt";
+
 // ACTIONS
-import { addDebt } from "@/actions/functions/queries/add-debt";
+import { clientFetchUserIdByName } from "@/actions/functions/data/client/user/client_fetchUserIdByName";
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
@@ -64,9 +67,17 @@ export const AddDebtContent = ({
         validationSchema: addDebtSchema,
         onSubmit: async (values) => {
             startTransition(async () => {
-                const result = await addDebt(values);
+                const result = await addDebt(authToken, values);
+
                 if (result.success) {
-                    router.push(PAGE_ENDPOINTS.HOME_PAGE);
+                    const userIdResult = await clientFetchUserIdByName(authToken, values.player_name);
+
+                    if (userIdResult.success && userIdResult.data && userIdResult.data) {
+                        router.push(`${PAGE_ENDPOINTS.PLAYER_PAGE}/${userIdResult.data}`);
+                    } else {
+                        router.push(PAGE_ENDPOINTS.HOME_PAGE);
+                    }
+
                     toast.success(result.message);
                 } else {
                     toast.error(result.message);

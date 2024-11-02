@@ -1,5 +1,6 @@
 // NEXTJS IMPORTS
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache'
 
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';

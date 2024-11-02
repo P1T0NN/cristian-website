@@ -1,17 +1,9 @@
 // REACTJS IMPORTS
 import { Suspense } from 'react';
 
-// NEXTJS IMPORTS
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-
-// CONFIG
-import { PAGE_ENDPOINTS } from "@/config";
-
 // COMPONENTS
-import { PlayerContent } from '@/components/(pages)/(protected)/player/[id]/player-content';
-import { ErrorMessage } from '@/components/ui/errors/error-message';
-import { PlayerLoading } from '@/components/(pages)/(protected)/player/[id]/player-loading';
+import { PlayerDetails } from '@/components/(pages)/(protected)/player/[id]/player-details';
+import { PlayerDetailsLoading } from '@/components/(pages)/(protected)/player/[id]/loading/player-details-loading';
 
 // ACTIONS
 import { server_fetchUserData } from '@/actions/functions/data/server/server_fetchUserData';
@@ -19,47 +11,22 @@ import { server_fetchUserData } from '@/actions/functions/data/server/server_fet
 // TYPES
 import type { typesUser } from '@/types/typesUser';
 
-async function PlayerPageContent({ 
+export default async function PlayerPage({ 
     params 
 }: { 
     params: Promise<{ id: string }> 
 }) {
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get('auth_token')?.value as string;
-
     const { id } = await params;
 
-    const result = await server_fetchUserData();
-    
-    if (!result.success) {
-        return (
-            <main className="flex flex-col w-full min-h-screen">
-                <ErrorMessage message={result.message} />
-            </main>
-        );
-    }
+    const serverUserData = await server_fetchUserData();
 
-    const userData = result.data as typesUser;
-
-    if (!userData.isAdmin) {
-        redirect(PAGE_ENDPOINTS.HOME_PAGE);
-    }
+    const userData = serverUserData.data as typesUser;
 
     return (
-        <main>
-            <PlayerContent authToken={authToken} playerId={id} currentUserData={userData} />
-        </main>
+        <div className="container mx-auto px-4 py-8">
+            <Suspense fallback={<PlayerDetailsLoading />}>
+                <PlayerDetails playerId={id} currentUserData={userData} />
+            </Suspense>
+        </div>
     );
-}
-
-export default function PlayerPage({ 
-    params 
-}: { 
-    params: Promise<{ id: string }> 
-}) {
-    return (
-        <Suspense fallback={<PlayerLoading />}>
-            <PlayerPageContent params={params} />
-        </Suspense>
-    );
-}
+};

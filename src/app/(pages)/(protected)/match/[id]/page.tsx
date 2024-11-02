@@ -2,60 +2,107 @@
 import { Suspense } from 'react';
 
 // NEXTJS IMPORTS
-import { cookies } from "next/headers";
-
-// SERVICES
-import { getUserLocale } from '@/services/server/locale';
+import { cookies } from 'next/headers';
 
 // COMPONENTS
-import { ErrorMessage } from "@/components/ui/errors/error-message";
-import { MatchContent } from "@/components/(pages)/(protected)/match/[id]/match-content";
-import { MatchLoading } from "@/components/(pages)/(protected)/match/[id]/match-loading";
+import { MatchDetails } from '@/components/(pages)/(protected)/match/[id]/match-details';
+import { MatchInstructions } from '@/components/(pages)/(protected)/match/[id]/match-instructions';
+import { DisplayTeamDetails } from '@/components/(pages)/(protected)/match/[id]/display-team-details';
+import { SwitchTeamColors } from '@/components/(pages)/(protected)/match/[id]/switch-team-colors';
+import { TeamCard } from '@/components/(pages)/(protected)/match/[id]/team-card';
+import { MatchDetailsLoading } from '@/components/(pages)/(protected)/match/[id]/loading/match-details-loading';
+import { MatchInstructionsLoading } from '@/components/(pages)/(protected)/match/[id]/loading/match-instructions-loading';
+import { DisplayTeamDetailsLoading } from '@/components/(pages)/(protected)/match/[id]/loading/display-team-details-loading';
+import { SwitchTeamColorsLoading } from '@/components/(pages)/(protected)/match/[id]/loading/switch-team-colors-loading';
+import { TeamCardLoading } from '@/components/(pages)/(protected)/match/[id]/loading/team-card-loading';
 
 // ACTIONS
-import { server_fetchUserData } from "@/actions/functions/data/server/server_fetchUserData";
+import { server_fetchUserData } from '@/actions/functions/data/server/server_fetchUserData';
+import { serverFetchMatch } from '@/actions/functions/data/server/server_fetchMatch';
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
 
-async function MatchPageContent({ 
-    params 
+
+export default async function MatchPage({ 
+    params
 }: { 
     params: Promise<{ id: string }>
 }) {
-    const locale = await getUserLocale();
+    const { id } = await params;
+
     const cookieStore = await cookies();
     const authToken = cookieStore.get('auth_token')?.value as string;
 
-    const { id } = await params;
+    const serverUserData = await server_fetchUserData();
+    const { match, team1Players, team2Players } = await serverFetchMatch(id);
 
-    const result = await server_fetchUserData();
-    
-    if (!result.success) {
-        return (
-            <main className="flex flex-col w-full min-h-screen">
-                <ErrorMessage message={result.message} />
-            </main>
-        );
+    const userData = serverUserData.data as typesUser;
+
+    const isUserInTeam = (players: typesUser[] | undefined) => {
+        return players?.some(player => player.id === userData.id) ?? false
     }
 
-    const userData = result.data as typesUser;
+    const userTeamNumber = isUserInTeam(team1Players) 
+        ? 1 
+        : isUserInTeam(team2Players) 
+            ? 2 
+            : null
 
     return (
-        <main>
-            <MatchContent matchId={id} authToken={authToken} serverUserData={userData} locale={locale} />
-        </main>
-    );
-}
+        <section className="space-y-6 p-4 max-w-4xl mx-auto">
+            <Suspense fallback={<MatchDetailsLoading />}>
+                <MatchDetails serverMatchData={match} />
+            </Suspense>
 
-export default function MatchPage({ 
-    params 
-}: { 
-    params: Promise<{ id: string }>
-}) {
-    return (
-        <Suspense fallback={<MatchLoading />}>
-            <MatchPageContent params={params} />
-        </Suspense>
+            <Suspense fallback={<MatchInstructionsLoading />}>
+                <MatchInstructions 
+                    instructions={match.match_instructions} 
+                    matchId={id} 
+                    authToken={authToken} 
+                />
+            </Suspense>
+
+            <Suspense fallback={<DisplayTeamDetailsLoading />}>
+                <DisplayTeamDetails match={match} />
+            </Suspense>
+
+            <div className="flex items-center">
+                <Suspense fallback={<SwitchTeamColorsLoading />}>
+                    {userData.isAdmin && (
+                        <SwitchTeamColors
+                            matchId={id}
+                            authToken={authToken}
+                            isAdmin={userData.isAdmin}
+                        />
+                    )}
+                </Suspense>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Suspense fallback={<TeamCardLoading />}>
+                    <TeamCard
+                        teamName={match.team1_name}
+                        players={team1Players}
+                        teamNumber={1}
+                        currentUserId={userData.id}
+                        userTeamNumber={userTeamNumber}
+                        matchId={id}
+                        authToken={authToken}
+                    />
+                </Suspense>
+                <Suspense fallback={<TeamCardLoading />}>
+                    <TeamCard
+                        teamName={match.team2_name}
+                        players={team2Players}
+                        teamNumber={2}
+                        currentUserId={userData.id}
+                        userTeamNumber={userTeamNumber}
+                        matchId={id}
+                        authToken={authToken}
+                    />
+                </Suspense>
+            </div>
+        </section>
     );
 }

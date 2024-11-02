@@ -134,34 +134,46 @@
         "viewMap": "Ver mapa",
         "actions": "Acciones",
         "delete": "Eliminar",
+        "deleting": "Eliminando...",
         "confirmDelete": "Confirmar eliminación",
-        "deleteLocationConfirmation": "¿Estás seguro de que deseas eliminar la ubicación '{locationName}'? Esta acción no se puede deshacer.",
+        "deleteLocationConfirmation": "¿Estás seguro de que deseas eliminar la ubicación? Esta acción no se puede deshacer.",
         "cancel": "Cancelar",
         "locationDeletedSuccess": "Ubicación eliminada con éxito",
         "locationDeletedError": "Error al eliminar la ubicación. Inténtalo de nuevo."
     },
 
     "MatchPage": {
-        "noMatchFound": "No se encontró el partido",
+        "noMatchFound": "No se encontró ningún partido",
         "type": "Tipo",
         "gender": "Género",
-        "leaveTeam": "Salir del equipo",
+        "leaveTeam": "Abandonar equipo",
         "joinTeam": "Unirse al equipo",
         "players": "Jugadores",
         "player": "Jugador",
         "viewMap": "Ver mapa",
         "errorFetchingMatch": "Error al obtener el partido",
-        "leaving": "Saliendo...",
+        "leaving": "Abandonando...",
         "joiningTeam": "Uniéndose...",
         "whiteShirt": "Camiseta blanca",
         "blackShirt": "Camiseta negra",
-        "swapColors": "Cambiar colores del equipo",
-        "enterInstructions": "Ingresar instrucciones del partido...",
+        "swapColors": "Cambiar colores de equipo",
+        "enterInstructions": "Ingrese instrucciones del partido...",
         "noInstructions": "No se proporcionaron instrucciones para este partido.",
         "editInstructions": "Editar instrucciones",
         "saving": "Guardando...",
         "save": "Guardar",
-        "cancel": "Cancelar"
+        "cancel": "Cancelar",
+        "genderMatchCard": "Género:",
+        "typeMatchCard": "Tipo:",
+        "checkAvailability": "Verificar disponibilidad",
+        "viewMatch": "Ver partido",
+        "finishMatch": "Finalizar partido",
+        "editMatch": "Editar partido",
+        "deleteMatch": "Eliminar partido",
+        "deleteMatchTitle": "Confirmar eliminación",
+        "deleteMatchConfirmation": "¿Estás seguro de que quieres eliminar este partido? Esta acción no se puede deshacer.",
+        "delete": "Eliminar",
+        "deleting": "Eliminando..."
     },
 
     "EditMatchPage": {
@@ -206,6 +218,27 @@
         "updatePassword": "Actualizar contraseña"
     },
 
+    "PlayerPage": {
+        "verified": "Verificado",
+        "admin": "Administrador",
+        "joined": "Se unió",
+        "playerOwes": "El jugador debe",
+        "iOwe": "Yo debo",
+        "addDebt": "Añadir deuda",
+        "individualDebts": "Deudas individuales",
+        "tableHeaderDate": "Fecha",
+        "tableHeaderPlayerOwes": "Jugador debe",
+        "tableHeaderIOwe": "Yo debo",
+        "tableHeaderReason": "Razón",
+        "tableHeaderAddedBy": "Añadido por",
+        "tableHeaderActions": "Acciones",
+        "deleteDebtButtonLabel": "Eliminar deuda",
+        "deleteDebtConfirmTitle": "¿Estás completamente seguro?",
+        "deleteDebtConfirmDescription": "Esta acción no se puede deshacer. Esto eliminará permanentemente la deuda y la quitará de nuestros servidores.",
+        "deleteDebtCancel": "Cancelar",
+        "deleteDebtConfirm": "Eliminar"
+    },
+
     "VerifyEmail": {
         "verifyingEmail": "Verificando tu correo...",
         "verificationSuccess": "¡Tu correo ha sido verificado exitosamente! Redirigiendo a la página de inicio de sesión...",
@@ -244,21 +277,6 @@
 
     "FormDateFieldComponent": {
         "pickDate": "Seleccionar fecha"
-    },
-
-    "MatchCardComponent": {
-        "gender": "Género:",
-        "type": "Tipo:",
-        "checkAvailability": "Ver disponibilidad",
-        "viewMatch": "Ver partido",
-        "finishMatch": "Finalizar partido",
-        "editMatch": "Editar partido",
-        "deleteMatch": "Eliminar partido",
-        "deleteMatchTitle": "Confirmar eliminación",
-        "deleteMatchConfirmation": "¿Estás seguro de que deseas eliminar este partido? Esta acción no se puede deshacer.",
-        "cancel": "Cancelar",
-        "delete": "Eliminar",
-        "deleting": "Eliminando..."
     },
 
     "GenericMessages": {
@@ -322,7 +340,8 @@
         "DEBT_DELETION_RATE_LIMITED": "Espera 5 minutos antes de eliminar otra deuda",
         "LOGOUT_RATE_LIMITED": "Espera 5 minutos antes de hacer otro cierre de sesión",
         "COLOR_TOGGLE_RATE_LIMITED": "Por favor, espera 5 minutos antes de cambiar el color del equipo nuevamente.",
-        "MATCH_INSTRUCTIONS_EDIT_RATE_LIMITED": "Por favor, espera 5 minutos antes de editar las instrucciones del partido nuevamente.",
+        "DELETE_LOCATION_RATE_LIMITED": "Por favor, espere 5 minutos antes de eliminar otra ubicación",
+        "ADD_LOCATION_RATE_LIMITED": "Por favor, espere 5 minutos antes de añadir otra ubicación",
 
         "REGISTER_VERIFICATION_TOKEN_EMAIL_SENT": "Correo de verificación enviado exitosamente. ¡Revisa tu correo!",
         "REGISTER_VERIFICATION_EMAIL_FAILED": "Error al enviar el correo de verificación. Inténtalo de nuevo más tarde.",
@@ -393,6 +412,7 @@
     "FetchMessages": {
         "USER_DATA_FAILED_TO_FETCH": "¡Error al obtener los datos del usuario!",
         "USER_DATA_SUCCESSFULLY_FETCHED": "¡Datos del usuario obtenidos con éxito!",
+        "USER_ID_FETCHED": "¡ID de usuario obtenido con éxito!",
 
         "NO_SEARCH_TERM": "No se proporcionó un término de búsqueda",
 

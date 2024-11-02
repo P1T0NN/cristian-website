@@ -18,8 +18,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from 'sonner';
 
-// ACTIONS
-import { updateUserFullName } from '@/actions/functions/queries/update-user-full-name';
+// SERVER ACTIONS
+import { updateUserFullName } from '@/actions/server_actions/mutations/user/updateUserFullName';
 
 // TYPES
 import type { typesUser } from '@/types/typesUser';
@@ -38,19 +38,21 @@ export const AccountSettings = ({
 }: AccountSettingsProps) => {
     const t = useTranslations('SettingsPage');
 
-    const [fullName, setFullName] = useState(serverUserData.fullName);
-    const [isLoading, setIsLoading] = useState(false);
     const [isPending, startTransition] = useTransition();
 
-    const handleSave = async () => {
-        setIsLoading(true);
-        const result = await updateUserFullName(authToken, fullName);
-        setIsLoading(false);
+    const [fullName, setFullName] = useState(serverUserData.fullName);
 
-        if (result.success) {
-            toast.success(result.message);
-        } else {
-            toast.error(result.message);
+    const handleSaveFullName = async () => {
+        if (fullName) {
+            startTransition(async () => {
+                const result = await updateUserFullName(authToken, fullName);
+
+                if (result.success) {
+                    toast.success(result.message);
+                } else {
+                    toast.error(result.message);
+                }
+            });
         }
     };
 
@@ -105,10 +107,10 @@ export const AccountSettings = ({
             <CardFooter>
                 <Button 
                     className="w-full" 
-                    onClick={handleSave} 
-                    disabled={isLoading || fullName === serverUserData.fullName}
+                    onClick={handleSaveFullName} 
+                    disabled={isPending|| fullName === serverUserData.fullName}
                 >
-                    {isLoading ? t('saving') : t('saveChanges')}
+                    {isPending ? t('saving') : t('saveChanges')}
                 </Button>
             </CardFooter>
         </Card>

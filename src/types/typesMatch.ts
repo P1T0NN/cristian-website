@@ -16,14 +16,3 @@ export type typesMatch = {
     match_instructions: string;
     created_at: Date;
 };
-
-export type typesAllMatchesCache = {
-    id: string;
-    location: string;
-    price: number;
-    starts_at_day: string;
-    starts_at_hour: string;
-    match_type: string;
-    match_gender: string;
-    created_at: Date;
-}

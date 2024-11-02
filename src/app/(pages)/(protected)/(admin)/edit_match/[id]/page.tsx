@@ -5,15 +5,17 @@ import { Suspense } from "react";
 
 // NEXTJS IMPORTS
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
+
+// LIBRARIES
+import { getTranslations } from "next-intl/server";
 
 // CONFIG
 import { PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
-import { EditMatchContent } from "@/components/(pages)/(protected)/(admin)/edit_match/[id]/edit-match-content";
-import { ErrorMessage } from "@/components/ui/errors/error-message";
-import { EditMatchLoading } from "@/components/(pages)/(protected)/(admin)/edit_match/[id]/edit-match-loading";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { EditMatchDetails } from "@/components/(pages)/(protected)/(admin)/edit_match/[id]/edit-match-details";
+import { EditMatchDetailsLoading } from "@/components/(pages)/(protected)/(admin)/edit_match/[id]/loading/edit-match-details-loading";
 
 // ACTIONS
 import { server_fetchUserData } from '@/actions/functions/data/server/server_fetchUserData';
@@ -21,43 +23,33 @@ import { server_fetchUserData } from '@/actions/functions/data/server/server_fet
 // TYPES
 import type { typesUser } from "@/types/typesUser";
 
-async function EditMatchPageContent({ 
+export default async function EditMatchPage({ 
     params 
 }: { 
     params: Promise<{ id: string }> 
 }) {
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get('auth_token')?.value as string;
+    const t = await getTranslations("EditMatchPage");
 
     const { id } = await params;
 
     const result = await server_fetchUserData();
-    
-    if (!result.success) {
-        return <ErrorMessage message={result.message} />;
-    }
-
     const userData = result.data as typesUser;
 
     if (!userData.isAdmin) {
         redirect(PAGE_ENDPOINTS.HOME_PAGE);
-    }
+    };
 
     return (
-        <main className="flex flex-col w-full min-h-screen">
-            <EditMatchContent matchId={id} authToken={authToken} />
-        </main>
-    );
-}
+        <div className="flex w-full h-full py-10 justify-center">
+            <Card className="w-full max-w-2xl">
+                <CardHeader>
+                    <CardTitle>{t('editMatch')}</CardTitle>
+                </CardHeader>
 
-export default function EditMatchPage({ 
-    params 
-}: { 
-    params: Promise<{ id: string }>
-}) {
-    return (
-        <Suspense fallback={<EditMatchLoading />}>
-            <EditMatchPageContent params={params} />
-        </Suspense>
+                <Suspense fallback={<EditMatchDetailsLoading />}>
+                    <EditMatchDetails matchId={id} />
+                </Suspense>
+            </Card>
+        </div>
     );
 }

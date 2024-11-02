@@ -6,15 +6,12 @@ import { useTransition } from "react";
 // NEXTJS IMPORTS
 import { useTranslations } from "next-intl";
 
-// LIBRARIES
-import { useQueryClient } from "@tanstack/react-query";
-
 // COMPONENTS
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-// ACTIONS
-import { client_toggleTeamColor } from "@/actions/functions/data/client/match/client_toggleTeamColor";
+// SERVER ACTIONS
+import { switchTeamColors } from "@/actions/server_actions/mutations/match/switchTeamColors";
 
 // LUCIDE ICONS
 import { ArrowLeftRight } from "lucide-react";
@@ -31,17 +28,15 @@ export const SwitchTeamColors = ({
     isAdmin,
 }: SwitchTeamColorsProps) => {
     const t = useTranslations("MatchPage");
-    const queryClient = useQueryClient();
 
     const [isPending, startTransition] = useTransition();
 
     const handleToggleColor = () => {
         startTransition(async () => {
-            const response = await client_toggleTeamColor(authToken, matchId, 1);
+            const response = await switchTeamColors(authToken, matchId, 1);
             
             if (response.success) {
                 toast.success(response.message);
-                queryClient.invalidateQueries({ queryKey: ['match', matchId] });
             } else {
                 toast.error(response.message);
             }

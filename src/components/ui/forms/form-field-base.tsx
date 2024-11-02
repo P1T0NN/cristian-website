@@ -9,9 +9,9 @@ type FormFieldBaseProps = {
 };
 
 export const FormFieldBase = ({ label, name, error, children }: FormFieldBaseProps) => (
-    <div className="relative flex flex-col space-y-1">
-        <Label htmlFor={name}>{label}</Label>
+    <div className="relative flex flex-col space-y-2">
+        <Label htmlFor={name} className="text-sm font-medium text-gray-700">{label}</Label>
         {children}
-        {error && <p className="text-sm text-red-500">{error}</p>}
+        {error && <p className="text-sm text-red-500 mt-1 animate-fadeIn">{error}</p>}
     </div>
 );

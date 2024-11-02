@@ -9,9 +9,11 @@ import { cookies } from "next/headers";
 import { PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
-import { AddMatchContent } from "@/components/(pages)/(protected)/(admin)/add_match/add-match-content";
-import { ErrorMessage } from "@/components/ui/errors/error-message";
-import { AddMatchLoading } from "@/components/(pages)/(protected)/(admin)/add_match/add-match-loading";
+import { Card } from "@/components/ui/card";
+import { UserDetails } from "@/components/(pages)/(protected)/(admin)/add_match/user-details";
+import { AddMatchDetails } from "@/components/(pages)/(protected)/(admin)/add_match/add-match-details";
+import { UserDetailsLoading } from "@/components/(pages)/(protected)/(admin)/add_match/loading/user-details-loading";
+import { AddMatchDetailsLoading } from "@/components/(pages)/(protected)/(admin)/add_match/loading/add-match-details-loading";
 
 // ACTIONS
 import { server_fetchUserData } from '@/actions/functions/data/server/server_fetchUserData';
@@ -19,33 +21,28 @@ import { server_fetchUserData } from '@/actions/functions/data/server/server_fet
 // TYPES
 import type { typesUser } from "@/types/typesUser";
 
-async function AddMatchPageContent() {
+export default async function AddMatchPage() {
     const cookieStore = await cookies();
     const authToken = cookieStore.get('auth_token')?.value as string;
 
-    const result = await server_fetchUserData();
-    
-    if (!result.success) {
-        return <ErrorMessage message={result.message} />;
-    }
-
-    const userData = result.data as typesUser;
+    const serverUserData = await server_fetchUserData();
+    const userData = serverUserData.data as typesUser;
 
     if (!userData.isAdmin) {
         redirect(PAGE_ENDPOINTS.HOME_PAGE);
     }
 
     return (
-        <main className="flex flex-col w-full min-h-screen">
-            <AddMatchContent authToken={authToken} serverUserData={userData} />
-        </main>
-    );
-}
+        <section className="flex w-full h-full py-10 justify-center">
+            <Card>
+                <Suspense fallback={<UserDetailsLoading />}>
+                    <UserDetails serverUserData={userData} />
+                </Suspense>
 
-export default function AddMatchPage() {
-    return (
-        <Suspense fallback={<AddMatchLoading />}>
-            <AddMatchPageContent />
-        </Suspense>
+                <Suspense fallback={<AddMatchDetailsLoading />}>
+                    <AddMatchDetails authToken={authToken} serverUserData={userData} />
+                </Suspense>
+            </Card>
+        </section>
     );
 }

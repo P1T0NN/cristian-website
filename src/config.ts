@@ -19,3 +19,9 @@ export const PAGE_ENDPOINTS = {
     EDIT_MATCH_PAGE:        "/edit_match",
     PLAYER_PAGE:            "/player"
 }
+
+export const CACHE_KEYS = {
+    MATCH_PREFIX:           "match:",
+    USER_PREFIX:            "user:",
+    ALL_LOCATIONS_PREFIX:   "all_locations"
+}

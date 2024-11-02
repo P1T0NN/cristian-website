@@ -1,21 +1,12 @@
-"use client"
-
-// REACTJS IMPORTS
-import { memo } from "react";
-
-// NEXTJS IMPORTS
-import { useRouter } from "next/navigation";
-
-// CONFIG
-import { PAGE_ENDPOINTS } from "@/config";
-
 // LIBRARIES
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
 // COMPONENTS
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { DeleteMatchButton } from "./delete-match-button";
+import { ViewMatchButton } from "./view-match-button";
+import { FinishMatchButton } from "./finish-match-button";
+import { EditMatchButton } from "./edit-match-button";
 
 // UTILS
 import { formatTime, formatDate } from "@/utils/dateUtils";
@@ -31,29 +22,13 @@ import { MapPin, Clock, Users, Dumbbell } from 'lucide-react';
 type MatchCardProps = {
     match: typesMatch;
     serverUserData: typesUser;
-    locale: string;
 };
 
-export const MatchCard = memo(({ 
+export const MatchCard = async ({ 
     match,
     serverUserData,
-    locale
 }: MatchCardProps) => {
-    const t = useTranslations("MatchCardComponent");
-
-    const router = useRouter();
-
-    const handleViewMatch = () => {
-        router.push(`${PAGE_ENDPOINTS.MATCH_PAGE}/${match.id}`);
-    }
-
-    const handleFinishMatch = () => {
-        // Implement finish match logic
-    };
-    
-    const handleEditMatch = () => {
-        router.push(`${PAGE_ENDPOINTS.EDIT_MATCH_PAGE}/${match.id}`);
-    };
+    const t = await getTranslations("MatchPage");
 
     return (
         <Card className="w-full h-full hover:shadow-lg transition-shadow duration-300">
@@ -67,19 +42,19 @@ export const MatchCard = memo(({
                         </div>
                         <div className="flex items-center text-sm text-muted-foreground">
                             <Clock className="w-4 h-4 mr-1" />
-                            <span>{formatDate(locale, match.starts_at_day)} - {formatTime(match.starts_at_hour)}h</span>
+                            <span>{formatDate(match.starts_at_day)} - {formatTime(match.starts_at_hour)}h</span>
                         </div>
                     </div>
 
                     <div className="flex flex-col space-y-2">
                         <div className="flex items-center">
                             <Users className="w-4 h-4 mr-2" />
-                            <span className="font-medium mr-1">{t("gender")}</span>
-                            <span>{getGenderLabel(locale, match.match_gender)}</span>
+                            <span className="font-medium mr-1">{t("genderMatchCard")}</span>
+                            <span>{getGenderLabel(match.match_gender)}</span>
                         </div>
                         <div className="flex items-center">
                             <Dumbbell className="w-4 h-4 mr-2" />
-                            <span className="font-medium mr-1">{t("type")}</span>
+                            <span className="font-medium mr-1">{t("typeMatchCard")}</span>
                             <span>{match.match_type}</span>
                         </div>
                     </div>
@@ -88,35 +63,16 @@ export const MatchCard = memo(({
 
             {serverUserData.isAdmin ? (
                 <CardFooter className="flex flex-col p-6 pt-0 space-y-2">
-                    <Button 
-                        className="w-full"
-                        onClick={handleViewMatch}
-                    >
-                        {t('viewMatch')}
-                    </Button>
-                    <Button 
-                        className="w-full bg-green-500 hover:bg-green-600"
-                        onClick={handleFinishMatch}
-                    >
-                        {t('finishMatch')}
-                    </Button>
-                    <Button
-                        className="w-full bg-blue-500 hover:bg-blue-600"
-                        onClick={handleEditMatch}
-                    >
-                        {t('editMatch')}
-                    </Button>
+                    <ViewMatchButton matchId={match.id}/>
+                    <FinishMatchButton />
+                    <EditMatchButton matchId={match.id} />
                     <DeleteMatchButton match={match} />
                 </CardFooter>
             ) : (
                 <CardFooter className="p-6 pt-0">
-                    <Button className="w-full" onClick={handleViewMatch}>
-                        {t("checkAvailability")}
-                    </Button>
+                    <ViewMatchButton matchId={match.id}/>
                 </CardFooter>
             )}
         </Card>
     );
-});
-
-MatchCard.displayName = 'MatchCard';
+};

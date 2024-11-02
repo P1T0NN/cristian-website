@@ -14,7 +14,7 @@ import { Separator } from "@/components/ui/separator";
 // TYPES
 import type { typesAddMatchForm } from "@/types/forms/AddMatchForm";
 
-type AddMatchContentProps = {
+type AddMatchFormProps = {
     formData: typesAddMatchForm;
     errors: Record<string, string>;
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -26,9 +26,9 @@ export const AddMatchForm = ({
     errors,
     handleInputChange,
     authToken
-}: AddMatchContentProps) => {
+}: AddMatchFormProps) => {
     const t = useTranslations("AddMatchPage");
-  
+
     const handleSelectChange = (name: string) => (value: string) => {
         handleInputChange({
             target: { name, value }

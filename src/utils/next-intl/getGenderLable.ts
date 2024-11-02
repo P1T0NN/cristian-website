@@ -1,4 +1,9 @@
-export const getGenderLabel = (locale: string, gender: string) => {
+// SERVICES
+import { getUserLocale } from "@/services/server/locale";
+
+export const getGenderLabel = async (gender: string) => {
+    const locale = await getUserLocale();
+
     if (locale === "es") {
         switch (gender) {
             case "Male":

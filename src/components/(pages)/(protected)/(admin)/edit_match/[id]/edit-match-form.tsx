@@ -1,7 +1,16 @@
 "use client";
 
+// REACTJS IMPORTS
+import { useTransition } from "react";
+
+// NEXTJS IMPORTS
+import { useRouter } from "next/navigation";
+
 // LIBRARIES
 import { useTranslations } from "next-intl";
+
+// CONFIG
+import { PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
 import { LocationField } from "@/components/(pages)/(protected)/(admin)/add_match/location-field";
@@ -10,29 +19,34 @@ import { FormSelectField } from "@/components/ui/forms/form-select-field";
 import { FormDateField } from "@/components/ui/forms/form-date-field";
 import { FormTimeField } from "@/components/ui/forms/form-time-field";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 // HOOKS
 import { useForm } from "@/hooks/useForm";
 import { useZodSchemas } from "@/hooks/useZodSchema";
+
+// ACTIONS
+import { editMatch } from "@/actions/server_actions/mutations/match/editMatch";
 
 // TYPES
 import { typesAddMatchForm } from "@/types/forms/AddMatchForm";
 
 type EditMatchFormProps = {
     matchData: typesAddMatchForm;
-    onSubmit: (values: typesAddMatchForm) => Promise<void>;
-    isPending: boolean;
     authToken: string;
+    matchId: string;
 }
 
 export const EditMatchForm = ({
     matchData,
-    onSubmit,
-    isPending,
-    authToken
+    authToken,
+    matchId
 }: EditMatchFormProps) => {
     const t = useTranslations("AddMatchPage");
     const editMatchMessages = useTranslations("EditMatchPage");
+    const router = useRouter();
+    
+    const [isPending, startTransition] = useTransition();
 
     const { addMatchSchema } = useZodSchemas();
 
@@ -50,7 +64,18 @@ export const EditMatchForm = ({
             added_by: matchData.added_by || ""
         },
         validationSchema: addMatchSchema,
-        onSubmit: (values) => onSubmit(values),
+        onSubmit: async (values) => {
+            startTransition(async () => {
+                const result = await editMatch(authToken, matchId, values);
+                
+                if (result.success) {
+                    router.push(PAGE_ENDPOINTS.HOME_PAGE);
+                    toast.success(result.message);
+                } else {
+                    toast.error(result.message);
+                }
+            });
+        },
     });
   
     const handleSelectChange = (name: string) => (value: string) => {

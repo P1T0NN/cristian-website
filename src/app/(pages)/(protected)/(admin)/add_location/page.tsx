@@ -2,51 +2,32 @@
 import { Suspense } from "react";
 
 // NEXTJS IMPORTS
-import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
-// CONFIG
-import { PAGE_ENDPOINTS } from "@/config";
+// LIBRARIES
+import { getTranslations } from "next-intl/server";
 
 // COMPONENTS
-import { AddLocationContent } from "@/components/(pages)/(protected)/(admin)/add_location/add-location-content";
-import { ErrorMessage } from "@/components/ui/errors/error-message";
-import { AddLocationLoading } from "@/components/(pages)/(protected)/(admin)/add_location/add-location-loading";
+import { AddLocationDialog } from "@/components/(pages)/(protected)/(admin)/add_location/add-location-dialog";
+import { LocationTable } from "@/components/(pages)/(protected)/(admin)/add_location/location-table";
+import { LocationTableLoading } from "@/components/(pages)/(protected)/(admin)/add_location/loading/locations-table-loading";
 
-// ACTIONS
-import { server_fetchUserData } from '@/actions/functions/data/server/server_fetchUserData';
+export default async function AddLocationPage() {
+    const t = await getTranslations("AddLocationPage");
 
-// TYPES
-import type { typesUser } from "@/types/typesUser";
-
-async function AddLocationPageContent() {
-    const result = await server_fetchUserData();
-    
-    if (!result.success) {
-        return (
-            <main className="flex flex-col w-full min-h-screen">
-                <ErrorMessage message={result.message} />
-            </main>
-        );
-    }
-
-    const userData = result.data as typesUser;
-
-    // If user is not Admin redirect him to Home Page
-    if (!userData.isAdmin) {
-        redirect(PAGE_ENDPOINTS.HOME_PAGE);
-    }
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get('auth_token')?.value as string;
 
     return (
-        <main>
-            <AddLocationContent />
-        </main>
-    );
-}
-
-export default function AddLocationPage() {
-    return (
-        <Suspense fallback={<AddLocationLoading />}>
-            <AddLocationPageContent />
-        </Suspense>
+        <div className="container mx-auto py-10">
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-3xl font-bold">{t("locations")}</h1>
+                <AddLocationDialog authToken={authToken} />
+            </div>
+            
+            <Suspense fallback={<LocationTableLoading />}>
+                <LocationTable authToken={authToken} />
+            </Suspense>
+        </div>
     );
 }

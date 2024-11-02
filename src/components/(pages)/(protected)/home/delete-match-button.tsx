@@ -41,7 +41,7 @@ type DeleteMatchButtonProps = {
 export const DeleteMatchButton = ({
     match
 }: DeleteMatchButtonProps) => {
-    const t = useTranslations("MatchCardComponent")
+    const t = useTranslations("MatchPage");
     const router = useRouter()
     const queryClient = useQueryClient()
 

@@ -1,30 +1,60 @@
 "use client"
 
+// REACTJS IMPORTS
+import { useTransition } from "react";
+
 // LIBRARIES
 import { useTranslations } from "next-intl";
 
 // COMPONENTS
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
+
+// SERVER ACTIONS
+import { managePlayer } from "@/actions/server_actions/mutations/match/managePlayer";
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
 
+// LUCIDE ICONS
+import { Loader2 } from "lucide-react";
+
 type PlayerItemProps = {
-    player: typesUser;
-    isCurrentUser: boolean;
-    onLeave: () => void;
-    isPending?: boolean;
+    player: typesUser
+    isCurrentUser: boolean
+    teamNumber: 1 | 2
+    matchId: string
+    authToken: string
 }
 
 export const PlayerItem = ({ 
     player, 
-    isCurrentUser, 
-    onLeave,
-    isPending
+    isCurrentUser,
+    teamNumber,
+    matchId,
+    authToken
 }: PlayerItemProps) => {
     const t = useTranslations("MatchPage");
+    const [isPending, startTransition] = useTransition();
+
+    const handleLeaveTeam = () => {
+        startTransition(async () => {
+            const response = await managePlayer(
+                authToken,
+                matchId,
+                player.id,
+                teamNumber,
+                'leave'
+            );
+
+            if (response.success) {
+                toast.success(response.message);
+            } else {
+                toast.error(response.message);
+            }
+        })
+    };
 
     return (
         <div className="flex items-center justify-between p-2 bg-muted rounded-lg transition-opacity duration-200 ease-in-out">
@@ -39,7 +69,7 @@ export const PlayerItem = ({
                 <Button
                     variant="destructive"
                     size="sm"
-                    onClick={onLeave}
+                    onClick={handleLeaveTeam}
                     disabled={isPending}
                     className="min-w-[100px]"
                 >
@@ -54,5 +84,5 @@ export const PlayerItem = ({
                 </Button>
             )}
         </div>
-    );
-};
+    )
+}

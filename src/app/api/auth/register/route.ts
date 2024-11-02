@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 // LIBRARIES
 import argon2 from 'argon2';
 import { v4 as uuidv4 } from 'uuid';
-import { applyRateLimit } from '@/lib/ratelimit/rateLimiter';
+import { apiRouteRateLimit } from '@/lib/ratelimit/api_routes/apiRouteRateLimit';
 
 // UTILS
 import { getTranslations } from 'next-intl/server';
@@ -19,7 +19,7 @@ import type { APIResponse } from '@/types/responses/APIResponse';
 export async function POST(request: Request): Promise<NextResponse<APIResponse>> {
     const t = await getTranslations('GenericMessages');
 
-    const rateLimitResult = await applyRateLimit(request, 'register');
+    const rateLimitResult = await apiRouteRateLimit(request, 'register');
     if (!rateLimitResult.success) {
         return NextResponse.json({ success: false, message: t('REGISTER_RATE_LIMIT') }, { status: 429 });
     }

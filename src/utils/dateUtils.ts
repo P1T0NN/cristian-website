@@ -1,11 +1,16 @@
 // LIBRARIES
 import { format, isToday, isTomorrow } from 'date-fns';
 
+// SERVICES
+import { getUserLocale } from '@/services/server/locale';
+
 export const formatTime = (timeStr: string): string => {
     return format(new Date(`2000-01-01T${timeStr}`), 'HH:mm');
 };
 
-export const formatDate = async (locale: string, dateStr: string): Promise<string> => {
+export const formatDate = async (dateStr: string): Promise<string> => {
+    const locale = await getUserLocale();
+    
     const date = new Date(dateStr);
 
     if (locale === "es") {

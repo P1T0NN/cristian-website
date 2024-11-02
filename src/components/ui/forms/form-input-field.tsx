@@ -32,6 +32,7 @@ export const FormInputField = ({
             onChange={onChange}
             placeholder={placeholder}
             autoComplete={autoComplete}
+            className="transition-all duration-200 ease-in-out focus:ring-2 focus:ring-primary focus:border-transparent"
         />
     </FormFieldBase>
 );

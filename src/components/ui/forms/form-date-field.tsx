@@ -38,7 +38,16 @@ export const FormDateField = ({
     const t = useTranslations("FormDateFieldComponent");
 
     const handleDateChange = (date: Date | undefined) => {
-        onChange(date ? date.toISOString() : undefined);
+        if (date) {
+            const utcDate = new Date(Date.UTC(
+                date.getFullYear(), 
+                date.getMonth(), 
+                date.getDate()
+            ));
+            onChange(utcDate.toISOString());
+        } else {
+            onChange(undefined);
+        }
     };
 
     return (
@@ -48,11 +57,12 @@ export const FormDateField = ({
                     <Button
                         variant="outline"
                         className={cn(
-                            "justify-start text-left font-normal",
-                            !value && "text-muted-foreground"
+                            "w-full justify-start text-left font-normal transition-all duration-200 ease-in-out",
+                            !value && "text-muted-foreground",
+                            "hover:bg-primary hover:text-primary-foreground"
                         )}
                     >
-                        <CalendarIcon />
+                        <CalendarIcon className="mr-2 h-4 w-4" />
                         {value ? format(new Date(value), "PPP") : <span>{t("pickDate")}</span>}
                     </Button>
                 </PopoverTrigger>

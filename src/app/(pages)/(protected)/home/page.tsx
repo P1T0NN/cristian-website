@@ -1,51 +1,49 @@
 // REACTJS IMPORTS
 import { Suspense } from 'react';
 
-// NEXTJS IMPORTS
-import { cookies } from "next/headers";
-
-// SERVICES
-import { getUserLocale } from '@/services/server/locale';
-
 // COMPONENTS
-import { HomeContent } from '@/components/(pages)/(protected)/home/home-content';
-import { ErrorMessage } from '@/components/ui/errors/error-message';
-import { HomeLoading } from '@/components/(pages)/(protected)/home/home-loading';
+import { HomeDetails } from '@/components/(pages)/(protected)/home/home-details';
+import { DisplayMatches } from '@/components/(pages)/(protected)/home/display-matches';
+import { HomeDetailsLoading } from '@/components/(pages)/(protected)/home/loading/home-details-loading';
+import { MatchesLoading } from '@/components/(pages)/(protected)/home/loading/matches-loading';
 
 // ACTIONS
 import { server_fetchUserData } from '@/actions/functions/data/server/server_fetchUserData';
 
 // TYPES
 import type { typesUser } from '@/types/typesUser';
+import type { FilterValues } from '@/components/(pages)/(protected)/home/filter-modal';
 
-async function HomePageContent() {
-    const locale = await getUserLocale();
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get('auth_token')?.value as string;
-
-    const result = await server_fetchUserData();
+export default async function HomePage({
+    searchParams
+}: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+    const serverUserData = await server_fetchUserData();
     
-    if (!result.success) {
-        return (
-            <main className="flex flex-col w-full min-h-screen">
-                <ErrorMessage message={result.message} />
-            </main>
-        );
-    }
+    const userData = serverUserData.data as typesUser;
 
-    const userData = result.data as typesUser;
+    const awaitedSearchParams = await searchParams;
+
+    const activeFilters: FilterValues = {
+        location: awaitedSearchParams.location as string || '',
+        price: awaitedSearchParams.price as string || '',
+        date: awaitedSearchParams.date as string || '',
+        timeFrom: awaitedSearchParams.timeFrom as string || '',
+        timeTo: awaitedSearchParams.timeTo as string || '',
+        gender: awaitedSearchParams.gender as string || '',
+        matchType: awaitedSearchParams.matchType as string || '',
+    };
 
     return (
-        <main>
-            <HomeContent authToken={authToken} serverUserData={userData} locale={locale} />
-        </main>
-    );
-}
+        <section className="p-6 max-w-6xl mx-auto">
+            <Suspense fallback={<HomeDetailsLoading />}>
+                <HomeDetails serverUserData={userData} activeFilters={activeFilters} />
+            </Suspense>
 
-export default function HomePage() {
-    return (
-        <Suspense fallback={<HomeLoading />}>
-            <HomePageContent />
-        </Suspense>
+            <Suspense fallback={<MatchesLoading />}>
+                <DisplayMatches serverUserData={userData} activeFilters={activeFilters} />
+            </Suspense>
+        </section>
     );
 }

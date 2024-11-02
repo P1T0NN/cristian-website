@@ -1,20 +1,10 @@
-"use client"
-
-// REACT IMPORTS
-import { useTransition } from "react";
-
 // LIBRARIES
-import { useTranslations } from "next-intl";
-import { useQueryClient } from "@tanstack/react-query";
+import { getTranslations } from "next-intl/server";
 
 // COMPONENTS
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { PlayerItem } from "./player-item";
-import { toast } from "sonner";
-
-// ACTIONS
-import { client_managePlayer } from "@/actions/functions/data/client/match/client_managePlayer";
+import { JoinTeamButton } from "./join-team-button";
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
@@ -29,7 +19,7 @@ type TeamCardProps = {
     authToken: string
 }
 
-export const TeamCard = ({
+export const TeamCard = async ({
     teamName,
     players,
     teamNumber,
@@ -38,37 +28,13 @@ export const TeamCard = ({
     matchId,
     authToken
 }: TeamCardProps) => {
-    const t = useTranslations("MatchPage");
-    const queryClient = useQueryClient();
-
-    const [isPending, startTransition] = useTransition();
-
-    const handleTogglePlayer = (action: 'join' | 'leave') => {
-        startTransition(async () => {
-            const response = await client_managePlayer(
-                authToken,
-                matchId,
-                currentUserId,
-                teamNumber,
-                action
-            )
-
-            if (response.success) {
-                queryClient.invalidateQueries({ queryKey: ['match', matchId] });
-                toast.success(response.message);
-            } else {
-                toast.error(response.message)
-            };
-        })
-    }
+    const t = await getTranslations("MatchPage")
 
     return (
         <Card>
             <CardHeader>
                 <CardTitle>{teamName}</CardTitle>
-                <div className="flex items-center justify-between">
-                    <CardDescription>{t('players')} {players?.length ?? 0}/11</CardDescription>
-                </div>
+                <CardDescription>{t('players')} {players?.length ?? 0}/11</CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
                 {players?.map((player) => (
@@ -76,19 +42,19 @@ export const TeamCard = ({
                         key={player.id}
                         player={player}
                         isCurrentUser={player.id === currentUserId}
-                        onLeave={() => handleTogglePlayer('leave')}
-                        isPending={isPending}
+                        teamNumber={teamNumber}
+                        matchId={matchId}
+                        authToken={authToken}
                     />
                 ))}
 
                 {(players?.length ?? 0) < 11 && !userTeamNumber && (
-                    <Button 
-                        onClick={() => handleTogglePlayer('join')}
-                        disabled={isPending}
-                        className="w-full"
-                    >
-                        {isPending ? t('joiningTeam') : t('joinTeam')}
-                    </Button>
+                    <JoinTeamButton
+                        teamNumber={teamNumber}
+                        matchId={matchId}
+                        currentUserId={currentUserId}
+                        authToken={authToken}
+                    />
                 )}
             </CardContent>
         </Card>

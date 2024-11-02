@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 
 // LIBRARIES
 import { getTranslations } from 'next-intl/server';
-import { applyRateLimit } from '@/lib/ratelimit/rateLimiter';
+import { apiRouteRateLimit } from '@/lib/ratelimit/api_routes/apiRouteRateLimit';
 
 // UTILS
 import { clearAuthCookies } from '@/utils/cookies/cookies';
@@ -16,7 +16,7 @@ import type { APIResponse } from '@/types/responses/APIResponse';
 export async function POST(request: NextRequest): Promise<NextResponse<APIResponse>> {
     const t = await getTranslations('GenericMessages');
 
-    const rateLimitResult = await applyRateLimit(request, 'logout');
+    const rateLimitResult = await apiRouteRateLimit(request, 'logout');
     if (!rateLimitResult.success) {
         return NextResponse.json({ success: false, message: t('LOGOUT_RATE_LIMIT') }, { status: 429 });
     }
