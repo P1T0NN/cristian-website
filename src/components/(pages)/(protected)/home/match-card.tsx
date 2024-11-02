@@ -1,3 +1,6 @@
+// NEXTJS IMPORTS
+import { cookies } from 'next/headers';
+
 // LIBRARIES
 import { getTranslations } from 'next-intl/server';
 
@@ -29,6 +32,9 @@ export const MatchCard = async ({
     serverUserData,
 }: MatchCardProps) => {
     const t = await getTranslations("MatchPage");
+
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get('auth_token')?.value as string;
 
     return (
         <Card className="w-full h-full hover:shadow-lg transition-shadow duration-300">
@@ -66,7 +72,7 @@ export const MatchCard = async ({
                     <ViewMatchButton matchId={match.id}/>
                     <FinishMatchButton />
                     <EditMatchButton matchId={match.id} />
-                    <DeleteMatchButton match={match} />
+                    <DeleteMatchButton authToken={authToken} match={match} />
                 </CardFooter>
             ) : (
                 <CardFooter className="p-6 pt-0">

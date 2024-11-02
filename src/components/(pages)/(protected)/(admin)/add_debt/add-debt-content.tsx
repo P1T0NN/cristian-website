@@ -31,7 +31,7 @@ import { useZodSchemas } from "@/hooks/useZodSchema";
 import { addDebt } from "@/actions/server_actions/mutations/debt/addDebt";
 
 // ACTIONS
-import { clientFetchUserIdByName } from "@/actions/functions/data/client/user/client_fetchUserIdByName";
+import { clientFetchUserIdByName } from "@/actions/functions/data/client/debt/client_fetchUserIdByName";
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";

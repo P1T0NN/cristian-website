@@ -28,17 +28,19 @@ import {
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 
-// ACTIONS
-import { deleteMatch } from "@/actions/functions/queries/delete-match"
+// SERVER ACTIONS
+import { deleteMatch } from "@/actions/server_actions/mutations/match/deleteMatch"
 
 // TYPES
 import type { typesMatch } from "@/types/typesMatch"
 
 type DeleteMatchButtonProps = {
-    match: typesMatch
+    authToken: string;
+    match: typesMatch;
 }
 
 export const DeleteMatchButton = ({
+    authToken,
     match
 }: DeleteMatchButtonProps) => {
     const t = useTranslations("MatchPage");
@@ -51,7 +53,7 @@ export const DeleteMatchButton = ({
     const handleDeleteMatch = async () => {
         startTransition(async () => {
             try {
-                const result = await deleteMatch(match.id)
+                const result = await deleteMatch(authToken, match.id)
                 if (result.success) {
                     queryClient.invalidateQueries({ queryKey: ["matches"] })
                     toast.success(result.message)
