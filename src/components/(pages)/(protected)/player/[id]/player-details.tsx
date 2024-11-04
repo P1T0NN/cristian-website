@@ -2,6 +2,7 @@
 import { Suspense } from "react";
 
 // NEXTJS IMPORTS
+import { cookies } from "next/headers";
 import Link from "next/link";
 
 // LIBRARIES
@@ -15,16 +16,20 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { DebtsTable } from "./debts-table";
+import { EditPlayerDetails } from "./edit-player-details";
 import { DebtsTableLoading } from "./loading/debts-table-loading";
 
 // ACTIONS
 import { serverFetchPlayer } from "@/actions/functions/data/server/server_fetchPlayer";
 
+// UTILS
+import { getPositionLabel } from "@/utils/next-intl/getPlayerPositionLabel";
+
 // TYPES
 import type { typesUser } from "@/types/typesUser";
 
 // LUCIDE ICONS
-import { CheckCircle, Shield, Mail, Calendar, Phone, Euro } from "lucide-react";
+import { CheckCircle, Shield, Mail, Calendar, Phone, Euro, IdCard, Users, Star } from "lucide-react";
 
 type PlayerDetailsProps = {
     playerId: string;
@@ -37,9 +42,14 @@ export const PlayerDetails = async ({
 }: PlayerDetailsProps) => {
     const t = await getTranslations("PlayerPage");
 
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get('auth_token')?.value as string;
+
     const serverPlayerData = await serverFetchPlayer(playerId);
 
     const playerData = serverPlayerData.data as typesUser;
+
+    const positionLabel = await getPositionLabel(playerData.player_position);
 
     return (
         <Card className="max-w-4xl mx-auto">
@@ -87,6 +97,20 @@ export const PlayerDetails = async ({
                         <span>{t('joined')} {new Date(playerData.created_at).toLocaleDateString()}</span>
                     </div>
 
+                    {/* New sections for DNI, Player position, and Player level */}
+                    <div className="flex items-center space-x-4">
+                        <IdCard className="h-5 w-5 text-muted-foreground" />
+                        <span>{t('dni')}: {playerData.dni || t('notProvided')}</span>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                        <Users className="h-5 w-5 text-muted-foreground" />
+                        <span>{t('playerPosition')}: {positionLabel || t('notProvided')}</span>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                        <Star className="h-5 w-5 text-muted-foreground" />
+                        <span>{t('playerLevel')}: {playerData.player_level || t('notProvided')}</span>
+                    </div>
+
                     <div className="flex items-center space-x-4">
                         <Euro className="h-5 w-5 text-muted-foreground" />
                         <span>
@@ -103,16 +127,23 @@ export const PlayerDetails = async ({
                 </div>
 
                 {currentUserData.isAdmin && (
-                    <div className="mt-6 mb-6 flex space-x-4">
+                    <div className="flex items-center mt-6 mb-6 space-x-4">
                         <Link 
-                            className="bg-primary text-secondary py-2 px-4 font-bold rounded hover:bg-primary/80 transition-all"
+                            className="flex items-center h-[35px] bg-primary text-secondary px-4 rounded hover:bg-primary/80 transition-all"
                             href={`${PAGE_ENDPOINTS.ADD_DEBT_PAGE}?playerName=${encodeURIComponent(playerData.fullName)}`}
                         >
                             {t('addDebt')}
                         </Link>
+                        <EditPlayerDetails
+                            authToken={authToken}
+                            playerId={playerId}
+                            initialDNI={playerData.dni}
+                            initialPlayerLevel={playerData.player_level}
+                            initialPlayerPosition={playerData.player_position}
+                        />
                     </div>
                 )}
-                
+                    
                 <Suspense fallback={<DebtsTableLoading isCurrentUserAdmin={currentUserData.isAdmin} />}>
                     <DebtsTable
                         debts={playerData.debts || []} 

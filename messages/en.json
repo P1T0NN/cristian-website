@@ -236,7 +236,21 @@
         "deleteDebtConfirmTitle": "Are you absolutely sure?",
         "deleteDebtConfirmDescription": "This action cannot be undone. This will permanently delete the debt and remove it from our servers.",
         "deleteDebtCancel": "Cancel",
-        "deleteDebtConfirm": "Delete"
+        "deleteDebtConfirm": "Delete",
+        "editPlayerInformation": "Edit player information",
+        "dni": "DNI",
+        "enterDNI": "Enter DNI",
+        "playerLevel": "Player Category",
+        "enterPlayerLevel": "Enter player level",
+        "playerPosition": "Player Position",
+        "selectPlayerPosition": "Select player position",
+        "goalkeeper": "Goalkeeper",
+        "defender": "Defender",
+        "midfielder": "Midfielder",
+        "attacker": "Attacker",
+        "updating": "Updating...",
+        "updateDetails": "Update details",
+        "notProvided": "Not provided"
     },
 
     "VerifyEmail": {

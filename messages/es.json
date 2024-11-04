@@ -236,7 +236,21 @@
         "deleteDebtConfirmTitle": "¿Estás completamente seguro?",
         "deleteDebtConfirmDescription": "Esta acción no se puede deshacer. Esto eliminará permanentemente la deuda y la quitará de nuestros servidores.",
         "deleteDebtCancel": "Cancelar",
-        "deleteDebtConfirm": "Eliminar"
+        "deleteDebtConfirm": "Eliminar",
+        "editPlayerInformation": "Editar información del jugador",
+        "dni": "DNI",
+        "enterDNI": "Ingrese el DNI",
+        "playerLevel": "Categoria del jugador",
+        "enterPlayerLevel": "Ingrese el nivel del jugador",
+        "playerPosition": "Posición del jugador",
+        "selectPlayerPosition": "Seleccionar posición del jugador",
+        "goalkeeper": "Portero",
+        "defender": "Defensa",
+        "midfielder": "Centrocampista",
+        "attacker": "Delantero",
+        "updating": "Actualizando...",
+        "updateDetails": "Actualizar detalles",
+        "notProvided": "No proporcionado"
     },
 
     "VerifyEmail": {
