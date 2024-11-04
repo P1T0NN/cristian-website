@@ -17,11 +17,13 @@ export const PAGE_ENDPOINTS = {
     ADD_DEBT_PAGE:          "/add_debt",
     ADD_LOCATION_PAGE:      "/add_location",
     EDIT_MATCH_PAGE:        "/edit_match",
-    PLAYER_PAGE:            "/player"
+    PLAYER_PAGE:            "/player",
+    ADD_TEAM_PAGE:       "/add_team"
 }
 
 export const CACHE_KEYS = {
     MATCH_PREFIX:           "match:",
     USER_PREFIX:            "user:",
-    ALL_LOCATIONS_PREFIX:   "all_locations"
+    ALL_LOCATIONS_PREFIX:   "all_locations",
+    ALL_TEAMS_PREFIX:       "all_teams"
 }

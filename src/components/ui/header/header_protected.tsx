@@ -25,7 +25,7 @@ import { getInitials } from "@/utils/getNameInitials";
 import type { typesUser } from "@/types/typesUser";
 
 // LUCIDE ICONS
-import { Bell, Settings } from "lucide-react";
+import { Users, Bell, Settings } from "lucide-react";
 
 type HeaderProps = {
     serverUserData: typesUser | undefined;
@@ -76,6 +76,13 @@ export const HeaderProtected = ({
                                 <DropdownMenuContent>
                                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                                     <DropdownMenuSeparator />
+                                    {serverUserData.isAdmin && (
+                                        <Link href={PAGE_ENDPOINTS.ADD_TEAM_PAGE}>
+                                            <DropdownMenuItem>
+                                                <Users className="mr-2" /> Create Team
+                                            </DropdownMenuItem>
+                                        </Link>
+                                    )}
                                     <Link href={PAGE_ENDPOINTS.SETTINGS_PAGE}>
                                         <DropdownMenuItem>
                                             <Settings className="mr-2" /> Settings
@@ -98,5 +105,5 @@ export const HeaderProtected = ({
                 </div>
             )}
         </header>
-    );
+    )
 };

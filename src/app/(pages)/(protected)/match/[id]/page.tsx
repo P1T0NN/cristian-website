@@ -88,6 +88,8 @@ export default async function MatchPage({
                         currentUserId={userData.id}
                         userTeamNumber={userTeamNumber}
                         matchId={id}
+                        matchType={match.match_type}
+                        isAdmin={userData.isAdmin}
                         authToken={authToken}
                     />
                 </Suspense>
@@ -99,6 +101,8 @@ export default async function MatchPage({
                         currentUserId={userData.id}
                         userTeamNumber={userTeamNumber}
                         matchId={id}
+                        matchType={match.match_type}
+                        isAdmin={userData.isAdmin}
                         authToken={authToken}
                     />
                 </Suspense>

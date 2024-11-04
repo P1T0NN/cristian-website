@@ -82,6 +82,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>>
                 id,
                 email,
                 fullName,
+                player_position,
                 phoneNumber,
                 is_verified,
                 isAdmin,

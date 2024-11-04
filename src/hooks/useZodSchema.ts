@@ -66,6 +66,11 @@ export const useZodSchemas = () => {
         location_url: z.string().min(1, { message: t('LOCATION_URL_REQUIRED') })
     });
 
+    const addTeamSchema = z.object({
+        team_name: z.string().min(1, "Team name is required"),
+        team_level: z.string().min(1, "Team level is required"),
+    })
+
     return {
         loginSchema,
         registerSchema,
@@ -73,6 +78,7 @@ export const useZodSchemas = () => {
         forgotPasswordSchema,
         addMatchSchema,
         addDebtSchema,
-        addLocationSchema
+        addLocationSchema,
+        addTeamSchema
     };
 };

@@ -10,13 +10,15 @@ import { JoinTeamButton } from "./join-team-button";
 import type { typesUser } from "@/types/typesUser";
 
 type TeamCardProps = {
-    teamName: string
-    players: typesUser[] | undefined
-    teamNumber: 1 | 2
-    currentUserId: string
-    userTeamNumber: number | null
-    matchId: string
-    authToken: string
+    teamName: string;
+    players: typesUser[] | undefined;
+    teamNumber: 1 | 2;
+    currentUserId: string;
+    userTeamNumber: number | null;
+    matchId: string;
+    matchType: string;
+    isAdmin: boolean;
+    authToken: string;
 }
 
 export const TeamCard = async ({
@@ -26,15 +28,32 @@ export const TeamCard = async ({
     currentUserId,
     userTeamNumber,
     matchId,
+    matchType,
+    isAdmin,
     authToken
 }: TeamCardProps) => {
-    const t = await getTranslations("MatchPage")
+    const t = await getTranslations("MatchPage");
+
+    const getMaxPlayers = (type: string) => {
+        switch (type) {
+            case 'F7':
+                return 7;
+            case 'F8':
+                return 8;
+            case 'F11':
+                return 11;
+            default:
+                return 11; // Default to 11 if matchType is not recognized
+        }
+    };
+
+    const maxPlayers = getMaxPlayers(matchType);
 
     return (
         <Card>
             <CardHeader>
                 <CardTitle>{teamName}</CardTitle>
-                <CardDescription>{t('players')} {players?.length ?? 0}/11</CardDescription>
+                <CardDescription>{t('players')} {players?.length ?? 0}/{maxPlayers}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
                 {players?.map((player) => (
@@ -44,11 +63,12 @@ export const TeamCard = async ({
                         isCurrentUser={player.id === currentUserId}
                         teamNumber={teamNumber}
                         matchId={matchId}
+                        isAdmin={isAdmin}
                         authToken={authToken}
                     />
                 ))}
 
-                {(players?.length ?? 0) < 11 && !userTeamNumber && (
+                {(players?.length ?? 0) < maxPlayers && !userTeamNumber && (
                     <JoinTeamButton
                         teamNumber={teamNumber}
                         matchId={matchId}

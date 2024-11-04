@@ -173,7 +173,8 @@
         "deleteMatchTitle": "Confirmar eliminación",
         "deleteMatchConfirmation": "¿Estás seguro de que quieres eliminar este partido? Esta acción no se puede deshacer.",
         "delete": "Eliminar",
-        "deleting": "Eliminando..."
+        "deleting": "Eliminando...",
+        "emptyPosition": "Posición disponible"
     },
 
     "EditMatchPage": {
@@ -251,6 +252,27 @@
         "updating": "Actualizando...",
         "updateDetails": "Actualizar detalles",
         "notProvided": "No proporcionado"
+    },
+
+    "AddTeamPage": {
+        "teams": "Equipos",
+        "addNewTeam": "Añadir Nuevo Equipo",
+        "fillTeamDetails": "Complete los detalles del nuevo equipo",
+        "teamName": "Nombre del Equipo",
+        "teamNamePlaceholder": "Ingrese el nombre del equipo",
+        "teamLevel": "Nivel del Equipo",
+        "teamLevelPlaceholder": "Ingrese el nivel del equipo",
+        "adding": "Añadiendo...",
+        "addTeam": "Añadir Equipo",
+        "createdAt": "Creado el",
+        "actions": "Acciones",
+        "deleteTeamConfirmation": "¿Está seguro de que desea eliminar este equipo?",
+        "deleteTeamWarning": "Esta acción no se puede deshacer. Todos los datos asociados con este equipo se eliminarán permanentemente.",
+        "cancel": "Cancelar",
+        "deleting": "Eliminando...",
+        "delete": "Eliminar",
+        "loading": "Cargando equipos...",
+        "errorLoadingTeams": "Error al cargar los equipos. Por favor, inténtelo de nuevo."
     },
 
     "VerifyEmail": {
@@ -356,6 +378,7 @@
         "COLOR_TOGGLE_RATE_LIMITED": "Por favor, espera 5 minutos antes de cambiar el color del equipo nuevamente.",
         "DELETE_LOCATION_RATE_LIMITED": "Por favor, espere 5 minutos antes de eliminar otra ubicación",
         "ADD_LOCATION_RATE_LIMITED": "Por favor, espere 5 minutos antes de añadir otra ubicación",
+        "ADD_TEAM_RATE_LIMITED": "¡Por favor, espere 5 minutos antes de añadir otro equipo!",
 
         "REGISTER_VERIFICATION_TOKEN_EMAIL_SENT": "Correo de verificación enviado exitosamente. ¡Revisa tu correo!",
         "REGISTER_VERIFICATION_EMAIL_FAILED": "Error al enviar el correo de verificación. Inténtalo de nuevo más tarde.",
@@ -390,6 +413,10 @@
         "LOCATION_CREATED": "Ubicación añadida exitosamente.",
         "LOCATION_DELETION_FAILED": "Error al eliminar la ubicación. ¡Inténtalo de nuevo!",
         "LOCATION_DELETED": "Ubicación eliminada exitosamente.",
+
+        "TEAM_ADDED_SUCCESSFULLY": "¡El equipo ha sido añadido exitosamente!",
+        "TEAM_ALREADY_EXISTS": "El equipo ya existe",
+        "TEAM_DELETED_SUCCESSFULLY": "Equipo eliminado con éxito",
 
         "COLOR_TOGGLE_FAILED": "Error al cambiar los colores del equipo. ¡Por favor, inténtalo de nuevo!",
         "COLOR_TOGGLED": "¡Colores del equipo cambiados!",
@@ -447,7 +474,10 @@
         "MATCH_FAILED_TO_FETCH": "Error al obtener el partido",
         "MATCH_NOT_FOUND": "No se encontró el partido",
         "MATCH_SUCCESSFULLY_FETCHED": "Partido obtenido con éxito",
-        "MATCH_FETCH_INVALID_REQUEST": "¡Solicitud de partido no válida!"
+        "MATCH_FETCH_INVALID_REQUEST": "¡Solicitud de partido no válida!",
+
+        "TEAMS_FETCHED": "Equipos obtenidos con éxito",
+        "FAILED_TO_FETCH_TEAMS": "Error al obtener los equipos"
     },
 
     "ZodErrors": {

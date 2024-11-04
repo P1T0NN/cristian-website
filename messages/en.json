@@ -173,7 +173,8 @@
         "deleteMatchTitle": "Confirm Deletion",
         "deleteMatchConfirmation": "Are you sure you want to delete this match? This action cannot be undone.",
         "delete": "Delete",
-        "deleting": "Deleting..."
+        "deleting": "Deleting...",
+        "emptyPosition": "Available position"
     },
 
     "EditMatchPage": {
@@ -251,6 +252,27 @@
         "updating": "Updating...",
         "updateDetails": "Update details",
         "notProvided": "Not provided"
+    },
+
+    "AddTeamPage": {
+        "teams": "Teams",
+        "addNewTeam": "Add New Team",
+        "fillTeamDetails": "Fill in the details for the new team",
+        "teamName": "Team Name",
+        "teamNamePlaceholder": "Enter team name",
+        "teamLevel": "Team Level",
+        "teamLevelPlaceholder": "Enter team level",
+        "adding": "Adding...",
+        "addTeam": "Add Team",
+        "createdAt": "Created At",
+        "actions": "Actions",
+        "deleteTeamConfirmation": "Are you sure you want to delete this team?",
+        "deleteTeamWarning": "This action cannot be undone. All data associated with this team will be permanently removed.",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "delete": "Delete",
+        "loading": "Loading teams...",
+        "errorLoadingTeams": "Error loading teams. Please try again."
     },
 
     "VerifyEmail": {
@@ -357,6 +379,7 @@
         "MATCH_INSTRUCTIONS_EDIT_RATE_LIMITED": "Please wait 5 minutes before editing match instructions again",
         "DELETE_LOCATION_RATE_LIMITED": "Please wait 5 minutes before deleting location again",
         "ADD_LOCATION_RATE_LIMITED": "Please wait 5 minutes before adding location again!",
+        "ADD_TEAM_RATE_LIMITED": "Please wait 5 minutes before adding team again!",
 
         "REGISTER_VERIFICATION_TOKEN_EMAIL_SENT": "Verification email sent successfully. Please check your email!",
         "REGISTER_VERIFICATION_EMAIL_FAILED": "Failed to send verification email. Please try again later.",
@@ -391,6 +414,10 @@
         "LOCATION_CREATED": "Location added successfully!",
         "LOCATION_DELETION_FAILED": "Failed to delete location. Please try again!",
         "LOCATION_DELETED": "Location deleted successfully!",
+
+        "TEAM_ADDED_SUCCESSFULLY": "Team has been added successfully!",
+        "TEAM_ALREADY_EXISTS": "Team already exists",
+        "TEAM_DELETED_SUCCESSFULLY": "Team deleted successfully",
 
         "COLOR_TOGGLE_FAILED": "Failed to switch team colors. Please try again!",
         "COLOR_TOGGLED": "Switched team colors!",
@@ -445,7 +472,10 @@
         "MATCH_FAILED_TO_FETCH": "Failed to get match",
         "MATCH_NOT_FOUND": "Match has not been found",
         "MATCH_SUCCESSFULLY_FETCHED": "Match fetched successfully",
-        "MATCH_FETCH_INVALID_REQUEST": "Invalid match request!"
+        "MATCH_FETCH_INVALID_REQUEST": "Invalid match request!",
+
+        "TEAMS_FETCHED": "Teams fetched successfully",
+        "FAILED_TO_FETCH_TEAMS": "Failed to fetch teams"
     },
 
     "ZodErrors": {
