@@ -19,6 +19,8 @@ const deleteMatchThreshold = 50;
 const editMatchThreshold = 20;
 const addTeamThreshold = 20;
 const deleteTeamThreshold = 20;
+const searchBarThreshold = 150;
+const addTeamDebtThreshold = 30;
 
 async function getIP(): Promise<string | null> {
     const awaitedHeaders = await headers();
@@ -40,7 +42,9 @@ export const serverActionRateLimit = async (
         'deleteMatch' |
         'editMatch' |
         'addTeam' |
-        'deleteTeam'
+        'deleteTeam' |
+        'searchBar' |
+        'addTeamDebt'
 ): Promise<{ success: boolean; message?: string }> => {
     const ip = getIP();
     if (!ip) {
@@ -84,6 +88,12 @@ export const serverActionRateLimit = async (
             break;
         case 'deleteTeam':
             threshold = deleteTeamThreshold;
+            break;
+        case 'searchBar':
+            threshold = searchBarThreshold;
+            break;
+        case 'addTeamDebt':
+            threshold = addTeamDebtThreshold;
             break;
         default:
             return { success: false, message: 'Invalid limit type' };

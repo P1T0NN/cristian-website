@@ -1,145 +1,143 @@
-"use client"
+'use client'
 
 // REACTJS IMPORTS
-import { useState, useRef, useEffect, useMemo, useCallback, useTransition } from "react";
+import { useState, useEffect, useRef } from 'react';
+
+// NEXTJS IMPORTS
+import Link from 'next/link';
 
 // LIBRARIES
-import debounce from 'lodash/debounce'; 
-import { useTranslations } from 'next-intl';
+import { useDebounce } from 'use-debounce';
+
+// CONFIG
+import { PAGE_ENDPOINTS } from '@/config';
 
 // COMPONENTS
 import { Input } from "@/components/ui/input";
-import { UserSearchResult } from "./user-search-result";
+import { Button } from "@/components/ui/button";
 
-// HOOKS
-import { useSearchUsers } from "@/hooks/useSearchUsers";
-
-// TYPES
-import { typesUser } from "@/types/typesUser";
+// SERVER ACTIONS
+import { searchBar } from '@/actions/server_actions/mutations/header/searchBar';
 
 // LUCIDE ICONS
-import { Search } from "lucide-react";
+import { Search } from 'lucide-react';
 
-type SearchBarProps = {
-    authToken: string | undefined;
+type SearchResult = {
+    users: { id: string; fullName: string }[];
+    teams: { id: string; team_name: string }[];
 }
 
-type CachedResult = {
-    term: string;
-    results: typesUser[];
-}
+export function SearchBar({ 
+    authToken 
+}: { authToken: string }) {
+    const searchRef = useRef<HTMLDivElement>(null);
 
-export const SearchBar = ({
-    authToken
-}: SearchBarProps) => {
-    const t = useTranslations('Header');
-    const searchRef = useRef<HTMLDivElement | null>(null);
-
-    const [isPending, startTransition] = useTransition();
-
-    const [searchTerm, setSearchTerm] = useState('');
-    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>('');
+    const [query, setQuery] = useState('');
+    const [results, setResults] = useState<SearchResult>({ users: [], teams: [] });
     const [isOpen, setIsOpen] = useState(false);
-    const [cachedResults, setCachedResults] = useState<CachedResult[]>([]);
 
-    const getCachedResults = useCallback((term: string) => {
-        const lowerTerm = term.toLowerCase();
-        const cachedEntry = cachedResults.find(cache => lowerTerm.startsWith(cache.term.toLowerCase()));
-        if (cachedEntry) {
-            return cachedEntry.results.filter(user => 
-                user.fullName.toLowerCase().includes(lowerTerm)
-            );
-        }
-        return null;
-    }, [cachedResults]);
-
-    const shouldFetch = !getCachedResults(debouncedSearchTerm) && debouncedSearchTerm.length > 1;
-
-    const { data: searchResults, isLoading, error } = useSearchUsers(
-        shouldFetch ? debouncedSearchTerm : '', 
-        7, 
-        authToken
-    );
-
-    const debouncedSetSearch = useMemo(
-        () => debounce((value: string) => {
-            startTransition(() => {
-                setDebouncedSearchTerm(value);
-            });
-        }, 300),
-        []
-    );
+    const [debouncedQuery] = useDebounce(query, 300);
 
     useEffect(() => {
-        debouncedSetSearch(searchTerm);
-        return () => debouncedSetSearch.cancel();
-    }, [searchTerm, debouncedSetSearch]);
+        if (debouncedQuery) {
+            searchBar(authToken, debouncedQuery).then(result => {
+                if (result.success && result.data) {
+                    setResults(result.data)
+                    setIsOpen(true)
+                } else {
+                    setResults({ users: [], teams: [] })
+                }
+            }).catch(() => {
+                setResults({ users: [], teams: [] })
+            })
+        } else {
+            setResults({ users: [], teams: [] })
+            setIsOpen(false)
+        }
+    }, [debouncedQuery, authToken])
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-                setIsOpen(false);
+                setIsOpen(false)
             }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
-
-    useEffect(() => {
-        if (searchResults && searchResults.success && shouldFetch) {
-            setCachedResults(prev => [...prev, { term: debouncedSearchTerm, results: searchResults.data }]);
         }
-    }, [searchResults, debouncedSearchTerm, shouldFetch]);
 
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchTerm(e.target.value);
-        setIsOpen(true);
-    };
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [])
 
-    const handleResultClick = () => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setQuery(e.target.value)
+        if (e.target.value) {
+            setIsOpen(true)
+        }
+    }
+
+    const handleItemClick = () => {
+        setQuery('');
         setIsOpen(false);
-        setSearchTerm('');
-    };
-
-    const displayResults = getCachedResults(debouncedSearchTerm) || (searchResults?.success ? searchResults.data : []);
+    }
 
     return (
-        <div ref={searchRef} className="relative w-full max-w-xl">
-            <div className="flex items-center">
+        <div ref={searchRef} className="relative w-full">
+            <div className="relative">
                 <Input
-                    type="search"
-                    className="w-full pl-10 pr-4 py-2 text-sm md:text-base h-10 md:h-12"
-                    placeholder={t('searchPlaceholder')}
-                    value={searchTerm}
-                    onChange={handleSearchChange}
+                    type="text"
+                    value={query}
+                    onChange={handleInputChange}
+                    placeholder="Search players or teams..."
+                    className="pr-10"
+                    aria-expanded={isOpen}
                 />
-                <Search className="absolute left-3 h-5 w-5 text-muted-foreground" />
+                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             </div>
-
-            {isOpen && searchTerm.length > 1 && (
-                <div className="absolute z-10 w-full mt-1 bg-background border border-border rounded-md shadow-lg">
-                    {isPending || isLoading ? (
-                        <div className="p-3 text-sm">{t('loading')}</div>
-                    ) : error ? (
-                        <div className="p-3 text-sm text-destructive">{t('error')}</div>
-                    ) : displayResults && displayResults.length > 0 ? (
-                        displayResults.map((player: typesUser) => (
-                            <UserSearchResult 
-                                key={player.id} 
-                                player={player} 
-                                onClick={handleResultClick} 
-                            />
-                        ))
-                    ) : ( 
-                        !isLoading && debouncedSearchTerm.length >= 2 ? ( 
-                            <div className="p-3 text-sm">{t('noResults')}</div>
-                        ) : null
+            {isOpen && (results.users.length > 0 || results.teams.length > 0) && (
+                <div className="absolute z-10 w-full mt-1 bg-popover rounded-md shadow-md max-h-60 overflow-auto border border-border">
+                    {results.users.length > 0 && (
+                        <div>
+                            <h3 className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase">Players</h3>
+                            {results.users.map((user) => (
+                                <Button
+                                    key={user.id}
+                                    variant="ghost"
+                                    className="w-full justify-start font-normal"
+                                    asChild
+                                >
+                                    <Link 
+                                        href={`${PAGE_ENDPOINTS.PLAYER_PAGE}/${user.id}`}
+                                        onClick={handleItemClick}
+                                    >
+                                        {user.fullName}
+                                    </Link>
+                                </Button>
+                            ))}
+                        </div>
+                    )}
+                    {results.teams.length > 0 && (
+                        <div>
+                            <h3 className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase">Teams</h3>
+                            {results.teams.map((team) => (
+                                <Button
+                                    key={team.id}
+                                    variant="ghost"
+                                    className="w-full justify-start font-normal"
+                                    asChild
+                                >
+                                    <Link 
+                                        href={`${PAGE_ENDPOINTS.TEAM_PAGE}/${team.id}`}
+                                        onClick={handleItemClick}
+                                    >
+                                        {team.team_name}
+                                    </Link>
+                                </Button>
+                            ))}
+                        </div>
                     )}
                 </div>
             )}
         </div>
-    );
-};
+    )
+}

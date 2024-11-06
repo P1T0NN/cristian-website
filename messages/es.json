@@ -275,6 +275,12 @@
         "errorLoadingTeams": "Error al cargar los equipos. Por favor, inténtelo de nuevo."
     },
 
+    "TeamPage": {
+        "editTeam": "Editar Equipo",
+        "createdOn": "Creado el",
+        "teamLevel": "Nivel del Equipo"
+    },
+
     "VerifyEmail": {
         "verifyingEmail": "Verificando tu correo...",
         "verificationSuccess": "¡Tu correo ha sido verificado exitosamente! Redirigiendo a la página de inicio de sesión...",
@@ -328,6 +334,7 @@
         "DEBT_ID_REQUIRED": "Se requiere ID de deuda",
         "FULL_NAME_REQUIRED": "¡Se requiere nombre completo!",
         "EMAIL_AND_USERID_REQUIRED": "Se requieren correo electrónico e ID",
+        "TEAM_ID_REQUIRED": "¡Se requiere el ID del equipo!",
         "VERIFICATION_EMAIL_COOLDOWN": "Por favor espera {time} segundos antes de solicitar otro correo de verificación.",
         "ACCOUNT_NOT_VERIFIED_RESENT": "Correo no verificado. Se ha enviado un nuevo correo de verificación.",
         "ACCOUNT_NOT_VERIFIED_RATE_LIMIT": "Correo no verificado. Por favor espera 5 minutos antes de solicitar otro correo de verificación.",
@@ -379,6 +386,7 @@
         "DELETE_LOCATION_RATE_LIMITED": "Por favor, espere 5 minutos antes de eliminar otra ubicación",
         "ADD_LOCATION_RATE_LIMITED": "Por favor, espere 5 minutos antes de añadir otra ubicación",
         "ADD_TEAM_RATE_LIMITED": "¡Por favor, espere 5 minutos antes de añadir otro equipo!",
+        "SEARCH_RATE_LIMITED": "Por favor, espere 5 minutos antes de buscar de nuevo. ¡Demasiadas solicitudes en un corto período de tiempo!",
 
         "REGISTER_VERIFICATION_TOKEN_EMAIL_SENT": "Correo de verificación enviado exitosamente. ¡Revisa tu correo!",
         "REGISTER_VERIFICATION_EMAIL_FAILED": "Error al enviar el correo de verificación. Inténtalo de nuevo más tarde.",
@@ -423,6 +431,9 @@
 
         "USER_UPDATE_FAILED": "Error al actualizar la configuración del usuario. ¡Inténtalo de nuevo!",
         "USER_FULL_NAME_UPDATED": "Nombre completo actualizado exitosamente.",
+
+        "USER_SEARCH_FAILED": "Error al buscar usuario",
+        "TEAM_SEARCH_FAILED": "Error al buscar equipo",
 
         "REDIS_CONNECTION_ERROR": "No se puede conectar a la base de datos. Inténtalo de nuevo más tarde.",
         "REDIS_DISCONNECTION_ERROR": "Error al desconectar de la base de datos.",
@@ -477,7 +488,11 @@
         "MATCH_FETCH_INVALID_REQUEST": "¡Solicitud de partido no válida!",
 
         "TEAMS_FETCHED": "Equipos obtenidos con éxito",
-        "FAILED_TO_FETCH_TEAMS": "Error al obtener los equipos"
+        "FAILED_TO_FETCH_TEAMS": "Error al obtener los equipos",
+
+        "FAILED_TO_FETCH_TEAM": "Error al obtener el equipo",
+        "TEAM_NOT_FOUND": "¡Equipo no encontrado!",
+        "TEAM_FETCHED": "¡Equipo obtenido con éxito!"
     },
 
     "ZodErrors": {

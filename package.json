@@ -30,6 +30,7 @@
     "argon2": "^0.41.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "cmdk": "1.0.0",
     "date-fns": "^4.1.0",
     "framer-motion": "^11.11.10",
     "jose": "^5.9.6",
@@ -47,6 +48,7 @@
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
+    "use-debounce": "^10.0.4",
     "uuid": "^10.0.0",
     "zod": "^3.23.8"
   },

@@ -275,6 +275,12 @@
         "errorLoadingTeams": "Error loading teams. Please try again."
     },
 
+    "TeamPage": {
+        "editTeam": "Edit Team",
+        "createdOn": "Created on",
+        "teamLevel": "Team Level"
+    },
+
     "VerifyEmail": {
         "verifyingEmail": "Verifying your email...",
         "verificationSuccess": "Your email has been successfully verified! Redirecting to login page...",
@@ -328,6 +334,7 @@
         "DEBT_ID_REQUIRED": "Debt ID is required",
         "FULL_NAME_REQUIRED": "Full name is required!",
         "EMAIL_AND_USERID_REQUIRED": "Email and ID are required!",
+        "TEAM_ID_REQUIRED":  "Team ID is required!",
         "VERIFICATION_EMAIL_COOLDOWN": "Please wait {time} seconds before requesting another verification email.",
         "ACCOUNT_NOT_VERIFIED_RESENT": "Email not verified. A new verification email has been sent.",
         "ACCOUNT_NOT_VERIFIED_RATE_LIMIT": "Email not verified. Please wait 5 minutes before requesting another verification email.",
@@ -380,6 +387,8 @@
         "DELETE_LOCATION_RATE_LIMITED": "Please wait 5 minutes before deleting location again",
         "ADD_LOCATION_RATE_LIMITED": "Please wait 5 minutes before adding location again!",
         "ADD_TEAM_RATE_LIMITED": "Please wait 5 minutes before adding team again!",
+        "SEARCH_RATE_LIMITED": "Please wait 5 minutes before searching again. Too many requests at short amount of time!",
+        "ADD_TEAM_DEBT_RATE_LIMITED": "Please wait 5 minutes before adding another team debt",
 
         "REGISTER_VERIFICATION_TOKEN_EMAIL_SENT": "Verification email sent successfully. Please check your email!",
         "REGISTER_VERIFICATION_EMAIL_FAILED": "Failed to send verification email. Please try again later.",
@@ -416,14 +425,19 @@
         "LOCATION_DELETED": "Location deleted successfully!",
 
         "TEAM_ADDED_SUCCESSFULLY": "Team has been added successfully!",
-        "TEAM_ALREADY_EXISTS": "Team already exists",
-        "TEAM_DELETED_SUCCESSFULLY": "Team deleted successfully",
+        "TEAM_ALREADY_EXISTS": "Team already exists!",
+        "TEAM_DELETED_SUCCESSFULLY": "Team deleted successfully!",
+        "TEAM_NOT_FOUND": "Team not found!",
+        "TEAM_DEBT_ADDED_SUCCESSFULLY": "Team debt added successfully!",
 
         "COLOR_TOGGLE_FAILED": "Failed to switch team colors. Please try again!",
         "COLOR_TOGGLED": "Switched team colors!",
 
         "USER_UPDATE_FAILED": "Failed to update user settings. Please try again!",
         "USER_FULL_NAME_UPDATED": "Full name updated successfully!",
+
+        "USER_SEARCH_FAILED": "Failed to search for user",
+        "TEAM_SEARCH_FAILED": "Failed to search for team",
 
         "REDIS_CONNECTION_ERROR": "Unable to connect to the database. Please try again later.",
         "REDIS_DISCONNECTION_ERROR": "Error occurred while disconnecting from the database.",
@@ -475,7 +489,11 @@
         "MATCH_FETCH_INVALID_REQUEST": "Invalid match request!",
 
         "TEAMS_FETCHED": "Teams fetched successfully",
-        "FAILED_TO_FETCH_TEAMS": "Failed to fetch teams"
+        "FAILED_TO_FETCH_TEAMS": "Failed to fetch teams",
+
+        "FAILED_TO_FETCH_TEAM": "Failed to fetch team",
+        "TEAM_NOT_FOUND": "Team not found!",
+        "TEAM_FETCHED": "Team fetched successfully!"
     },
 
     "ZodErrors": {

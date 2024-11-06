@@ -41,7 +41,8 @@ const ADMIN_PROTECTED_PAGES = [
     PAGE_ENDPOINTS.MATCH_PAGE,
     '/match/[id]',
     PAGE_ENDPOINTS.PLAYER_PAGE,
-    '/player/[id]'
+    '/player/[id]',
+    PAGE_ENDPOINTS.ADD_TEAM_PAGE
 ];
 
 // Helper functions

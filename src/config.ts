@@ -18,7 +18,8 @@ export const PAGE_ENDPOINTS = {
     ADD_LOCATION_PAGE:      "/add_location",
     EDIT_MATCH_PAGE:        "/edit_match",
     PLAYER_PAGE:            "/player",
-    ADD_TEAM_PAGE:       "/add_team"
+    ADD_TEAM_PAGE:          "/add_team",
+    TEAM_PAGE:              "/team",
 }
 
 export const CACHE_KEYS = {

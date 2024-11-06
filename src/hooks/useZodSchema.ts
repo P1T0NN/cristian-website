@@ -69,7 +69,7 @@ export const useZodSchemas = () => {
     const addTeamSchema = z.object({
         team_name: z.string().min(1, "Team name is required"),
         team_level: z.string().min(1, "Team level is required"),
-    })
+    });
 
     return {
         loginSchema,
