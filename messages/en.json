@@ -389,6 +389,7 @@
         "ADD_TEAM_RATE_LIMITED": "Please wait 5 minutes before adding team again!",
         "SEARCH_RATE_LIMITED": "Please wait 5 minutes before searching again. Too many requests at short amount of time!",
         "ADD_TEAM_DEBT_RATE_LIMITED": "Please wait 5 minutes before adding another team debt",
+        "SEARCH_TEAMS_RATE_LIMITED": "Please wait 5 minutes before searching for a team again!",
 
         "REGISTER_VERIFICATION_TOKEN_EMAIL_SENT": "Verification email sent successfully. Please check your email!",
         "REGISTER_VERIFICATION_EMAIL_FAILED": "Failed to send verification email. Please try again later.",

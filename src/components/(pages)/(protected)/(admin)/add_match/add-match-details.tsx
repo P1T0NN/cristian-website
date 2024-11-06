@@ -1,7 +1,7 @@
 "use client";
 
 // REACTJS IMPORTS
-import { useTransition, Suspense } from "react";
+import { useTransition } from "react";
 
 // NEXTJS IMPORTS
 import { useRouter } from "next/navigation";

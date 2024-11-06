@@ -387,6 +387,7 @@
         "ADD_LOCATION_RATE_LIMITED": "Por favor, espere 5 minutos antes de añadir otra ubicación",
         "ADD_TEAM_RATE_LIMITED": "¡Por favor, espere 5 minutos antes de añadir otro equipo!",
         "SEARCH_RATE_LIMITED": "Por favor, espere 5 minutos antes de buscar de nuevo. ¡Demasiadas solicitudes en un corto período de tiempo!",
+        "SEARCH_TEAMS_RATE_LIMITED": "¡Por favor, espera 5 minutos antes de buscar un equipo de nuevo!",
 
         "REGISTER_VERIFICATION_TOKEN_EMAIL_SENT": "Correo de verificación enviado exitosamente. ¡Revisa tu correo!",
         "REGISTER_VERIFICATION_EMAIL_FAILED": "Error al enviar el correo de verificación. Inténtalo de nuevo más tarde.",
