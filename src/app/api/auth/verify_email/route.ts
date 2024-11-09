@@ -1,7 +1,6 @@
 // LIBRARIES
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase/supabase';
-import { apiRouteRateLimit } from '@/lib/ratelimit/api_routes/apiRouteRateLimit';
 import { getTranslations } from 'next-intl/server';
 
 // TYPES
@@ -9,11 +8,6 @@ import type { APIResponse } from '@/types/responses/APIResponse';
 
 export async function POST(request: Request): Promise<NextResponse<APIResponse>> {
     const t = await getTranslations('GenericMessages');
-
-    const rateLimitResult = await apiRouteRateLimit(request, 'verifyEmail');
-    if (!rateLimitResult.success) {
-        return NextResponse.json({ success: false, message: t('VERIFY_EMAIL_RATE_LIMIT') }, { status: 429 });
-    }
 
     const { token } = await request.json();
 

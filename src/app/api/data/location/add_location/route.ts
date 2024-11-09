@@ -6,7 +6,7 @@ import { getTranslations } from 'next-intl/server';
 import { supabase } from '@/lib/supabase/supabase';
 
 // SERVICES
-import { redisCacheService } from '@/services/server/redis-cache.service';
+import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
 
 // TYPES
 import type { APIResponse } from '@/types/responses/APIResponse';
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>>
     }
 
     // Invalidate the locations cache
-    await redisCacheService.delete(LOCATIONS_CACHE_KEY);
+    await upstashRedisCacheService.delete(LOCATIONS_CACHE_KEY);
 
     return NextResponse.json({ success: true, message: t('LOCATION_CREATED'), data });
 }

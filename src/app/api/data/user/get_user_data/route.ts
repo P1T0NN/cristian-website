@@ -6,14 +6,16 @@ import { jwtVerify } from 'jose';
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
+// CONFIG
+import { CACHE_KEYS } from '@/config';
+
 // SERVICES
-import { redisCacheService } from '@/services/server/redis-cache.service';
+import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
 
 // TYPES
 import type { APIResponse } from '@/types/responses/APIResponse';
 
 const CACHE_TTL = 300; // 5 minutes in seconds
-const CACHE_KEY_PREFIX = 'user:';
 
 export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
     const genericMessages = await getTranslations("GenericMessages");
@@ -32,10 +34,10 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
     }
 
     const userId = payload.sub;
-    const cacheKey = `${CACHE_KEY_PREFIX}${userId}`;
+    const cacheKey = `${CACHE_KEYS.USER_PREFIX}${userId}`;
 
     // Try to get user data from cache first
-    const cachedResult = await redisCacheService.get(cacheKey);
+    const cachedResult = await upstashRedisCacheService.get(cacheKey);
     if (cachedResult.success && cachedResult.data) {
         return NextResponse.json({ success: true, message: fetchMessages('USER_DATA_SUCCESSFULLY_FETCHED'), data: cachedResult.data });
     }
@@ -52,7 +54,7 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
     }
 
     // Store the fetched data in cache
-    await redisCacheService.set(cacheKey, data, CACHE_TTL);
+    await upstashRedisCacheService.set(cacheKey, data, CACHE_TTL);
 
     return NextResponse.json({ success: true, message: fetchMessages('USER_DATA_SUCCESSFULLY_FETCHED'), data });
 }

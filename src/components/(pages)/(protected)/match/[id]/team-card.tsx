@@ -47,16 +47,24 @@ export const TeamCard = async ({
         }
     };
 
-    const maxPlayers = getMaxPlayers(matchType);
+    const isDefaultTeam = teamName === "Equipo 1" || teamName === "Equipo 2";
+    const maxPlayers = isDefaultTeam ? getMaxPlayers(matchType) : 8; // Use getMaxPlayers for default teams, 8 for custom teams
+    const currentPlayers = isDefaultTeam ? (players?.length ?? 0) : maxPlayers;
+    const isFull = currentPlayers >= maxPlayers;
 
     return (
         <Card>
             <CardHeader>
                 <CardTitle>{teamName}</CardTitle>
-                <CardDescription>{t('players')} {players?.length ?? 0}/{maxPlayers}</CardDescription>
+                <CardDescription>
+                    {t('players')} {currentPlayers}/{maxPlayers}
+                    {!isDefaultTeam && (
+                        <span className="block text-red-500 mt-1">{t('teamIsFull')}</span>
+                    )}
+                </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
-                {players?.map((player) => (
+                {isDefaultTeam && players?.map((player) => (
                     <PlayerItem
                         key={player.id}
                         player={player}
@@ -68,7 +76,7 @@ export const TeamCard = async ({
                     />
                 ))}
 
-                {(players?.length ?? 0) < maxPlayers && !userTeamNumber && (
+                {isDefaultTeam && !isFull && !userTeamNumber && (
                     <JoinTeamButton
                         teamNumber={teamNumber}
                         matchId={matchId}

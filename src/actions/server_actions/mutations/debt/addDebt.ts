@@ -6,7 +6,6 @@ import { revalidatePath } from 'next/cache';
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
-import { serverActionRateLimit } from '@/lib/ratelimit/server_actions/serverActionRateLimit';
 import { jwtVerify } from 'jose';
 
 // TYPES
@@ -16,11 +15,6 @@ import type { typesUser } from "@/types/typesUser";
 export async function addDebt(authToken: string, addDebtData: typesAddDebtForm) {
     const genericMessages = await getTranslations("GenericMessages");
     const fetchMessages = await getTranslations("FetchMessages");
-
-    const rateLimitResult = await serverActionRateLimit('addDebt');
-    if (!rateLimitResult.success) {
-        return { success: false, message: genericMessages('DEBT_CREATION_RATE_LIMITED') };
-    }
 
     if (!authToken) {
         return { success: false, message: genericMessages('UNAUTHORIZED') }

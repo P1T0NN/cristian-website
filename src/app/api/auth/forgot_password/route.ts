@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
-import { apiRouteRateLimit } from '@/lib/ratelimit/api_routes/apiRouteRateLimit';
 import { getTranslations } from 'next-intl/server';
 
 // UTILS
@@ -17,11 +16,6 @@ const TOKEN_EXPIRATION_HOURS = 1;
 
 export async function POST(request: NextRequest): Promise<NextResponse<APIResponse>> {
     const t = await getTranslations('GenericMessages');
-
-    const rateLimitResult = await apiRouteRateLimit(request, 'resetPassword');
-    if (!rateLimitResult.success) {
-        return NextResponse.json({ success: false, message: t('PASSWORD_RESET_RATE_LIMITED') }, { status: 429 });
-    }
 
     const { email } = await request.json();
 

@@ -7,7 +7,7 @@ import { supabase } from '@/lib/supabase/supabase';
 import { jwtVerify } from 'jose';
 
 // SERVICES
-import { redisCacheService } from '@/services/server/redis-cache.service';
+import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
 
 // CONFIG
 import { CACHE_KEYS } from '@/config';
@@ -34,8 +34,8 @@ export async function GET(req: NextRequest): Promise<NextResponse<APIResponse>> 
         return NextResponse.json({ success: false, message: genericMessages('JWT_DECODE_ERROR') }, { status: 401 });
     }
 
-    // Try to get teams from Redis cache
-    const cacheResult = await redisCacheService.get<typesTeam[]>(CACHE_KEYS.ALL_TEAMS_PREFIX);
+    // Try to get teams from Upstash Redis cache
+    const cacheResult = await upstashRedisCacheService.get<typesTeam[]>(CACHE_KEYS.ALL_TEAMS_PREFIX);
 
     if (cacheResult.success && cacheResult.data) {
         return NextResponse.json({ success: true, message: fetchMessages('TEAMS_FETCHED'), data: cacheResult.data });
@@ -51,8 +51,8 @@ export async function GET(req: NextRequest): Promise<NextResponse<APIResponse>> 
         return NextResponse.json({ success: false, message: fetchMessages('FAILED_TO_FETCH_TEAMS') }, { status: 500 });
     }
 
-    // Store in Redis cache
-    await redisCacheService.set(CACHE_KEYS.ALL_TEAMS_PREFIX, teams, CACHE_TTL);
+    // Store in Upstash Redis cache
+    await upstashRedisCacheService.set(CACHE_KEYS.ALL_TEAMS_PREFIX, teams, CACHE_TTL);
 
     return NextResponse.json({ success: true, message: fetchMessages('TEAMS_FETCHED'), data: teams });
 }

@@ -8,8 +8,8 @@ import { useDebounce } from "use-debounce";
 import { searchTeams } from "@/actions/server_actions/mutations/match/searchTeams";
 
 export const useTeamSearch = (authToken: string, handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void) => {
-    const [team1QueryState, setTeam1QueryState] = useState('');
-    const [team2QueryState, setTeam2QueryState] = useState('');
+    const [team1QueryState, setTeam1QueryState] = useState('Equipo 1');
+    const [team2QueryState, setTeam2QueryState] = useState('Equipo 2');
     const [team1Results, setTeam1Results] = useState<{ id: string; team_name: string }[]>([]);
     const [team2Results, setTeam2Results] = useState<{ id: string; team_name: string }[]>([]);
     const [isTeam1Open, setIsTeam1Open] = useState(false);
@@ -58,13 +58,20 @@ export const useTeamSearch = (authToken: string, handleInputChange: (e: React.Ch
         setTeam1QueryState(query);
         setIsTeam1Open(query.length > 0);
         setIsTeam2Open(false);
+        handleInputChange({ target: { name: 'team1_name', value: query } } as React.ChangeEvent<HTMLInputElement>);
     };
 
     const setTeam2Query = (query: string) => {
         setTeam2QueryState(query);
         setIsTeam2Open(query.length > 0);
         setIsTeam1Open(false);
+        handleInputChange({ target: { name: 'team2_name', value: query } } as React.ChangeEvent<HTMLInputElement>);
     };
+
+    useEffect(() => {
+        handleInputChange({ target: { name: 'team1_name', value: 'Equipo 1' } } as React.ChangeEvent<HTMLInputElement>);
+        handleInputChange({ target: { name: 'team2_name', value: 'Equipo 2' } } as React.ChangeEvent<HTMLInputElement>);
+    }, []);
 
     const handleTeamSelect = (team: string, teamName: string) => {
         handleInputChange({

@@ -3,7 +3,6 @@ import { NextResponse, NextRequest } from 'next/server';
 
 // LIBRARIES
 import argon2 from 'argon2';
-import { apiRouteRateLimit } from '@/lib/ratelimit/api_routes/apiRouteRateLimit';
 
 // ACTIONS
 import { resendVerificationEmail } from '@/actions/functions/auth/auth';
@@ -33,11 +32,6 @@ interface LoginAPIResponse extends APIResponse {
 
 export async function POST(request: NextRequest): Promise<NextResponse<LoginAPIResponse>> {
     const t = await getTranslations('GenericMessages');
-
-    const rateLimitResult = await apiRouteRateLimit(request, 'login');
-    if (!rateLimitResult.success) {
-        return NextResponse.json({ success: false, message: t('LOGIN_RATE_LIMIT') }, { status: 429 });
-    }
 
     const body = await request.json();
     const { email, password } = body;

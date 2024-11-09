@@ -7,7 +7,7 @@ import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
 // SERVICES
-import { redisCacheService } from '@/services/server/redis-cache.service';
+import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
 
 // TYPES
 import type { APIResponse } from '@/types/responses/APIResponse';
@@ -39,8 +39,8 @@ export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>>
         return NextResponse.json({ success: false, message: fetchMessages('MATCH_FETCH_INVALID_REQUEST') }, { status: 400 });
     }
 
-    // Try to get match data from Redis cache
-    const cacheResult = await redisCacheService.get<typesMatch>(`${MATCH_CACHE_KEY_PREFIX}${matchId}`);
+    // Try to get match data from Upstash Redis cache
+    const cacheResult = await upstashRedisCacheService.get<typesMatch>(`${MATCH_CACHE_KEY_PREFIX}${matchId}`);
 
     let match: typesMatch | null = null;
 
@@ -64,8 +64,8 @@ export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>>
 
         match = dbMatch;
 
-        // Store in Redis cache
-        await redisCacheService.set(`${MATCH_CACHE_KEY_PREFIX}${matchId}`, match, CACHE_TTL);
+        // Store in Upstash Redis cache
+        await upstashRedisCacheService.set(`${MATCH_CACHE_KEY_PREFIX}${matchId}`, match, CACHE_TTL);
     }
 
     // Check if match is null after all attempts to fetch it

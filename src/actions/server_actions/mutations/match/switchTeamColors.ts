@@ -6,11 +6,10 @@ import { revalidatePath } from 'next/cache'
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
-import { serverActionRateLimit } from '@/lib/ratelimit/server_actions/serverActionRateLimit';
 import { jwtVerify } from 'jose';
 
 // SERVICES
-import { redisCacheService } from '@/services/server/redis-cache.service';
+import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
 
 const MATCH_CACHE_KEY_PREFIX = 'match:';
 
@@ -29,11 +28,6 @@ export async function switchTeamColors(
 
     if (!payload) {
         return { success: false, message: genericMessages('JWT_DECODE_ERROR') };
-    }
-
-    const rateLimitResult = await serverActionRateLimit('switchTeamColor');
-    if (!rateLimitResult.success) {
-        return { success: false, message: genericMessages('COLOR_TOGGLE_RATE_LIMITED') };
     }
 
     // Fetch current match data
@@ -72,7 +66,7 @@ export async function switchTeamColors(
     }
 
     // Invalidate the specific match cache
-    await redisCacheService.delete(`${MATCH_CACHE_KEY_PREFIX}${matchId}`);
+    await upstashRedisCacheService.delete(`${MATCH_CACHE_KEY_PREFIX}${matchId}`);
 
     revalidatePath("/");
 

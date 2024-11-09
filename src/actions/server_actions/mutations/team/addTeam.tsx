@@ -6,11 +6,10 @@ import { revalidatePath } from "next/cache";
 // LIBRARIES
 import { supabase } from "@/lib/supabase/supabase";
 import { getTranslations } from "next-intl/server";
-import { serverActionRateLimit } from "@/lib/ratelimit/server_actions/serverActionRateLimit";
 import { jwtVerify } from "jose";
 
 // SERVICES
-import { redisCacheService } from "@/services/server/redis-cache.service";
+import { upstashRedisCacheService } from "@/services/server/redis-cache.service";
 
 // CONFIG
 import { CACHE_KEYS } from "@/config";
@@ -29,11 +28,6 @@ export async function addTeam(authToken: string, addTeamData: typesAddTeamForm) 
 
     if (!payload) {
         return { success: false, message: t('JWT_DECODE_ERROR') };
-    }
-
-    const rateLimitResult = await serverActionRateLimit('addTeam');
-    if (!rateLimitResult.success) {
-        return { success: false, message: t('ADD_TEAM_RATE_LIMITED') };
     }
 
     const team_name = addTeamData.team_name;
@@ -58,7 +52,7 @@ export async function addTeam(authToken: string, addTeamData: typesAddTeamForm) 
     }
 
     // Invalidate the teams cache
-    await redisCacheService.delete(CACHE_KEYS.ALL_TEAMS_PREFIX);
+    await upstashRedisCacheService.delete(CACHE_KEYS.ALL_TEAMS_PREFIX);
 
     revalidatePath("/");
 

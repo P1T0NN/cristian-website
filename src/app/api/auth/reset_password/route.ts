@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from 'next/server';
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
 import argon2 from 'argon2';
-import { apiRouteRateLimit } from '@/lib/ratelimit/api_routes/apiRouteRateLimit';
 import { getTranslations } from 'next-intl/server';
 
 // TYPES
@@ -12,11 +11,6 @@ import type { APIResponse } from '@/types/responses/APIResponse';
 
 export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>> {
     const t = await getTranslations('GenericMessages');
-
-    const rateLimitResult = await apiRouteRateLimit(req, 'resetPassword');
-    if (!rateLimitResult.success) {
-        return NextResponse.json({ success: false, message: t('PASSWORD_RESET_RATE_LIMITED') }, { status: 429 });
-    }
 
     const requestBody = await req.json();
     const { token, password } = requestBody;

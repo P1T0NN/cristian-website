@@ -174,7 +174,8 @@
         "deleteMatchConfirmation": "¿Estás seguro de que quieres eliminar este partido? Esta acción no se puede deshacer.",
         "delete": "Eliminar",
         "deleting": "Eliminando...",
-        "emptyPosition": "Posición disponible"
+        "emptyPosition": "Posición disponible",
+        "teamIsFull": "¡Este equipo está completo!"
     },
 
     "EditMatchPage": {

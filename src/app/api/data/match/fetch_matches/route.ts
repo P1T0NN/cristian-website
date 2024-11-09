@@ -7,7 +7,7 @@ import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
 // SERVICES
-import { redisCacheService } from '@/services/server/redis-cache.service';
+import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
 
 // TYPES
 import type { APIResponse } from '@/types/responses/APIResponse';
@@ -53,14 +53,14 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
         const cacheKey = `${MATCHES_CACHE_PREFIX}${match.id}`;
         
         // Try to get from cache first
-        const cachedMatch = await redisCacheService.get<typesMatch>(cacheKey);
+        const cachedMatch = await upstashRedisCacheService.get<typesMatch>(cacheKey);
         
         if (cachedMatch.success && cachedMatch.data) {
             return cachedMatch.data;
         }
         
         // If not in cache, cache the match
-        await redisCacheService.set(cacheKey, match, CACHE_TTL);
+        await upstashRedisCacheService.set(cacheKey, match, CACHE_TTL);
         return match;
     }));
 

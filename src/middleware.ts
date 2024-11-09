@@ -1,11 +1,15 @@
 // NEXTJS IMPORTS
 import { NextRequest, NextResponse } from 'next/server';
 
+// LIBRARIES
+import { jwtVerify } from 'jose';
+import { getTranslations } from 'next-intl/server';
+
 // CONFIG
 import { PAGE_ENDPOINTS } from '@/config';
 
-// LIBRARIES
-import { jwtVerify } from 'jose';
+// SERVER ACTIONS
+import { checkGlobalRateLimit } from './actions/server_actions/ratelimit/checkGlobalRateLimit';
 
 // ACTIONS
 import { server_fetchUserData } from './actions/functions/data/server/server_fetchUserData';
@@ -45,6 +49,14 @@ const ADMIN_PROTECTED_PAGES = [
     PAGE_ENDPOINTS.ADD_TEAM_PAGE
 ];
 
+function getIP(request: NextRequest): string {
+    const forwardedFor = request.headers.get('x-forwarded-for');
+    if (forwardedFor) {
+        return forwardedFor.split(',')[0];
+    }
+    return request.headers.get('x-real-ip') || 'unknown';
+}
+
 // Helper functions
 async function redirectToLogin(req: NextRequest) {
     return NextResponse.redirect(new URL(PAGE_ENDPOINTS.LOGIN_PAGE, req.url));
@@ -69,6 +81,8 @@ async function refreshAuthToken(refreshToken: string, response: NextResponse): P
 }
 
 export async function middleware(req: NextRequest) {
+    const genericMessages = await getTranslations("GenericMessages");
+
     const authToken = req.cookies.get('auth_token')?.value;
     const refreshToken = req.cookies.get('rtok')?.value;
     const csrfToken = req.cookies.get('csrftoken')?.value;
@@ -80,6 +94,18 @@ export async function middleware(req: NextRequest) {
         const newCsrfToken = await refreshCsrfToken();
         if (newCsrfToken) {
             setCsrfTokenCookie(response, newCsrfToken);
+        }
+    }
+
+    // Global Rate Limiting
+    if (pathname.startsWith('/api/')) {
+        const identifier = getIP(req);
+        const isWithinRateLimit = await checkGlobalRateLimit(identifier);
+        if (!isWithinRateLimit) {
+            return new NextResponse(JSON.stringify({ message: genericMessages("RATE_LIMIT_EXCEEDED") }), {
+                status: 429,
+                headers: { 'Content-Type': 'application/json' }
+            });
         }
     }
 
@@ -139,6 +165,6 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
     matcher: [
-        '/((?!api|_next/static|_next/image|favicon.ico).*)',
+        '/((?!_next/static|_next/image|favicon.ico).*)',
     ],
 };

@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from 'next/server';
 // LIBRARIES
 import { Resend } from 'resend';
 import { getTranslations } from 'next-intl/server';
-import { apiRouteRateLimit } from '@/lib/ratelimit/api_routes/apiRouteRateLimit';
 
 // EMAIL TEMPLATES
 import { PasswordResetEmailTemplate } from '@/email_templates/password-reset-email-template';
@@ -17,11 +16,6 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function POST(request: NextRequest): Promise<NextResponse<APIResponse>> {
     const genericMessages = await getTranslations('GenericMessages');
     const emailTemplateMessages = await getTranslations('EmailTemplateMessages');
-
-    const rateLimitResult = await apiRouteRateLimit(request, 'resetPassword');
-    if (!rateLimitResult.success) {
-        return NextResponse.json({ success: false, message: genericMessages('PASSWORD_RESET_RATE_LIMITED') }, { status: 429 });
-    }
 
     const { email } = await request.json();
 

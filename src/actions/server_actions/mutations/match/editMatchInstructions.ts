@@ -6,11 +6,10 @@ import { revalidatePath } from "next/cache";
 // LIBRARIES
 import { getTranslations } from "next-intl/server";
 import { supabase } from "@/lib/supabase/supabase";
-import { serverActionRateLimit } from "@/lib/ratelimit/server_actions/serverActionRateLimit";
 import { jwtVerify } from "jose";
 
 // SERVICES
-import { redisCacheService } from "@/services/server/redis-cache.service";
+import { upstashRedisCacheService } from "@/services/server/redis-cache.service";
 
 // CONFIG
 import { CACHE_KEYS } from "@/config";
@@ -32,11 +31,6 @@ export const editMatchInstructions = async (
         return { success: false, message: genericMessages('JWT_DECODE_ERROR') };
     }
 
-    const rateLimitResult = await serverActionRateLimit('editMatchInstructions');
-    if (!rateLimitResult.success) {
-        return { success: false, message: genericMessages('MATCH_INSTRUCTIONS_EDIT_RATE_LIMITED') };
-    }
-
     if (!matchId) {
         return { success: false, message: genericMessages('MATCH_ID_INVALID') };
     }
@@ -51,7 +45,7 @@ export const editMatchInstructions = async (
     }
 
     // Invalidate the specific match cache
-    await redisCacheService.delete(`${CACHE_KEYS.MATCH_PREFIX}${matchId}`);
+    await upstashRedisCacheService.delete(`${CACHE_KEYS.MATCH_PREFIX}${matchId}`);
 
     revalidatePath("/");
 

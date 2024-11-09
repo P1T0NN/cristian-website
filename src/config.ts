@@ -1,3 +1,5 @@
+export const GLOBAL_RATE_LIMIT = 1000;
+
 export const PAGE_ENDPOINTS = {
     LOGIN_PAGE:             "/login",
     REGISTER_PAGE:          "/register",

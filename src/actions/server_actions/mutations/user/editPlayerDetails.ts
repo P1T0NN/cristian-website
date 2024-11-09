@@ -6,16 +6,10 @@ import { revalidatePath } from 'next/cache';
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
-import { serverActionRateLimit } from '@/lib/ratelimit/server_actions/serverActionRateLimit';
 import { jwtVerify } from 'jose';
 
 export async function editPlayerDetails(authToken: string, playerId: string, dni: string, playerLevel: string, playerPosition: string) {
     const genericMessages = await getTranslations("GenericMessages");
-
-    const rateLimitResult = await serverActionRateLimit('updateFullName');
-    if (!rateLimitResult.success) {
-        return { success: false, message: genericMessages('UPDATE_FULL_NAME_RATE_LIMIT') };
-    }
 
     if (!authToken) {
         return { success: false, message: genericMessages('UNAUTHORIZED') };

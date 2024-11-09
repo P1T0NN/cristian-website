@@ -6,7 +6,6 @@ import { revalidatePath } from 'next/cache';
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
-import { serverActionRateLimit } from '@/lib/ratelimit/server_actions/serverActionRateLimit';
 import { jwtVerify } from 'jose';
 
 // TYPES
@@ -23,11 +22,6 @@ export async function addMatch(authToken: string, addMatchData: typesAddMatchFor
 
     if (!payload) {
         return { success: false, message: genericMessages('JWT_DECODE_ERROR') };
-    }
-
-    const rateLimitResult = await serverActionRateLimit('addMatch');
-    if (!rateLimitResult.success) {
-        return { success: false, message: genericMessages('MATCH_CREATION_RATE_LIMITED') };
     }
 
     const { data, error } = await supabase

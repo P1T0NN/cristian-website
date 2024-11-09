@@ -87,7 +87,10 @@ export const GenericMessages = {
     REDIS_SET_ERROR: "Unable to store data in the cache. Please try again.",
     REDIS_DELETE_ERROR: "Unable to delete data from the cache. Please try again.",
     REDIS_SCAN_ERROR: "Unable to scan data from the cache. Please try again.",
+    REDIS_INCREMENT_ERROR: "Unable to increment date from the cache. Please try again.",
     REDIS_CLIENT_ERROR: "An error occurred with the database client. Please try again later.",
+    REDIS_OPERATION_ERROR: "Unable to execute redis operation. Please try again.",
+    REDIS_EXISTS_ERROR: "Redis already exists!",
 
     // Rate Limit Messages
     RATE_LIMIT_EXCEEDED: "Too many requests, please try again in a minute!",

@@ -3,7 +3,6 @@
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
-import { serverActionRateLimit } from '@/lib/ratelimit/server_actions/serverActionRateLimit';
 import { jwtVerify } from 'jose';
 
 // TYPES
@@ -22,11 +21,6 @@ export async function searchTeams(authToken: string, query: string): Promise<{ s
 
     if (!payload) {
         return { success: false, message: genericMessages('JWT_DECODE_ERROR') }
-    }
-
-    const rateLimitResult = await serverActionRateLimit('searchTeams')
-    if (!rateLimitResult.success) {
-        return { success: false, message: genericMessages('SEARCH_TEAMS_RATE_LIMITED') }
     }
 
     // Search for teams

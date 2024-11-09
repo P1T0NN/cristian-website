@@ -7,23 +7,17 @@ import { revalidatePath } from 'next/cache';
 import { getTranslations } from 'next-intl/server';
 import { jwtVerify } from 'jose';
 import { supabase } from '@/lib/supabase/supabase';
-import { serverActionRateLimit } from '@/lib/ratelimit/server_actions/serverActionRateLimit';
 
 // CONFIG
 import { CACHE_KEYS } from '@/config';
 
 // SERVICES
-import { redisCacheService } from '@/services/server/redis-cache.service';
+import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
 
 const CACHE_TTL = 300; // 5 minutes in seconds
 
 export async function updateUserFullName(authToken: string, fullName: string) {
     const genericMessages = await getTranslations("GenericMessages");
-
-    const rateLimitResult = await serverActionRateLimit('updateFullName');
-    if (!rateLimitResult.success) {
-        return { success: false, message: genericMessages('UPDATE_FULL_NAME_RATE_LIMIT') };
-    }
 
     if (!authToken) {
         return { success: false, message: genericMessages('UNAUTHORIZED') };
@@ -54,10 +48,10 @@ export async function updateUserFullName(authToken: string, fullName: string) {
 
     // Clear the old cache for this user
     const cacheKey = `${CACHE_KEYS.USER_PREFIX}${userId}`;
-    await redisCacheService.delete(cacheKey);
+    await upstashRedisCacheService.delete(cacheKey);
 
     // Set the new cache with the updated data
-    await redisCacheService.set(cacheKey, data, CACHE_TTL);
+    await upstashRedisCacheService.set(cacheKey, data, CACHE_TTL);
 
     revalidatePath("/");
 

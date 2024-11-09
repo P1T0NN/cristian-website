@@ -7,15 +7,15 @@ import { revalidatePath } from 'next/cache';
 import { getTranslations } from 'next-intl/server';
 import { supabase } from '@/lib/supabase/supabase';
 import { jwtVerify } from 'jose';
-import { serverActionRateLimit } from '@/lib/ratelimit/server_actions/serverActionRateLimit';
 
 // SERVICES
-import { redisCacheService } from '@/services/server/redis-cache.service';
+import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
+
+// CONFIG
+import { CACHE_KEYS } from '@/config';
 
 // TYPES
 import { typesAddLocationForm } from '@/types/forms/AddLocationForm';
-
-const LOCATIONS_CACHE_KEY = 'all_locations';
 
 export async function addLocation(authToken: string, addLocationData: typesAddLocationForm) {
     const t = await getTranslations("GenericMessages");
@@ -28,11 +28,6 @@ export async function addLocation(authToken: string, addLocationData: typesAddLo
 
     if (!payload) {
         return { success: false, message: t('JWT_DECODE_ERROR') };
-    }
-
-    const rateLimitResult = await serverActionRateLimit('deleteLocation');
-    if (!rateLimitResult.success) {
-        return { success: false, message: t('ADD_LOCATION_RATE_LIMITED') };
     }
 
     const location_name = addLocationData.location_name;
@@ -66,7 +61,7 @@ export async function addLocation(authToken: string, addLocationData: typesAddLo
     }
 
     // Invalidate the locations cache
-    await redisCacheService.delete(LOCATIONS_CACHE_KEY);
+    await upstashRedisCacheService.delete(CACHE_KEYS.ALL_LOCATIONS_PREFIX);
 
     revalidatePath("/");
 
