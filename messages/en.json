@@ -162,16 +162,22 @@
         "genderMatchCard": "Gender:",
         "typeMatchCard": "Type:",
         "checkAvailability": "Check availability",
-        "viewMatch": "View match",
-        "finishMatch": "Finish match",
-        "editMatch": "Edit match",
+        "viewMatch": "View Match",
+        "finishMatch": "Finish Match",
+        "editMatch": "Edit Match",
         "deleteMatch": "Delete Match",
         "deleteMatchTitle": "Confirm Deletion",
         "deleteMatchConfirmation": "Are you sure you want to delete this match? This action cannot be undone.",
         "delete": "Delete",
         "deleting": "Deleting...",
         "emptyPosition": "Available position",
-        "teamIsFull": "This team is full!"
+        "teamIsFull": "This team is full!",
+        "adminFunctions": "Admin Functions",
+        "deleteConfirmTitle": "Are you absolutely sure?",
+        "deleteConfirmDescription": "This action cannot be undone. This will permanently delete the match and remove all associated data from our servers.",
+        "finishing": "Finishing...",
+        "finishConfirmTitle": "Are you sure you want to finish this match?",
+        "finishConfirmDescription": "This action will move the match to the history and remove it from active matches. This cannot be undone."
     },
 
     "EditMatchPage": {
@@ -422,6 +428,9 @@
 
         "USER_SEARCH_FAILED": "Failed to search for user",
         "TEAM_SEARCH_FAILED": "Failed to search for team",
+
+        "MATCH_HISTORY_INSERT_FAILED": "Failed to add match into history",
+        "MATCH_FINISHED": "Match has been finished and moved to history",
 
         "REDIS_CONNECTION_ERROR": "Unable to connect to the database. Please try again later.",
         "REDIS_DISCONNECTION_ERROR": "Error occurred while disconnecting from the database.",

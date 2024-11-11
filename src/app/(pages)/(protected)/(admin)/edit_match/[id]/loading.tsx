@@ -1,50 +1,72 @@
 // COMPONENTS
-import { CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Separator } from "@/components/ui/separator";
 
-export default async function loading() {
+export default function loading() {
     return (
-        <>
-            <CardContent className="space-y-6">
-                <div className="space-y-4">
-                    <Skeleton className="h-6 w-1/4" />
-                    <Skeleton className="h-10 w-full" />
-                </div>
+        <div className="flex w-full h-full py-10 justify-center">
+            <Card className="w-full max-w-2xl">
+                <CardHeader>
+                    <Skeleton className="h-8 w-48" /> {/* CardTitle skeleton */}
+                </CardHeader>
 
-                <div className="space-y-4">
-                    <Skeleton className="h-10 w-full" />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Skeleton className="h-10 w-full" />
-                    <Skeleton className="h-10 w-full" />
-                </div>
-
-                <Separator />
-
-                <div className="space-y-4">
-                    <Skeleton className="h-6 w-1/4" />
-                    <Skeleton className="h-10 w-full" />
-                    <Skeleton className="h-10 w-full" />
-                </div>
-
-                <Separator />
-
-                <div className="space-y-4">
-                    <Skeleton className="h-6 w-1/4" />
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <Skeleton className="h-10 w-full" />
+                <CardContent className="space-y-4">
+                    {/* Location Field */}
+                    <div className="space-y-2">
+                        <Skeleton className="h-4 w-24" />
                         <Skeleton className="h-10 w-full" />
                     </div>
-                </div>
 
-                <Skeleton className="h-10 w-full" />
-            </CardContent>
+                    {/* Price Field */}
+                    <div className="space-y-2">
+                        <Skeleton className="h-4 w-16" />
+                        <Skeleton className="h-10 w-full" />
+                    </div>
 
-            <CardFooter>
-                <Skeleton className="h-10 w-full" />
-            </CardFooter>
-        </>
+                    {/* Team1 Name Field */}
+                    <div className="space-y-2">
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-10 w-full" />
+                    </div>
+
+                    {/* Team2 Name Field */}
+                    <div className="space-y-2">
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-10 w-full" />
+                    </div>
+
+                    {/* Date Field */}
+                    <div className="space-y-2">
+                        <Skeleton className="h-4 w-16" />
+                        <Skeleton className="h-10 w-full" />
+                    </div>
+
+                    {/* Time Field */}
+                    <div className="space-y-2">
+                        <Skeleton className="h-4 w-16" />
+                        <Skeleton className="h-10 w-full" />
+                    </div>
+
+                    {/* Match Type Field */}
+                    <div className="space-y-2">
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-10 w-full" />
+                    </div>
+
+                    {/* Match Gender Field */}
+                    <div className="space-y-2">
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-10 w-full" />
+                    </div>
+
+                    {/* Submit Button */}
+                    <Skeleton className="h-10 w-full mt-4" />
+                </CardContent>
+
+                <CardFooter className="flex w-full">
+                    <Skeleton className="h-10 w-32" /> {/* Cancel Edit Button */}
+                </CardFooter>
+            </Card>
+        </div>
     );
-};
+}

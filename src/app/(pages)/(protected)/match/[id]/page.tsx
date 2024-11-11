@@ -7,6 +7,7 @@ import { MatchInstructions } from '@/components/(pages)/(protected)/match/[id]/m
 import { DisplayTeamDetails } from '@/components/(pages)/(protected)/match/[id]/display-team-details';
 import { SwitchTeamColors } from '@/components/(pages)/(protected)/match/[id]/switch-team-colors';
 import { TeamCard } from '@/components/(pages)/(protected)/match/[id]/team-card';
+import { AdminFunctions } from '@/components/(pages)/(protected)/match/[id]/admin-functions';
 
 // ACTIONS
 import { server_fetchUserData } from '@/actions/functions/data/server/server_fetchUserData';
@@ -14,7 +15,6 @@ import { serverFetchMatch } from '@/actions/functions/data/server/server_fetchMa
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
-
 
 export default async function MatchPage({ 
     params
@@ -88,6 +88,8 @@ export default async function MatchPage({
                     authToken={authToken}
                 />
             </div>
+
+            <AdminFunctions matchId={id} authToken={authToken} />
         </section>
     );
 }

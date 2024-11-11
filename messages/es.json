@@ -171,7 +171,13 @@
         "delete": "Eliminar",
         "deleting": "Eliminando...",
         "emptyPosition": "Posición disponible",
-        "teamIsFull": "¡Este equipo está completo!"
+        "teamIsFull": "¡Este equipo está completo!",
+        "adminFunctions": "Funciones de Administrador",
+        "deleteConfirmTitle": "¿Estás absolutamente seguro?",
+        "deleteConfirmDescription": "Esta acción no se puede deshacer. Esto eliminará permanentemente el partido y eliminará todos los datos asociados de nuestros servidores.",
+        "finishing": "Finalizando...",
+        "finishConfirmTitle": "¿Estás seguro de que quieres finalizar este partido?",
+        "finishConfirmDescription": "Esta acción moverá el partido al historial y lo eliminará de los partidos activos. Esto no se puede deshacer."
     },
 
     "EditMatchPage": {
@@ -435,6 +441,9 @@
 
         "USER_SEARCH_FAILED": "Error al buscar usuario",
         "TEAM_SEARCH_FAILED": "Error al buscar equipo",
+
+        "MATCH_HISTORY_INSERT_FAILED": "No se pudo agregar el partido al historial",
+        "MATCH_FINISHED": "El partido ha sido finalizado y movido al historial",
 
         "REDIS_CONNECTION_ERROR": "No se puede conectar a la base de datos. Inténtalo de nuevo más tarde.",
         "REDIS_DISCONNECTION_ERROR": "Error al desconectar de la base de datos.",
