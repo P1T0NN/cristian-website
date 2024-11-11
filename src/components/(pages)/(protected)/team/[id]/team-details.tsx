@@ -8,6 +8,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 // ACTIONS
 import { serverFetchTeam } from '@/actions/functions/data/server/server_fetchTeam';
+import { server_fetchUserData } from "@/actions/functions/data/server/server_fetchUserData";
 
 // TYPES
 import type { typesTeam } from '@/types/typesTeam';
@@ -18,14 +19,15 @@ import { CalendarDays, Star, Edit } from "lucide-react";
 
 type TeamDetailsProps = {
     teamId: string;
-    serverUserData: typesUser;
 }
 
 export const TeamDetails = async ({ 
     teamId, 
-    serverUserData
 }: TeamDetailsProps) => {
     const t = await getTranslations("TeamPage");
+
+    const serverUserData = await server_fetchUserData();
+    const userData = serverUserData.data as typesUser;
 
     const serverTeamData = await serverFetchTeam(teamId);
     const teamData = serverTeamData.data as typesTeam;
@@ -43,7 +45,7 @@ export const TeamDetails = async ({
                             <CardTitle className="text-2xl font-bold">{teamData.team_name}</CardTitle>
                         </div>
                     </div>
-                    {serverUserData.isAdmin && (
+                    {userData.isAdmin && (
                         <Button variant="outline">
                             <Edit className="mr-2 h-4 w-4" /> {t('editTeam')}
                         </Button>

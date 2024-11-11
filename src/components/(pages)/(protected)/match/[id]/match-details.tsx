@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 
 // UTILS
 import { formatDate, formatTime } from "@/utils/dateUtils";
-import { getGenderLabel } from "@/utils/next-intl/getGenderLable";
+import { getGenderLabel } from "@/utils/next-intl/getGenderLabel";
 
 // TYPES
 import type { typesMatch } from "@/types/typesMatch";

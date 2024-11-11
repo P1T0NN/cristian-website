@@ -1,9 +1,5 @@
-// REACTJS IMPORTS
-import { Suspense } from 'react';
-
 // COMPONENTS
 import { PlayerDetails } from '@/components/(pages)/(protected)/player/[id]/player-details';
-import { PlayerDetailsLoading } from '@/components/(pages)/(protected)/player/[id]/loading/player-details-loading';
 
 // ACTIONS
 import { server_fetchUserData } from '@/actions/functions/data/server/server_fetchUserData';
@@ -24,9 +20,7 @@ export default async function PlayerPage({
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <Suspense fallback={<PlayerDetailsLoading />}>
-                <PlayerDetails playerId={id} currentUserData={userData} />
-            </Suspense>
+            <PlayerDetails playerId={id} currentUserData={userData} />
         </div>
     );
 };

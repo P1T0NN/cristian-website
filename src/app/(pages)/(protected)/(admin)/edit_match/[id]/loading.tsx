@@ -3,7 +3,7 @@ import { CardContent, CardFooter } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 
-export const EditMatchDetailsLoading = () => {
+export default async function loading() {
     return (
         <>
             <CardContent className="space-y-6">

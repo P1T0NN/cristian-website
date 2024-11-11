@@ -1,6 +1,3 @@
-// REACTJS IMPORTS
-import { Suspense } from 'react';
-
 // NEXTJS IMPORTS
 import { cookies } from 'next/headers';
 
@@ -10,11 +7,6 @@ import { MatchInstructions } from '@/components/(pages)/(protected)/match/[id]/m
 import { DisplayTeamDetails } from '@/components/(pages)/(protected)/match/[id]/display-team-details';
 import { SwitchTeamColors } from '@/components/(pages)/(protected)/match/[id]/switch-team-colors';
 import { TeamCard } from '@/components/(pages)/(protected)/match/[id]/team-card';
-import { MatchDetailsLoading } from '@/components/(pages)/(protected)/match/[id]/loading/match-details-loading';
-import { MatchInstructionsLoading } from '@/components/(pages)/(protected)/match/[id]/loading/match-instructions-loading';
-import { DisplayTeamDetailsLoading } from '@/components/(pages)/(protected)/match/[id]/loading/display-team-details-loading';
-import { SwitchTeamColorsLoading } from '@/components/(pages)/(protected)/match/[id]/loading/switch-team-colors-loading';
-import { TeamCardLoading } from '@/components/(pages)/(protected)/match/[id]/loading/team-card-loading';
 
 // ACTIONS
 import { server_fetchUserData } from '@/actions/functions/data/server/server_fetchUserData';
@@ -51,61 +43,50 @@ export default async function MatchPage({
 
     return (
         <section className="space-y-6 p-4 max-w-4xl mx-auto">
-            <Suspense fallback={<MatchDetailsLoading />}>
-                <MatchDetails serverMatchData={match} />
-            </Suspense>
+            <MatchDetails serverMatchData={match} />
 
-            <Suspense fallback={<MatchInstructionsLoading />}>
-                <MatchInstructions 
-                    instructions={match.match_instructions} 
-                    matchId={id} 
-                    authToken={authToken} 
-                />
-            </Suspense>
+            <MatchInstructions 
+                instructions={match.match_instructions} 
+                matchId={id} 
+                authToken={authToken} 
+            />
 
-            <Suspense fallback={<DisplayTeamDetailsLoading />}>
-                <DisplayTeamDetails match={match} />
-            </Suspense>
+            <DisplayTeamDetails match={match} />
 
             <div className="flex items-center">
-                <Suspense fallback={<SwitchTeamColorsLoading />}>
-                    {userData.isAdmin && (
-                        <SwitchTeamColors
-                            matchId={id}
-                            authToken={authToken}
-                            isAdmin={userData.isAdmin}
-                        />
-                    )}
-                </Suspense>
+                {userData.isAdmin && (
+                    <SwitchTeamColors
+                        matchId={id}
+                        authToken={authToken}
+                        isAdmin={userData.isAdmin}
+                    />
+                )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Suspense fallback={<TeamCardLoading />}>
-                    <TeamCard
-                        teamName={match.team1_name}
-                        players={team1Players}
-                        teamNumber={1}
-                        currentUserId={userData.id}
-                        userTeamNumber={userTeamNumber}
-                        matchId={id}
-                        matchType={match.match_type}
-                        isAdmin={userData.isAdmin}
-                        authToken={authToken}
-                    />
-                </Suspense>
-                <Suspense fallback={<TeamCardLoading />}>
-                    <TeamCard
-                        teamName={match.team2_name}
-                        players={team2Players}
-                        teamNumber={2}
-                        currentUserId={userData.id}
-                        userTeamNumber={userTeamNumber}
-                        matchId={id}
-                        matchType={match.match_type}
-                        isAdmin={userData.isAdmin}
-                        authToken={authToken}
-                    />
-                </Suspense>
+                <TeamCard
+                    teamName={match.team1_name}
+                    players={team1Players}
+                    teamNumber={1}
+                    currentUserId={userData.id}
+                    userTeamNumber={userTeamNumber}
+                    matchId={id}
+                    matchType={match.match_type}
+                    isAdmin={userData.isAdmin}
+                    authToken={authToken}
+                />
+                
+                <TeamCard
+                    teamName={match.team2_name}
+                    players={team2Players}
+                    teamNumber={2}
+                    currentUserId={userData.id}
+                    userTeamNumber={userTeamNumber}
+                    matchId={id}
+                    matchType={match.match_type}
+                    isAdmin={userData.isAdmin}
+                    authToken={authToken}
+                />
             </div>
         </section>
     );

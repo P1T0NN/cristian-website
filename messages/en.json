@@ -12,15 +12,11 @@
     },
     
     "HomePage": {
-        "welcome": "Welcome, {name}!",
-        "filteredMatches": "Filtered matches",
-        "allMatches": "All matches",
-        "filteredMessage": "Showing matches based on your selected filters",
-        "allAvailableMessage": "Showing all available matches",
-        "noMatchesFound": "No matches found.",
-        "todayMatches": "Today's Matches",
-        "tomorrowMatches": "Tomorrow's Matches",
-        "upcomingMatches": "Upcoming Matches"
+        "upcoming": "Upcoming",
+        "followed": "Followed",
+        "availableEvents": "Available Events",
+        "refresh": "Refresh",
+        "noEventsAvailable": "No events available at this time."
     },
 
     "LoginPage": {
@@ -143,7 +139,7 @@
     },
 
     "MatchPage": {
-        "noMatchFound": "No match found",
+        "noMatchesFound": "No matches found",
         "type": "Type",
         "gender": "Gender",
         "leaveTeam": "Leave Team",
@@ -252,7 +248,10 @@
         "attacker": "Attacker",
         "updating": "Updating...",
         "updateDetails": "Update details",
-        "notProvided": "Not provided"
+        "notProvided": "Not provided",
+        "date": "Date",
+        "reason": "Reason",
+        "addedBy": "Added By"
     },
 
     "AddTeamPage": {

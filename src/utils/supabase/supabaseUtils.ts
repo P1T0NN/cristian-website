@@ -42,11 +42,12 @@ export const getUserByEmail = async (email: string) => {
 };
 
 export const insertVerificationToken = async (verification: typesVerificationToken) => {
-    const { error } = await supabase
+    const { data, error } = await supabase
         .from('user_verifications')
-        .insert([verification]);
+        .insert([verification])
+        .select();
     
-    return error;
+    return { data, error };
 };
 
 export async function deleteOldVerificationToken(userId: string) {

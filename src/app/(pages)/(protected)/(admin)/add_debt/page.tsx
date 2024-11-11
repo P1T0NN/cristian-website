@@ -1,6 +1,3 @@
-// REACTJS IMPORTS
-import { Suspense } from "react";
-
 // NEXTJS IMPORTS
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
@@ -11,7 +8,6 @@ import { PAGE_ENDPOINTS } from "@/config";
 // COMPONENTS
 import { AddDebtContent } from "@/components/(pages)/(protected)/(admin)/add_debt/add-debt-content";
 import { ErrorMessage } from "@/components/ui/errors/error-message";
-import { AddDebtLoading } from "@/components/(pages)/(protected)/(admin)/add_debt/add-debt-loading";
 
 // ACTIONS
 import { server_fetchUserData } from '@/actions/functions/data/server/server_fetchUserData';
@@ -48,8 +44,6 @@ async function AddDebtPageContent() {
 
 export default function AddDebtPage() {
     return (
-        <Suspense fallback={<AddDebtLoading />}>
-            <AddDebtPageContent />
-        </Suspense>
+        <AddDebtPageContent />
     );
 }

@@ -12,15 +12,11 @@
     },
 
     "HomePage": {
-        "welcome": "Bienvenido, {name}!",
-        "filteredMatches": "Partidos filtrados",
-        "allMatches": "Todos los partidos",
-        "filteredMessage": "Mostrando partidos según tus filtros seleccionados",
-        "allAvailableMessage": "Mostrando todos los partidos disponibles",
-        "noMatchesFound": "No se encontraron partidos.",
-        "todayMatches": "Partidos de hoy",
-        "tomorrowMatches": "Partidos de mañana",
-        "upcomingMatches": "Próximos partidos"
+        "upcoming": "Próximos",
+        "followed": "Seguidos",
+        "availableEvents": "Eventos disponibles",
+        "refresh": "Actualizar",
+        "noEventsAvailable": "No hay eventos disponibles en este momento."
     },
 
     "LoginPage": {
@@ -143,7 +139,7 @@
     },
 
     "MatchPage": {
-        "noMatchFound": "No se encontró ningún partido",
+        "noMatchesFound": "No se encontró ningún partido",
         "type": "Tipo",
         "gender": "Género",
         "leaveTeam": "Abandonar equipo",
@@ -252,7 +248,10 @@
         "attacker": "Delantero",
         "updating": "Actualizando...",
         "updateDetails": "Actualizar detalles",
-        "notProvided": "No proporcionado"
+        "notProvided": "No proporcionado",
+        "date": "Fecha",
+        "reason": "Motivo",
+        "addedBy": "Añadido por"
     },
 
     "AddTeamPage": {

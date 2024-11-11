@@ -1,58 +1,62 @@
-/// LIBRARIES
-import * as motion from "framer-motion/client";
-import { getTranslations } from "next-intl/server";
+// NEXTJS IMPORTS
+import { revalidatePath } from 'next/cache';
+
+// LIBRARIES
+import { getTranslations } from 'next-intl/server';
 
 // COMPONENTS
-import { MatchesRow } from './match-row';
-import { AnimationNoMatches } from './animation-no-matches';
+import { MatchCard } from "@/components/(pages)/(protected)/home/match-card";
+import { Button } from "@/components/ui/button";
 
 // ACTIONS
-import { serverFetchMatches } from "@/actions/functions/data/server/server_fetchMatches";
-
-// UTILS
-import { filterMatches } from "./utils/filterMatches";
-import { groupMatches } from "./utils/groupMatches";
-import { sortMatchesByDate } from "./utils/sortMatches";
+import { serverFetchMatches } from '@/actions/functions/data/server/server_fetchMatches';
 
 // TYPES
-import type { typesUser } from '@/types/typesUser';
 import type { typesMatch } from '@/types/typesMatch';
-import type { FilterValues } from "./filter-modal";
+
+// LUCIDE ICONS
+import { RefreshCcw } from "lucide-react";
 
 type DisplayMatchesProps = {
-    serverUserData: typesUser;
-    activeFilters: FilterValues;
-};
+    date?: string;
+}
 
-export const DisplayMatches = async ({
-    serverUserData,
-    activeFilters
+export const DisplayMatches = async ({ 
+    date
 }: DisplayMatchesProps) => {
     const t = await getTranslations("HomePage");
 
-    const serverMatchesData = await serverFetchMatches();
+    const serverMatchesData = await serverFetchMatches(date);
     const matchesData = serverMatchesData.data as typesMatch[];
 
-    const filteredMatches = filterMatches(matchesData, activeFilters);
-    const groupedMatches = groupMatches(filteredMatches);
-    const sortedFutureMatches = sortMatchesByDate(groupedMatches.future);
+    async function refreshMatches() {
+        'use server'
+        revalidatePath('/');
+    }
 
     return (
-        <>
-            <AnimationNoMatches serverMatchesData={matchesData} />
-    
-            {matchesData.length > 0 && (
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ staggerChildren: 0.1 }}
-                    className="flex flex-col items-center space-y-8"
-                >
-                    <MatchesRow title={t('todayMatches')} matches={groupedMatches.today} serverUserData={serverUserData} />
-                    <MatchesRow title={t('tomorrowMatches')} matches={groupedMatches.tomorrow} serverUserData={serverUserData} />
-                    <MatchesRow title={t('upcomingMatches')} matches={sortedFutureMatches} serverUserData={serverUserData} />
-                </motion.div>
+        <div className="space-y-4">
+            <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold">{t('availableEvents')}</h2>
+                <form action={refreshMatches}>
+                    <Button variant="ghost" size="sm" type="submit">
+                        <RefreshCcw className="w-4 h-4 mr-2" />
+                        {t('refresh')}
+                    </Button>
+                </form>
+            </div>
+
+            {matchesData.length === 0 ? (
+                <div className="text-center text-muted-foreground">
+                    {t('noEventsAvailable')}
+                </div>
+            ) : (
+                <div className="space-y-4">
+                    {matchesData.map((match) => (
+                        <MatchCard key={match.id} match={match} />
+                    ))}
+                </div>
             )}
-        </>
-    )
-}
+        </div>
+    );
+};

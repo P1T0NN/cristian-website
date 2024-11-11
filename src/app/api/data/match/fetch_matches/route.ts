@@ -32,12 +32,22 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
         return NextResponse.json({ success: false, message: genericMessages('JWT_DECODE_ERROR') }, { status: 401 });
     }
 
+    // Extract date from URL parameters
+    const url = new URL(req.url);
+    const date = url.searchParams.get('date');
+
     // Fetch matches from database
-    const { data: dbMatches, error: supabaseError } = await supabase
+    let matchesQuery = supabase
         .from('matches')
         .select('*')
-        .order('created_at', { ascending: false })
-        .returns<typesMatch[]>();
+        .order('created_at', { ascending: false });
+
+    // If date is provided, filter matches by date
+    if (date) {
+        matchesQuery = matchesQuery.eq('starts_at_day', date);
+    }
+
+    const { data: dbMatches, error: supabaseError } = await matchesQuery.returns<typesMatch[]>();
 
     if (supabaseError) {
         return NextResponse.json({ success: false, message: fetchMessages('MATCHES_FAILED_TO_FETCH') }, { status: 500 });

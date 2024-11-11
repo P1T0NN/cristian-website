@@ -1,84 +1,79 @@
 // NEXTJS IMPORTS
-import { cookies } from 'next/headers';
-
-// LIBRARIES
-import { getTranslations } from 'next-intl/server';
+import Link from "next/link";
 
 // COMPONENTS
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { DeleteMatchButton } from "./delete-match-button";
-import { ViewMatchButton } from "./view-match-button";
-import { FinishMatchButton } from "./finish-match-button";
-import { EditMatchButton } from "./edit-match-button";
+import { Card, CardContent } from "@/components/ui/card";
 
 // UTILS
+import { getGenderLabel } from "@/utils/next-intl/getGenderLabel";
 import { formatTime, formatDate } from "@/utils/dateUtils";
-import { getGenderLabel } from "@/utils/next-intl/getGenderLable";
 
 // TYPES
 import type { typesMatch } from "@/types/typesMatch";
-import type { typesUser } from "@/types/typesUser";
 
 // LUCIDE ICONS
-import { MapPin, Clock, Users, Dumbbell } from 'lucide-react';
+import { MapPin } from "lucide-react";
 
 type MatchCardProps = {
     match: typesMatch;
-    serverUserData: typesUser;
 };
 
 export const MatchCard = async ({ 
-    match,
-    serverUserData,
+    match 
 }: MatchCardProps) => {
-    const t = await getTranslations("MatchPage");
-
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get('auth_token')?.value as string;
+    const title = `${match.team1_name} vs ${match.team2_name}`;
+    
+    const formatMatchType = (type: string) => {
+        switch (type) {
+            case "F8": return "8v8"
+            case "F7": return "7v7"
+            case "F11": return "11v11"
+            default: return type
+        }
+    };
+    
+    const translatedGender = await getGenderLabel(match.match_gender);
+    const format = `${formatMatchType(match.match_type)} ${translatedGender}`;
+    const formattedTime = formatTime(match.starts_at_hour);
+    const formattedDate = await formatDate(match.starts_at_day);
 
     return (
-        <Card className="w-full h-full hover:shadow-lg transition-shadow duration-300">
-            <CardContent className="p-6">
-                <div className="flex flex-col space-y-4">
-                    <div className="space-y-2">
-                        <h3 className="text-2xl font-bold text-primary">{match.price}€</h3>
-                        <div className="flex items-center text-sm text-muted-foreground">
-                            <MapPin className="w-4 h-4 mr-1" />
-                            <span>{match.location}</span>
+        <Link href={`/match/${match.id}`} className="block w-full">
+            <Card className="w-full bg-white transition-shadow hover:shadow-md">
+                <CardContent className="p-4">
+                    <div className="flex items-start gap-4">
+                        <div className="flex flex-col items-center">
+                            <div className="text-3xl font-bold leading-none">{formattedTime}</div>
+                            <div className="text-sm text-muted-foreground mt-1">{formattedDate}</div>
                         </div>
-                        <div className="flex items-center text-sm text-muted-foreground">
-                            <Clock className="w-4 h-4 mr-1" />
-                            <span>{formatDate(match.starts_at_day)} - {formatTime(match.starts_at_hour)}h</span>
+                        <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                                <h3 className="font-semibold text-lg truncate">{title}</h3>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-2 mt-2">
+                                <span className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600">{format}</span>
+                                <div className="flex items-center gap-1">
+                                    <span className={`w-2.5 h-2.5 rounded-full ${match.team1_color ? 'bg-black' : 'bg-white border border-gray-300'}`} />
+                                    <span className={`w-2.5 h-2.5 rounded-full ${match.team2_color ? 'bg-black' : 'bg-white border border-gray-300'}`} />
+                                </div>
+                            </div>
+                            {match.match_instructions && (
+                                <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{match.match_instructions}</p>
+                            )}
+                        </div>
+                        <div className="text-right flex flex-col items-end gap-1">
+                            <div className="font-semibold text-lg">{match.price}€</div>
                         </div>
                     </div>
-
-                    <div className="flex flex-col space-y-2">
-                        <div className="flex items-center">
-                            <Users className="w-4 h-4 mr-2" />
-                            <span className="font-medium mr-1">{t("genderMatchCard")}</span>
-                            <span>{getGenderLabel(match.match_gender)}</span>
-                        </div>
-                        <div className="flex items-center">
-                            <Dumbbell className="w-4 h-4 mr-2" />
-                            <span className="font-medium mr-1">{t("typeMatchCard")}</span>
-                            <span>{match.match_type}</span>
-                        </div>
+        
+                    <div 
+                        className="w-full mt-3 flex items-center justify-center py-2 px-4 text-sm font-medium rounded-md"
+                    >
+                        <MapPin className="w-4 h-4 mr-2" />
+                        {match.location}
                     </div>
-                </div>
-            </CardContent>
-
-            {serverUserData.isAdmin ? (
-                <CardFooter className="flex flex-col p-6 pt-0 space-y-2">
-                    <ViewMatchButton matchId={match.id}/>
-                    <FinishMatchButton />
-                    <EditMatchButton matchId={match.id} />
-                    <DeleteMatchButton authToken={authToken} match={match} />
-                </CardFooter>
-            ) : (
-                <CardFooter className="p-6 pt-0">
-                    <ViewMatchButton matchId={match.id}/>
-                </CardFooter>
-            )}
-        </Card>
+                </CardContent>
+            </Card>
+        </Link>
     );
 };

@@ -1,6 +1,3 @@
-// REACTJS IMPORTS
-import { Suspense } from "react";
-
 // NEXTJS IMPORTS
 import { cookies } from "next/headers";
 
@@ -10,7 +7,6 @@ import { getTranslations } from "next-intl/server";
 // COMPONENTS
 import { AddLocationDialog } from "@/components/(pages)/(protected)/(admin)/add_location/add-location-dialog";
 import { LocationTable } from "@/components/(pages)/(protected)/(admin)/add_location/location-table";
-import { LocationTableLoading } from "@/components/(pages)/(protected)/(admin)/add_location/loading/locations-table-loading";
 
 export default async function AddLocationPage() {
     const t = await getTranslations("AddLocationPage");
@@ -25,9 +21,7 @@ export default async function AddLocationPage() {
                 <AddLocationDialog authToken={authToken} />
             </div>
             
-            <Suspense fallback={<LocationTableLoading />}>
-                <LocationTable authToken={authToken} />
-            </Suspense>
+            <LocationTable authToken={authToken} />
         </div>
     );
 }

@@ -1,6 +1,3 @@
-// REACTJS IMPORTS
-import { Suspense } from "react";
-
 // NEXTJS IMPORTS
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
@@ -14,7 +11,6 @@ import { PAGE_ENDPOINTS } from "@/config";
 // COMPONENTS
 import { AddTeamDialog } from "@/components/(pages)/(protected)/(admin)/add_team/add-team-dialog";
 import { TeamTable } from "@/components/(pages)/(protected)/(admin)/add_team/team-table";
-import { TeamTableLoading } from "@/components/(pages)/(protected)/(admin)/add_team/loading/add-team-table-loading";
 
 // ACTIONS
 import { server_fetchUserData } from '@/actions/functions/data/server/server_fetchUserData';
@@ -42,9 +38,7 @@ export default async function AddTeamPage() {
                 <AddTeamDialog authToken={authToken} />
             </div>
             
-            <Suspense fallback={<TeamTableLoading />}>
-                <TeamTable authToken={authToken} />
-            </Suspense>
+            <TeamTable authToken={authToken} />
         </div>
     )
 }

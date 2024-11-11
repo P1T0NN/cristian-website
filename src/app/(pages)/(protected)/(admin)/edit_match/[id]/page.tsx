@@ -1,8 +1,3 @@
-
-
-// REACTJS IMPORTS
-import { Suspense } from "react";
-
 // NEXTJS IMPORTS
 import { redirect } from "next/navigation";
 
@@ -15,7 +10,6 @@ import { PAGE_ENDPOINTS } from "@/config";
 // COMPONENTS
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { EditMatchDetails } from "@/components/(pages)/(protected)/(admin)/edit_match/[id]/edit-match-details";
-import { EditMatchDetailsLoading } from "@/components/(pages)/(protected)/(admin)/edit_match/[id]/loading/edit-match-details-loading";
 
 // ACTIONS
 import { server_fetchUserData } from '@/actions/functions/data/server/server_fetchUserData';
@@ -46,9 +40,7 @@ export default async function EditMatchPage({
                     <CardTitle>{t('editMatch')}</CardTitle>
                 </CardHeader>
 
-                <Suspense fallback={<EditMatchDetailsLoading />}>
-                    <EditMatchDetails matchId={id} />
-                </Suspense>
+                <EditMatchDetails matchId={id} />
             </Card>
         </div>
     );

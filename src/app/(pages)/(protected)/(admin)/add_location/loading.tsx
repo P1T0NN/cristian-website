@@ -1,19 +1,42 @@
-// COMPONENTS
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Skeleton } from "@/components/ui/skeleton"
+// LIBRARIES
+import { getTranslations } from "next-intl/server";
 
-export const LocationTableLoading = () => {
+// COMPONENTS
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
+
+export default async function loading() {
+    const t = await getTranslations("AddLocationPage");
+
     return (
-        <div className="rounded-md border">
+        <div className="container mx-auto py-10">
+            <h1 className="text-3xl font-bold">{t("locations")}</h1>
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead className="w-[100px]">ID</TableHead>
-                        <TableHead>Location Name</TableHead>
-                        <TableHead>Address</TableHead>
-                        <TableHead>City</TableHead>
-                        <TableHead>Country</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                        <TableHead className="w-[100px]">
+                            <Skeleton className="h-4 w-8" />
+                        </TableHead>
+                        
+                        <TableHead>
+                            <Skeleton className="h-4 w-24" />
+                        </TableHead>
+
+                        <TableHead>
+                            <Skeleton className="h-4 w-16" />
+                        </TableHead>
+
+                        <TableHead>
+                            <Skeleton className="h-4 w-12" />
+                        </TableHead>
+
+                        <TableHead>
+                            <Skeleton className="h-4 w-16" />
+                        </TableHead>
+
+                        <TableHead className="text-right">
+                            <Skeleton className="h-4 w-14 ml-auto" />
+                        </TableHead>
                     </TableRow>
                 </TableHeader>
 

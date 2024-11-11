@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export const TeamDetailsLoading = () => {
+export default function loading() {
     return (
         <div className="container mx-auto px-4 py-8">
             <Card className="w-full max-w-4xl mx-auto">

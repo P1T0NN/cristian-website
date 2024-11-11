@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 // LIBRARIES
 import { jwtVerify } from 'jose';
 import { getTranslations } from 'next-intl/server';
+import { format } from 'date-fns';
 
 // CONFIG
 import { PAGE_ENDPOINTS } from '@/config';
@@ -63,7 +64,8 @@ async function redirectToLogin(req: NextRequest) {
 }
 
 async function redirectToHome(req: NextRequest) {
-    return NextResponse.redirect(new URL(PAGE_ENDPOINTS.HOME_PAGE, req.url));
+    const currentDate = format(new Date(), 'yyyy-MM-dd');
+    return NextResponse.redirect(new URL(`${PAGE_ENDPOINTS.HOME_PAGE}?date=${currentDate}`, req.url));
 }
 
 async function refreshCsrfToken() {
@@ -121,6 +123,15 @@ export async function middleware(req: NextRequest) {
         return redirectToHome(req);
     }
 
+    // Handle the home page
+    if (pathname === PAGE_ENDPOINTS.HOME_PAGE) {
+        const dateParam = req.nextUrl.searchParams.get('date');
+        if (!dateParam) {
+            // Redirect to the home page with the current date in the URL
+            return redirectToHome(req);
+        }
+    }
+
     if (isProtectedPage || isAdminPage) {
         // Handle missing authToken and try to refresh
         if (!authToken && refreshToken) {
@@ -167,4 +178,4 @@ export const config = {
     matcher: [
         '/((?!_next/static|_next/image|favicon.ico).*)',
     ],
-};
+}

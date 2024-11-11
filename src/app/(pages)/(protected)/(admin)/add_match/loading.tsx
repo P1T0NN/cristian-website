@@ -1,11 +1,18 @@
 // COMPONENTS
-import { CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 
-export const AddMatchDetailsLoading = () => {
+export default async function loading() {
     return (
-        <>
+        <Card className="w-full max-w-3xl mx-auto">
+            <CardHeader>
+                <div className="space-y-2">
+                    <Skeleton className="h-7 w-3/4" />
+                    <Skeleton className="h-5 w-full" />
+                </div>
+            </CardHeader>
+
             <CardContent>
                 <div className="space-y-8">
                     <div className="space-y-4">
@@ -41,6 +48,6 @@ export const AddMatchDetailsLoading = () => {
             <CardFooter>
                 <Skeleton className="h-10 w-[150px]" />
             </CardFooter>
-        </>
+        </Card>
     );
-};
+}

@@ -1,6 +1,3 @@
-// REACTJS IMPORTS
-import { Suspense } from "react";
-
 // NEXTJS IMPORTS
 import { cookies } from "next/headers";
 import Link from "next/link";
@@ -17,7 +14,6 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { DebtsTable } from "./debts-table";
 import { EditPlayerDetails } from "./edit-player-details";
-import { DebtsTableLoading } from "./loading/debts-table-loading";
 
 // ACTIONS
 import { serverFetchPlayer } from "@/actions/functions/data/server/server_fetchPlayer";
@@ -144,12 +140,10 @@ export const PlayerDetails = async ({
                     </div>
                 )}
                     
-                <Suspense fallback={<DebtsTableLoading isCurrentUserAdmin={currentUserData.isAdmin} />}>
-                    <DebtsTable
-                        debts={playerData.debts || []} 
-                        isCurrentUserAdmin={currentUserData.isAdmin}
-                    />
-                </Suspense>
+                <DebtsTable
+                    debts={playerData.debts || []} 
+                    isCurrentUserAdmin={currentUserData.isAdmin}
+                />
             </CardContent>
         </Card>
     )

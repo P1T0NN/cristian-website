@@ -9,12 +9,14 @@ import { getTranslations } from 'next-intl/server';
 // SERVICES
 import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
 
+// CONFIG
+import { CACHE_KEYS } from '@/config';
+
 // TYPES
 import type { APIResponse } from '@/types/responses/APIResponse';
 import type { typesMatch } from '@/types/typesMatch';
 import type { typesMatchWithPlayers } from '@/types/typesMatchWithPlayers';
 
-const MATCH_CACHE_KEY_PREFIX = 'match:';
 const CACHE_TTL = 60 * 60 * 12; // 12 hours in seconds
 
 export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>> {
@@ -40,7 +42,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>>
     }
 
     // Try to get match data from Upstash Redis cache
-    const cacheResult = await upstashRedisCacheService.get<typesMatch>(`${MATCH_CACHE_KEY_PREFIX}${matchId}`);
+    const cacheResult = await upstashRedisCacheService.get<typesMatch>(`${CACHE_KEYS.MATCH_PREFIX}${matchId}`);
 
     let match: typesMatch | null = null;
 
@@ -65,7 +67,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>>
         match = dbMatch;
 
         // Store in Upstash Redis cache
-        await upstashRedisCacheService.set(`${MATCH_CACHE_KEY_PREFIX}${matchId}`, match, CACHE_TTL);
+        await upstashRedisCacheService.set(`${CACHE_KEYS.MATCH_PREFIX}${matchId}`, match, CACHE_TTL);
     }
 
     // Check if match is null after all attempts to fetch it

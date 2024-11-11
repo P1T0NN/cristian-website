@@ -1,49 +1,32 @@
 // REACTJS IMPORTS
-import { Suspense } from 'react';
+import { Suspense } from "react";
 
 // COMPONENTS
-import { HomeDetails } from '@/components/(pages)/(protected)/home/home-details';
-import { DisplayMatches } from '@/components/(pages)/(protected)/home/display-matches';
-import { HomeDetailsLoading } from '@/components/(pages)/(protected)/home/loading/home-details-loading';
-import { MatchesLoading } from '@/components/(pages)/(protected)/home/loading/matches-loading';
+import { DisplayCalendar } from "@/components/(pages)/(protected)/home/display-calendar";
+import { DisplayMatches } from "@/components/(pages)/(protected)/home/display-matches";
+import { DisplayMatchesLoading } from "@/components/(pages)/(protected)/home/loading/display-matches-loading";
+import { DisplayCalendarLoading } from "@/components/(pages)/(protected)/home/loading/display-calendar-loading";
 
-// ACTIONS
-import { server_fetchUserData } from '@/actions/functions/data/server/server_fetchUserData';
-
-// TYPES
-import type { typesUser } from '@/types/typesUser';
-import type { FilterValues } from '@/components/(pages)/(protected)/home/filter-modal';
-
-export default async function HomePage({
-    searchParams
-}: {
+export default async function HomePage({ 
+    searchParams 
+}: { 
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-    const serverUserData = await server_fetchUserData();
-    
-    const userData = serverUserData.data as typesUser;
-
     const awaitedSearchParams = await searchParams;
 
-    const activeFilters: FilterValues = {
-        location: awaitedSearchParams.location as string || '',
-        price: awaitedSearchParams.price as string || '',
-        date: awaitedSearchParams.date as string || '',
-        timeFrom: awaitedSearchParams.timeFrom as string || '',
-        timeTo: awaitedSearchParams.timeTo as string || '',
-        gender: awaitedSearchParams.gender as string || '',
-        matchType: awaitedSearchParams.matchType as string || '',
-    };
+    const date = awaitedSearchParams.date;
 
     return (
-        <section className="p-6 max-w-6xl mx-auto">
-            <Suspense fallback={<HomeDetailsLoading />}>
-                <HomeDetails serverUserData={userData} activeFilters={activeFilters} />
-            </Suspense>
-
-            <Suspense fallback={<MatchesLoading />}>
-                <DisplayMatches serverUserData={userData} activeFilters={activeFilters} />
-            </Suspense>
-        </section>
+        <div className="min-h-screen bg-background">
+            <main className="container mx-auto p-4 space-y-4">
+                <Suspense fallback={<DisplayCalendarLoading />} >
+                    <DisplayCalendar />
+                </Suspense>
+        
+                <Suspense fallback={<DisplayMatchesLoading />}>
+                    <DisplayMatches date={date as string} />
+                </Suspense>
+            </main>
+        </div>
     );
 }
