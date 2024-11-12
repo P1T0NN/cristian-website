@@ -186,7 +186,8 @@
         "requestSubstitute": "Solicitar Sustituto",
         "replace": "Reemplazar",
         "replacing": "Reemplazando...",
-        "substituteAlreadyRequested": "Ya has solicitado un sustituto. ¡Por favor, espera a que alguien te reemplace!"
+        "substituteAlreadyRequested": "Ya has solicitado un sustituto. ¡Por favor, espera a que alguien te reemplace!",
+        "placesLeft": "plazas disponibles"
     },
 
     "EditMatchPage": {

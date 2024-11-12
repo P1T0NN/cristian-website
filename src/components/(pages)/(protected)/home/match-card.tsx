@@ -1,6 +1,9 @@
 // NEXTJS IMPORTS
 import Link from "next/link";
 
+// LIBRARIES
+import { getTranslations } from "next-intl/server";
+
 // COMPONENTS
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -12,7 +15,7 @@ import { formatTime, formatDate } from "@/utils/dateUtils";
 import type { typesMatch } from "@/types/typesMatch";
 
 // LUCIDE ICONS
-import { MapPin } from "lucide-react";
+import { MapPin, Users } from "lucide-react";
 
 type MatchCardProps = {
     match: typesMatch;
@@ -21,6 +24,8 @@ type MatchCardProps = {
 export const MatchCard = async ({ 
     match 
 }: MatchCardProps) => {
+    const t = await getTranslations("MatchPage");
+
     const title = `${match.team1_name} vs ${match.team2_name}`;
     
     const formatMatchType = (type: string) => {
@@ -36,6 +41,19 @@ export const MatchCard = async ({
     const format = `${formatMatchType(match.match_type)} ${translatedGender}`;
     const formattedTime = formatTime(match.starts_at_hour);
     const formattedDate = await formatDate(match.starts_at_day);
+
+    // Calculate total places and places left
+    const getTotalPlaces = (matchType: string) => {
+        switch (matchType) {
+            case "F8": return 16;
+            case "F7": return 14;
+            case "F11": return 22;
+            default: return 0;
+        }
+    };
+
+    const totalPlaces = getTotalPlaces(match.match_type);
+    const placesLeft = Math.max(0, totalPlaces - (match.places_occupied || 0));
 
     return (
         <Link href={`/match/${match.id}`} className="block w-full">
@@ -56,6 +74,10 @@ export const MatchCard = async ({
                                     <span className={`w-2.5 h-2.5 rounded-full ${match.team1_color ? 'bg-black' : 'bg-white border border-gray-300'}`} />
                                     <span className={`w-2.5 h-2.5 rounded-full ${match.team2_color ? 'bg-black' : 'bg-white border border-gray-300'}`} />
                                 </div>
+                                <span className="text-xs bg-blue-100 px-2 py-1 rounded-full text-blue-600 flex items-center">
+                                    <Users className="w-3 h-3 mr-1" />
+                                    {placesLeft} {t('placesLeft')}
+                                </span>
                             </div>
                             {match.match_instructions && (
                                 <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{match.match_instructions}</p>

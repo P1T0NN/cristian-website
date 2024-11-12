@@ -14,5 +14,6 @@ export type typesMatch = {
     team1_color: boolean;
     team2_color: boolean;
     match_instructions: string;
+    places_occupied: number;
     created_at: Date;
 };

@@ -35,7 +35,7 @@ export async function managePlayer(
     // Fetch match details
     const { data: match, error: matchError } = await supabase
         .from('matches')
-        .select('starts_at_day, starts_at_hour')
+        .select('starts_at_day, starts_at_hour, places_occupied')
         .eq('id', matchId)
         .single();
 
@@ -63,6 +63,13 @@ export async function managePlayer(
         if (error) {
             return { success: false, message: genericMessages('OPERATION_FAILED') };
         }
+
+        // Increment places_occupied
+        await supabase
+            .from('matches')
+            .update({ places_occupied: match.places_occupied + 1 })
+            .eq('id', matchId);
+
     } else if (action === 'leave') {
         const { error } = await supabase
             .from('match_players')
@@ -75,6 +82,13 @@ export async function managePlayer(
         if (error) {
             return { success: false, message: genericMessages('OPERATION_FAILED') };
         }
+
+        // Decrement places_occupied, ensuring it doesn't go below 0
+        await supabase
+            .from('matches')
+            .update({ places_occupied: Math.max(match.places_occupied - 1, 0) })
+            .eq('id', matchId);
+
     } else if (action === 'requestSubstitute') {
         const { error } = await supabase
             .from('match_players')
@@ -115,6 +129,8 @@ export async function managePlayer(
         if (insertError) {
             return { success: false, message: genericMessages('OPERATION_FAILED') };
         }
+
+        // Note: places_occupied remains the same for replace action
     }
 
     revalidatePath("/");
