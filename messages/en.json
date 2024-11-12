@@ -180,7 +180,14 @@
         "finishConfirmDescription": "This action will move the match to the history and remove it from active matches. This cannot be undone.",
         "joinTeamConfirmTitle": "Confirm Team Join",
         "joinTeamConfirmDescription": "By joining the team, you accept that you will pay for this match in cash. Are you sure you want to join the team?",
-        "confirmJoin": "Yes, Join Team"
+        "confirmJoin": "Yes, Join Team",
+        "substituteRequestTitle": "Request Substitute",
+        "substituteRequestDescription": "It's too late to leave the team. Would you like to request a substitute?",
+        "requestingSubstitute": "Requesting Substitute...",
+        "requestSubstitute": "Request Substitute",
+        "replace": "Replace",
+        "replacing": "Replacing...",
+        "substituteAlreadyRequested": "You have already requested a substitute. Please wait for someone to replace you!"
     },
 
     "EditMatchPage": {
@@ -446,6 +453,10 @@
         "MATCH_FINISHED": "Match has been finished and moved to history",
         "MATCH_HISTORY_DELETION_FAILED": "Failed to delete match from match history!",
         "MATCH_HISTORY_DELETED": "Match successfully deleted from match history!",
+
+        "TOO_LATE_TO_LEAVE": "It's too late to leave the team. You can request a substitute instead.",
+        "SUBSTITUTE_REQUESTED_SUCCESSFULLY'": "Requested substitute successfully!",
+        "PLAYER_REPLACED_SUCCESSFULLY": "You replaced player successfully!",
 
         "REDIS_CONNECTION_ERROR": "Unable to connect to the database. Please try again later.",
         "REDIS_DISCONNECTION_ERROR": "Error occurred while disconnecting from the database.",

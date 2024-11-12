@@ -1,5 +1,6 @@
 // TYPES
 import type { typesDebt } from "./typesDebt";
+import type { typesMatchPlayer } from "./typesMatchPlayer";
 
 export type typesUser = {
     id: string;
@@ -15,6 +16,7 @@ export type typesUser = {
     created_at: Date;
     dni: string;
     debts?: typesDebt[];
+    matchPlayer?: typesMatchPlayer;
 };
 
 // FOR LOGGING IN
