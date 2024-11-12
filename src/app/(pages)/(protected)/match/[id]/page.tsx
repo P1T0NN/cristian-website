@@ -89,7 +89,9 @@ export default async function MatchPage({
                 />
             </div>
 
-            <AdminFunctions matchId={id} authToken={authToken} />
+            {userData.isAdmin && (
+                <AdminFunctions matchId={id} authToken={authToken} />
+            )}
         </section>
     );
 }

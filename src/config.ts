@@ -22,6 +22,7 @@ export const PAGE_ENDPOINTS = {
     PLAYER_PAGE:            "/player",
     ADD_TEAM_PAGE:          "/add_team",
     TEAM_PAGE:              "/team",
+    MATCH_HISTORY:          "/match_history"
 }
 
 export const CACHE_KEYS = {

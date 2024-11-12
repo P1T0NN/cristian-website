@@ -287,6 +287,16 @@
         "teamLevel": "Team Level"
     },
 
+    "MatchHistoryPage": {
+        "matchHistory": "Match History",
+        "noMatchHistoryFound": "No match history entries found.",
+        "delete": "Delete",
+        "deleteConfirmTitle": "Are you absolutely sure?",
+        "deleteConfirmDescription": "This action cannot be undone. This will permanently delete this match from the history.",
+        "cancel": "Cancel",
+        "deleting": "Deleting..."
+    },
+
     "VerifyEmail": {
         "verifyingEmail": "Verifying your email...",
         "verificationSuccess": "Your email has been successfully verified! Redirecting to login page...",
@@ -431,6 +441,8 @@
 
         "MATCH_HISTORY_INSERT_FAILED": "Failed to add match into history",
         "MATCH_FINISHED": "Match has been finished and moved to history",
+        "MATCH_HISTORY_DELETION_FAILED": "Failed to delete match from match history!",
+        "MATCH_HISTORY_DELETED": "Match successfully deleted from match history!",
 
         "REDIS_CONNECTION_ERROR": "Unable to connect to the database. Please try again later.",
         "REDIS_DISCONNECTION_ERROR": "Error occurred while disconnecting from the database.",
@@ -483,7 +495,11 @@
 
         "FAILED_TO_FETCH_TEAM": "Failed to fetch team",
         "TEAM_NOT_FOUND": "Team not found!",
-        "TEAM_FETCHED": "Team fetched successfully!"
+        "TEAM_FETCHED": "Team fetched successfully!",
+
+        "MATCH_HISTORY_FAILED_TO_FETCH": "Failed to fetch match history!",
+        "NO_MATCH_HISTORY_FOUND": "There is no match history.",
+        "MATCH_HISTORY_SUCCESSFULLY_FETCHED": "Match history fetched successfully!"
     },
 
     "ZodErrors": {

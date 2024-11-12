@@ -77,6 +77,13 @@ export const HeaderProtected = ({
                                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     {serverUserData.isAdmin && (
+                                        <Link href={PAGE_ENDPOINTS.MATCH_HISTORY}>
+                                            <DropdownMenuItem>
+                                                <Users className="mr-2" /> Match History
+                                            </DropdownMenuItem>
+                                        </Link>
+                                    )}
+                                    {serverUserData.isAdmin && (
                                         <Link href={PAGE_ENDPOINTS.ADD_TEAM_PAGE}>
                                             <DropdownMenuItem>
                                                 <Users className="mr-2" /> Create Team

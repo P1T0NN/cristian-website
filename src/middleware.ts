@@ -47,7 +47,9 @@ const ADMIN_PROTECTED_PAGES = [
     '/match/[id]',
     PAGE_ENDPOINTS.PLAYER_PAGE,
     '/player/[id]',
-    PAGE_ENDPOINTS.ADD_TEAM_PAGE
+    PAGE_ENDPOINTS.ADD_TEAM_PAGE,
+    PAGE_ENDPOINTS.MATCH_HISTORY,
+    '/match_history/[id]'
 ];
 
 function getIP(request: NextRequest): string {
@@ -115,7 +117,8 @@ export async function middleware(req: NextRequest) {
     const isProtectedPage = PROTECTED_PAGES.includes(pathname) || 
                             pathname.startsWith('/match/') || 
                             pathname.startsWith('/edit_match/') ||
-                            pathname.startsWith('/player/');
+                            pathname.startsWith('/player/') || 
+                            pathname.startsWith('/match_history/')
     const isAdminPage = ADMIN_PROTECTED_PAGES.includes(pathname);
 
     // Redirect authenticated users away from public pages

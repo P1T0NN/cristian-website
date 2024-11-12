@@ -287,6 +287,16 @@
         "teamLevel": "Nivel del Equipo"
     },
 
+    "MatchHistoryPage": {
+        "matchHistory": "Historial de Partidos",
+        "noMatchHistoryFound": "No se encontraron entradas en el historial de partidos.",
+        "delete": "Eliminar",
+        "deleteConfirmTitle": "¿Estás absolutamente seguro?",
+        "deleteConfirmDescription": "Esta acción no se puede deshacer. Esto eliminará permanentemente este partido del historial.",
+        "cancel": "Cancelar",
+        "deleting": "Eliminando..."
+    },
+
     "VerifyEmail": {
         "verifyingEmail": "Verificando tu correo...",
         "verificationSuccess": "¡Tu correo ha sido verificado exitosamente! Redirigiendo a la página de inicio de sesión...",
@@ -444,6 +454,8 @@
 
         "MATCH_HISTORY_INSERT_FAILED": "No se pudo agregar el partido al historial",
         "MATCH_FINISHED": "El partido ha sido finalizado y movido al historial",
+        "MATCH_HISTORY_DELETION_FAILED": "¡Error al eliminar el partido del historial de partidos!",
+        "MATCH_HISTORY_DELETED": "¡Partido eliminado exitosamente del historial de partidos!",
 
         "REDIS_CONNECTION_ERROR": "No se puede conectar a la base de datos. Inténtalo de nuevo más tarde.",
         "REDIS_DISCONNECTION_ERROR": "Error al desconectar de la base de datos.",
@@ -502,7 +514,11 @@
 
         "FAILED_TO_FETCH_TEAM": "Error al obtener el equipo",
         "TEAM_NOT_FOUND": "¡Equipo no encontrado!",
-        "TEAM_FETCHED": "¡Equipo obtenido con éxito!"
+        "TEAM_FETCHED": "¡Equipo obtenido con éxito!",
+
+        "MATCH_HISTORY_FAILED_TO_FETCH": "¡Error al obtener el historial de partidos!",
+        "NO_MATCH_HISTORY_FOUND": "No hay historial de partidos.",
+        "MATCH_HISTORY_SUCCESSFULLY_FETCHED": "¡Historial de partidos obtenido con éxito!"
     },
 
     "ZodErrors": {
