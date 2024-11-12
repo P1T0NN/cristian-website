@@ -7,6 +7,7 @@ export type typesUser = {
     email: string;
     fullName: string;
     phoneNumber: string;
+    gender: string;
     is_verified: boolean;
     isAdmin: boolean;
     player_debt: number;

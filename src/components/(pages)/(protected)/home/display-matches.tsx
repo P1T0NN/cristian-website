@@ -13,20 +13,23 @@ import { serverFetchMatches } from '@/actions/functions/data/server/server_fetch
 
 // TYPES
 import type { typesMatch } from '@/types/typesMatch';
+import type { typesUser } from '@/types/typesUser';
 
 // LUCIDE ICONS
 import { RefreshCcw } from "lucide-react";
 
 type DisplayMatchesProps = {
+    serverUserData: typesUser;
     date?: string;
 }
 
 export const DisplayMatches = async ({ 
+    serverUserData,
     date
 }: DisplayMatchesProps) => {
     const t = await getTranslations("HomePage");
 
-    const serverMatchesData = await serverFetchMatches(date);
+    const serverMatchesData = await serverFetchMatches(serverUserData.gender, serverUserData.isAdmin, date);
     const matchesData = serverMatchesData.data as typesMatch[];
 
     async function refreshMatches() {

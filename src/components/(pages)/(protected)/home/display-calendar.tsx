@@ -54,9 +54,6 @@ export const DisplayCalendar = () => {
                     <div>
                         {t('upcoming')} <span className="bg-muted px-2 py-0.5 rounded">0</span>
                     </div>
-                    <div>
-                        {t('followed')} <span className="bg-muted px-2 py-0.5 rounded">0</span>
-                    </div>
                 </div>
             </div>
             <div className="flex gap-2 overflow-x-auto pb-2 px-4">

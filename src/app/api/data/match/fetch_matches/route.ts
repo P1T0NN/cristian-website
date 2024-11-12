@@ -9,11 +9,13 @@ import { getTranslations } from 'next-intl/server';
 // SERVICES
 import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
 
+// CONFIG
+import { CACHE_KEYS } from '@/config';
+
 // TYPES
 import type { APIResponse } from '@/types/responses/APIResponse';
 import type { typesMatch } from '@/types/typesMatch';
 
-const MATCHES_CACHE_PREFIX = 'match:';
 const CACHE_TTL = 60 * 60 * 12; // 12 hours in seconds
 
 export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
@@ -26,25 +28,28 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
         return NextResponse.json({ success: false, message: genericMessages('UNAUTHORIZED') }, { status: 401 });
     }
 
-    const { payload } = await jwtVerify(token, new TextEncoder().encode(process.env.JWT_SECRET));
-
-    if (!payload) {
+    try {
+        await jwtVerify(token, new TextEncoder().encode(process.env.JWT_SECRET));
+    } catch {
         return NextResponse.json({ success: false, message: genericMessages('JWT_DECODE_ERROR') }, { status: 401 });
     }
 
-    // Extract date from URL parameters
     const url = new URL(req.url);
     const date = url.searchParams.get('date');
+    const gender = url.searchParams.get('gender');
+    const isAdmin = url.searchParams.get('isAdmin') === 'true';
 
-    // Fetch matches from database
     let matchesQuery = supabase
         .from('matches')
         .select('*')
         .order('created_at', { ascending: false });
 
-    // If date is provided, filter matches by date
     if (date) {
         matchesQuery = matchesQuery.eq('starts_at_day', date);
+    }
+
+    if (!isAdmin && gender) {
+        matchesQuery = matchesQuery.or(`match_gender.eq.${gender},match_gender.eq.Mixed`);
     }
 
     const { data: dbMatches, error: supabaseError } = await matchesQuery.returns<typesMatch[]>();
@@ -53,23 +58,18 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
         return NextResponse.json({ success: false, message: fetchMessages('MATCHES_FAILED_TO_FETCH') }, { status: 500 });
     }
 
-    // If no matches found
     if (!dbMatches || dbMatches.length === 0) {
         return NextResponse.json({ success: true, message: fetchMessages('NO_MATCHES_FOUND'), data: [] });
     }
 
-    // Cache each match individually
     const cachedMatches = await Promise.all(dbMatches.map(async (match) => {
-        const cacheKey = `${MATCHES_CACHE_PREFIX}${match.id}`;
-        
-        // Try to get from cache first
+        const cacheKey = `${CACHE_KEYS.MATCH_PREFIX}${match.id}`;
         const cachedMatch = await upstashRedisCacheService.get<typesMatch>(cacheKey);
         
         if (cachedMatch.success && cachedMatch.data) {
             return cachedMatch.data;
         }
         
-        // If not in cache, cache the match
         await upstashRedisCacheService.set(cacheKey, match, CACHE_TTL);
         return match;
     }));

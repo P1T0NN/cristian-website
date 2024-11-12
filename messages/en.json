@@ -13,7 +13,6 @@
     
     "HomePage": {
         "upcoming": "Upcoming",
-        "followed": "Followed",
         "availableEvents": "Available Events",
         "refresh": "Refresh",
         "noEventsAvailable": "No events available at this time."
