@@ -177,7 +177,10 @@
         "deleteConfirmDescription": "This action cannot be undone. This will permanently delete the match and remove all associated data from our servers.",
         "finishing": "Finishing...",
         "finishConfirmTitle": "Are you sure you want to finish this match?",
-        "finishConfirmDescription": "This action will move the match to the history and remove it from active matches. This cannot be undone."
+        "finishConfirmDescription": "This action will move the match to the history and remove it from active matches. This cannot be undone.",
+        "joinTeamConfirmTitle": "Confirm Team Join",
+        "joinTeamConfirmDescription": "By joining the team, you accept that you will pay for this match in cash. Are you sure you want to join the team?",
+        "confirmJoin": "Yes, Join Team"
     },
 
     "EditMatchPage": {

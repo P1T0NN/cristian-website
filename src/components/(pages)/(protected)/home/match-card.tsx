@@ -39,7 +39,7 @@ export const MatchCard = async ({
 
     return (
         <Link href={`/match/${match.id}`} className="block w-full">
-            <Card className="w-full bg-white transition-shadow hover:shadow-md">
+            <Card className="w-full transition-shadow hover:shadow-md">
                 <CardContent className="p-4">
                     <div className="flex items-start gap-4">
                         <div className="flex flex-col items-center">

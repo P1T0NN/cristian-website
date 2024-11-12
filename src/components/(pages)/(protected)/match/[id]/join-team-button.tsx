@@ -7,6 +7,17 @@ import { useTransition } from "react";
 import { useTranslations } from "next-intl";
 
 // COMPONENTS
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+  } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -26,9 +37,9 @@ export const JoinTeamButton = ({
     currentUserId,
     authToken
 }: JoinTeamButtonProps) => {
-    const t = useTranslations("MatchPage")
+    const t = useTranslations("MatchPage");
 
-    const [isPending, startTransition] = useTransition()
+    const [isPending, startTransition] = useTransition();
 
     const handleJoinTeam = () => {
         startTransition(async () => {
@@ -46,15 +57,32 @@ export const JoinTeamButton = ({
                 toast.error(response.message)
             }
         })
-    }
+    };
 
     return (
-        <Button 
-            onClick={handleJoinTeam}
-            disabled={isPending}
-            className="w-full"
-        >
-            {isPending ? t('joiningTeam') : t('joinTeam')}
-        </Button>
+        <AlertDialog>
+            <AlertDialogTrigger asChild>
+                <Button 
+                    className="w-full"
+                    disabled={isPending}
+                >
+                    {isPending ? t('joiningTeam') : t('joinTeam')}
+                </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>{t('joinTeamConfirmTitle')}</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        {t('joinTeamConfirmDescription')}
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleJoinTeam} disabled={isPending}>
+                        {isPending ? t('joiningTeam') : t('confirmJoin')}
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
     )
 }
