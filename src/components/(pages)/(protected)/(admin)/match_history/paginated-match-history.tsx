@@ -65,7 +65,7 @@ export const PaginatedMatchHistory = ({
                     const formattedDate = dateFormat(new Date(match.starts_at_day), 'dd/MM/yyyy');
 
                     return (
-                        <Card key={match.id} className="w-full bg-white transition-shadow hover:shadow-md">
+                        <Card key={match.id} className="w-full transition-shadow hover:shadow-md">
                             <CardContent className="p-4">
                                 <div className="flex items-start gap-4">
                                     <div className="flex flex-col items-center">
