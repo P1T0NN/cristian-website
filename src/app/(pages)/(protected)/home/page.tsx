@@ -12,6 +12,7 @@ import { server_fetchUserData } from "@/actions/functions/data/server/server_fet
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
+import { MyActiveMatches } from "@/components/(pages)/(protected)/home/my-active-matches";
 
 export default async function HomePage({ 
     searchParams 
@@ -29,7 +30,10 @@ export default async function HomePage({
         <div className="min-h-screen bg-background">
             <main className="container mx-auto p-4 space-y-4">
                 <Suspense fallback={<DisplayCalendarLoading />} >
-                    <DisplayCalendar />
+                    <div className="flex w-full justify-between">
+                        <DisplayCalendar />
+                        <MyActiveMatches currentUserId={userData.id} />
+                    </div>
                 </Suspense>
         
                 <Suspense fallback={<DisplayMatchesLoading />}>

@@ -307,6 +307,12 @@
         "deleting": "Deleting..."
     },
 
+    "ActiveMatchesPage": {
+        "activeMatches": "Active Matches",
+        "noActiveMatches": "You have no active matches",
+        "placesLeft": "places left"
+    },
+
     "VerifyEmail": {
         "verifyingEmail": "Verifying your email...",
         "verificationSuccess": "Your email has been successfully verified! Redirecting to login page...",
@@ -513,7 +519,12 @@
 
         "MATCH_HISTORY_FAILED_TO_FETCH": "Failed to fetch match history!",
         "NO_MATCH_HISTORY_FOUND": "There is no match history.",
-        "MATCH_HISTORY_SUCCESSFULLY_FETCHED": "Match history fetched successfully!"
+        "MATCH_HISTORY_SUCCESSFULLY_FETCHED": "Match history fetched successfully!",
+
+        "ACTIVE_MATCHES_COUNT_FETCH_FAILED": "Failed to fetch active matches for user!",
+        "ACTIVE_MATCHES_COUNT_FETCHED": "Active matches fetched successfully!",
+        "ACTIVE_MATCHES_FETCH_FAILED": "Failed to fetch active matches for user!",
+        "ACTIVE_MATCHES_FETCHED": "Active matches fetched successfully!"
     },
 
     "ZodErrors": {

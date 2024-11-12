@@ -307,6 +307,12 @@
         "deleting": "Eliminando..."
     },
 
+    "ActiveMatchesPage": {
+        "activeMatches": "Partidos Activos",
+        "noActiveMatches": "No tienes partidos activos",
+        "placesLeft": "plazas disponibles"
+    },
+
     "VerifyEmail": {
         "verifyingEmail": "Verificando tu correo...",
         "verificationSuccess": "¡Tu correo ha sido verificado exitosamente! Redirigiendo a la página de inicio de sesión...",
@@ -532,7 +538,12 @@
 
         "MATCH_HISTORY_FAILED_TO_FETCH": "¡Error al obtener el historial de partidos!",
         "NO_MATCH_HISTORY_FOUND": "No hay historial de partidos.",
-        "MATCH_HISTORY_SUCCESSFULLY_FETCHED": "¡Historial de partidos obtenido con éxito!"
+        "MATCH_HISTORY_SUCCESSFULLY_FETCHED": "¡Historial de partidos obtenido con éxito!",
+
+        "ACTIVE_MATCHES_COUNT_FETCH_FAILED": "¡No se pudieron obtener los partidos activos del usuario!",
+        "ACTIVE_MATCHES_COUNT_FETCHED": "¡Partidos activos obtenidos con éxito!",
+        "ACTIVE_MATCHES_FETCH_FAILED": "¡No se pudieron obtener los partidos activos del usuario!",
+        "ACTIVE_MATCHES_FETCHED": "¡Partidos activos obtenidos con éxito!"
     },
 
     "ZodErrors": {

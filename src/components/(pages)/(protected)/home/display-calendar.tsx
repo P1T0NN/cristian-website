@@ -8,21 +8,17 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
 // LIBRARIES
-import { useTranslations } from 'next-intl';
-
-// CONFIG
-import { PAGE_ENDPOINTS } from '@/config';
-
-// LIBRARIES
 import { format, addDays, isSameDay, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { cn } from "@/lib/utils";
+
+// CONFIG
+import { PAGE_ENDPOINTS } from '@/config';
 
 // COMPONENTS
 import { Button } from "@/components/ui/button";
 
 export const DisplayCalendar = () => {
-    const t = useTranslations('HomePage');
     const searchParams = useSearchParams();
 
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -50,11 +46,6 @@ export const DisplayCalendar = () => {
                 <h2 className="text-xl font-semibold">
                     {format(selectedDate, "EEEE d 'de' MMMM", { locale: es })}
                 </h2>
-                <div className="flex gap-4">
-                    <div>
-                        {t('upcoming')} <span className="bg-muted px-2 py-0.5 rounded">0</span>
-                    </div>
-                </div>
             </div>
             <div className="flex gap-2 overflow-x-auto pb-2 px-4">
                 {days.map((day) => (
