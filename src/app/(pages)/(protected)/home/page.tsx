@@ -7,8 +7,8 @@ import { DisplayMatches } from "@/components/(pages)/(protected)/home/display-ma
 import { DisplayMatchesLoading } from "@/components/(pages)/(protected)/home/loading/display-matches-loading";
 import { DisplayCalendarLoading } from "@/components/(pages)/(protected)/home/loading/display-calendar-loading";
 
-// ACTIONS
-import { server_fetchUserData } from "@/actions/functions/data/server/server_fetchUserData";
+// SERVER ACTIONS
+import { getUser } from "@/actions/actions/auth/verifyAuth";
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
@@ -19,8 +19,7 @@ export default async function HomePage({
 }: { 
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-    const serverUserData = await server_fetchUserData();
-    const userData = serverUserData.data as typesUser;
+    const serverUserData = await getUser() as typesUser;
 
     const awaitedSearchParams = await searchParams;
 
@@ -32,12 +31,12 @@ export default async function HomePage({
                 <Suspense fallback={<DisplayCalendarLoading />} >
                     <div className="flex w-full justify-between">
                         <DisplayCalendar />
-                        <MyActiveMatches currentUserId={userData.id} />
+                        <MyActiveMatches currentUserId={serverUserData.id} />
                     </div>
                 </Suspense>
         
                 <Suspense fallback={<DisplayMatchesLoading />}>
-                    <DisplayMatches date={date as string} serverUserData={userData} />
+                    <DisplayMatches date={date as string} serverUserData={serverUserData} />
                 </Suspense>
             </main>
         </div>

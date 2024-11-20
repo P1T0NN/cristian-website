@@ -1,184 +1,72 @@
 // NEXTJS IMPORTS
-import { NextRequest, NextResponse } from 'next/server';
-
-// LIBRARIES
-import { jwtVerify } from 'jose';
-import { getTranslations } from 'next-intl/server';
-import { format } from 'date-fns';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 // CONFIG
-import { PAGE_ENDPOINTS } from '@/config';
+import { getAllProtectedRoutes, ADMIN_PAGE_ENDPOINTS, DEFAULT_JWT_EXPIRATION_TIME } from './config';
 
 // SERVER ACTIONS
-import { checkGlobalRateLimit } from './actions/server_actions/ratelimit/checkGlobalRateLimit';
+import { checkIfUserIsAdmin } from './actions/server_actions/auth/checkIfUserIsAdmin';
 
 // ACTIONS
-import { server_fetchUserData } from './actions/functions/data/server/server_fetchUserData';
+import { verifyAuthWithRefresh } from '@/actions/actions/auth/verifyAuth';
 
-// UTILS
-import { clearAuthCookies, setAuthTokenCookie, setCsrfTokenCookie } from '@/utils/cookies/cookies';
-import { refreshAccessToken } from '@/utils/auth/refreshAccessToken';
+export async function middleware(request: NextRequest) {
+    const authToken = request.cookies.get('auth_token')?.value;
+    const refreshToken = request.cookies.get('refresh_token')?.value;
+    const path = request.nextUrl.pathname;
 
-// TYPES
-import type { typesUser } from '@/types/typesUser';
+    const isProtectedRoute = getAllProtectedRoutes().some(route => path.startsWith(route));
+    const isAdminRoute = Object.values(ADMIN_PAGE_ENDPOINTS).some(route => path.startsWith(route));
 
-const PUBLIC_PAGES = [
-    PAGE_ENDPOINTS.LOGIN_PAGE,
-    PAGE_ENDPOINTS.REGISTER_PAGE,
-    PAGE_ENDPOINTS.FORGOT_PASSWORD_PAGE,
-    PAGE_ENDPOINTS.VERIFY_EMAIL_PAGE,
-    PAGE_ENDPOINTS.RESET_PASSWORD_PAGE
-    // Add other public pages here
-];
+    if (isProtectedRoute) {
+        let validToken = authToken;
 
-// Define protected and admin pages
-const PROTECTED_PAGES = [
-    PAGE_ENDPOINTS.HOME_PAGE, 
-    PAGE_ENDPOINTS.SETTINGS_PAGE
-];
-
-const ADMIN_PROTECTED_PAGES = [
-    PAGE_ENDPOINTS.ADD_MATCH_PAGE,
-    PAGE_ENDPOINTS.ADD_DEBT_PAGE,
-    PAGE_ENDPOINTS.ADD_LOCATION_PAGE,
-    PAGE_ENDPOINTS.EDIT_MATCH_PAGE,
-    '/edit_match/[id]',
-    PAGE_ENDPOINTS.MATCH_PAGE,
-    '/match/[id]',
-    PAGE_ENDPOINTS.PLAYER_PAGE,
-    '/player/[id]',
-    PAGE_ENDPOINTS.ADD_TEAM_PAGE,
-    PAGE_ENDPOINTS.MATCH_HISTORY,
-    '/match_history/[id]'
-];
-
-function getIP(request: NextRequest): string {
-    const forwardedFor = request.headers.get('x-forwarded-for');
-    if (forwardedFor) {
-        return forwardedFor.split(',')[0];
-    }
-    return request.headers.get('x-real-ip') || 'unknown';
-}
-
-// Helper functions
-async function redirectToLogin(req: NextRequest) {
-    return NextResponse.redirect(new URL(PAGE_ENDPOINTS.LOGIN_PAGE, req.url));
-}
-
-async function redirectToHome(req: NextRequest) {
-    const currentDate = format(new Date(), 'yyyy-MM-dd');
-    return NextResponse.redirect(new URL(`${PAGE_ENDPOINTS.HOME_PAGE}?date=${currentDate}`, req.url));
-}
-
-async function refreshCsrfToken() {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/csrf_token`, { method: 'GET' });
-    return response.ok ? (await response.json()).csrf_token : null;
-}
-
-async function refreshAuthToken(refreshToken: string, response: NextResponse): Promise<string | null> {
-    const result = await refreshAccessToken(refreshToken);
-    if (result && result.authToken) {
-        setAuthTokenCookie(response, result.authToken);
-        return result.authToken;
-    }
-    return null;
-}
-
-export async function middleware(req: NextRequest) {
-    const genericMessages = await getTranslations("GenericMessages");
-
-    const authToken = req.cookies.get('auth_token')?.value;
-    const refreshToken = req.cookies.get('rtok')?.value;
-    const csrfToken = req.cookies.get('csrftoken')?.value;
-    const pathname = req.nextUrl.pathname;
-    const response = NextResponse.next();
-
-    // CSRF Token Refresh
-    if (!csrfToken && !pathname.startsWith('/api/auth')) {
-        const newCsrfToken = await refreshCsrfToken();
-        if (newCsrfToken) {
-            setCsrfTokenCookie(response, newCsrfToken);
-        }
-    }
-
-    // Global Rate Limiting
-    if (pathname.startsWith('/api/')) {
-        const identifier = getIP(req);
-        const isWithinRateLimit = await checkGlobalRateLimit(identifier);
-        if (!isWithinRateLimit) {
-            return new NextResponse(JSON.stringify({ message: genericMessages("RATE_LIMIT_EXCEEDED") }), {
-                status: 429,
-                headers: { 'Content-Type': 'application/json' }
-            });
-        }
-    }
-
-    const isPublicPage = PUBLIC_PAGES.includes(pathname);
-    const isProtectedPage = PROTECTED_PAGES.includes(pathname) || 
-                            pathname.startsWith('/match/') || 
-                            pathname.startsWith('/edit_match/') ||
-                            pathname.startsWith('/player/') || 
-                            pathname.startsWith('/match_history/')
-    const isAdminPage = ADMIN_PROTECTED_PAGES.includes(pathname);
-
-    // Redirect authenticated users away from public pages
-    if (isPublicPage && (authToken || refreshToken)) {
-        return redirectToHome(req);
-    }
-
-    // Handle the home page
-    if (pathname === PAGE_ENDPOINTS.HOME_PAGE) {
-        const dateParam = req.nextUrl.searchParams.get('date');
-        if (!dateParam) {
-            // Redirect to the home page with the current date in the URL
-            return redirectToHome(req);
-        }
-    }
-
-    if (isProtectedPage || isAdminPage) {
-        // Handle missing authToken and try to refresh
         if (!authToken && refreshToken) {
-            const newAuthToken = await refreshAuthToken(refreshToken, response);
-            if (newAuthToken) {
+            const result = await verifyAuthWithRefresh();
+
+            if (!result.isAuth) {
+                return NextResponse.redirect(new URL('/login', request.url));
+            }
+
+            if ('newAuthToken' in result && result.newAuthToken) {
+                validToken = result.newAuthToken;
+                const response = NextResponse.next();
+                response.cookies.set('auth_token', result.newAuthToken, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'strict',
+                    maxAge: DEFAULT_JWT_EXPIRATION_TIME,
+                    path: '/'
+                });
                 return response;
             }
-            clearAuthCookies(response);
-            return redirectToLogin(req);
         }
 
-        // Verify and decode JWT
-        const verifiedToken = await jwtVerify(authToken as string, new TextEncoder().encode(process.env.JWT_SECRET)).catch(() => null);
-
-        if (!verifiedToken) {
-            clearAuthCookies(response); // Clear cookies if token is invalid
-            return redirectToLogin(req); // Redirect to login
+        if (!validToken) {
+            return NextResponse.redirect(new URL('/login', request.url));
         }
 
-        const isTokenExpired = verifiedToken.payload.exp && verifiedToken.payload.exp < Math.floor(Date.now() / 1000);
-
-        if (isTokenExpired && refreshToken) {
-            // Handle expired token
-            const newAuthToken = await refreshAuthToken(refreshToken, response);
-            if (newAuthToken) {
-                setAuthTokenCookie(response, newAuthToken);
-                return response; // Return with the new token
+        if (isAdminRoute) {
+            const isAdmin = await checkIfUserIsAdmin(validToken);
+            if (!isAdmin) {
+                return NextResponse.redirect(new URL('/home', request.url));
             }
-            clearAuthCookies(response); // Clear cookies if no refresh token
-            return redirectToLogin(req); // Redirect to login
-        }
-
-        // Admin Validation
-        if (isAdminPage) {
-            const isAdmin = await server_fetchUserData().then(result => result.success && (result.data as typesUser).isAdmin === true);
-            if (!isAdmin) return redirectToHome(req); // Redirect if not admin
         }
     }
 
-    return response; // Continue processing if everything is fine
+    return NextResponse.next();
 }
 
 export const config = {
     matcher: [
-        '/((?!_next/static|_next/image|favicon.ico).*)',
+        /*
+         * Match all request paths except for the ones starting with:
+         * - api (API routes)
+         * - _next/static (static files)
+         * - _next/image (image optimization files)
+         * - favicon.ico (favicon file)
+         */
+        '/((?!api|_next/static|_next/image|favicon.ico).*)',
     ],
 }

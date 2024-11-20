@@ -5,7 +5,7 @@ import Link from "next/link";
 import { getTranslations } from 'next-intl/server';
 
 // CONFIG
-import { PAGE_ENDPOINTS } from "@/config";
+import { PROTECTED_PAGE_ENDPOINTS} from "@/config";
 
 // COMPONENTS
 import { Card, CardContent } from "@/components/ui/card";
@@ -75,7 +75,7 @@ export const DisplayActiveMatches = async ({
                 const placesLeft = Math.max(0, totalPlaces - (match.places_occupied || 0));
 
                 return (
-                    <Link href={`${PAGE_ENDPOINTS.MATCH_PAGE}/${match.id}`} key={match.id} className="block w-full">
+                    <Link href={`${PROTECTED_PAGE_ENDPOINTS.MATCH_PAGE}/${match.id}`} key={match.id} className="block w-full">
                         <Card className="w-full transition-shadow hover:shadow-md">
                             <CardContent className="p-4">
                                 <div className="flex items-start gap-4">

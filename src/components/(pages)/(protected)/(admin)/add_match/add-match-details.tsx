@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 // CONFIG
-import { PAGE_ENDPOINTS } from "@/config";
+import { PROTECTED_PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
 import { CardContent, CardFooter } from "@/components/ui/card";
@@ -63,7 +63,7 @@ export const AddMatchDetails = ({
                 const result = await addMatch(authToken, values);
                 
                 if (result.success) {
-                    router.push(PAGE_ENDPOINTS.HOME_PAGE);
+                    router.push(PROTECTED_PAGE_ENDPOINTS.HOME_PAGE);
                     toast.success(result.message);
                 } else {
                     toast.error(result.message);

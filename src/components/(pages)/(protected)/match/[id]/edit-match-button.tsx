@@ -6,9 +6,11 @@ import { useRouter } from "next/navigation";
 // COMPONENTS
 import { Button } from "@/components/ui/button";
 
+// CONFIG
+import { ADMIN_PAGE_ENDPOINTS } from "@/config";
+
 // LUCIDE ICONS
 import { Edit } from "lucide-react";
-import { PAGE_ENDPOINTS } from "@/config";
 
 type EditMatchButtonProps = {
     matchId: string;
@@ -20,7 +22,7 @@ export const EditMatchButton = ({
     const router = useRouter();
 
     const handleEditMatch = () => {
-        router.push(`${PAGE_ENDPOINTS.EDIT_MATCH_PAGE}/${matchId}`)
+        router.push(`${ADMIN_PAGE_ENDPOINTS.EDIT_MATCH_PAGE}/${matchId}`)
     };
 
     return (

@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useTranslations } from 'next-intl';
 
 // CONFIG
-import { PAGE_ENDPOINTS } from "@/config";
+import { PUBLIC_PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
 import { Input } from "@/components/ui/input";
@@ -22,11 +22,8 @@ import { toast } from "sonner";
 import { useForm } from "@/hooks/useForm";
 import { useZodSchemas } from "@/hooks/useZodSchema";
 
-// ACTIONS
-import { requestPasswordReset } from "@/actions/functions/auth/auth";
-
-// UTILS
-import { executeWithMinimumDuration } from "@/utils/timeoutForFunctions";
+// SERVER ACTIONS
+import { requestPasswordReset } from "@/actions/server_actions/auth/requestPasswordReset";
 
 // TYPES
 import { typesForgotPasswordForm } from "@/types/forms/ForgotPasswordForm";
@@ -45,10 +42,7 @@ export const ForgotPasswordContent = () => {
         validationSchema: forgotPasswordSchema,
         onSubmit: async (values) => {
             startTransition(async () => {
-                const result = await executeWithMinimumDuration(
-                    () => requestPasswordReset(values.email),
-                    3000 // 3 seconds
-                );
+                const result = await requestPasswordReset(values.email);
                 
                 if (result.success) {
                     toast.success(result.message);
@@ -93,7 +87,7 @@ export const ForgotPasswordContent = () => {
 
                     <div className="flex flex-col items-center space-y-10">
                         <Separator />
-                        <Link href={PAGE_ENDPOINTS.LOGIN_PAGE} className="underline">{t('backToLogin')}</Link>
+                        <Link href={PUBLIC_PAGE_ENDPOINTS.LOGIN_PAGE} className="underline">{t('backToLogin')}</Link>
                     </div>
                 </form>
             </div>

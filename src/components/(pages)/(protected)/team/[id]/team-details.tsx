@@ -6,9 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
+// SERVER ACTIONS
+import { getUser } from "@/actions/actions/auth/verifyAuth";
+
 // ACTIONS
 import { serverFetchTeam } from '@/actions/functions/data/server/server_fetchTeam';
-import { server_fetchUserData } from "@/actions/functions/data/server/server_fetchUserData";
 
 // TYPES
 import type { typesTeam } from '@/types/typesTeam';
@@ -26,8 +28,7 @@ export const TeamDetails = async ({
 }: TeamDetailsProps) => {
     const t = await getTranslations("TeamPage");
 
-    const serverUserData = await server_fetchUserData();
-    const userData = serverUserData.data as typesUser;
+    const serverUserData = await getUser() as typesUser;
 
     const serverTeamData = await serverFetchTeam(teamId);
     const teamData = serverTeamData.data as typesTeam;
@@ -45,7 +46,7 @@ export const TeamDetails = async ({
                             <CardTitle className="text-2xl font-bold">{teamData.team_name}</CardTitle>
                         </div>
                     </div>
-                    {userData.isAdmin && (
+                    {serverUserData.isAdmin && (
                         <Button variant="outline">
                             <Edit className="mr-2 h-4 w-4" /> {t('editTeam')}
                         </Button>

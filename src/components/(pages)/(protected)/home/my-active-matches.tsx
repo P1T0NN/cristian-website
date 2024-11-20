@@ -5,7 +5,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 // CONFIG
-import { PAGE_ENDPOINTS } from "@/config";
+import { PROTECTED_PAGE_ENDPOINTS } from "@/config";
 
 // ACTIONS
 import { serverFetchMyActiveMatchesCount } from "@/actions/functions/data/server/server_fetchMyActiveMatchesCount";
@@ -24,7 +24,7 @@ export const MyActiveMatches = async ({ currentUserId }: MyActiveMatchesProps) =
     const activeMatchesCount = serverActiveMatchesData.data as number;
 
     return (
-        <Link href={PAGE_ENDPOINTS.ACTIVE_MATCHES} className="group">
+        <Link href={PROTECTED_PAGE_ENDPOINTS.ACTIVE_MATCHES} className="group">
             <div className="flex items-center space-x-2 p-2 rounded-md transition-colors duration-200 ease-in-out group-hover:bg-muted/50">
                 <span className="text-sm font-medium group-hover:underline">{t('upcoming')}</span>
                 {activeMatchesCount !== null ? (

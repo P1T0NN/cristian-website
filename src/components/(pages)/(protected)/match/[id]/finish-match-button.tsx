@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 // CONFIG
-import { PAGE_ENDPOINTS } from "@/config";
+import { PROTECTED_PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
 import { 
@@ -53,7 +53,7 @@ export const FinishMatchButton = ({
 
             if (response.success) {
                 toast.success(response.message)
-                router.replace(PAGE_ENDPOINTS.HOME_PAGE);
+                router.replace(PROTECTED_PAGE_ENDPOINTS.HOME_PAGE);
             } else {
                 toast.error(response.message)
             }

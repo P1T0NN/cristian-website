@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 // CONFIG
-import { PAGE_ENDPOINTS } from "@/config";
+import { ADMIN_PAGE_ENDPOINTS} from "@/config";
 
 // COMPONENTS
 import { Label } from "@/components/ui/label";
@@ -49,7 +49,7 @@ export const LocationField = ({
     const searchTimeoutRef = useRef<NodeJS.Timeout>();
 
     const handleRedirectToAddLocation = () => {
-        router.push(PAGE_ENDPOINTS.ADD_LOCATION_PAGE);
+        router.push(ADMIN_PAGE_ENDPOINTS.ADD_LOCATION_PAGE);
     };
 
     const handleLocationSearch = (event: React.ChangeEvent<HTMLInputElement>) => {

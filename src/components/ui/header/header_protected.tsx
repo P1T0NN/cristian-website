@@ -2,7 +2,7 @@
 import Link from "next/link";
 
 // CONFIG
-import { PAGE_ENDPOINTS } from "@/config";
+import { PROTECTED_PAGE_ENDPOINTS, ADMIN_PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
 import { Button } from "@/components/ui/button";
@@ -43,7 +43,7 @@ export const HeaderProtected = ({
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-20">
                     <div className="flex items-center">
-                        <Link href={PAGE_ENDPOINTS.HOME_PAGE}>
+                        <Link href={PROTECTED_PAGE_ENDPOINTS.HOME_PAGE}>
                             <h1 className="text-xl font-bold tracking-[2px]">Cris Futbol</h1>
                         </Link>
                     </div>
@@ -77,20 +77,20 @@ export const HeaderProtected = ({
                                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     {serverUserData.isAdmin && (
-                                        <Link href={PAGE_ENDPOINTS.MATCH_HISTORY}>
+                                        <Link href={ADMIN_PAGE_ENDPOINTS.MATCH_HISTORY}>
                                             <DropdownMenuItem>
                                                 <Users className="mr-2" /> Match History
                                             </DropdownMenuItem>
                                         </Link>
                                     )}
                                     {serverUserData.isAdmin && (
-                                        <Link href={PAGE_ENDPOINTS.ADD_TEAM_PAGE}>
+                                        <Link href={ADMIN_PAGE_ENDPOINTS.ADD_TEAM_PAGE}>
                                             <DropdownMenuItem>
                                                 <Users className="mr-2" /> Create Team
                                             </DropdownMenuItem>
                                         </Link>
                                     )}
-                                    <Link href={PAGE_ENDPOINTS.SETTINGS_PAGE}>
+                                    <Link href={PROTECTED_PAGE_ENDPOINTS.SETTINGS_PAGE}>
                                         <DropdownMenuItem>
                                             <Settings className="mr-2" /> Settings
                                         </DropdownMenuItem>

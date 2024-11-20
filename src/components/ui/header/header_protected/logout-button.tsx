@@ -7,14 +7,14 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 // CONFIG
-import { PAGE_ENDPOINTS } from "@/config";
+import { PUBLIC_PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 
-// ACTIONS
-import { logoutUser } from "@/actions/functions/auth/auth";
+// SERVER ACTIONS
+import { logoutUser } from '@/actions/server_actions/auth/logoutUser';
 
 // LUCIDE ICONS
 import { LogOut } from "lucide-react";
@@ -30,7 +30,7 @@ export const LogoutButton = () => {
 
         if (result.success) {
             toast.success(result.message);
-            router.push(PAGE_ENDPOINTS.LOGIN_PAGE);
+            router.push(PUBLIC_PAGE_ENDPOINTS.LOGIN_PAGE);
         } else {
             toast.error(result.message);
         }

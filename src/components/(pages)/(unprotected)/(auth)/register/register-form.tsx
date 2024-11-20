@@ -3,6 +3,7 @@ import { useTranslations } from 'next-intl';
 
 // COMPONENTS
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
     Select,
     SelectContent,
@@ -10,13 +11,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 
 // TYPES
 import { typesRegisterForm } from "@/types/forms/RegisterForm";
 
 // LUCIDE ICONS
-import { Mail, LockKeyhole, User, Phone, PersonStanding } from "lucide-react";
+import { Mail, Phone, LockKeyhole, User, PersonStanding } from "lucide-react";
 
 type RegisterFormProps = {
     formData: typesRegisterForm;

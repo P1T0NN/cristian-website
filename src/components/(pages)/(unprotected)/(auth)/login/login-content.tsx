@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from 'next-intl';
 
 // CONFIG
-import { PAGE_ENDPOINTS } from "@/config";
+import { PROTECTED_PAGE_ENDPOINTS, PUBLIC_PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
 import { Separator } from "@/components/ui/separator";
@@ -23,8 +23,8 @@ import { LoginForm } from "./login-form";
 import { useForm } from "@/hooks/useForm";
 import { useZodSchemas } from "@/hooks/useZodSchema";
 
-// ACTIONS
-import { loginUser } from "@/actions/functions/auth/auth";
+// SERVER ACTIONS
+import { loginUser } from "@/actions/server_actions/auth/loginUser";
 
 // TYPES
 import { typesLoginForm } from "@/types/forms/LoginForm";
@@ -42,12 +42,13 @@ export const LoginContent = () => {
         validationSchema: loginSchema,
         onSubmit: async (values) => {
             startTransition(async () => {
-                const result = await loginUser(values);
+                const result = await loginUser(values.email, values.password);
+
                 if (result.success) {
-                    toast.success(result.message);
-                    router.replace(PAGE_ENDPOINTS.HOME_PAGE);
+                    toast.success("Logged in successfully");
+                    router.replace(PROTECTED_PAGE_ENDPOINTS.HOME_PAGE);
                 } else {
-                    toast.error(result.message);
+                    toast.error(result.message || "Error logging in");
                 }
             });
         },
@@ -66,7 +67,7 @@ export const LoginContent = () => {
                     />
 
                     <div className="flex items-center justify-between">
-                        <Link href={PAGE_ENDPOINTS.FORGOT_PASSWORD_PAGE} className="underline">
+                        <Link href={PUBLIC_PAGE_ENDPOINTS.FORGOT_PASSWORD_PAGE} className="underline">
                             {t('forgotPassword')}
                         </Link>
 
@@ -78,7 +79,7 @@ export const LoginContent = () => {
                     <div className="flex flex-col items-center space-y-10">
                         <Separator />
                         <p>
-                            {t('notAMember')} <Link href={PAGE_ENDPOINTS.REGISTER_PAGE} className="underline">{t('register')}</Link>
+                            {t('notAMember')} <Link href={PUBLIC_PAGE_ENDPOINTS.REGISTER_PAGE} className="underline">{t('register')}</Link>
                         </p>
                     </div>
                 </div>

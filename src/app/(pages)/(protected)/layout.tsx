@@ -7,8 +7,8 @@ import { ThemeProvider } from "@/providers/theme-provider";
 // COMPONENTS
 import { HeaderProtected } from "@/components/ui/header/header_protected";
 
-// ACTIONS
-import { server_fetchUserData } from "@/actions/functions/data/server/server_fetchUserData";
+// SERVER ACTIONS
+import { getUser } from "@/actions/actions/auth/verifyAuth";
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
@@ -27,14 +27,7 @@ export default async function ProtectedLayout({
     return null;
   }
 
-  const result = await server_fetchUserData();
-  const userData: typesUser | undefined = result.success ? (result.data as typesUser) : undefined;
-
-  if (!userData) {
-    // Handle the case where user data couldn't be fetched
-    // For now, we'll just return null
-    return null;
-  }
+  const serverUserData = await getUser() as typesUser;
 
   return (
     <>
@@ -44,7 +37,7 @@ export default async function ProtectedLayout({
             enableSystem
             disableTransitionOnChange
         >
-          <HeaderProtected serverUserData={userData} authToken={authToken} />
+          <HeaderProtected serverUserData={serverUserData} authToken={authToken} />
           {children}
         </ThemeProvider>
     </>

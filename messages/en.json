@@ -313,12 +313,12 @@
         "placesLeft": "places left"
     },
 
-    "VerifyEmail": {
-        "verifyingEmail": "Verifying your email...",
-        "verificationSuccess": "Your email has been successfully verified! Redirecting to login page...",
-        "verificationError": "There was an error verifying your email. Please try again or contact support.",
-        "invalidLink": "Invalid verification link",
-        "unexpectedError": "An unexpected error occurred"
+    "VerifyEmailPage": {
+        "title": "Email Verification",
+        "description": "Verifying your email address",
+        "verifying": "Verifying your email...",
+        "redirecting": "Redirecting to login page...",
+        "returnHome": "Return to Home"
     },
 
     "FilterModalComponent": {

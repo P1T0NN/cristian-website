@@ -1,73 +1,79 @@
 'use client';
 
 // REACTJS IMPORTS
-import { useState, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 // NEXTJS IMPORTS
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 // LIBRARIES
 import { useTranslations } from 'next-intl';
 
-// CONFIG
-import { PAGE_ENDPOINTS } from '@/config';
-
 // COMPONENTS
-import { toast } from 'sonner';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader2 } from 'lucide-react';
 
-export function VerifyEmailContent() {
-    const t = useTranslations('VerifyEmail')
-    const searchParams = useSearchParams()
-    const router = useRouter()
-  
-    const verificationAttempted = useRef(false)
-    const [verificationStatus, setVerificationStatus] = useState<'loading' | 'success' | 'error'>('loading')
-  
-    if (!verificationAttempted.current) {
-        verificationAttempted.current = true
-        const token = searchParams.get('token')
-    
-        if (!token) {
-            setVerificationStatus('error')
-            toast.error(t('invalidLink'))
-        } else {
-            verifyEmail(token)
-        }
-    }
-  
-    async function verifyEmail(token: string) {
-        try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/verify_email`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ token }),
-            })
-    
-            const data = await response.json()
-    
-            if (response.ok) {
-                setVerificationStatus('success')
-                toast.success(data.message)
-                setTimeout(() => router.push(PAGE_ENDPOINTS.LOGIN_PAGE), 3000)
-            } else {
-                setVerificationStatus('error')
-                toast.error(data.message)
-            }
-        } catch {
-            setVerificationStatus('error')
-            toast.error(t('unexpectedError'))
-        }
-    }
-  
-    if (verificationStatus === 'loading') {
-        return <h1 className='font-bold text-2xl text-center pt-16'>{t('verifyingEmail')}</h1>
-    }
-  
-    if (verificationStatus === 'success') {
-        return <h1 className='text-green-500 font-bold text-2xl text-center pt-16'>{t('verificationSuccess')}</h1>
-    }
-  
-    return <h1 className='text-red-500 font-bold text-2xl text-center pt-16'>{t('verificationError')}</h1>
+// SERVER ACTIONS
+import { verifyEmail } from '@/actions/server_actions/auth/verifyEmail';
+
+export const VerifyEmailContent = ({ 
+  token 
+}: { 
+  token: string 
+}) => {
+  const t = useTranslations("VerifyEmailPage");
+  const router = useRouter();
+
+  const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
+  const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    const handleVerifyEmail = async () => {
+      const result = await verifyEmail(token);
+
+      setStatus(result.success ? 'success' : 'error');
+      setMessage(result.message);
+
+      if (result.success) {
+        setTimeout(() => router.push('/login'), 3000);
+      }
+    };
+
+    handleVerifyEmail();
+  }, [token, router]);
+
+  const handleReturn = () => {
+    router.push('/');
+  };
+
+  return (
+    <Card className="w-[350px] mx-auto mt-10">
+      <CardHeader>
+        <CardTitle>{t('title')}</CardTitle>
+        <CardDescription>{t('description')}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {status === 'verifying' && (
+          <div className="flex items-center justify-center">
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <p>{t('verifying')}</p>
+          </div>
+        )}
+        {status === 'success' && (
+          <>
+            <p className="text-green-600 mb-4">{message}</p>
+            <p className="mb-4">{t('redirecting')}</p>
+            <Button onClick={handleReturn} className="w-full">{t('returnHome')}</Button>
+          </>
+        )}
+        {status === 'error' && (
+          <>
+            <p className="text-red-600 mb-4">{message}</p>
+            <Button onClick={handleReturn} className="w-full">{t('returnHome')}</Button>
+          </>
+        )}
+      </CardContent>
+    </Card>
+  );
 }

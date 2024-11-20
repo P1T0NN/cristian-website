@@ -9,8 +9,10 @@ import { SwitchTeamColors } from '@/components/(pages)/(protected)/match/[id]/sw
 import { TeamCard } from '@/components/(pages)/(protected)/match/[id]/team-card';
 import { AdminFunctions } from '@/components/(pages)/(protected)/match/[id]/admin-functions';
 
+// SERVER ACTIONS
+import { getUser } from '@/actions/actions/auth/verifyAuth';
+
 // ACTIONS
-import { server_fetchUserData } from '@/actions/functions/data/server/server_fetchUserData';
 import { serverFetchMatch } from '@/actions/functions/data/server/server_fetchMatch';
 
 // TYPES
@@ -26,13 +28,11 @@ export default async function MatchPage({
     const cookieStore = await cookies();
     const authToken = cookieStore.get('auth_token')?.value as string;
 
-    const serverUserData = await server_fetchUserData();
+    const serverUserData = await getUser() as typesUser;
     const { match, team1Players, team2Players } = await serverFetchMatch(id);
 
-    const userData = serverUserData.data as typesUser;
-
     const isUserInTeam = (players: typesUser[] | undefined) => {
-        return players?.some(player => player.id === userData.id) ?? false
+        return players?.some(player => player.id === serverUserData.id) ?? false
     }
 
     const userTeamNumber = isUserInTeam(team1Players) 
@@ -54,11 +54,11 @@ export default async function MatchPage({
             <DisplayTeamDetails match={match} />
 
             <div className="flex items-center">
-                {userData.isAdmin && (
+                {serverUserData.isAdmin && (
                     <SwitchTeamColors
                         matchId={id}
                         authToken={authToken}
-                        isAdmin={userData.isAdmin}
+                        isAdmin={serverUserData.isAdmin}
                     />
                 )}
             </div>
@@ -68,11 +68,11 @@ export default async function MatchPage({
                     teamName={match.team1_name}
                     players={team1Players}
                     teamNumber={1}
-                    currentUserId={userData.id}
+                    currentUserId={serverUserData.id}
                     userTeamNumber={userTeamNumber}
                     matchId={id}
                     matchType={match.match_type}
-                    isAdmin={userData.isAdmin}
+                    isAdmin={serverUserData.isAdmin}
                     authToken={authToken}
                 />
                 
@@ -80,16 +80,16 @@ export default async function MatchPage({
                     teamName={match.team2_name}
                     players={team2Players}
                     teamNumber={2}
-                    currentUserId={userData.id}
+                    currentUserId={serverUserData.id}
                     userTeamNumber={userTeamNumber}
                     matchId={id}
                     matchType={match.match_type}
-                    isAdmin={userData.isAdmin}
+                    isAdmin={serverUserData.isAdmin}
                     authToken={authToken}
                 />
             </div>
 
-            {userData.isAdmin && (
+            {serverUserData.isAdmin && (
                 <AdminFunctions matchId={id} authToken={authToken} />
             )}
         </section>

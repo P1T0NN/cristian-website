@@ -13,7 +13,7 @@ import { es } from 'date-fns/locale';
 import { cn } from "@/lib/utils";
 
 // CONFIG
-import { PAGE_ENDPOINTS } from '@/config';
+import { PROTECTED_PAGE_ENDPOINTS } from '@/config';
 
 // COMPONENTS
 import { Button } from "@/components/ui/button";
@@ -52,7 +52,7 @@ export const DisplayCalendar = () => {
                     <Link
                         key={day.number}
                         prefetch={true}
-                        href={`${PAGE_ENDPOINTS.HOME_PAGE}/?date=${format(day.date, 'yyyy-MM-dd')}`}
+                        href={`${PROTECTED_PAGE_ENDPOINTS.HOME_PAGE}/?date=${format(day.date, 'yyyy-MM-dd')}`}
                         passHref
                     >
                         <Button

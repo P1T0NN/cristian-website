@@ -1,111 +1,113 @@
-"use client"
+'use client';
 
 // REACTJS IMPORTS
-import { useTransition, useState, useCallback } from "react";
+import { useState, useEffect } from 'react';
 
 // NEXTJS IMPORTS
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from 'next/navigation';
 
 // LIBRARIES
 import { useTranslations } from 'next-intl';
 
 // CONFIG
-import { PAGE_ENDPOINTS } from "@/config";
+import { PUBLIC_PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
+import { toast } from "sonner";
 import { ResetPasswordForm } from "./reset-password-form";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 
 // HOOKS
 import { useForm } from "@/hooks/useForm";
 import { useZodSchemas } from "@/hooks/useZodSchema";
 
-// UTILS
-import { resetPassword, isResetTokenValid } from "@/actions/functions/auth/auth";
+// SERVER ACTIONS
+import { resetPassword } from '@/actions/server_actions/auth/resetPassword';
+import { validateResetToken } from '@/actions/server_actions/auth/validateResetToken';
 
 export function ResetPasswordContent() {
-    const t = useTranslations('ResetPasswordPage')
-    const router = useRouter()
-    const searchParams = useSearchParams()
-    const token = searchParams.get('token')
+  const t = useTranslations('ResetPasswordPage');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token');
 
-    const [isPending, startTransition] = useTransition()
-    const [isValidToken, setIsValidToken] = useState(false)
-    const [isLoading, setIsLoading] = useState(true)
-    const [isSuccess, setIsSuccess] = useState(false)
+  const [status, setStatus] = useState<'validating' | 'valid' | 'invalid' | 'resetting' | 'success' | 'error'>('validating');
+  const [message, setMessage] = useState('');
 
-    const handleSuccessAndRedirect = useCallback(() => {
-        setIsSuccess(true)
-        setTimeout(() => {
-            router.replace(PAGE_ENDPOINTS.LOGIN_PAGE)
-        }, 2000)
-    }, [router])
+  const { resetPasswordSchema } = useZodSchemas();
 
-    const { resetPasswordSchema } = useZodSchemas()
+  const { formData, errors, handleInputChange, handleSubmit } = useForm({
+    initialValues: { password: '', confirmPassword: '' },
+    validationSchema: resetPasswordSchema,
+    onSubmit: async (values) => {
+      if (!token) return;
 
-    const { formData, errors, handleInputChange, handleSubmit } = useForm({
-        initialValues: { password: '', confirmPassword: '' },
-        validationSchema: resetPasswordSchema,
-        onSubmit: async (values) => {
-            startTransition(async () => {
-                if (!token) {
-                    return
-                }
-                const result = await resetPassword(token, values.password)
-                if (result.success) {
-                    toast.success(result.message)
-                    handleSuccessAndRedirect()
-                } else {
-                    toast.error(result.message)
-                }
-            })
-        },
-    })
+      setStatus('resetting');
 
+      const result = await resetPassword(token, values.password);
+      if (result.success) {
+        setStatus('success');
+        setMessage(result.message);
+        toast.success(result.message);
+        setTimeout(() => router.replace(PUBLIC_PAGE_ENDPOINTS.LOGIN_PAGE), 3000);
+      } else {
+        setStatus('error');
+        setMessage(result.message);
+        toast.error(result.message);
+      }
+    },
+  });
+
+  useEffect(() => {
     if (!token) {
-        router.replace(PAGE_ENDPOINTS.LOGIN_PAGE)
-        return null
+      router.replace(PUBLIC_PAGE_ENDPOINTS.LOGIN_PAGE);
+      return;
     }
 
-    if (isLoading) {
-        isResetTokenValid(token).then((result) => {
-            if (result.success) {
-                setIsValidToken(true)
-            } else {
-                toast.error(result.message)
-                router.push(PAGE_ENDPOINTS.LOGIN_PAGE)
-            }
-            setIsLoading(false)
-        })
-        return <h1 className='font-bold text-2xl text-center pt-16'>{t('validatingLink')}</h1>
-    }
+    const validateToken = async () => {
+      const result = await validateResetToken(token);
+      if (result.success) {
+        setStatus('valid');
+      } else {
+        setStatus('invalid');
+        setMessage(result.message);
+        toast.error(result.message);
+        setTimeout(() => router.replace(PUBLIC_PAGE_ENDPOINTS.LOGIN_PAGE), 3000);
+      }
+    };
 
-    if (isSuccess) {
-        return <h1 className='font-bold text-green-500 text-2xl text-center pt-16'>{t('resetSuccess')}</h1>
-    }
+    validateToken();
+  }, [token, router]);
 
-    if (!isValidToken) {
-        return null
-    }
+  if (status === 'validating') {
+    return <h1 className='font-bold text-2xl text-center pt-16'>{t('validatingLink')}</h1>;
+  }
 
-    return (
-        <section className="flex w-full min-h-screen justify-center">
-            <div className="flex flex-col pt-16 items-center space-y-7">
-                <h1 className="text-2xl font-bold">{t('resetPassword')}</h1>
+  if (status === 'invalid' || status === 'error') {
+    return <h1 className='font-bold text-red-500 text-2xl text-center pt-16'>{message}</h1>;
+  }
 
-                <div className="flex flex-col space-y-10">
-                    <ResetPasswordForm
-                        formData={formData}
-                        errors={errors}
-                        handleInputChange={handleInputChange}
-                    />
+  if (status === 'success') {
+    return <h1 className='font-bold text-green-500 text-2xl text-center pt-16'>{t('resetSuccess')}</h1>;
+  }
 
-                    <Button disabled={isPending} className="w-full font-bold" onClick={handleSubmit}>
-                        {isPending ? t('resetting') : t('resetPasswordButton')}
-                    </Button>
-                </div>
-            </div>
-        </section>
-    )
+  return (
+    <section className="flex w-full min-h-screen justify-center">
+      <div className="flex flex-col pt-16 items-center space-y-7">
+        <h1 className="text-2xl font-bold">{t('resetPassword')}</h1>
+
+        <div className="flex flex-col space-y-10">
+          <ResetPasswordForm
+            formData={formData}
+            errors={errors}
+            handleInputChange={handleInputChange}
+          />
+
+          <Button disabled={status === 'resetting'} className="w-full font-bold" onClick={handleSubmit}>
+            {status === 'resetting' ? t('resetting') : t('resetPasswordButton')}
+          </Button>
+        </div>
+      </div>
+    </section>
+  );
 }

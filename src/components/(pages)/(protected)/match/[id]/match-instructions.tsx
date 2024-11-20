@@ -5,8 +5,10 @@ import { getTranslations } from "next-intl/server";
 import { Card, CardContent } from "@/components/ui/card";
 import { EditMatchInstructionsDialog } from "./edit-match-instructions-dialog";
 
+// SERVER ACTIONS
+import { getUser } from "@/actions/actions/auth/verifyAuth";
+
 // ACTIONS
-import { server_fetchUserData } from "@/actions/functions/data/server/server_fetchUserData";
 import { typesUser } from "@/types/typesUser";
 
 type MatchInstructionsProps = {
@@ -22,8 +24,7 @@ export const MatchInstructions = async ({
 }: MatchInstructionsProps) => {
     const t = await getTranslations("MatchPage");
 
-    const serverUserData = await server_fetchUserData();
-    const userData = serverUserData.data as typesUser;
+    const serverUserData = await getUser() as typesUser; 
 
     return (
         <Card className="mb-6">
@@ -34,7 +35,7 @@ export const MatchInstructions = async ({
                             {instructions || t('noInstructions')}
                         </div>
                     </div>
-                    {userData.isAdmin && (
+                    {serverUserData.isAdmin && (
                         <EditMatchInstructionsDialog
                             instructions={instructions}
                             matchId={matchId}

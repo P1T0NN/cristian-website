@@ -11,18 +11,18 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from 'next-intl';
 
 // CONFIG
-import { PAGE_ENDPOINTS } from "@/config";
-
-// HOOKS
-import { useForm } from "@/hooks/useForm";
+import { PUBLIC_PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
 import { Separator } from "@/components/ui/separator";
 import { RegisterForm } from "./register-form";
 import { toast } from "sonner";
 
-// UTILS
-import { registerUser } from "@/actions/functions/auth/auth";
+// HOOKS
+import { useForm } from "@/hooks/useForm";
+
+// SERVER ACTIONS
+import { registerUser } from "@/actions/server_actions/auth/registerUser";
 
 // ZOD
 import { registerSchema } from "@/zod/schema";
@@ -34,7 +34,7 @@ export const RegisterContent = () => {
     const [isPending, startTransition] = useTransition();
 
     const { formData, errors, handleInputChange, handleSubmit } = useForm({
-        initialValues: {
+          initialValues: {
             email: "",
             fullName: "",
             phoneNumber: "",
@@ -44,17 +44,18 @@ export const RegisterContent = () => {
         },
         validationSchema: registerSchema,
         onSubmit: async (values) => {
-            startTransition(async () => {
-                const result = await registerUser(values);
-                if (result.success) {
-                    toast.success(result.message);
-                    router.replace(PAGE_ENDPOINTS.LOGIN_PAGE);
-                } else {
-                    toast.error(result.message);
-                }
-            });
+          startTransition(async () => {
+            const result = await registerUser(values);
+  
+            if (result.success) {
+              toast.success(result.message);
+              router.replace(PUBLIC_PAGE_ENDPOINTS.LOGIN_PAGE);
+            } else {
+              toast.error(result.message);
+            }
+          });
         },
-    });
+      });
 
     return (
         <section className="flex w-full min-h-screen justify-center">
@@ -73,7 +74,7 @@ export const RegisterContent = () => {
                     <div className="flex flex-col items-center space-y-10">
                         <Separator />
                         <p>
-                            {t('alreadyUsing')} <Link href={PAGE_ENDPOINTS.LOGIN_PAGE} className="underline">{t('logIn')}</Link>
+                            {t('alreadyUsing')} <Link href={PUBLIC_PAGE_ENDPOINTS.LOGIN_PAGE} className="underline">{t('logIn')}</Link>
                         </p>
                     </div>
                 </div>

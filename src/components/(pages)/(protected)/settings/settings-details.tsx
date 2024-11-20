@@ -15,7 +15,7 @@ import { NotificationSettings } from "./notification-settings";
 import { SecuritySettings } from "./security-settings";
 
 // ACTIONS
-import { server_fetchUserData } from "@/actions/functions/data/server/server_fetchUserData";
+import { getUser } from "@/actions/actions/auth/verifyAuth";
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
@@ -27,8 +27,7 @@ export const SettingsDetails = async () => {
     const cookieStore = await cookies();
     const authToken = cookieStore.get('auth_token')?.value as string;
 
-    const serverUserData = await server_fetchUserData();
-    const userData = serverUserData.data as typesUser;
+    const serverUserData = await getUser() as typesUser;
 
     return (
         <Tabs defaultValue="account" className="space-y-4">
@@ -41,7 +40,7 @@ export const SettingsDetails = async () => {
 
             <TabsContent value="account">
                 <AccountSettings 
-                    serverUserData={userData} 
+                    serverUserData={serverUserData} 
                     authToken={authToken} 
                     currentLocale={locale} 
                 />

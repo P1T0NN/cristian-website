@@ -313,12 +313,12 @@
         "placesLeft": "plazas disponibles"
     },
 
-    "VerifyEmail": {
-        "verifyingEmail": "Verificando tu correo...",
-        "verificationSuccess": "¡Tu correo ha sido verificado exitosamente! Redirigiendo a la página de inicio de sesión...",
-        "verificationError": "Hubo un error al verificar tu correo. Inténtalo de nuevo o contacta soporte.",
-        "invalidLink": "Enlace de verificación inválido",
-        "unexpectedError": "Ocurrió un error inesperado"
+    "VerifyEmailPage": {
+        "title": "Verificación de Correo Electrónico",
+        "description": "Verificando tu dirección de correo electrónico",
+        "verifying": "Verificando tu correo electrónico...",
+        "redirecting": "Redirigiendo a la página de inicio de sesión...",
+        "returnHome": "Volver a Inicio"
     },
 
     "FilterModalComponent": {

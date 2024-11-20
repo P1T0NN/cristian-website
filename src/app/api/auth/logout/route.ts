@@ -3,29 +3,32 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
 // LIBRARIES
-import { getTranslations } from 'next-intl/server';
+import { supabase } from '@/lib/supabase/supabase';
 
 // UTILS
-import { clearAuthCookies } from '@/utils/cookies/cookies';
-import { GenericMessages } from '@/utils/genericMessages';
+import { verifyToken } from '@/utils/auth/jwt';
 
-// TYPES
-import type { APIResponse } from '@/types/responses/APIResponse';
-
-export async function POST(): Promise<NextResponse<APIResponse>> {
-    const t = await getTranslations('GenericMessages');
-
+export async function POST() {
     const cookieStore = await cookies();
-    const csrfToken = cookieStore.get('csrftoken')?.value;
+    const authToken = cookieStore.get('auth_token')?.value;
 
-    if (!csrfToken) {
-        return NextResponse.json({ success: false, message: GenericMessages.MISSING_CSRF_TOKEN }, { status: 403 });
+    if (!authToken) {
+        return NextResponse.json({ success: false, message: 'Not authenticated' }, { status: 401 });
     }
 
-    const response = NextResponse.json({ success: true, message: t('LOGOUT_SUCCESSFUL') }, { status: 200 });
+    const payload = await verifyToken(authToken);
+    
+    const { error } = await supabase
+        .from('refresh_tokens')
+        .delete()
+        .eq('user_id', payload.sub);
 
-    // Clear cookies
-    clearAuthCookies(response);
+    if (error) {
+        return NextResponse.json({ success: false, message: "Error deleting refresh token!"} );
+    }
 
-    return response;
+    cookieStore.delete('auth_token');
+    cookieStore.delete('refresh_token');
+
+    return NextResponse.json({ success: true, message: 'Logged out successfully' });
 }

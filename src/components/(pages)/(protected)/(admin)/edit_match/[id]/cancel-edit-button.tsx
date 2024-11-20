@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 // CONFIG
-import { PAGE_ENDPOINTS } from "@/config";
+import { PROTECTED_PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
 import { Button } from "@/components/ui/button"
@@ -17,7 +17,7 @@ export const CancelEditButton = () => {
     const router = useRouter();
 
     const handleCancelButton = () => {
-        router.push(PAGE_ENDPOINTS.HOME_PAGE);
+        router.push(PROTECTED_PAGE_ENDPOINTS.HOME_PAGE);
     }
 
     return (

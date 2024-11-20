@@ -6,7 +6,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 // CONFIG
-import { PAGE_ENDPOINTS } from "@/config";
+import { ADMIN_PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -126,7 +126,7 @@ export const PlayerDetails = async ({
                     <div className="flex items-center mt-6 mb-6 space-x-4">
                         <Link 
                             className="flex items-center h-[35px] bg-primary text-secondary px-4 rounded hover:bg-primary/80 transition-all"
-                            href={`${PAGE_ENDPOINTS.ADD_DEBT_PAGE}?playerName=${encodeURIComponent(playerData.fullName)}`}
+                            href={`${ADMIN_PAGE_ENDPOINTS.ADD_DEBT_PAGE}?playerName=${encodeURIComponent(playerData.fullName)}`}
                         >
                             {t('addDebt')}
                         </Link>

@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 // CONFIG
-import { PAGE_ENDPOINTS } from "@/config";
+import { PROTECTED_PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
 import { LocationField } from "@/components/(pages)/(protected)/(admin)/add_match/location-field";
@@ -69,7 +69,7 @@ export const EditMatchForm = ({
                 const result = await editMatch(authToken, matchId, values);
                 
                 if (result.success) {
-                    router.push(PAGE_ENDPOINTS.HOME_PAGE);
+                    router.push(PROTECTED_PAGE_ENDPOINTS.HOME_PAGE);
                     toast.success(result.message);
                 } else {
                     toast.error(result.message);

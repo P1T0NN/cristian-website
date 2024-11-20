@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 
 // CONFIG
-import { PAGE_ENDPOINTS } from "@/config";
+import { ADMIN_PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
 import { Button } from "@/components/ui/button";
@@ -111,7 +111,7 @@ export const PlayerItem = ({
     return (
         <div className="flex items-center justify-between p-2 bg-muted rounded-lg transition-opacity duration-200 ease-in-out">
             {isAdmin ? (
-                <Link href={`${PAGE_ENDPOINTS.PLAYER_PAGE}/${player.id}`} className="flex items-center space-x-2">
+                <Link href={`${ADMIN_PAGE_ENDPOINTS.PLAYER_PAGE}/${player.id}`} className="flex items-center space-x-2">
                     <PlayerInfo />
                 </Link>
             ) : (
