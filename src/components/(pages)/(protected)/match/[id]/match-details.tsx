@@ -24,6 +24,8 @@ export const MatchDetails = async ({
 }: MatchDetailsProps) => {
     const t = await getTranslations("MatchPage");
 
+    const formattedDate = await formatDate(serverMatchData.starts_at_day, true);
+
     return (
         <Card>
             <CardHeader>
@@ -58,7 +60,7 @@ export const MatchDetails = async ({
                     </div>
                     <div className="flex flex-col items-center">
                         <Calendar className="h-5 w-5 text-muted-foreground mb-2" />
-                        <span className="text-sm font-medium">{formatDate(serverMatchData.starts_at_day)}</span>
+                        <span className="text-sm font-medium">{formattedDate}</span>
                     </div>
                     <div className="flex flex-col items-center">
                         <Clock className="h-5 w-5 text-muted-foreground mb-2" />
