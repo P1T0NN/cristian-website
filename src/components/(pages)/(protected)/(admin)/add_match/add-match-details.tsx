@@ -55,6 +55,7 @@ export const AddMatchDetails = ({
             starts_at_hour: "",
             match_type: "",
             match_gender: "",
+            match_duration: 60,
             added_by: serverUserData.fullName
         },
         validationSchema: addMatchSchema,

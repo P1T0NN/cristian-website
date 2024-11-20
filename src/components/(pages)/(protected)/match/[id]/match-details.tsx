@@ -63,6 +63,7 @@ export const MatchDetails = async ({
                     <div className="flex flex-col items-center">
                         <Clock className="h-5 w-5 text-muted-foreground mb-2" />
                         <span className="text-sm font-medium">{formatTime(serverMatchData.starts_at_hour)}h</span>
+                        <span className="text-xs text-muted-foreground">{serverMatchData.match_duration} {t('minutes')}</span>
                     </div>
                     <div className="flex flex-col items-center">
                         <Coins className="h-5 w-5 text-muted-foreground mb-2" />

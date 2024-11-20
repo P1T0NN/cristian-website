@@ -92,7 +92,9 @@
         "matchDetails": "Match Details",
         "addNewLocation": "Location",
         "locationUrl": "Location Url",
-        "locationUrlPlaceholder": "Paste google maps location link"
+        "locationUrlPlaceholder": "Paste google maps location link",
+        "match_duration": "Match Duration (minutes)",
+        "matchDurationPlaceholder": "Enter match duration in minutes"
     },
 
     "AddDebtPage": {
@@ -187,7 +189,15 @@
         "replace": "Replace",
         "replacing": "Replacing...",
         "substituteAlreadyRequested": "You have already requested a substitute. Please wait for someone to replace you!",
-        "placesLeft": "places left"
+        "placesLeft": "places left",
+        "playerActions": "Player Actions",
+        "playerActionsDescription": "Choose an action for {playerName}",
+        "goToProfile": "Go to Profile",
+        "removePlayer": "Remove Player",
+        "removing": "Removing...",
+        "playerRemoved": "Player removed successfully",
+        "errorRemovingPlayer": "Error removing player",
+        "minutes": "min"
     },
 
     "EditMatchPage": {
@@ -463,6 +473,7 @@
         "TOO_LATE_TO_LEAVE": "It's too late to leave the team. You can request a substitute instead.",
         "SUBSTITUTE_REQUESTED_SUCCESSFULLY'": "Requested substitute successfully!",
         "PLAYER_REPLACED_SUCCESSFULLY": "You replaced player successfully!",
+        "PLAYER_REMOVED_SUCCESSFULLY": "You removed the player successfully!",
 
         "REDIS_CONNECTION_ERROR": "Unable to connect to the database. Please try again later.",
         "REDIS_DISCONNECTION_ERROR": "Error occurred while disconnecting from the database.",
@@ -552,7 +563,8 @@
         "REASON_REQUIRED": "Reason for the debt is required",
         "REASON_TOO_LONG": "Reason cannot exceed 255 characters",
         "LOCATION_NAME_REQUIRED": "Location name is required",
-        "LOCATION_URL_REQUIRED": "Google Maps URL of location is required"
+        "LOCATION_URL_REQUIRED": "Google Maps URL of location is required",
+        "MATCH_DURATION_REQUIRED": "Match duration is required"
     },
 
     "EmailTemplateMessages": {

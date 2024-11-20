@@ -50,6 +50,7 @@ export const useZodSchemas = () => {
         match_gender: z.enum(['Male', 'Female', 'Mixed', 'Other'], {
             errorMap: () => ({ message: t('MATCH_GENDER_REQUIRED') })
         }),
+        match_duration: z.number().min(1, { message: t('MATCH_DURATION_REQUIRED') }),
         added_by: z.string()
     });
 

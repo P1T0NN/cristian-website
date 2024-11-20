@@ -10,6 +10,7 @@ export type typesMatch = {
     starts_at_hour: string;
     match_type: string;
     match_gender: string;
+    match_duration: number;
     // I made it bool because it's less expensive action then string
     team1_color: boolean;
     team2_color: boolean;

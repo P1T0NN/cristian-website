@@ -3,19 +3,14 @@
 // REACTJS IMPORTS
 import { useState, useTransition } from "react";
 
-// NEXTJS IMPORTS
-import Link from "next/link";
-
 // LIBRARIES
 import { useTranslations } from "next-intl";
-
-// CONFIG
-import { ADMIN_PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SubstituteRequestDialog } from "./substitute-request-dialog";
+import { AdminActionsDialog } from "./admin-actions-dialog";
 import { toast } from "sonner";
 
 // SERVER ACTIONS
@@ -48,6 +43,7 @@ export const PlayerItem = ({
     
     const [isPending, startTransition] = useTransition();
     const [showSubstituteDialog, setShowSubstituteDialog] = useState(false);
+    const [showAdminModal, setShowAdminModal] = useState(false);
 
     const handleLeaveTeam = () => {
         if (player.matchPlayer?.substitute_requested) {
@@ -111,14 +107,15 @@ export const PlayerItem = ({
     return (
         <div className="flex items-center justify-between p-2 bg-muted rounded-lg transition-opacity duration-200 ease-in-out">
             {isAdmin ? (
-                <Link href={`${ADMIN_PAGE_ENDPOINTS.PLAYER_PAGE}/${player.id}`} className="flex items-center space-x-2">
+                <Button variant="ghost" className="p-0" onClick={() => setShowAdminModal(true)}>
                     <PlayerInfo />
-                </Link>
+                </Button>
             ) : (
                 <div className="flex items-center space-x-2">
                     <PlayerInfo />
                 </div>
             )}
+
             {isCurrentUser ? (
                 <Button
                     variant="destructive"
@@ -161,6 +158,16 @@ export const PlayerItem = ({
                     matchId={matchId}
                     playerId={player.id}
                     onClose={() => setShowSubstituteDialog(false)}
+                />
+            )}
+
+            {showAdminModal && (
+                <AdminActionsDialog
+                    isOpen={showAdminModal}
+                    onClose={() => setShowAdminModal(false)}
+                    player={player}
+                    matchId={matchId}
+                    authToken={authToken}
                 />
             )}
         </div>

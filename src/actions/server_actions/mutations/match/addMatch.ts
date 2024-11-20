@@ -37,6 +37,7 @@ export async function addMatch(authToken: string, addMatchData: typesAddMatchFor
                 starts_at_hour: addMatchData.starts_at_hour,
                 match_type: addMatchData.match_type,
                 match_gender: addMatchData.match_gender,
+                match_duration: addMatchData.match_duration,
                 added_by: addMatchData.added_by
             }
         ]);

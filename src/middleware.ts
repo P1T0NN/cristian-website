@@ -2,14 +2,22 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+// LIBRARIES
+import { format } from 'date-fns';
+
 // CONFIG
-import { getAllProtectedRoutes, ADMIN_PAGE_ENDPOINTS, DEFAULT_JWT_EXPIRATION_TIME } from './config';
+import { getAllProtectedRoutes, ADMIN_PAGE_ENDPOINTS, DEFAULT_JWT_EXPIRATION_TIME, PROTECTED_PAGE_ENDPOINTS } from './config';
 
 // SERVER ACTIONS
 import { checkIfUserIsAdmin } from './actions/server_actions/auth/checkIfUserIsAdmin';
 
 // ACTIONS
 import { verifyAuthWithRefresh } from '@/actions/actions/auth/verifyAuth';
+
+async function redirectToHome(req: NextRequest) {
+    const currentDate = format(new Date(), 'yyyy-MM-dd');
+    return NextResponse.redirect(new URL(`${PROTECTED_PAGE_ENDPOINTS.HOME_PAGE}?date=${currentDate}`, req.url));
+}
 
 export async function middleware(request: NextRequest) {
     const authToken = request.cookies.get('auth_token')?.value;
@@ -18,6 +26,14 @@ export async function middleware(request: NextRequest) {
 
     const isProtectedRoute = getAllProtectedRoutes().some(route => path.startsWith(route));
     const isAdminRoute = Object.values(ADMIN_PAGE_ENDPOINTS).some(route => path.startsWith(route));
+
+    if (path === PROTECTED_PAGE_ENDPOINTS.HOME_PAGE) {
+        const dateParam = request.nextUrl.searchParams.get('date');
+        if (!dateParam) {
+            // Redirect to the home page with the current date in the URL
+            return redirectToHome(request);
+        }
+    }
 
     if (isProtectedRoute) {
         let validToken = authToken;

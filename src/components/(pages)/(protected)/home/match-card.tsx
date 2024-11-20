@@ -15,7 +15,7 @@ import { formatTime, formatDate } from "@/utils/dateUtils";
 import type { typesMatch } from "@/types/typesMatch";
 
 // LUCIDE ICONS
-import { MapPin, Users } from "lucide-react";
+import { MapPin, Users, Clock } from "lucide-react";
 
 type MatchCardProps = {
     match: typesMatch;
@@ -70,6 +70,10 @@ export const MatchCard = async ({
                             </div>
                             <div className="flex flex-wrap items-center gap-2 mt-2">
                                 <span className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600">{format}</span>
+                                <span className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600 flex items-center">
+                                    <Clock className="w-3 h-3 mr-1" />
+                                    {match.match_duration} {t('minutes')}
+                                </span>
                                 <div className="flex items-center gap-1">
                                     <span className={`w-2.5 h-2.5 rounded-full ${match.team1_color ? 'bg-black' : 'bg-white border border-gray-300'}`} />
                                     <span className={`w-2.5 h-2.5 rounded-full ${match.team2_color ? 'bg-black' : 'bg-white border border-gray-300'}`} />

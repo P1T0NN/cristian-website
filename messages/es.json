@@ -92,7 +92,9 @@
         "matchDetails": "Detalles del partido",
         "addNewLocation": "Ubicación",
         "locationUrl": "Enlace de ubicación",
-        "locationUrlPlaceholder": "Pega el enlace de Google Maps"
+        "locationUrlPlaceholder": "Pega el enlace de Google Maps",
+        "match_duration": "Duración del Partido (minutos)",
+        "matchDurationPlaceholder": "Ingrese la duración del partido en minutos"
     },
 
     "AddDebtPage": {
@@ -187,7 +189,15 @@
         "replace": "Reemplazar",
         "replacing": "Reemplazando...",
         "substituteAlreadyRequested": "Ya has solicitado un sustituto. ¡Por favor, espera a que alguien te reemplace!",
-        "placesLeft": "plazas disponibles"
+        "placesLeft": "plazas disponibles",
+        "playerActions": "Acciones del Jugador",
+        "playerActionsDescription": "Elige una acción para {playerName}",
+        "goToProfile": "Ir al Perfil",
+        "removePlayer": "Eliminar Jugador",
+        "removing": "Eliminando...",
+        "playerRemoved": "Jugador eliminado con éxito",
+        "errorRemovingPlayer": "Error al eliminar el jugador",
+        "minutes": "min"
     },
 
     "EditMatchPage": {
@@ -476,6 +486,7 @@
         "TOO_LATE_TO_LEAVE": "Es demasiado tarde para abandonar el equipo. Puedes solicitar un sustituto en su lugar.",
         "SUBSTITUTE_REQUESTED_SUCCESSFULLY": "¡Se ha solicitado un sustituto con éxito!",
         "PLAYER_REPLACED_SUCCESSFULLY": "¡Has reemplazado al jugador con éxito!",
+        "PLAYER_REMOVED_SUCCESSFULLY": "Jugador eliminado del partido con éxito",
 
         "REDIS_CONNECTION_ERROR": "No se puede conectar a la base de datos. Inténtalo de nuevo más tarde.",
         "REDIS_DISCONNECTION_ERROR": "Error al desconectar de la base de datos.",
@@ -571,7 +582,8 @@
         "REASON_REQUIRED": "Se requiere una razón para la deuda",
         "REASON_TOO_LONG": "La razón no puede exceder los 255 caracteres",
         "LOCATION_NAME_REQUIRED": "Se requiere el nombre de la ubicación",
-        "LOCATION_URL_REQUIRED": "Se requiere la URL de Google Maps de la ubicación"
+        "LOCATION_URL_REQUIRED": "Se requiere la URL de Google Maps de la ubicación",
+        "MATCH_DURATION_REQUIRED": "La duración del partido es obligatoria"
     },
 
     "EmailTemplateMessages": {

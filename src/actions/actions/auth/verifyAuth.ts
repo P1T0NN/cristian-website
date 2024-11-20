@@ -65,7 +65,7 @@ export const getUser = cache(async () => {
   
     const { data: user, error } = await supabase
         .from('users')
-        .select('id, email, fullName')
+        .select('*')
         .eq('id', session.userId)
         .single()
   

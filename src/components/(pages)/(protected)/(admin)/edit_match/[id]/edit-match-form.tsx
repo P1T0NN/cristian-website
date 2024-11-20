@@ -61,6 +61,7 @@ export const EditMatchForm = ({
             starts_at_hour: matchData.starts_at_hour || "",
             match_type: matchData.match_type || "",
             match_gender: matchData.match_gender || "",
+            match_duration: matchData.match_duration || 60,
             added_by: matchData.added_by || ""
         },
         validationSchema: addMatchSchema,
@@ -123,6 +124,16 @@ export const EditMatchForm = ({
                 onChange={handleInputChange}
                 placeholder={t('pricePlaceholder')}
                 error={errors.price}
+            />
+
+            <FormInputField
+                label={t("matchDuration")}
+                name="match_duration"
+                type="number"
+                value={formData.match_duration}
+                onChange={handleInputChange}
+                placeholder={t('matchDurationPlaceholder')}
+                error={errors.match_duration}
             />
 
             <FormInputField

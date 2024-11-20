@@ -76,6 +76,15 @@ export const MatchDetailsSection = ({
                 placeholder={t('matchGenderPlaceholder')}
                 error={errors.match_gender}
             />
+            <FormInputField
+                label={t("match_duration")}
+                name="match_duration"
+                type="number"
+                value={formData.match_duration}
+                onChange={handleInputChange}
+                placeholder={t('matchDurationPlaceholder')}
+                error={errors.match_duration}
+            />
         </div>
     );
 };

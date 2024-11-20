@@ -8,5 +8,6 @@ export type typesAddMatchForm = {
     starts_at_hour: string;
     match_type: string;
     match_gender: string;
+    match_duration: number;
     added_by: string;
 }
