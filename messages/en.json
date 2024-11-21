@@ -204,7 +204,8 @@
         "removeDiscount": "Remove Discount",
         "markAsGratis": "Mark as Gratis",
         "removeGratis": "Remove Gratis",
-        "paymentStatusUpdated": "Payment status updated successfully"
+        "paymentStatusUpdated": "Payment status updated successfully",
+        "hasDiscount": "Has Discount"
     },
 
     "EditMatchPage": {

@@ -9,8 +9,8 @@ export class UpstashRateLimiter implements RateLimiter {
   
     constructor(private config: UpstashConfig) {
         this.redis = new Redis({
-            url: config.url,
-            token: config.token,
+            url: process.env.REDIS_URL,
+            token: process.env.REDIS_TOKEN,
         });
     }
   

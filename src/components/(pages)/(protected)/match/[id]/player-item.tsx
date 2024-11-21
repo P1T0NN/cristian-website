@@ -8,19 +8,20 @@ import { useTranslations } from "next-intl";
 
 // COMPONENTS
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SubstituteRequestDialog } from "./substitute-request-dialog";
 import { AdminActionsDialog } from "./admin-actions-dialog";
+import { PlayerInfo } from "./player-info";
 import { toast } from "sonner";
 
 // SERVER ACTIONS
 import { managePlayer } from "@/actions/server_actions/mutations/match/managePlayer";
+import { updatePaymentStatus } from "@/actions/server_actions/mutations/match/updatePaymentStatus";
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
 
 // LUCIDE ICONS
-import { Loader2, UserMinus, Gift, Percent } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 type PlayerItemProps = {
     player: typesUser;
@@ -41,9 +42,11 @@ export const PlayerItem = ({
 }: PlayerItemProps) => {
     const t = useTranslations("MatchPage");
     
-    const [isPending, startTransition] = useTransition();
     const [showSubstituteDialog, setShowSubstituteDialog] = useState(false);
     const [showAdminModal, setShowAdminModal] = useState(false);
+    const [isLeavePending, startLeaveTransition] = useTransition();
+    const [isReplacePending, startReplaceTransition] = useTransition();
+    const [isPaymentPending, startPaymentTransition] = useTransition();
 
     const handleLeaveTeam = () => {
         if (player.matchPlayer?.substitute_requested) {
@@ -51,7 +54,7 @@ export const PlayerItem = ({
             return;
         }
 
-        startTransition(async () => {
+        startLeaveTransition(async () => {
             const response = await managePlayer(
                 authToken,
                 matchId,
@@ -67,11 +70,11 @@ export const PlayerItem = ({
             } else {
                 toast.error(response.message);
             }
-        })
+        });
     };
 
     const handleReplacePlayer = () => {
-        startTransition(async () => {
+        startReplaceTransition(async () => {
             const response = await managePlayer(
                 authToken,
                 matchId,
@@ -85,80 +88,87 @@ export const PlayerItem = ({
             } else {
                 toast.error(response.message);
             }
-        })
+        });
     };
 
-    const PlayerInfo = () => {
-        const nameColor = player.matchPlayer?.has_paid ? "text-green-500" : "text-red-500";
-        
-        return (
-            <div className="flex items-center space-x-2">
-                <Avatar>
-                    <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${player.fullName}`} />
-                    <AvatarFallback>{player.fullName.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col">
-                    <span className={`font-medium ${nameColor}`}>
-                        {player.matchPlayer?.has_gratis && <Gift className="inline-block mr-1 text-blue-500" size={16} />}
-                        {player.matchPlayer?.has_discount && !player.matchPlayer.has_gratis && <Percent className="inline-block mr-1 text-yellow-500" size={16} />}
-                        {player.fullName}
-                    </span>
-                    <p className="text-sm">{player.player_position}</p>
-                </div>
-                {player.matchPlayer?.substitute_requested && (
-                    <UserMinus className="text-yellow-500" size={20} />
-                )}
-            </div>
-        )
-    }
+    const handleUpdatePaymentStatus = (status: 'paid' | 'discount' | 'gratis') => {
+        startPaymentTransition(async () => {
+            let hasPaid = status === 'paid' ? !player.matchPlayer?.has_paid : player.matchPlayer?.has_paid;
+            let hasDiscount = status === 'discount' ? !player.matchPlayer?.has_discount : player.matchPlayer?.has_discount;
+            let hasGratis = status === 'gratis' ? !player.matchPlayer?.has_gratis : player.matchPlayer?.has_gratis;
+
+            if (status === 'gratis' && hasGratis) {
+                hasPaid = true;
+                hasDiscount = false;
+            } else if (status === 'discount' && hasDiscount) {
+                hasGratis = false;
+            }
+
+            const result = await updatePaymentStatus(
+                authToken,
+                matchId,
+                player.id,
+                hasPaid || false,
+                hasDiscount || false,
+                hasGratis || false
+            );
+
+            if (result.success) {
+                toast.success(t('paymentStatusUpdated'));
+            } else {
+                toast.error(result.message);
+            }
+        });
+    };
 
     return (
-        <div className="flex items-center justify-between p-2 bg-muted rounded-lg transition-opacity duration-200 ease-in-out">
-            {isAdmin ? (
-                <Button variant="ghost" className="p-0" onClick={() => setShowAdminModal(true)}>
-                    <PlayerInfo />
-                </Button>
-            ) : (
-                <div className="flex items-center space-x-2">
-                    <PlayerInfo />
-                </div>
-            )}
+        <div 
+            className="flex items-center justify-between p-2 bg-muted rounded-lg transition-opacity duration-200 ease-in-out"
+        >
+            <PlayerInfo 
+                player={player}
+                isAdmin={isAdmin}
+                onUpdatePaymentStatus={handleUpdatePaymentStatus}
+                isPaymentPending={isPaymentPending}
+                onOpenAdminDialog={() => setShowAdminModal(true)}
+            />
 
-            {isCurrentUser ? (
-                <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={handleLeaveTeam}
-                    disabled={isPending}
-                    className="min-w-[100px]"
-                >
-                    {isPending ? (
-                        <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            {t('leaving')}
-                        </>
-                    ) : (
-                        t('leaveTeam')
-                    )}
-                </Button>
-            ) : player.matchPlayer?.substitute_requested && (
-                <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={handleReplacePlayer}
-                    disabled={isPending}
-                    className="min-w-[100px] text-white bg-yellow-500 hover:bg-yellow-500/80"
-                >
-                    {isPending ? (
-                        <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            {t('replacing')}
-                        </>
-                    ) : (
-                        t('replace')
-                    )}
-                </Button>
-            )}
+            <div className="flex items-center space-x-2 relative z-10">
+                {isCurrentUser ? (
+                    <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={handleLeaveTeam}
+                        disabled={isLeavePending}
+                    >
+                        {isLeavePending ? (
+                            <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                {t('leaving')}
+                            </>
+                        ) : (
+                            t('leaveTeam')
+                        )}
+                    </Button>
+                ) : player.matchPlayer?.substitute_requested && (
+                    <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={handleReplacePlayer}
+                        disabled={isReplacePending}
+                        className="text-white bg-yellow-500 hover:bg-yellow-500/80"
+                    >
+                        {isReplacePending ? (
+                            <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                {t('replacing')}
+                            </>
+                        ) : (
+                            t('replace')
+                        )}
+                    </Button>
+                )}
+            </div>
 
             {showSubstituteDialog && (
                 <SubstituteRequestDialog

@@ -204,7 +204,8 @@
         "removeDiscount": "Quitar Descuento",
         "markAsGratis": "Marcar como Gratis",
         "removeGratis": "Quitar Gratis",
-        "paymentStatusUpdated": "Estado de pago actualizado con éxito"
+        "paymentStatusUpdated": "Estado de pago actualizado con éxito",
+        "hasDiscount": "Tiene Descuento"
     },
 
     "EditMatchPage": {

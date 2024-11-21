@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 // UTILS
 import { formatDate, formatTime } from "@/utils/dateUtils";
 import { getGenderLabel } from "@/utils/next-intl/getGenderLabel";
+import { formatMatchType } from "@/utils/matchTypeFormatter";
 
 // TYPES
 import type { typesMatch } from "@/types/typesMatch";
@@ -25,6 +26,7 @@ export const MatchDetails = async ({
     const t = await getTranslations("MatchPage");
 
     const formattedDate = await formatDate(serverMatchData.starts_at_day, true);
+    const formattedMatchType = await formatMatchType(serverMatchData.match_type);
 
     return (
         <Card>
@@ -32,8 +34,8 @@ export const MatchDetails = async ({
                 <CardTitle className="text-3xl font-bold text-center">{serverMatchData.location}</CardTitle>
                 <div className="text-center text-lg text-muted-foreground">
                     <div className="flex justify-center gap-2">
-                        <Badge variant="secondary">
-                            {serverMatchData.match_type}
+                        <Badge variant="secondary" className="whitespace-pre-line">
+                            {formattedMatchType}
                         </Badge>
                         <Badge variant="secondary">
                             {getGenderLabel(serverMatchData.match_gender)}
@@ -45,7 +47,7 @@ export const MatchDetails = async ({
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                     <div className="flex flex-col items-center">
                         <MapPin className="h-5 w-5 text-muted-foreground mb-2" />
-                        <span className="text-sm font-medium">{serverMatchData.location}</span>
+                        <span className="text-sm font-medium uppercase">{serverMatchData.location}</span>
                         {serverMatchData.location_url && (
                             <a
                                 href={serverMatchData.location_url}
@@ -60,7 +62,7 @@ export const MatchDetails = async ({
                     </div>
                     <div className="flex flex-col items-center">
                         <Calendar className="h-5 w-5 text-muted-foreground mb-2" />
-                        <span className="text-sm font-medium">{formattedDate}</span>
+                        <span className="text-sm font-medium uppercase">{formattedDate}</span>
                     </div>
                     <div className="flex flex-col items-center">
                         <Clock className="h-5 w-5 text-muted-foreground mb-2" />
