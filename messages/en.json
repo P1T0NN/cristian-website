@@ -197,7 +197,14 @@
         "removing": "Removing...",
         "playerRemoved": "Player removed successfully",
         "errorRemovingPlayer": "Error removing player",
-        "minutes": "min"
+        "minutes": "min",
+        "markAsPaid": "Mark as Paid",
+        "markAsUnpaid": "Mark as Unpaid",
+        "applyDiscount": "Apply Discount",
+        "removeDiscount": "Remove Discount",
+        "markAsGratis": "Mark as Gratis",
+        "removeGratis": "Remove Gratis",
+        "paymentStatusUpdated": "Payment status updated successfully"
     },
 
     "EditMatchPage": {
@@ -474,6 +481,7 @@
         "SUBSTITUTE_REQUESTED_SUCCESSFULLY'": "Requested substitute successfully!",
         "PLAYER_REPLACED_SUCCESSFULLY": "You replaced player successfully!",
         "PLAYER_REMOVED_SUCCESSFULLY": "You removed the player successfully!",
+        "PAYMENT_STATUS_UPDATED_SUCCESSFULLY": "Successfully updated payment status!",
 
         "REDIS_CONNECTION_ERROR": "Unable to connect to the database. Please try again later.",
         "REDIS_DISCONNECTION_ERROR": "Error occurred while disconnecting from the database.",

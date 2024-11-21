@@ -103,7 +103,10 @@ export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>>
                 userId: p.user_id,
                 substitute_requested: p.substitute_requested,
                 team_number: p.team_number,
-                created_at: p.created_at
+                created_at: p.created_at,
+                has_paid: p.has_paid,
+                has_discount: p.has_discount,
+                has_gratis: p.has_gratis
             }
         }));
 
@@ -117,7 +120,10 @@ export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>>
                 userId: p.user_id,
                 substitute_requested: p.substitute_requested,
                 team_number: p.team_number,
-                created_at: p.created_at
+                created_at: p.created_at,
+                has_paid: p.has_paid,
+                has_discount: p.has_discount,
+                has_gratis: p.has_gratis
             }
         }));
 

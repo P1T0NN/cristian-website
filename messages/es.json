@@ -197,7 +197,14 @@
         "removing": "Eliminando...",
         "playerRemoved": "Jugador eliminado con éxito",
         "errorRemovingPlayer": "Error al eliminar el jugador",
-        "minutes": "min"
+        "minutes": "min",
+        "markAsPaid": "Marcar como Pagado",
+        "markAsUnpaid": "Marcar como No Pagado",
+        "applyDiscount": "Aplicar Descuento",
+        "removeDiscount": "Quitar Descuento",
+        "markAsGratis": "Marcar como Gratis",
+        "removeGratis": "Quitar Gratis",
+        "paymentStatusUpdated": "Estado de pago actualizado con éxito"
     },
 
     "EditMatchPage": {
@@ -487,6 +494,7 @@
         "SUBSTITUTE_REQUESTED_SUCCESSFULLY": "¡Se ha solicitado un sustituto con éxito!",
         "PLAYER_REPLACED_SUCCESSFULLY": "¡Has reemplazado al jugador con éxito!",
         "PLAYER_REMOVED_SUCCESSFULLY": "Jugador eliminado del partido con éxito",
+        "PAYMENT_STATUS_UPDATED_SUCCESSFULLY": "¡Estado de pago actualizado con éxito!",
 
         "REDIS_CONNECTION_ERROR": "No se puede conectar a la base de datos. Inténtalo de nuevo más tarde.",
         "REDIS_DISCONNECTION_ERROR": "Error al desconectar de la base de datos.",

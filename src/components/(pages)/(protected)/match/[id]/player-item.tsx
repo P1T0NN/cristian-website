@@ -20,7 +20,7 @@ import { managePlayer } from "@/actions/server_actions/mutations/match/managePla
 import type { typesUser } from "@/types/typesUser";
 
 // LUCIDE ICONS
-import { Loader2, UserMinus } from "lucide-react";
+import { Loader2, UserMinus, Gift, Percent } from "lucide-react";
 
 type PlayerItemProps = {
     player: typesUser;
@@ -88,21 +88,29 @@ export const PlayerItem = ({
         })
     };
 
-    const PlayerInfo = () => (
-        <div className="flex items-center space-x-2">
-            <Avatar>
-                <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${player.fullName}`} />
-                <AvatarFallback>{player.fullName.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col">
-                <span className="font-medium">{player.fullName}</span>
-                <p className="text-sm">{player.player_position}</p>
+    const PlayerInfo = () => {
+        const nameColor = player.matchPlayer?.has_paid ? "text-green-500" : "text-red-500";
+        
+        return (
+            <div className="flex items-center space-x-2">
+                <Avatar>
+                    <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${player.fullName}`} />
+                    <AvatarFallback>{player.fullName.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col">
+                    <span className={`font-medium ${nameColor}`}>
+                        {player.matchPlayer?.has_gratis && <Gift className="inline-block mr-1 text-blue-500" size={16} />}
+                        {player.matchPlayer?.has_discount && !player.matchPlayer.has_gratis && <Percent className="inline-block mr-1 text-yellow-500" size={16} />}
+                        {player.fullName}
+                    </span>
+                    <p className="text-sm">{player.player_position}</p>
+                </div>
+                {player.matchPlayer?.substitute_requested && (
+                    <UserMinus className="text-yellow-500" size={20} />
+                )}
             </div>
-            {player.matchPlayer?.substitute_requested && (
-                <UserMinus className="text-yellow-500" size={20} />
-            )}
-        </div>
-    )
+        )
+    }
 
     return (
         <div className="flex items-center justify-between p-2 bg-muted rounded-lg transition-opacity duration-200 ease-in-out">
