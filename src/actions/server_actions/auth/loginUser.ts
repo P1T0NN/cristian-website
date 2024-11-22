@@ -2,6 +2,7 @@
 
 // NEXTJS IMPORTS
 import { cookies } from 'next/headers';
+import { getTranslations } from 'next-intl/server';
 
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
@@ -30,6 +31,8 @@ const rateLimiter = new UpstashRateLimiter({
 });
 
 export async function loginUser(email: string, password: string): Promise<APIResponse> {
+    const t = await getTranslations('GenericMessages');
+
     const { data: user, error } = await supabase
         .from('users')
         .select('*')
@@ -37,12 +40,12 @@ export async function loginUser(email: string, password: string): Promise<APIRes
         .single();
 
     if (error || !user) {
-        return { success: false, message: 'Invalid credentials' };
+        return { success: false, message: t('INVALID_CREDENTIALS') };
     }
 
     const validPassword = await verifyPassword(user.password, password);
     if (!validPassword) {
-        return { success: false, message: 'Invalid credentials' };
+        return { success: false, message: t('INVALID_CREDENTIALS') };
     }
 
     if (!user.is_verified) {
@@ -50,7 +53,7 @@ export async function loginUser(email: string, password: string): Promise<APIRes
         if (!resendResult.success) {
             return resendResult;
         }
-        return { success: false, message: 'Email not verified. We have sent you another verification link, please check your email!' };
+        return { success: false, message: t('EMAIL_NOT_VERIFIED') };
     }
 
     const token = await generateToken(user.id);
@@ -65,7 +68,7 @@ export async function loginUser(email: string, password: string): Promise<APIRes
 
     if (existingTokenError && existingTokenError.code !== 'PGRST116') {
         // PGRST116 is the error code for "no rows returned", which is fine in this case
-        return { success: false, message: 'Error during login process' };
+        return { success: false, message: t('UNKNOWN_ERROR') };
     }
 
     // If an existing token was found, delete it
@@ -76,8 +79,7 @@ export async function loginUser(email: string, password: string): Promise<APIRes
             .eq('id', existingToken.id);
 
         if (deleteError) {
-            console.error('Error deleting existing refresh token:', deleteError);
-            return { success: false, message: 'Error during login process' };
+            return { success: false, message: t('UNKNOWN_ERROR') };
         }
     }
 
@@ -87,8 +89,7 @@ export async function loginUser(email: string, password: string): Promise<APIRes
         .insert({ user_id: user.id, token: refreshToken, expires_at: new Date(Date.now() + DEFAULT_REFRESH_TOKEN_EXPIRATION_TIME) });
 
     if (refreshTokenError) {
-        console.error('Error creating refresh token:', refreshTokenError);
-        return { success: false, message: 'Error creating refresh token' };
+        return { success: false, message: t('REFRESH_TOKEN_ERROR') };
     }
 
     const cookieStore = await cookies();
@@ -109,7 +110,7 @@ export async function loginUser(email: string, password: string): Promise<APIRes
 
     return {
         success: true,
-        message: 'Login successful',
+        message: t('LOGIN_SUCCESSFUL'),
         data: {
             user,
             token
@@ -118,12 +119,14 @@ export async function loginUser(email: string, password: string): Promise<APIRes
 }
 
 async function resendVerificationEmail(email: string): Promise<APIResponse> {
+    const t = await getTranslations('GenericMessages');
+
     const rateLimitResult = await rateLimiter.limit(`resend_verification_email:${email}`);
 
     if (!rateLimitResult.success) {
         return {
             success: false,
-            message: `Too many attempts. Please try again in ${Math.ceil((rateLimitResult.reset - Date.now()) / 1000)} seconds.`,
+            message: t('LOGIN_RATE_LIMIT', { seconds: Math.ceil((rateLimitResult.reset - Date.now()) / 1000) }),
             data: {
                 retryAfter: Math.ceil((rateLimitResult.reset - Date.now()) / 1000)
             }
@@ -134,8 +137,8 @@ async function resendVerificationEmail(email: string): Promise<APIResponse> {
     const result = await sendVerificationEmail(email);
     
     if (!result.success) {
-        return { success: false, message: 'Error sending verification email. Please try again later.' };
+        return { success: false, message: t('email_VerificationError') };
     }
 
-    return { success: true, message: 'Verification email sent successfully' };
+    return { success: true, message: t('email_VerificationSent') };
 }

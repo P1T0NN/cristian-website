@@ -205,7 +205,8 @@
         "markAsGratis": "Mark as Gratis",
         "removeGratis": "Remove Gratis",
         "paymentStatusUpdated": "Payment status updated successfully",
-        "hasDiscount": "Has Discount"
+        "hasDiscount": "Has Discount",
+        "substituteRequested": "Substitute requested"
     },
 
     "EditMatchPage": {
@@ -372,13 +373,61 @@
     },
 
     "GenericMessages": {
-        "USER_CREATED": "If user with that email doesn't exist already, we have sent you an email verification link!",
-        "USER_ALREADY_EXISTS": "If user with that email doesn't exist already, we have sent you an email verification link!",
+        "INVALID_CREDENTIALS": "Invalid credentials",
+        "EMAIL_NOT_VERIFIED": "Email not verified. We have sent you another verification link, please check your email!",
+        "REFRESH_TOKEN_ERROR": "Error creating refresh token",
+        "LOGIN_RATE_LIMIT": "Too many attempts. Please try again in {seconds} seconds.",
+        "email_VerificationError": "Error sending verification email. Please try again later.",
+        "email_VerificationSent": "Verification email sent successfully",
         "LOGIN_SUCCESSFUL": "Logged in successfully!",
-        "LOGOUT_SUCCESSFUL": "Logged out successfully!",
+
+        "NO_ACTIVE_SESSION": "No active session found",
+        "LOGOUT_ERROR": "Error during logout process",
+        "LOGOUT_SUCCESSFUL": "Logged out successfully",
+
+        "INVALID_REFRESH_TOKEN": "Invalid refresh token",
+
+        "REGISTRATION_ERROR": "Error during registration process",
+        "USER_ALREADY_EXISTS": "If user with that email doesn't exist already, we have sent you an email verification link!",
+        "USER_CREATION_ERROR": "Error creating user",
+        "USER_CREATION_FAILED": "User creation failed",
+        "REGISTRATION_SUCCESS_WITH_EMAIL": "If user with that email doesn't exist already, we have sent you an email verification link!",
+        "REGISTRATION_SUCCESS_WITHOUT_EMAIL": "If user with that email doesn't exist already, we have sent you an email verification link!",
+
+        "PASSWORD_RESET_REQUEST_SENT": "If a user with that email exists, a password reset link has been sent.",
+
+        "INVALID_RESET_TOKEN": "Invalid or expired reset token",
+        "PASSWORD_UPDATE_ERROR": "Error updating password",
+        "PASSWORD_RESET_SUCCESS": "Password has been reset successfully",
+
+        "PASSWORD_RESET_EMAIL_SENT": "If a user with that email exists, a password reset link has been sent.",
+        "RESET_TOKEN_ERROR": "Error creating reset token",
+        "PASSWORD_RESET_EMAIL_SUCCESS": "Password reset email sent successfully",
+        "PASSWORD_RESET_EMAIL_SUBJECT": "Reset Your Password",
+
+        "USER_ALREADY_VERIFIED": "User is already verified",
+        "VERIFICATION_TOKEN_ERROR": "Error creating verification token",
+        "VERIFICATION_EMAIL_SUBJECT": "Verify your email",
+        "VERIFICATION_EMAIL_SENT": "Verification email sent successfully",
+
+        "RESET_TOKEN_REQUIRED": "Reset password token is required",
+        "INVALID_OR_EXPIRED_TOKEN": "Invalid or expired token",
+        "TOKEN_EXPIRED": "Token has expired",
+        "TOKEN_VALID": "Token is valid",
+
+        "INVALID_VERIFICATION_LINK": "Invalid verification link. Please request a new one.",
+        "ERROR_DELETING_EXPIRED_VERIFICATION": "Error deleting expired verification!",
+        "VERIFICATION_LINK_EXPIRED": "Verification link has expired. Please request a new one.",
+        "ERROR_DELETING_NONEXISTENT_USER_VERIFICATION": "Error deleting verification for non-existent user!",
+        "USER_NOT_FOUND": "User not found!",
+        "ERROR_DELETING_VERIFIED_USER_VERIFICATION": "Error deleting verification for already verified user!",
+        "EMAIL_ALREADY_VERIFIED": "Email already verified. You can now log in.",
+        "ERROR_UPDATING_VERIFICATION_STATUS": "Error updating user verification status",
+        "EMAIL_VERIFIED_CLEANUP_ISSUE": "Email verified successfully, but there was an issue cleaning up. You can now log in.",
+        "EMAIL_VERIFIED_SUCCESS": "Email verified successfully. You can now log in.",
+
         "USER_VERIFIED": "User is successfully verified. Now you can login!",
         "USER_DOESNT_EXIST": "If user with this email exists, we have sent a verification email!",
-        "USER_NOT_FOUND": "User not found!",
         "PLAYER_ID_REQUIRED": "Player ID is required",
         "EMAIL_REQUIRED": "Email is required!",
         "DEBT_ID_REQUIRED": "Debt ID is required",
@@ -420,7 +469,6 @@
         "PASSWORD_RESET_REQUEST_FAILED": "Failed to request password reset. Please try again later.",
         "PASSWORD_RESET_LINK_SENT": "If an account exists for that email, we have sent a password reset link.",
         "PASSWORD_RESET_FAILED": "Failed to reset password. The link may be invalid or expired. Please request a new password reset.",
-        "PASSWORD_RESET_SUCCESS": "Your password has been successfully reset. You can now log in with your new password.",
         "PASSWORD_RESET_TOKEN_GENERATED": "Successfully generated reset password token!",
         "INVALID_RESET_PASSWORD_TOKEN": "Reset password link is invalid or expired",
         "RESET_PASSWORD_TOKEN_VALID": "Reset password link is valid",

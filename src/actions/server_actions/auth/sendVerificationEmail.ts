@@ -1,5 +1,8 @@
 "use server"
 
+// NEXTJS IMPORTS
+import { getTranslations } from 'next-intl/server';
+
 // LIBRARIES
 import { Resend } from 'resend';
 import { supabase } from '@/lib/supabase/supabase';
@@ -16,7 +19,7 @@ import { APIResponse } from '@/types/responses/APIResponse';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendVerificationEmail(email: string): Promise<APIResponse> {
-    console.log('Attempting to send verification email to:', email);
+    const t = await getTranslations('GenericMessages');
 
     // Check if user exists and is not verified
     const { data: user, error: userError } = await supabase
@@ -26,13 +29,11 @@ export async function sendVerificationEmail(email: string): Promise<APIResponse>
         .single();
 
     if (userError || !user) {
-        console.error('User not found:', userError);
-        return { success: false, message: 'User not found' };
+        return { success: false, message: t('USER_NOT_FOUND') };
     }
 
     if (user.is_verified) {
-        console.log('User is already verified');
-        return { success: true, message: 'User is already verified' };
+        return { success: true, message: t('USER_ALREADY_VERIFIED') };
     }
 
     const verificationToken = generateVerificationToken();
@@ -47,23 +48,17 @@ export async function sendVerificationEmail(email: string): Promise<APIResponse>
         });
 
     if (tokenError) {
-        console.error('Error creating verification token:', tokenError);
-        return { success: false, message: 'Error creating verification token' };
+        return { success: false, message: t('VERIFICATION_TOKEN_ERROR') };
     }
 
     const verificationUrl = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/verify_email?token=${verificationToken}`;
 
-    try {
-        const result = await resend.emails.send({
-            from: 'Cris Futbol <onboarding@resend.dev>',
-            to: email,
-            subject: 'Verify your email',
-            react: VerificationEmailTemplate({ verificationUrl }),
-        });
-        console.log('Email sent successfully:', result);
-        return { success: true, message: 'Verification email sent successfully' };
-    } catch (error) {
-        console.error('Error sending email:', error);
-        return { success: false, message: 'Failed to send verification email' };
-    }
+    await resend.emails.send({
+        from: 'Cris Futbol <onboarding@resend.dev>',
+        to: email,
+        subject: t('VERIFICATION_EMAIL_SUBJECT'),
+        react: VerificationEmailTemplate({ verificationUrl }),
+    });
+    
+    return { success: true, message: t('VERIFICATION_EMAIL_SENT') };
 }

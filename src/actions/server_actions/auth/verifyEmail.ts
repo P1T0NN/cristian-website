@@ -2,11 +2,14 @@
 
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
+import { getTranslations } from 'next-intl/server';
 
 // TYPES
 import type { APIResponse } from '@/types/responses/APIResponse';
 
 export async function verifyEmail(token: string): Promise<APIResponse> {
+    const t = await getTranslations('GenericMessages');
+
     const { data: verification, error: verificationError } = await supabase
         .from('user_verifications')
         .select('*')
@@ -14,7 +17,7 @@ export async function verifyEmail(token: string): Promise<APIResponse> {
         .single();
 
     if (verificationError || !verification) {
-        return { success: false, message: 'Invalid verification link. Please request a new one.' };
+        return { success: false, message: t('INVALID_VERIFICATION_LINK') };
     }
 
     if (new Date(verification.expires_at) < new Date()) {
@@ -24,10 +27,10 @@ export async function verifyEmail(token: string): Promise<APIResponse> {
             .eq('id', verification.id);
         
         if (deleteError) {
-            return { success: false, message: "Error deleting expired verification!" };
+            return { success: false, message: t('ERROR_DELETING_EXPIRED_VERIFICATION') };
         }
         
-        return { success: false, message: 'Verification link has expired. Please request a new one.' };
+        return { success: false, message: t('VERIFICATION_LINK_EXPIRED') };
     }
 
     const { data: user, error: userError } = await supabase
@@ -43,10 +46,10 @@ export async function verifyEmail(token: string): Promise<APIResponse> {
             .eq('id', verification.id);
         
         if (deleteError) {
-            return { success: false, message: "Error deleting verification for non-existent user!" };
+            return { success: false, message: t('ERROR_DELETING_NONEXISTENT_USER_VERIFICATION') };
         }
 
-        return { success: false, message: 'User not found. Please contact support.' };
+        return { success: false, message: t('USER_NOT_FOUND') };
     }
 
     if (user.is_verified) {
@@ -56,10 +59,10 @@ export async function verifyEmail(token: string): Promise<APIResponse> {
             .eq('id', verification.id);
         
         if (deleteError) {
-            return { success: false, message: "Error deleting verification for already verified user!" };
+            return { success: false, message: t('ERROR_DELETING_VERIFIED_USER_VERIFICATION') };
         }
 
-        return { success: true, message: 'Email already verified. You can now log in.' };
+        return { success: true, message: t('EMAIL_ALREADY_VERIFIED') };
     }
 
     const { error: updateError } = await supabase
@@ -68,7 +71,7 @@ export async function verifyEmail(token: string): Promise<APIResponse> {
         .eq('id', verification.user_id);
 
     if (updateError) {
-        return { success: false, message: 'Error updating user verification status' };
+        return { success: false, message: t('ERROR_UPDATING_VERIFICATION_STATUS') };
     }
 
     const { error: deleteError } = await supabase
@@ -77,8 +80,8 @@ export async function verifyEmail(token: string): Promise<APIResponse> {
         .eq('id', verification.id);
     
     if (deleteError) {
-        return { success: true, message: 'Email verified successfully, but there was an issue cleaning up. You can now log in.' };
+        return { success: true, message: t('EMAIL_VERIFIED_CLEANUP_ISSUE') };
     }
         
-    return { success: true, message: 'Email verified successfully. You can now log in.' };
+    return { success: true, message: t('EMAIL_VERIFIED_SUCCESS') };
 }

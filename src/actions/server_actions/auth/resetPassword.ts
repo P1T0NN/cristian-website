@@ -1,5 +1,8 @@
 "use server"
 
+// NEXTJS IMPORTS
+import { getTranslations } from 'next-intl/server';
+
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
 
@@ -7,6 +10,8 @@ import { supabase } from '@/lib/supabase/supabase';
 import { hashPassword } from '@/utils/argon2';
 
 export async function resetPassword(token: string, newPassword: string) {
+    const t = await getTranslations('GenericMessages');
+
     const { data: resetToken, error: tokenError } = await supabase
         .from('reset_password_tokens')
         .select('*')
@@ -14,7 +19,7 @@ export async function resetPassword(token: string, newPassword: string) {
         .single();
 
     if (tokenError || !resetToken || new Date() > new Date(resetToken.expires_at)) {
-        return { success: false, message: 'Invalid or expired reset token' };
+        return { success: false, message: t('INVALID_RESET_TOKEN') };
     }
 
     const hashedPassword = await hashPassword(newPassword);
@@ -25,7 +30,7 @@ export async function resetPassword(token: string, newPassword: string) {
         .eq('id', resetToken.user_id);
 
     if (updateError) {
-        return { success: false, message: 'Error updating password' };
+        return { success: false, message: t('PASSWORD_UPDATE_ERROR') };
     }
 
     await supabase
@@ -33,5 +38,5 @@ export async function resetPassword(token: string, newPassword: string) {
         .delete()
         .eq('id', resetToken.id);
 
-    return { success: true, message: 'Password has been reset successfully' };
+    return { success: true, message: t('PASSWORD_RESET_SUCCESS') };
 }

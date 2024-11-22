@@ -3,6 +3,7 @@
 // LIBRARIES
 import { Resend } from 'resend';
 import { supabase } from '@/lib/supabase/supabase';
+import { getTranslations } from 'next-intl/server';
 
 // UTILS
 import { generateResetPasswordToken } from '@/utils/auth/auth-utils';
@@ -16,6 +17,8 @@ import type { APIResponse } from '@/types/responses/APIResponse';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendResetPasswordEmail(email: string): Promise<APIResponse> {
+    const t = await getTranslations('GenericMessages');
+
     // Check if user exists
     const { data: user, error: userError } = await supabase
         .from('users')
@@ -25,11 +28,11 @@ export async function sendResetPasswordEmail(email: string): Promise<APIResponse
 
     if (userError) {
         // Don't reveal if the user exists or not
-        return { success: true, message: 'If a user with that email exists, a password reset link has been sent.' };
+        return { success: true, message: t('PASSWORD_RESET_EMAIL_SENT') };
     }
 
     if (!user) {
-        return { success: true, message: 'If a user with that email exists, a password reset link has been sent.' };
+        return { success: true, message: t('PASSWORD_RESET_EMAIL_SENT') };
     }
 
     const resetToken = generateResetPasswordToken();
@@ -45,7 +48,7 @@ export async function sendResetPasswordEmail(email: string): Promise<APIResponse
         });
 
     if (tokenError) {
-        return { success: false, message: 'Error creating reset token' };
+        return { success: false, message: t('RESET_TOKEN_ERROR') };
     }
 
     const resetUrl = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/reset_password?token=${resetToken}`;
@@ -53,9 +56,9 @@ export async function sendResetPasswordEmail(email: string): Promise<APIResponse
     await resend.emails.send({
         from: 'Cris Futbol <onboarding@resend.dev>',
         to: email,
-        subject: 'Reset Password',
+        subject: t('PASSWORD_RESET_EMAIL_SUBJECT'),
         react: PasswordResetEmailTemplate({ resetUrl }),
     });
 
-    return { success: true, message: 'Password reset email sent successfully' };
+    return { success: true, message: t('PASSWORD_RESET_EMAIL_SUCCESS') };
 }

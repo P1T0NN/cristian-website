@@ -205,7 +205,8 @@
         "markAsGratis": "Marcar como Gratis",
         "removeGratis": "Quitar Gratis",
         "paymentStatusUpdated": "Estado de pago actualizado con éxito",
-        "hasDiscount": "Tiene Descuento"
+        "hasDiscount": "Tiene Descuento",
+        "substituteRequested": "Sustitución solicitada"
     },
 
     "EditMatchPage": {
@@ -372,34 +373,65 @@
     },
 
     "GenericMessages": {
-        "USER_CREATED": "Si el usuario con ese correo electrónico no existe ya, te hemos enviado un enlace de verificación de correo electrónico.",
-        "USER_ALREADY_EXISTS": "Si el usuario con ese correo electrónico no existe ya, te hemos enviado un enlace de verificación de correo electrónico.",
+        "INVALID_CREDENTIALS": "Credenciales inválidas",
+        "EMAIL_NOT_VERIFIED": "Correo electrónico no verificado. Te hemos enviado otro enlace de verificación, ¡por favor revisa tu correo!",
+        "REFRESH_TOKEN_ERROR": "Error al crear el token de actualización",
+        "email_VerificationError": "Error al enviar el correo de verificación. Por favor, inténtalo más tarde.",
+        "email_VerificationSent": "Correo de verificación enviado con éxito",
         "LOGIN_SUCCESSFUL": "¡Inicio de sesión exitoso!",
-        "LOGOUT_SUCCESSFUL": "¡Cierre de sesión exitoso!",
-        "USER_VERIFIED": "Usuario verificado exitosamente. ¡Ahora puedes iniciar sesión!",
-        "USER_DOESNT_EXIST": "Si existe un usuario con ese correo electrónico, hemos enviado un correo de verificación.",
+
+        "NO_ACTIVE_SESSION": "No se encontró una sesión activa",
+        "LOGOUT_ERROR": "Error durante el proceso de cierre de sesión",
+        "LOGOUT_SUCCESSFUL": "Sesión cerrada exitosamente",
+
+        "INVALID_REFRESH_TOKEN": "Token de actualización inválido",
+
+        "REGISTRATION_ERROR": "Error durante el proceso de registro",
+        "USER_CREATION_ERROR": "Error al crear el usuario",
+        "USER_CREATION_FAILED": "La creación del usuario falló",
+        "REGISTRATION_SUCCESS_WITH_EMAIL": "Usuario registrado con éxito. Por favor, revisa tu correo electrónico para verificar tu cuenta.",
+        "REGISTRATION_SUCCESS_WITHOUT_EMAIL": "Usuario registrado con éxito, pero hubo un problema al enviar el correo de verificación. Por favor, contacta con soporte.",
+
+        "PASSWORD_RESET_REQUEST_SENT": "Si existe un usuario con ese correo electrónico, se ha enviado un enlace para restablecer la contraseña.",
+
+        "INVALID_RESET_TOKEN": "Token de restablecimiento inválido o expirado",
+        "PASSWORD_UPDATE_ERROR": "Error al actualizar la contraseña",
+        "PASSWORD_RESET_SUCCESS": "La contraseña se ha restablecido con éxito",
+
+        "PASSWORD_RESET_EMAIL_SENT": "Si existe un usuario con ese correo electrónico, se ha enviado un enlace para restablecer la contraseña.",
+        "RESET_TOKEN_ERROR": "Error al crear el token de restablecimiento",
+        "PASSWORD_RESET_EMAIL_SUCCESS": "Correo de restablecimiento de contraseña enviado con éxito",
+        "PASSWORD_RESET_EMAIL_SUBJECT": "Restablece tu Contraseña",
+
+        "USER_ALREADY_VERIFIED": "El usuario ya está verificado",
+        "VERIFICATION_TOKEN_ERROR": "Error al crear el token de verificación",
+        "VERIFICATION_EMAIL_SUBJECT": "Verifica tu correo electrónico",
+        "VERIFICATION_EMAIL_SENT": "Correo de verificación enviado con éxito",
+
+        "RESET_TOKEN_REQUIRED": "Se requiere el token de restablecimiento de contraseña",
+        "INVALID_OR_EXPIRED_TOKEN": "Token inválido o expirado",
+        "TOKEN_EXPIRED": "El token ha expirado",
+        "TOKEN_VALID": "El token es válido",
+
+        "INVALID_VERIFICATION_LINK": "Enlace de verificación inválido. Por favor, solicita uno nuevo.",
+        "ERROR_DELETING_EXPIRED_VERIFICATION": "¡Error al eliminar la verificación expirada!",
+        "VERIFICATION_LINK_EXPIRED": "El enlace de verificación ha expirado. Por favor, solicita uno nuevo.",
+        "ERROR_DELETING_NONEXISTENT_USER_VERIFICATION": "¡Error al eliminar la verificación de un usuario inexistente!",
         "USER_NOT_FOUND": "¡Usuario no encontrado!",
+        "ERROR_DELETING_VERIFIED_USER_VERIFICATION": "¡Error al eliminar la verificación de un usuario ya verificado!",
+        "EMAIL_ALREADY_VERIFIED": "El correo electrónico ya está verificado. Ahora puedes iniciar sesión.",
+        "ERROR_UPDATING_VERIFICATION_STATUS": "Error al actualizar el estado de verificación del usuario",
+        "EMAIL_VERIFIED_CLEANUP_ISSUE": "Correo electrónico verificado con éxito, pero hubo un problema al limpiar. Ahora puedes iniciar sesión.",
+        "EMAIL_VERIFIED_SUCCESS": "Correo electrónico verificado con éxito. Ahora puedes iniciar sesión.",
+        
         "PLAYER_ID_REQUIRED": "Se requiere ID del jugador",
         "EMAIL_REQUIRED": "¡Se requiere correo electrónico!",
         "DEBT_ID_REQUIRED": "Se requiere ID de deuda",
         "FULL_NAME_REQUIRED": "¡Se requiere nombre completo!",
         "EMAIL_AND_USERID_REQUIRED": "Se requieren correo electrónico e ID",
         "TEAM_ID_REQUIRED": "¡Se requiere el ID del equipo!",
-        "VERIFICATION_EMAIL_COOLDOWN": "Por favor espera {time} segundos antes de solicitar otro correo de verificación.",
-        "ACCOUNT_NOT_VERIFIED_RESENT": "Correo no verificado. Se ha enviado un nuevo correo de verificación.",
-        "ACCOUNT_NOT_VERIFIED_RATE_LIMIT": "Correo no verificado. Por favor espera 5 minutos antes de solicitar otro correo de verificación.",
-        "ACCOUNT_NOT_VERIFIED_FAILED": "Correo no verificado. Falló el reenvío del correo de verificación.",
-        "ERROR_CHECKING_USER_EXISTENCE": "Hubo un error al verificar la existencia del usuario. ¡Por favor, intenta de nuevo!",
-        "ERROR_FINDING_USER": "¡No pudimos encontrar el usuario después del registro!",
         "ERROR_REGISTER_VERIFICATION_TOKEN_EXPIRED": "Este enlace de verificación ha expirado. ¡Por favor, solicita uno nuevo intentando iniciar sesión de nuevo!",
-        "FAILED_REGISTRATION": "Error al registrar usuario. ¡Por favor, intenta de nuevo!",
         "FAILED_TO_GET_ID": "Error al obtener ID de usuario",
-        "FAILED_TO_CREATE_VERIFICATION_TOKEN": "Error al crear el token de verificación.",
-        "FAILED_TO_VERIFY_USER": "Error al verificar usuario. ¡Por favor, intenta de nuevo!",
-        "INVALID_LOGIN": "Credenciales de inicio de sesión no válidas. Inténtalo de nuevo.",
-        "INVALID_REGISTER": "Fallo en el registro. Verifica tu información e inténtalo de nuevo.",
-        "INVALID_LOGOUT": "Ocurrió un error durante el cierre de sesión. Inténtalo de nuevo.",
-        "INVALID_REGISTER_VERIFICATION_TOKEN": "¡Enlace de verificación no válido!",
 
         "INVALID_JWT_TOKEN": "Token de autenticación no válido. Inicia sesión de nuevo.",
         "NO_JWT_FOUND": "No se encontró token de autenticación. Inicia sesión.",
@@ -420,7 +452,6 @@
         "PASSWORD_RESET_REQUEST_FAILED": "Fallo al solicitar el restablecimiento de contraseña. Inténtalo de nuevo más tarde.",
         "PASSWORD_RESET_LINK_SENT": "Si existe una cuenta para ese correo, hemos enviado un enlace para restablecer la contraseña.",
         "PASSWORD_RESET_FAILED": "Error al restablecer la contraseña. El enlace puede ser inválido o haber expirado. Solicita un nuevo restablecimiento de contraseña.",
-        "PASSWORD_RESET_SUCCESS": "Tu contraseña se ha restablecido exitosamente. Ahora puedes iniciar sesión con tu nueva contraseña.",
         "PASSWORD_RESET_TOKEN_GENERATED": "Token de restablecimiento de contraseña generado exitosamente.",
         "INVALID_RESET_PASSWORD_TOKEN": "El enlace para restablecer la contraseña es inválido o ha expirado",
         "RESET_PASSWORD_TOKEN_VALID": "El enlace para restablecer la contraseña es válido",
@@ -506,7 +537,7 @@
         "REDIS_CLIENT_ERROR": "Ocurrió un error con el cliente de la base de datos. Inténtalo de nuevo más tarde.",
 
         "RATE_LIMIT_EXCEEDED": "¡Demasiadas solicitudes, intenta nuevamente en un minuto!",
-        "LOGIN_RATE_LIMIT": "Demasiados intentos de inicio de sesión, inténtalo nuevamente después de un minuto.",
+        "LOGIN_RATE_LIMIT": "Demasiados intentos. Por favor, inténtalo de nuevo en {seconds} segundos.",
         "REGISTER_RATE_LIMIT": "Demasiados intentos de registro, inténtalo nuevamente después de un minuto.",
         "VERIFY_EMAIL_RATE_LIMIT": "Demasiados intentos de verificación, inténtalo nuevamente después de un minuto.",
 

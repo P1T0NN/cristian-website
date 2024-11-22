@@ -1,5 +1,8 @@
 "use server"
 
+// NEXTJS IMPORTS
+import { getTranslations } from 'next-intl/server';
+
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
 
@@ -20,6 +23,8 @@ type RegisterUserProps = {
 }
 
 export async function registerUser(userData: RegisterUserProps): Promise<APIResponse> {
+    const t = await getTranslations('GenericMessages');
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { email, password, confirmPassword: _, ...otherFields } = userData;
 
@@ -31,55 +36,48 @@ export async function registerUser(userData: RegisterUserProps): Promise<APIResp
         .single();
 
     if (existingUserError && existingUserError.code !== 'PGRST116') {
-        console.error('Error checking for existing user:', existingUserError);
-        return { success: false, message: 'Error during registration process' };
+        return { success: false, message: t('REGISTRATION_ERROR') };
     }
 
     if (existingUser) {
-        return { success: false, message: 'A user with this email already exists' };
+        return { success: false, message: t('USER_ALREADY_EXISTS') };
     }
 
     // If no existing user, proceed with registration
-    try {
-        const hashedPassword = await hashPassword(password);
+    const hashedPassword = await hashPassword(password);
 
-        const userDataToInsert = {
-            email,
-            password: hashedPassword,
-            ...otherFields
-        };
+    const userDataToInsert = {
+        email,
+        password: hashedPassword,
+        ...otherFields
+    };
 
-        const { data: user, error } = await supabase
-            .from('users')
-            .insert(userDataToInsert)
-            .select()
-            .single();
+    const { data: user, error } = await supabase
+        .from('users')
+        .insert(userDataToInsert)
+        .select()
+        .single();
 
-        if (error) {
-            console.error('Error creating user:', error);
-            return { success: false, message: 'Error creating user' };
-        }
-
-        if (!user) {
-            return { success: false, message: 'User creation failed' };
-        }
-
-        const emailResult = await sendVerificationEmail(user.email);
-        if (!emailResult.success) {
-            console.error('Failed to send verification email:', emailResult.message);
-            // Optionally, you might want to delete the created user here
-            // since the email verification failed
-        }
-
-        return {
-            success: true,
-            message: emailResult.success 
-                ? 'User registered successfully. Please check your email to verify your account.'
-                : 'User registered successfully, but there was an issue sending the verification email. Please contact support.',
-            data: { user }
-        };
-    } catch (error) {
-        console.error('Unexpected error during user registration:', error);
-        return { success: false, message: 'Unexpected error during user registration' };
+    if (error) {
+        return { success: false, message: t('USER_CREATION_ERROR') };
     }
+
+    if (!user) {
+        return { success: false, message: t('USER_CREATION_FAILED') };
+    }
+
+    const emailResult = await sendVerificationEmail(user.email);
+    if (!emailResult.success) {
+        //console.error('Failed to send verification email:', emailResult.message);
+        // Optionally, you might want to delete the created user here
+        // since the email verification failed
+    }
+
+    return {
+        success: true,
+        message: emailResult.success 
+            ? t('REGISTRATION_SUCCESS_WITH_EMAIL')
+            : t('REGISTRATION_SUCCESS_WITHOUT_EMAIL'),
+        data: { user }
+    };
 }

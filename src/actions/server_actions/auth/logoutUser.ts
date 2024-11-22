@@ -2,6 +2,7 @@
 
 // NEXTJS IMPORTS
 import { cookies } from 'next/headers';
+import { getTranslations } from 'next-intl/server';
 
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
@@ -13,11 +14,13 @@ import { verifyToken } from '@/utils/auth/jwt';
 import type { APIResponse } from '@/types/responses/APIResponse';
 
 export async function logoutUser(): Promise<APIResponse> {
+    const t = await getTranslations('GenericMessages');
+
     const cookieStore = await cookies();
     const authToken = cookieStore.get('auth_token')?.value;
 
     if (!authToken) {
-        return { success: false, message: 'No active session found' };
+        return { success: false, message: t('NO_ACTIVE_SESSION') };
     }
 
     // Verify the token to get the user ID
@@ -31,13 +34,12 @@ export async function logoutUser(): Promise<APIResponse> {
         .eq('user_id', userId);
 
     if (deleteError) {
-        console.error('Error deleting refresh token:', deleteError);
-        return { success: false, message: 'Error during logout process' };
+        return { success: false, message: t('LOGOUT_ERROR') };
     }
 
     // Clear the cookies
     cookieStore.delete('auth_token');
     cookieStore.delete('refresh_token');
 
-    return { success: true, message: 'Logged out successfully' };
+    return { success: true, message: t('LOGOUT_SUCCESSFUL') };
 }

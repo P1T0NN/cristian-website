@@ -2,6 +2,7 @@
 
 // NEXTJS IMPORTS
 import { cookies } from 'next/headers';
+import { getTranslations } from 'next-intl/server';
 
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
@@ -14,6 +15,7 @@ import { generateToken } from '@/utils/auth/jwt';
 
 // I didnt put APIResponse here as return type, because we need to return more data and specific boolean
 export async function refreshAuthToken(refreshToken: string) {
+    const t = await getTranslations('GenericMessages');
     const cookieStore = await cookies();
 
     const { data: tokenData, error } = await supabase
@@ -24,7 +26,7 @@ export async function refreshAuthToken(refreshToken: string) {
 
     if (error || !tokenData) {
         cookieStore.delete('refresh_token');
-        return { success: false, message: 'Invalid refresh token' };
+        return { success: false, message: t('INVALID_REFRESH_TOKEN') };
     };
 
     const newAuthToken = await generateToken(tokenData.user_id)
