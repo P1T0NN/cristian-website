@@ -15,7 +15,7 @@ import { formatTime, formatDate } from "@/utils/dateUtils";
 import type { typesMatch } from "@/types/typesMatch";
 
 // LUCIDE ICONS
-import { MapPin, Users, Clock } from "lucide-react";
+import { MapPin, Users, Clock } from 'lucide-react';
 
 type MatchCardProps = {
     match: typesMatch;
@@ -52,8 +52,25 @@ export const MatchCard = async ({
         }
     };
 
+    const getOccupiedPlaces = (matchType: string, team1Name: string, team2Name: string, placesOccupied: number) => {
+        const totalPlaces = getTotalPlaces(matchType);
+        let occupiedPlaces = 0;
+
+        if (team1Name !== "Equipo 1" && team2Name !== "Equipo 2") {
+            return totalPlaces; // All places are occupied if both teams are custom
+        }
+
+        if (team1Name !== "Equipo 1" || team2Name !== "Equipo 2") {
+            occupiedPlaces = totalPlaces / 2; // Half of the places are occupied if one team is custom
+        }
+
+        // Add the places_occupied to the calculation
+        return Math.min(totalPlaces, occupiedPlaces + placesOccupied);
+    };
+
     const totalPlaces = getTotalPlaces(match.match_type);
-    const placesLeft = Math.max(0, totalPlaces - (match.places_occupied || 0));
+    const occupiedPlaces = getOccupiedPlaces(match.match_type, match.team1_name, match.team2_name, match.places_occupied || 0);
+    const placesLeft = Math.max(0, totalPlaces - occupiedPlaces);
 
     return (
         <Link href={`/match/${match.id}`} className="block w-full">

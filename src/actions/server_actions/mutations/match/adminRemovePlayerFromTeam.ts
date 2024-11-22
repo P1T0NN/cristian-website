@@ -8,6 +8,12 @@ import { jwtVerify } from 'jose';
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
+// SERVICES
+import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
+
+// CONFIG
+import { CACHE_KEYS } from '@/config';
+
 export async function adminRemovePlayerFromMatch(authToken: string, matchId: string, playerId: string) {
     const genericMessages = await getTranslations("GenericMessages");
 
@@ -40,7 +46,7 @@ export async function adminRemovePlayerFromMatch(authToken: string, matchId: str
     const [{ data: match, error: matchError }, { error: removeError }] = await Promise.all([
         supabase
             .from('matches')
-            .select('places_occupied')
+            .select('*')
             .eq('id', matchId)
             .single(),
         supabase
@@ -60,18 +66,27 @@ export async function adminRemovePlayerFromMatch(authToken: string, matchId: str
         return { success: false, message: genericMessages('OPERATION_FAILED') };
     }
 
-    // Update places_occupied
+    // Update places_occupied in the database
+    let updatedPlacesOccupied = match.places_occupied;
     if (match && match.places_occupied > 0) {
+        updatedPlacesOccupied = match.places_occupied - 1;
         const { error: updateError } = await supabase
             .from('matches')
-            .update({ places_occupied: match.places_occupied - 1 })
+            .update({ places_occupied: updatedPlacesOccupied })
             .eq('id', matchId);
 
         if (updateError) {
             return { success: false, message: genericMessages('OPERATION_FAILED') };
         }
-    } else {
-        // No need to do nothinjg
+    }
+
+    // Update the cache
+    const cacheKey = `${CACHE_KEYS.MATCH_PREFIX}${matchId}`;
+    const cachedMatch = await upstashRedisCacheService.get<typeof match>(cacheKey);
+    
+    if (cachedMatch.success && cachedMatch.data) {
+        const updatedCachedMatch = { ...cachedMatch.data, places_occupied: updatedPlacesOccupied };
+        await upstashRedisCacheService.set(cacheKey, updatedCachedMatch, 60 * 60 * 12); // 12 hours TTL
     }
 
     revalidatePath("/");

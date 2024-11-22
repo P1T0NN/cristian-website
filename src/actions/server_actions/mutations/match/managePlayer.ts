@@ -9,6 +9,12 @@ import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 import { subHours, parseISO, isBefore } from 'date-fns';
 
+// SERVICES
+import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
+
+// CONFIG
+import { CACHE_KEYS } from '@/config';
+
 export async function managePlayer(
     authToken: string,
     matchId: string,
@@ -35,7 +41,7 @@ export async function managePlayer(
     // Fetch match details
     const { data: match, error: matchError } = await supabase
         .from('matches')
-        .select('starts_at_day, starts_at_hour, places_occupied')
+        .select('*')
         .eq('id', matchId)
         .single();
 
@@ -51,6 +57,8 @@ export async function managePlayer(
         return { success: false, message: genericMessages('TOO_LATE_TO_LEAVE'), canRequestSubstitute: true };
     }
     
+    let updatedPlacesOccupied = match.places_occupied || 0;
+
     if (action === 'join') {
         const { error } = await supabase
             .from('match_players')
@@ -64,11 +72,7 @@ export async function managePlayer(
             return { success: false, message: genericMessages('OPERATION_FAILED') };
         }
 
-        // Increment places_occupied
-        await supabase
-            .from('matches')
-            .update({ places_occupied: match.places_occupied + 1 })
-            .eq('id', matchId);
+        updatedPlacesOccupied += 1;
 
     } else if (action === 'leave') {
         const { error } = await supabase
@@ -83,11 +87,7 @@ export async function managePlayer(
             return { success: false, message: genericMessages('OPERATION_FAILED') };
         }
 
-        // Decrement places_occupied, ensuring it doesn't go below 0
-        await supabase
-            .from('matches')
-            .update({ places_occupied: Math.max(match.places_occupied - 1, 0) })
-            .eq('id', matchId);
+        updatedPlacesOccupied = Math.max(updatedPlacesOccupied - 1, 0);
 
     } else if (action === 'requestSubstitute') {
         const { error } = await supabase
@@ -102,8 +102,6 @@ export async function managePlayer(
             return { success: false, message: genericMessages('OPERATION_FAILED') };
         }
     } else if (action === 'replacePlayer') {
-        // This action requires additional parameters: the ID of the player being replaced
-        // and the team number. For simplicity, we'll assume these are passed in the userId and teamNumber parameters.
         const playerToReplaceId = userId;
         
         const { error: deleteError } = await supabase
@@ -122,15 +120,32 @@ export async function managePlayer(
             .from('match_players')
             .insert({
                 match_id: matchId,
-                user_id: payload.sub as string, // Assuming the JWT payload contains the user ID in the 'sub' field
+                user_id: payload.sub as string,
                 team_number: teamNumber
             });
 
         if (insertError) {
             return { success: false, message: genericMessages('OPERATION_FAILED') };
         }
+    }
 
-        // Note: places_occupied remains the same for replace action
+    // Update the database
+    const { error: updateError } = await supabase
+        .from('matches')
+        .update({ places_occupied: updatedPlacesOccupied })
+        .eq('id', matchId);
+
+    if (updateError) {
+        return { success: false, message: genericMessages('OPERATION_FAILED') };
+    }
+
+    // Update the cache
+    const cacheKey = `${CACHE_KEYS.MATCH_PREFIX}${matchId}`;
+    const cachedMatch = await upstashRedisCacheService.get<typeof match>(cacheKey);
+    
+    if (cachedMatch.success && cachedMatch.data) {
+        const updatedCachedMatch = { ...cachedMatch.data, places_occupied: updatedPlacesOccupied };
+        await upstashRedisCacheService.set(cacheKey, updatedCachedMatch, 60 * 60 * 12); // 12 hours TTL
     }
 
     revalidatePath("/");

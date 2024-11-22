@@ -48,9 +48,9 @@ export const TeamCard = async ({
     };
 
     const isDefaultTeam = teamName === "Equipo 1" || teamName === "Equipo 2";
-    const maxPlayers = isDefaultTeam ? getMaxPlayers(matchType) : 8; // Use getMaxPlayers for default teams, 8 for custom teams
+    const maxPlayers = getMaxPlayers(matchType);
     const currentPlayers = isDefaultTeam ? (players?.length ?? 0) : maxPlayers;
-    const isFull = currentPlayers >= maxPlayers;
+    const isFull = isDefaultTeam ? currentPlayers >= maxPlayers : true;
 
     return (
         <Card>
