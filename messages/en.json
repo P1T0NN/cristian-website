@@ -8,7 +8,10 @@
         "newMatch": "New match",
         "loading": "Loading...",
         "error": "There was an error...",
-        "noResults": "No results found"
+        "noResults": "No results found",
+        "title": "Cris Futbol",
+        "matchHistory": "Match History",
+        "createTeam": "Create Team"
     },
     
     "HomePage": {

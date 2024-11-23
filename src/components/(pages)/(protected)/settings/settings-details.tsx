@@ -35,7 +35,7 @@ export const SettingsDetails = async () => {
                 <TabsTrigger value="account">{t('account')}</TabsTrigger>
                 <TabsTrigger value="appearance">{t('appearance')}</TabsTrigger>
                 <TabsTrigger value="notifications">{t('notifications')}</TabsTrigger>
-                <TabsTrigger value="security">{t('security')}</TabsTrigger>
+                {/*<TabsTrigger value="security">{t('security')}</TabsTrigger>*/}
             </TabsList>
 
             <TabsContent value="account">
@@ -54,9 +54,9 @@ export const SettingsDetails = async () => {
                 <NotificationSettings />
             </TabsContent>
 
-            <TabsContent value="security">
+            {/*<TabsContent value="security">
                 <SecuritySettings />
-            </TabsContent>
+            </TabsContent>*/}
         </Tabs>
     )
 }

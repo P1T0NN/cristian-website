@@ -44,11 +44,16 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse<typesM
 
     const matchIds = matchPlayers.map(mp => mp.match_id);
 
-    // Step 2: Fetch match data for the retrieved match IDs
+    // Get current date in UTC
+    const currentDate = new Date().toISOString().split('T')[0];
+
+    // Step 2: Fetch match data for the retrieved match IDs with date filter
     const { data: matches, error: matchesError } = await supabase
         .from('matches')
         .select('*')
-        .in('id', matchIds);
+        .in('id', matchIds)
+        .gte('starts_at_day', currentDate) // Only fetch matches with date greater than or equal to current date
+        .order('starts_at_day', { ascending: true }); // Optional: Order by date ascending
 
     if (matchesError) {
         return NextResponse.json({ success: false, message: fetchMessages('ACTIVE_MATCHES_FETCH_FAILED') });

@@ -8,7 +8,10 @@
         "newMatch": "Nuevo partido",
         "loading": "Cargando...",
         "error": "Hubo un error...",
-        "noResults": "No se encontraron resultados"
+        "noResults": "No se encontraron resultados",
+        "title": "Cris Fútbol",
+        "matchHistory": "Historial de Partidos",
+        "createTeam": "Crear Equipo"
     },
 
     "HomePage": {

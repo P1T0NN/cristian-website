@@ -1,6 +1,9 @@
 // NEXTJS IMPORTS
 import Link from "next/link";
 
+// LIBRARIES
+import { getTranslations } from "next-intl/server";
+
 // CONFIG
 import { PROTECTED_PAGE_ENDPOINTS, ADMIN_PAGE_ENDPOINTS } from "@/config";
 
@@ -25,17 +28,18 @@ import { getInitials } from "@/utils/getNameInitials";
 import type { typesUser } from "@/types/typesUser";
 
 // LUCIDE ICONS
-import { Users, Bell, Settings } from "lucide-react";
+import { Bell, Settings, History, UserPlus } from 'lucide-react';
 
 type HeaderProps = {
     serverUserData: typesUser | undefined;
     authToken: string | undefined;
 }
 
-export const HeaderProtected = ({ 
+export const HeaderProtected = async ({ 
     serverUserData, 
     authToken 
 }: HeaderProps) => {
+    const t = await getTranslations('Header');
     const initials = serverUserData ? getInitials(serverUserData.fullName) : '';
 
     return (
@@ -44,7 +48,7 @@ export const HeaderProtected = ({
                 <div className="flex items-center justify-between h-20">
                     <div className="flex items-center">
                         <Link href={PROTECTED_PAGE_ENDPOINTS.HOME_PAGE}>
-                            <h1 className="text-xl font-bold tracking-[2px]">Cris Futbol</h1>
+                            <h1 className="text-xl font-bold tracking-[2px]">{t('title')}</h1>
                         </Link>
                     </div>
 
@@ -74,25 +78,25 @@ export const HeaderProtected = ({
                                     </div>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent>
-                                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                                    <DropdownMenuLabel>{t('myAccount')}</DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     {serverUserData.isAdmin && (
                                         <Link href={ADMIN_PAGE_ENDPOINTS.MATCH_HISTORY}>
                                             <DropdownMenuItem>
-                                                <Users className="mr-2" /> Match History
+                                                <History className="mr-2" /> {t('matchHistory')}
                                             </DropdownMenuItem>
                                         </Link>
                                     )}
                                     {serverUserData.isAdmin && (
                                         <Link href={ADMIN_PAGE_ENDPOINTS.ADD_TEAM_PAGE}>
                                             <DropdownMenuItem>
-                                                <Users className="mr-2" /> Create Team
+                                                <UserPlus className="mr-2" /> {t('createTeam')}
                                             </DropdownMenuItem>
                                         </Link>
                                     )}
                                     <Link href={PROTECTED_PAGE_ENDPOINTS.SETTINGS_PAGE}>
                                         <DropdownMenuItem>
-                                            <Settings className="mr-2" /> Settings
+                                            <Settings className="mr-2" /> {t('settings')}
                                         </DropdownMenuItem>
                                     </Link>
                                     <DropdownMenuSeparator />
@@ -114,3 +118,4 @@ export const HeaderProtected = ({
         </header>
     )
 };
+

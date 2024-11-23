@@ -28,13 +28,30 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
         return NextResponse.json({ success: false, message: genericMessages('USER_ID_REQUIRED') });
     }
 
-    // Count the number of active matches for the user
-    const { count, error } = await supabase
+    // Get current date in UTC
+    const currentDate = new Date().toISOString().split('T')[0];
+
+    // First Supabase call: Get match IDs for the user
+    const { data: matchIds, error: matchIdsError } = await supabase
         .from('match_players')
-        .select('match_id', { count: 'exact', head: true })
+        .select('match_id')
         .eq('user_id', userId);
 
-    if (error) {
+    if (matchIdsError) {
+        return NextResponse.json({ success: false, message: fetchMessages('ACTIVE_MATCHES_FETCH_FAILED') });
+    }
+
+    // Extract match IDs from the result
+    const ids = matchIds.map(item => item.match_id);
+
+    // Second Supabase call: Count active matches
+    const { count, error: countError } = await supabase
+        .from('matches')
+        .select('id', { count: 'exact', head: true })
+        .in('id', ids)
+        .gte('starts_at_day', currentDate);
+
+    if (countError) {
         return NextResponse.json({ success: false, message: fetchMessages('ACTIVE_MATCHES_COUNT_FETCH_FAILED') });
     }
 
