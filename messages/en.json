@@ -206,7 +206,10 @@
         "removeGratis": "Remove Gratis",
         "paymentStatusUpdated": "Payment status updated successfully",
         "hasDiscount": "Has Discount",
-        "substituteRequested": "Substitute requested"
+        "substituteRequested": "Substitute requested",
+        "matchAdminStatusUpdated": "Match admin status updated",
+        "removeMatchAdmin": "Remove match admin",
+        "makeMatchAdmin": "Make match admin"
     },
 
     "EditMatchPage": {
@@ -531,6 +534,7 @@
         "PLAYER_REPLACED_SUCCESSFULLY": "You replaced player successfully!",
         "PLAYER_REMOVED_SUCCESSFULLY": "You removed the player successfully!",
         "PAYMENT_STATUS_UPDATED_SUCCESSFULLY": "Successfully updated payment status!",
+        "MATCH_ADMIN_STATUS_UPDATED": "Match admin status has been updated successfully",
 
         "REDIS_CONNECTION_ERROR": "Unable to connect to the database. Please try again later.",
         "REDIS_DISCONNECTION_ERROR": "Error occurred while disconnecting from the database.",

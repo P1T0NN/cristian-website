@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import type { typesUser } from "@/types/typesUser";
 
 // LUCIDE ICONS
-import { UserMinus, Gift, Percent, DollarSign, User } from 'lucide-react';
+import { UserMinus, Gift, Percent, DollarSign, User, Shield } from 'lucide-react';
 
 type PlayerInfoProps = {
     player: typesUser;
@@ -21,6 +21,9 @@ type PlayerInfoProps = {
     onUpdatePaymentStatus: (status: 'paid' | 'discount' | 'gratis') => void;
     isPaymentPending: boolean;
     onOpenAdminDialog: () => void;
+    currentUserMatchAdmin: boolean;
+    handleToggleMatchAdmin: () => void;
+    isMatchAdminPending: boolean;
 }
 
 export const PlayerInfo = ({ 
@@ -29,6 +32,9 @@ export const PlayerInfo = ({
     onUpdatePaymentStatus, 
     isPaymentPending,
     onOpenAdminDialog,
+    currentUserMatchAdmin,
+    handleToggleMatchAdmin,
+    isMatchAdminPending
 }: PlayerInfoProps) => {
     const t = useTranslations("MatchPage");
     const nameColor = player.matchPlayer?.has_paid ? "text-green-500" : "text-red-500";
@@ -37,6 +43,9 @@ export const PlayerInfo = ({
         e.preventDefault();
         onUpdatePaymentStatus(status);
     };
+
+    // We are checking if user should see payment controls
+    const showPaymentControls = isAdmin || currentUserMatchAdmin;
 
     return (
         <div className="flex flex-col">
@@ -76,7 +85,7 @@ export const PlayerInfo = ({
                     </TooltipProvider>
                 )}
             </div>
-            {isAdmin && (
+            {showPaymentControls && (
                 <div className="flex mt-2 space-x-2">
                     <PaymentStatusButton
                         status="paid"
@@ -105,12 +114,32 @@ export const PlayerInfo = ({
                         tooltipText={player.matchPlayer?.has_gratis ? t('removeGratis') : t('markAsGratis')}
                         disabled={isPaymentPending}
                     />
-                    <Button
-                        className="w-10 h-10"
-                        onClick={onOpenAdminDialog}
-                    >
-                        <User size={16} />
-                    </Button>
+                    {isAdmin && (
+                        <>
+                        <Button
+                            className="w-10 h-10"
+                            onClick={onOpenAdminDialog}
+                        >
+                            <User size={16} />
+                        </Button>
+                        <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button
+                                        className={`w-10 h-10 ${player.matchPlayer?.has_match_admin ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-500 hover:bg-gray-600'}`}
+                                        onClick={handleToggleMatchAdmin}
+                                        disabled={isMatchAdminPending}
+                                    >
+                                        <Shield size={16} className="text-white" />
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>{player.matchPlayer?.has_match_admin ? t('removeMatchAdmin') : t('makeMatchAdmin')}</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    </>
+                    )}
                 </div>
             )}
         </div>

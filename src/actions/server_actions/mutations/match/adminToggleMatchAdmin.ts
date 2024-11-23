@@ -8,14 +8,10 @@ import { jwtVerify } from 'jose';
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
-export async function updatePaymentStatus(
+export async function adminToggleMatchAdmin(
     authToken: string,
     matchId: string,
-    playerId: string,
-    hasPaid: boolean,
-    hasDiscount: boolean,
-    hasGratis: boolean,
-    currentUserMatchAdmin: boolean
+    playerId: string
 ) {
     const genericMessages = await getTranslations("GenericMessages");
 
@@ -29,7 +25,7 @@ export async function updatePaymentStatus(
         return { success: false, message: genericMessages('JWT_DECODE_ERROR') };
     }
 
-    if (!matchId || !playerId || typeof hasPaid !== 'boolean' || typeof hasDiscount !== 'boolean' || typeof hasGratis !== 'boolean') {
+    if (!matchId || !playerId) {
         return { success: false, message: genericMessages('OPERATION_FAILED') };
     }
 
@@ -40,22 +36,27 @@ export async function updatePaymentStatus(
         .eq('id', payload.sub)
         .single();
 
-    const isAuthorized = 
-        (userData?.isAdmin) || // System admin
-        currentUserMatchAdmin; // Match admin (using passed prop instead of database query)
-
-    if (userError || !isAuthorized) {
+    if (userError || !userData || !userData.isAdmin) {
         return { success: false, message: genericMessages('UNAUTHORIZED') };
     }
 
-    // Update the payment status
+    // Fetch current match admin status
+    const { data: currentStatus, error: statusError } = await supabase
+        .from('match_players')
+        .select('has_match_admin')
+        .match({ match_id: matchId, user_id: playerId })
+        .single();
+
+    if (statusError) {
+        return { success: false, message: genericMessages('OPERATION_FAILED') };
+    }
+
+    // Toggle the match admin status
+    const newStatus = !currentStatus.has_match_admin;
+
     const { error: updateError } = await supabase
         .from('match_players')
-        .update({
-            has_paid: hasPaid,
-            has_discount: hasDiscount,
-            has_gratis: hasGratis
-        })
+        .update({ has_match_admin: newStatus })
         .match({ match_id: matchId, user_id: playerId });
 
     if (updateError) {
@@ -66,6 +67,7 @@ export async function updatePaymentStatus(
 
     return { 
         success: true, 
-        message: genericMessages('PAYMENT_STATUS_UPDATED_SUCCESSFULLY')
+        message: genericMessages('MATCH_ADMIN_STATUS_UPDATED'),
+        data: { newStatus }
     };
 }

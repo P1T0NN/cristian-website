@@ -22,6 +22,7 @@ import type { typesUser } from "@/types/typesUser";
 
 // LUCIDE ICONS
 import { Loader2 } from "lucide-react";
+import { adminToggleMatchAdmin } from "@/actions/server_actions/mutations/match/adminToggleMatchAdmin";
 
 type PlayerItemProps = {
     player: typesUser;
@@ -30,6 +31,7 @@ type PlayerItemProps = {
     matchId: string;
     isAdmin: boolean;
     authToken: string;
+    currentUserMatchAdmin: boolean;
 }
 
 export const PlayerItem = ({ 
@@ -38,7 +40,8 @@ export const PlayerItem = ({
     teamNumber,
     matchId,
     isAdmin,
-    authToken
+    authToken,
+    currentUserMatchAdmin,
 }: PlayerItemProps) => {
     const t = useTranslations("MatchPage");
     
@@ -47,6 +50,7 @@ export const PlayerItem = ({
     const [isLeavePending, startLeaveTransition] = useTransition();
     const [isReplacePending, startReplaceTransition] = useTransition();
     const [isPaymentPending, startPaymentTransition] = useTransition();
+    const [isMatchAdminPending, startIsMatchAdminPending] = useTransition();
 
     const handleLeaveTeam = () => {
         if (player.matchPlayer?.substitute_requested) {
@@ -110,7 +114,8 @@ export const PlayerItem = ({
                 player.id,
                 hasPaid || false,
                 hasDiscount || false,
-                hasGratis || false
+                hasGratis || false,
+                currentUserMatchAdmin
             );
 
             if (result.success) {
@@ -120,6 +125,18 @@ export const PlayerItem = ({
             }
         });
     };
+
+    const handleToggleMatchAdmin = () => {
+        startIsMatchAdminPending(async () => {
+            const response = await adminToggleMatchAdmin(authToken, matchId, player.id);
+
+            if (response.success) {
+                toast.success(response.message);
+            } else {
+                toast.error(response.message);
+            }
+        })
+    }
 
     return (
         <div 
@@ -131,6 +148,9 @@ export const PlayerItem = ({
                 onUpdatePaymentStatus={handleUpdatePaymentStatus}
                 isPaymentPending={isPaymentPending}
                 onOpenAdminDialog={() => setShowAdminModal(true)}
+                currentUserMatchAdmin={currentUserMatchAdmin}
+                handleToggleMatchAdmin={handleToggleMatchAdmin}
+                isMatchAdminPending={isMatchAdminPending}
             />
 
             <div className="flex items-center space-x-2 relative z-10">

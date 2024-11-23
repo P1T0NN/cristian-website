@@ -206,7 +206,10 @@
         "removeGratis": "Quitar Gratis",
         "paymentStatusUpdated": "Estado de pago actualizado con éxito",
         "hasDiscount": "Tiene Descuento",
-        "substituteRequested": "Sustitución solicitada"
+        "substituteRequested": "Sustitución solicitada",
+        "matchAdminStatusUpdated": "Estado de administrador de partido actualizado",
+        "removeMatchAdmin": "Quitar administrador de partido",
+        "makeMatchAdmin": "Hacer administrador de partido"
     },
 
     "EditMatchPage": {
@@ -527,6 +530,7 @@
         "PLAYER_REPLACED_SUCCESSFULLY": "¡Has reemplazado al jugador con éxito!",
         "PLAYER_REMOVED_SUCCESSFULLY": "Jugador eliminado del partido con éxito",
         "PAYMENT_STATUS_UPDATED_SUCCESSFULLY": "¡Estado de pago actualizado con éxito!",
+        "MATCH_ADMIN_STATUS_UPDATED": "El estado de administrador de partido se ha actualizado con éxito",
 
         "REDIS_CONNECTION_ERROR": "No se puede conectar a la base de datos. Inténtalo de nuevo más tarde.",
         "REDIS_DISCONNECTION_ERROR": "Error al desconectar de la base de datos.",

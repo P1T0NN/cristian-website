@@ -6,6 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { PlayerItem } from "./player-item";
 import { JoinTeamButton } from "./join-team-button";
 
+// ACTIONS
+import { serverFetchCurrentUserMatchAdmin } from "@/actions/functions/data/server/server_fetchCurrentUserMatchAdmin";
+
 // TYPES
 import type { typesUser } from "@/types/typesUser";
 
@@ -30,9 +33,12 @@ export const TeamCard = async ({
     matchId,
     matchType,
     isAdmin,
-    authToken
+    authToken,
 }: TeamCardProps) => {
     const t = await getTranslations("MatchPage");
+
+    const serverCurrentUserMatchAdmin = await serverFetchCurrentUserMatchAdmin(matchId);
+    const currentUserMatchAdmin = serverCurrentUserMatchAdmin.data as boolean;
 
     const getMaxPlayers = (type: string) => {
         switch (type) {
@@ -52,6 +58,10 @@ export const TeamCard = async ({
     const currentPlayers = isDefaultTeam ? (players?.length ?? 0) : maxPlayers;
     const isFull = isDefaultTeam ? currentPlayers >= maxPlayers : true;
 
+    // We have to add this, because if we dont and we make player has_paid to true or any payment action, player will be moved from his current index position in team to the bottom
+    // because of react rerender when using .map in here: {isDefaultTeam && players?.map((player) => (
+    const sortedPlayers = players?.sort((a, b) => (a.id).localeCompare(b.id)) || [];
+
     return (
         <Card>
             <CardHeader>
@@ -64,8 +74,8 @@ export const TeamCard = async ({
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
-                {isDefaultTeam && players?.map((player) => (
-                    <PlayerItem
+                {isDefaultTeam && sortedPlayers.map((player) => (
+                     <PlayerItem
                         key={player.id}
                         player={player}
                         isCurrentUser={player.id === currentUserId}
@@ -73,6 +83,7 @@ export const TeamCard = async ({
                         matchId={matchId}
                         isAdmin={isAdmin}
                         authToken={authToken}
+                        currentUserMatchAdmin={currentUserMatchAdmin}
                     />
                 ))}
 

@@ -8,4 +8,5 @@ export type typesMatchPlayer = {
     has_paid: boolean;
     has_discount: boolean;
     has_gratis: boolean;
+    has_match_admin: boolean;
 }
