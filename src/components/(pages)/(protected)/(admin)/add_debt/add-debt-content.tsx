@@ -8,7 +8,7 @@ import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 
 // CONFIG
-import { PROTECTED_PAGE_ENDPOINTS, ADMIN_PAGE_ENDPOINTS } from "@/config";
+import { PROTECTED_PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
 import {
@@ -73,7 +73,7 @@ export const AddDebtContent = ({
                     const userIdResult = await clientFetchUserIdByName(authToken, values.player_name);
 
                     if (userIdResult.success && userIdResult.data && userIdResult.data) {
-                        router.push(`${ADMIN_PAGE_ENDPOINTS.PLAYER_PAGE}/${userIdResult.data}`);
+                        router.push(`${PROTECTED_PAGE_ENDPOINTS.PLAYER_PAGE}/${userIdResult.data}`);
                     } else {
                         router.push(PROTECTED_PAGE_ENDPOINTS.HOME_PAGE);
                     }

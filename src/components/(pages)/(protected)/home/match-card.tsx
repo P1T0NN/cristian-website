@@ -15,7 +15,7 @@ import { formatTime, formatDate } from "@/utils/dateUtils";
 import type { typesMatch } from "@/types/typesMatch";
 
 // LUCIDE ICONS
-import { MapPin, Users, Clock } from 'lucide-react';
+import { MapPin, Users, Clock, User } from 'lucide-react';
 
 type MatchCardProps = {
     match: typesMatch;
@@ -109,11 +109,15 @@ export const MatchCard = async ({
                         </div>
                     </div>
         
-                    <div 
-                        className="w-full mt-3 flex items-center justify-center py-2 px-4 text-sm font-medium rounded-md"
-                    >
-                        <MapPin className="w-4 h-4 mr-2" />
-                        {match.location}
+                    <div className="w-full mt-3 flex items-center justify-between text-sm text-muted-foreground">
+                        <div className="flex items-center">
+                            <User className="w-4 h-4 mr-2" />
+                            {t('organizer')}: {match.added_by}
+                        </div>
+                        <div className="flex items-center">
+                            <MapPin className="w-4 h-4 mr-2" />
+                            {match.location}
+                        </div>
                     </div>
                 </CardContent>
             </Card>

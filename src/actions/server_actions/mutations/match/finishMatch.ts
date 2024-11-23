@@ -26,22 +26,27 @@ export async function finishMatch(authToken: string, matchId: string) {
         return { success: false, message: genericMessages('JWT_DECODE_ERROR') };
     }
 
-    // We use supabase.rpc here, because finish match is complex function, so its better to handle all in one supabase call to DB. At the bottom of the file is SQL we run into SUpabase
+    // Call the Supabase RPC function
     const { data: result, error } = await supabase.rpc('finish_match', { p_match_id: matchId });
 
-    if (error || !result.success) {
-        console.error('Match finish failed:', result?.message || error?.message);
+    if (error) {
         return { 
             success: false, 
             message: genericMessages('MATCH_FINISH_FAILED'),
-            error: result?.message || error?.message
+        };
+    }
+
+    if (!result.success) {
+        return { 
+            success: false, 
+            message: genericMessages(result.message_code),
         };
     }
 
     await upstashRedisCacheService.delete(`${CACHE_KEYS.MATCH_PREFIX}${matchId}`);
     revalidatePath("/");
 
-    return { success: true, message: genericMessages("MATCH_FINISHED") };
+    return { success: true, message: genericMessages(result.message_code) };
 }
 
 /*

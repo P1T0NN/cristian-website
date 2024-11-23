@@ -11,7 +11,8 @@
         "noResults": "No results found",
         "title": "Cris Futbol",
         "matchHistory": "Match History",
-        "createTeam": "Create Team"
+        "createTeam": "Create Team",
+        "profile": "Profile"
     },
     
     "HomePage": {
@@ -212,7 +213,8 @@
         "substituteRequested": "Substitute requested",
         "matchAdminStatusUpdated": "Match admin status updated",
         "removeMatchAdmin": "Remove match admin",
-        "makeMatchAdmin": "Make match admin"
+        "makeMatchAdmin": "Make match admin",
+        "organizer": "Organizer"
     },
 
     "EditMatchPage": {
@@ -292,7 +294,11 @@
         "notProvided": "Not provided",
         "date": "Date",
         "reason": "Reason",
-        "addedBy": "Added By"
+        "addedBy": "Added By",
+        "phoneNumber": "Phone Number",
+        "enterPhoneNumber": "Enter your phone number",
+        "country": "Country",
+        "enterCountry": "Enter your country"
     },
 
     "AddTeamPage": {
@@ -538,6 +544,8 @@
         "PLAYER_REMOVED_SUCCESSFULLY": "You removed the player successfully!",
         "PAYMENT_STATUS_UPDATED_SUCCESSFULLY": "Successfully updated payment status!",
         "MATCH_ADMIN_STATUS_UPDATED": "Match admin status has been updated successfully",
+
+        "PLAYER_DETAILS_UPDATED": "Player details updated successfully",
 
         "REDIS_CONNECTION_ERROR": "Unable to connect to the database. Please try again later.",
         "REDIS_DISCONNECTION_ERROR": "Error occurred while disconnecting from the database.",

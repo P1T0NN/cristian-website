@@ -18,18 +18,24 @@ import { editPlayerDetails } from "@/actions/server_actions/mutations/user/editP
 
 type EditPlayerDetailsProps = {
     authToken: string;
-    playerId: string
-    initialDNI: string
-    initialPlayerLevel: string
-    initialPlayerPosition: string
+    playerId: string;
+    initialPhoneNumber: string;
+    initialCountry: string;
+    initialDNI: string;
+    initialPlayerLevel: string;
+    initialPlayerPosition: string;
+    isAdmin: boolean;
 }
 
 export function EditPlayerDetails({ 
     authToken,
     playerId, 
+    initialPhoneNumber,
+    initialCountry,
     initialDNI, 
     initialPlayerLevel, 
-    initialPlayerPosition 
+    initialPlayerPosition,
+    isAdmin
 }: EditPlayerDetailsProps) {
     const t = useTranslations("PlayerPage");
 
@@ -37,16 +43,16 @@ export function EditPlayerDetails({
 
     const [isOpen, setIsOpen] = useState(false);
 
+    const [phoneNumber, setPhoneNumber] = useState(initialPhoneNumber ?? '');
+    const [country, setCountry] = useState(initialCountry ?? '');
     const [dni, setDNI] = useState(initialDNI ?? '');
     const [playerLevel, setPlayerLevel] = useState(initialPlayerLevel ?? '');
     const [playerPosition, setPlayerPosition] = useState(initialPlayerPosition ?? '');
 
     const handleEditPlayerDetails = () => {
         startTransition(async () => {
-            // We only add try/catch here for smootheness when our transition is finished, that in fairly the same time data changes in UI
-            // We can do it setIsOpen also in result.success but I found that using try/catch is faster like for 10ms or so, really its preference
             try {
-                const result = await editPlayerDetails(authToken, playerId, dni, playerLevel, playerPosition);
+                const result = await editPlayerDetails(authToken, playerId, dni, country, phoneNumber, playerLevel, playerPosition);
         
                 if (result.success) {
                     toast.success(result.message);
@@ -78,29 +84,49 @@ export function EditPlayerDetails({
 
                 <form action={handleEditPlayerDetails} className="space-y-4">
                     <FormInputField
-                        label={t('dni')}
-                        name="dni"
+                        label={t('phoneNumber')}
+                        name="phoneNumber"
                         type="text"
-                        value={dni}
-                        onChange={(e) => setDNI(e.target.value)}
-                        placeholder={t('enterDNI')}
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        placeholder={t('enterPhoneNumber')}
                     />
                     <FormInputField
-                        label={t('playerLevel')}
-                        name="level"
+                        label={t('country')}
+                        name="country"
                         type="text"
-                        value={playerLevel}
-                        onChange={(e) => setPlayerLevel(e.target.value)}
-                        placeholder={t('enterPlayerLevel')}
+                        value={country}
+                        onChange={(e) => setCountry(e.target.value)}
+                        placeholder={t('enterCountry')}
                     />
-                    <FormSelectField
-                        label={t('playerPosition')}
-                        name="position"
-                        value={playerPosition}
-                        onChange={(value) => setPlayerPosition(value)}
-                        options={positionOptions}
-                        placeholder={t('selectPlayerPosition')}
-                    />
+                    {isAdmin && (
+                        <>
+                            <FormInputField
+                                label={t('dni')}
+                                name="dni"
+                                type="text"
+                                value={dni}
+                                onChange={(e) => setDNI(e.target.value)}
+                                placeholder={t('enterDNI')}
+                            />
+                            <FormInputField
+                                label={t('playerLevel')}
+                                name="level"
+                                type="text"
+                                value={playerLevel}
+                                onChange={(e) => setPlayerLevel(e.target.value)}
+                                placeholder={t('enterPlayerLevel')}
+                            />
+                            <FormSelectField
+                                label={t('playerPosition')}
+                                name="position"
+                                value={playerPosition}
+                                onChange={(value) => setPlayerPosition(value)}
+                                options={positionOptions}
+                                placeholder={t('selectPlayerPosition')}
+                            />
+                        </>
+                    )}
                     <Button type="submit" disabled={isPending}>
                         {isPending ? t('updating') : t('updateDetails')}
                     </Button>

@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from "next-intl";
 
 // CONFIG
-import { ADMIN_PAGE_ENDPOINTS } from "@/config";
+import { PROTECTED_PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
 import { Button } from "@/components/ui/button";
@@ -54,7 +54,7 @@ export const AdminActionsDialog = ({
     const [isPending, startTransition] = useTransition();
 
     const handleGoToProfile = () => {
-        router.push(`${ADMIN_PAGE_ENDPOINTS.PLAYER_PAGE}/${player.id}`);
+        router.push(`${PROTECTED_PAGE_ENDPOINTS.PLAYER_PAGE}/${player.id}`);
     };
 
     const handleRemovePlayer = async () => {

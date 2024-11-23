@@ -22,10 +22,10 @@ export const DisplayTeamDetails = async ({
                 <span>{match.team1_name} - {match.team1_color ? t('whiteShirt') : t('blackShirt')}</span>
             </div>
             <div className="flex items-center space-x-2">
+                <span>{match.team2_name} - {match.team2_color ? t('whiteShirt') : t('blackShirt')}</span>
                 <div 
                     className={`w-6 h-6 rounded-full ${match.team2_color ? 'bg-white border' : 'bg-black'}`}
                 />
-                <span>{match.team2_name} - {match.team2_color ? t('whiteShirt') : t('blackShirt')}</span>
             </div>
         </div>
     )

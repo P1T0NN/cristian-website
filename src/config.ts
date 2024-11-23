@@ -22,6 +22,7 @@ export const PROTECTED_PAGE_ENDPOINTS = {
     SETTINGS_PAGE: "/settings",
     MATCH_PAGE: "/match",
     ACTIVE_MATCHES: "/active_matches",
+    PLAYER_PAGE: "/player",
 };
 
 export const ADMIN_PAGE_ENDPOINTS = {
@@ -29,7 +30,6 @@ export const ADMIN_PAGE_ENDPOINTS = {
     ADD_DEBT_PAGE: "/add_debt",
     ADD_LOCATION_PAGE: "/add_location",
     EDIT_MATCH_PAGE: "/edit_match",
-    PLAYER_PAGE: "/player",
     ADD_TEAM_PAGE: "/add_team",
     TEAM_PAGE: "/team",
     MATCH_HISTORY: "/match_history",

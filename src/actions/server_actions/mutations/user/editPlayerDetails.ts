@@ -8,7 +8,7 @@ import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 import { jwtVerify } from 'jose';
 
-export async function editPlayerDetails(authToken: string, playerId: string, dni: string, playerLevel: string, playerPosition: string) {
+export async function editPlayerDetails(authToken: string, playerId: string, dni: string, country: string, phoneNumber: string, playerLevel: string, playerPosition: string) {
     const genericMessages = await getTranslations("GenericMessages");
 
     if (!authToken) {
@@ -26,15 +26,17 @@ export async function editPlayerDetails(authToken: string, playerId: string, dni
         .update({ 
             dni: dni, 
             player_level: playerLevel, 
-            player_position: playerPosition 
+            player_position: playerPosition ,
+            country: country,
+            phoneNumber: phoneNumber
         })
         .eq('id', playerId)
 
     if (error) {
-        return { success: false, message: 'Failed to update player details' };
+        return { success: false, message: genericMessages('UNKNOWN_ERROR') };
     }
 
     revalidatePath("/");
 
-    return { success: true, message: 'Player details updated successfully', data };
+    return { success: true, message: genericMessages('PLAYER_DETAILS_UPDATED'), data };
 }

@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { useDebounce } from 'use-debounce';
 
 // CONFIG
-import { ADMIN_PAGE_ENDPOINTS } from '@/config';
+import { ADMIN_PAGE_ENDPOINTS, PROTECTED_PAGE_ENDPOINTS } from '@/config';
 
 // COMPONENTS
 import { Input } from "@/components/ui/input";
@@ -107,7 +107,7 @@ export function SearchBar({
                                     asChild
                                 >
                                     <Link 
-                                        href={`${ADMIN_PAGE_ENDPOINTS.PLAYER_PAGE}/${user.id}`}
+                                        href={`${PROTECTED_PAGE_ENDPOINTS.PLAYER_PAGE}/${user.id}`}
                                         onClick={handleItemClick}
                                     >
                                         {user.fullName}

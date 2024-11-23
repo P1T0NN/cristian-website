@@ -28,7 +28,7 @@ import { getInitials } from "@/utils/getNameInitials";
 import type { typesUser } from "@/types/typesUser";
 
 // LUCIDE ICONS
-import { Bell, Settings, History, UserPlus } from 'lucide-react';
+import { Bell, Settings, History, UserPlus, User } from 'lucide-react';
 
 type HeaderProps = {
     serverUserData: typesUser | undefined;
@@ -80,6 +80,11 @@ export const HeaderProtected = async ({
                                 <DropdownMenuContent>
                                     <DropdownMenuLabel>{t('myAccount')}</DropdownMenuLabel>
                                     <DropdownMenuSeparator />
+                                    <Link href={`${PROTECTED_PAGE_ENDPOINTS.PLAYER_PAGE}/${serverUserData.id}`}>
+                                        <DropdownMenuItem>
+                                            <User className="mr-2" /> {t('profile')}
+                                        </DropdownMenuItem>
+                                    </Link>
                                     {serverUserData.isAdmin && (
                                         <Link href={ADMIN_PAGE_ENDPOINTS.MATCH_HISTORY}>
                                             <DropdownMenuItem>
@@ -118,4 +123,3 @@ export const HeaderProtected = async ({
         </header>
     )
 };
-

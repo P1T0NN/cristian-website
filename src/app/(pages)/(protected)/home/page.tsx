@@ -4,6 +4,7 @@ import { Suspense } from "react";
 // COMPONENTS
 import { DisplayCalendar } from "@/components/(pages)/(protected)/home/display-calendar";
 import { DisplayMatches } from "@/components/(pages)/(protected)/home/display-matches";
+import { MyActiveMatches } from "@/components/(pages)/(protected)/home/my-active-matches";
 import { DisplayMatchesLoading } from "@/components/(pages)/(protected)/home/loading/display-matches-loading";
 import { DisplayCalendarLoading } from "@/components/(pages)/(protected)/home/loading/display-calendar-loading";
 
@@ -12,7 +13,6 @@ import { getUser } from "@/actions/actions/auth/verifyAuth";
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
-import { MyActiveMatches } from "@/components/(pages)/(protected)/home/my-active-matches";
 
 export default async function HomePage({ 
     searchParams 

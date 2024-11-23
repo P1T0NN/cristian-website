@@ -16,6 +16,7 @@ export type typesUser = {
     player_position: string;
     created_at: Date;
     dni: string;
+    country: string;
     debts?: typesDebt[];
     matchPlayer?: typesMatchPlayer;
 };
