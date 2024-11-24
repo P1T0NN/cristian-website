@@ -17,6 +17,7 @@ export type typesUser = {
     created_at: Date;
     dni: string;
     country: string;
+    has_access: boolean;
     debts?: typesDebt[];
     matchPlayer?: typesMatchPlayer;
 };

@@ -6,7 +6,6 @@ import { revalidatePath } from 'next/cache';
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
-import type { TranslationValues } from 'next-intl';
 import { jwtVerify } from 'jose';
 
 // SERVICES
@@ -15,22 +14,9 @@ import { upstashRedisCacheService } from '@/services/server/redis-cache.service'
 // CONFIG
 import { CACHE_KEYS } from '@/config';
 
-// We need these types because of how supabase.rpc returns messages
-enum MessageCode {
-    MATCH_FINISHED_SUCCESSFULLY = 'MATCH_FINISHED_SUCCESSFULLY',
-    MATCH_NOT_FOUND = 'MATCH_NOT_FOUND',
-    FAILED_TO_INSERT_MATCH_HISTORY = 'FAILED_TO_INSERT_MATCH_HISTORY',
-    FAILED_TO_UPDATE_USER_DEBT = 'FAILED_TO_UPDATE_USER_DEBT',
-    FAILED_TO_INSERT_DEBT = 'FAILED_TO_INSERT_DEBT',
-    FAILED_TO_DELETE_MATCH = 'FAILED_TO_DELETE_MATCH',
-    UNEXPECTED_ERROR = 'UNEXPECTED_ERROR'
-}
-
-type RPCResponseData = {
-    success: boolean;
-    code: MessageCode;
-    metadata?: TranslationValues; 
-}
+// TYPES
+// We need this type because of how supabase.rpc returns messages
+import { RPCResponseData } from '@/types/responses/RPCResponseData';
 
 export async function finishMatch(authToken: string, matchId: string) {
     const t = await getTranslations("GenericMessages");

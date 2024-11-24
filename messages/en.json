@@ -1,4 +1,15 @@
 {
+    "UnauthorizedPage": {
+        "title": "Access Restricted",
+        "description": "Your account is pending approval or has been restricted.",
+        "explanation": "We're sorry, but you don't have access to this page at the moment. This could be because:",
+        "pending": "Your account is still pending approval",
+        "restricted": "Your access has been temporarily restricted",
+        "permissions": "You're trying to access a page that requires special permissions",
+        "contactSupport": "If you believe this is an error, please contact our support team for assistance.",
+        "goToHomepage": "Go to Homepage"
+    },
+
     "Header": {
         "searchPlaceholder": "Search players...",
         "myAccount": "My Account",
@@ -12,7 +23,8 @@
         "title": "Cris Futbol",
         "matchHistory": "Match History",
         "createTeam": "Create Team",
-        "profile": "Profile"
+        "profile": "Profile",
+        "registrations": "Registrations"
     },
     
     "HomePage": {
@@ -214,7 +226,9 @@
         "matchAdminStatusUpdated": "Match admin status updated",
         "removeMatchAdmin": "Remove match admin",
         "makeMatchAdmin": "Make match admin",
-        "organizer": "Organizer"
+        "organizer": "Organizer",
+        "switchTeam": "Switch Team",
+        "playerSwitchedTeam": "Player switched team successfully"
     },
 
     "EditMatchPage": {
@@ -350,6 +364,22 @@
         "verifying": "Verifying your email...",
         "redirecting": "Redirecting to login page...",
         "returnHome": "Return to Home"
+    },
+
+    "AccessForRegistrationPage": {
+        "pageTitle": "Access for Registration",
+        "cardTitle": "Users Without Access",
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "gender": "Gender",
+        "action": "Action",
+        "grantAccess": "Grant Access",
+        "givingAccess": "Giving access...",
+        "confirmAccessTitle": "Confirm Access Grant",
+        "confirmAccessDescription": "If you grant access, this user will be able to see your website data and matches. Are you sure you want to proceed?",
+        "cancel": "Cancel",
+        "confirmGrant": "Yes, Grant Access"
     },
 
     "FilterModalComponent": {
@@ -547,6 +577,9 @@
 
         "PLAYER_DETAILS_UPDATED": "Player details updated successfully",
 
+        "USER_GRANT_ACCESS_FAILED": "Failed to grant access to user",
+        "USER_ACCESS_GRANTED_SUCCESSFULLY": "User access granted successfully",
+
         "REDIS_CONNECTION_ERROR": "Unable to connect to the database. Please try again later.",
         "REDIS_DISCONNECTION_ERROR": "Error occurred while disconnecting from the database.",
         "REDIS_GET_ERROR": "Unable to retrieve data from the cache. Please try again.",
@@ -557,6 +590,7 @@
 
         "RATE_LIMIT_EXCEEDED": "Too many requests, please try again in a minute!",
 
+        "INVALID_USER_ID": "User ID invalid!",
         "IP_UNKNOWN": "Unable to determine IP",
         "NETWORK_ERROR": "A network error occurred. Please check your connection and try again.",
         "UNKNOWN_ERROR": "An unexpected error occurred. Please try again later.",
@@ -607,7 +641,9 @@
         "ACTIVE_MATCHES_COUNT_FETCH_FAILED": "Failed to fetch active matches for user!",
         "ACTIVE_MATCHES_COUNT_FETCHED": "Active matches fetched successfully!",
         "ACTIVE_MATCHES_FETCH_FAILED": "Failed to fetch active matches for user!",
-        "ACTIVE_MATCHES_FETCHED": "Active matches fetched successfully!"
+        "ACTIVE_MATCHES_FETCHED": "Active matches fetched successfully!",
+
+        "USERS_WITH_NO_ACCESS_FETCHED": "Users without access successfully fetched"
     },
 
     "ZodErrors": {

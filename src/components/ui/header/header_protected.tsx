@@ -28,7 +28,7 @@ import { getInitials } from "@/utils/getNameInitials";
 import type { typesUser } from "@/types/typesUser";
 
 // LUCIDE ICONS
-import { Bell, Settings, History, UserPlus, User } from 'lucide-react';
+import { Bell, Settings, History, UserPlus, User, ClipboardList } from 'lucide-react';
 
 type HeaderProps = {
     serverUserData: typesUser | undefined;
@@ -86,18 +86,23 @@ export const HeaderProtected = async ({
                                         </DropdownMenuItem>
                                     </Link>
                                     {serverUserData.isAdmin && (
-                                        <Link href={ADMIN_PAGE_ENDPOINTS.MATCH_HISTORY}>
-                                            <DropdownMenuItem>
-                                                <History className="mr-2" /> {t('matchHistory')}
-                                            </DropdownMenuItem>
-                                        </Link>
-                                    )}
-                                    {serverUserData.isAdmin && (
-                                        <Link href={ADMIN_PAGE_ENDPOINTS.ADD_TEAM_PAGE}>
-                                            <DropdownMenuItem>
-                                                <UserPlus className="mr-2" /> {t('createTeam')}
-                                            </DropdownMenuItem>
-                                        </Link>
+                                        <>
+                                            <Link href={ADMIN_PAGE_ENDPOINTS.MATCH_HISTORY}>
+                                                <DropdownMenuItem>
+                                                    <History className="mr-2" /> {t('matchHistory')}
+                                                </DropdownMenuItem>
+                                            </Link>
+                                            <Link href={ADMIN_PAGE_ENDPOINTS.ADD_TEAM_PAGE}>
+                                                <DropdownMenuItem>
+                                                    <UserPlus className="mr-2" /> {t('createTeam')}
+                                                </DropdownMenuItem>
+                                            </Link>
+                                            <Link href={ADMIN_PAGE_ENDPOINTS.ACCESS_FOR_REGISTRATIONS}>
+                                                <DropdownMenuItem>
+                                                    <ClipboardList className="mr-2" /> {t('registrations')}
+                                                </DropdownMenuItem>
+                                            </Link>
+                                        </>
                                     )}
                                     <Link href={PROTECTED_PAGE_ENDPOINTS.SETTINGS_PAGE}>
                                         <DropdownMenuItem>

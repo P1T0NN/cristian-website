@@ -59,6 +59,29 @@ export const verifyAuthWithRefresh = cache(async () => {
     redirect('/login');
 })
 
+export const checkUserAccess = async (token: string): Promise<boolean> => {
+    const payload = await verifyToken(token).catch(error => {
+        console.error('Error verifying token:', error);
+        return null;
+    });
+
+    if (!payload) {
+        return false;
+    }
+
+    const { data, error } = await supabase
+        .from('users')
+        .select('has_access')
+        .eq('id', payload.sub)
+        .single();
+
+    if (error) {
+        return false;
+    }
+
+    return data.has_access;
+}
+
 export const getUser = cache(async () => {
     const session = await verifyAuthWithRefresh();
     if (!session) return null;

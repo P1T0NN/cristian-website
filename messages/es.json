@@ -1,4 +1,15 @@
 {
+    "UnauthorizedPage": {
+        "title": "Acceso Restringido",
+        "description": "Tu cuenta está pendiente de aprobación o ha sido restringida.",
+        "explanation": "Lo sentimos, pero no tienes acceso a esta página en este momento. Esto podría deberse a que:",
+        "pending": "Tu cuenta aún está pendiente de aprobación",
+        "restricted": "Tu acceso ha sido temporalmente restringido",
+        "permissions": "Estás intentando acceder a una página que requiere permisos especiales",
+        "contactSupport": "Si crees que esto es un error, por favor contacta a nuestro equipo de soporte para obtener ayuda.",
+        "goToHomepage": "Ir a la Página de Inicio"
+    },
+
     "Header": {
         "searchPlaceholder": "Buscar jugadores...",
         "myAccount": "Mi Cuenta",
@@ -12,7 +23,8 @@
         "title": "Cris Fútbol",
         "matchHistory": "Historial de Partidos",
         "createTeam": "Crear Equipo",
-        "profile": "Perfil"
+        "profile": "Perfil",
+        "registrations": "Registros"
     },
 
     "HomePage": {
@@ -214,7 +226,9 @@
         "matchAdminStatusUpdated": "Estado de administrador de partido actualizado",
         "removeMatchAdmin": "Quitar administrador de partido",
         "makeMatchAdmin": "Hacer administrador de partido",
-        "organizer": "Organizador"
+        "organizer": "Organizador",
+        "switchTeam": "Cambiar de Equipo",
+        "playerSwitchedTeam": "El jugador cambió de equipo exitosamente"
     },
 
     "EditMatchPage": {
@@ -350,6 +364,22 @@
         "verifying": "Verificando tu correo electrónico...",
         "redirecting": "Redirigiendo a la página de inicio de sesión...",
         "returnHome": "Volver a Inicio"
+    },
+
+    "AccessForRegistrationPage": {
+        "pageTitle": "Acceso para Registro",
+        "cardTitle": "Usuarios Sin Acceso",
+        "name": "Nombre",
+        "email": "Correo",
+        "phone": "Teléfono",
+        "gender": "Género",
+        "action": "Acción",
+        "grantAccess": "Otorgar Acceso",
+        "givingAccess": "Otorgando acceso...",
+        "confirmAccessTitle": "Confirmar Otorgamiento de Acceso",
+        "confirmAccessDescription": "Si otorga acceso, este usuario podrá ver los datos de su sitio web y los partidos. ¿Está seguro de que desea continuar?",
+        "cancel": "Cancelar",
+        "confirmGrant": "Sí, Otorgar Acceso"
     },
 
     "FilterModalComponent": {
@@ -543,6 +573,9 @@
 
         "PLAYER_DETAILS_UPDATED": "Detalles del jugador actualizados con éxito",
 
+        "USER_GRANT_ACCESS_FAILED": "No se pudo otorgar acceso al usuario",
+        "USER_ACCESS_GRANTED_SUCCESSFULLY": "Acceso otorgado al usuario exitosamente",
+
         "REDIS_CONNECTION_ERROR": "No se puede conectar a la base de datos. Inténtalo de nuevo más tarde.",
         "REDIS_DISCONNECTION_ERROR": "Error al desconectar de la base de datos.",
         "REDIS_GET_ERROR": "No se puede recuperar la información de la caché. Inténtalo de nuevo.",
@@ -556,6 +589,7 @@
         "REGISTER_RATE_LIMIT": "Demasiados intentos de registro, inténtalo nuevamente después de un minuto.",
         "VERIFY_EMAIL_RATE_LIMIT": "Demasiados intentos de verificación, inténtalo nuevamente después de un minuto.",
 
+        "INVALID_USER_ID": "¡ID de usuario inválido!",
         "IP_UNKNOWN": "No se puede determinar la IP",
         "NETWORK_ERROR": "Ocurrió un error de red. Verifica tu conexión e intenta nuevamente.",
         "UNKNOWN_ERROR": "Ocurrió un error inesperado. Inténtalo nuevamente más tarde.",
@@ -609,7 +643,9 @@
         "ACTIVE_MATCHES_COUNT_FETCH_FAILED": "¡No se pudieron obtener los partidos activos del usuario!",
         "ACTIVE_MATCHES_COUNT_FETCHED": "¡Partidos activos obtenidos con éxito!",
         "ACTIVE_MATCHES_FETCH_FAILED": "¡No se pudieron obtener los partidos activos del usuario!",
-        "ACTIVE_MATCHES_FETCHED": "¡Partidos activos obtenidos con éxito!"
+        "ACTIVE_MATCHES_FETCHED": "¡Partidos activos obtenidos con éxito!",
+
+        "USERS_WITH_NO_ACCESS_FETCHED": "Usuarios sin acceso obtenidos exitosamente"
     },
 
     "ZodErrors": {

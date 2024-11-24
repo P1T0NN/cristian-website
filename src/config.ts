@@ -33,6 +33,7 @@ export const ADMIN_PAGE_ENDPOINTS = {
     ADD_TEAM_PAGE: "/add_team",
     TEAM_PAGE: "/team",
     MATCH_HISTORY: "/match_history",
+    ACCESS_FOR_REGISTRATIONS: "/access_for_registrations"
 };
 
 // Helper function to get all protected routes
