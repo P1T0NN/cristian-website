@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache';
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
+import type { TranslationValues } from 'next-intl';
 import { jwtVerify } from 'jose';
 
 // SERVICES
@@ -14,57 +15,73 @@ import { upstashRedisCacheService } from '@/services/server/redis-cache.service'
 // CONFIG
 import { CACHE_KEYS } from '@/config';
 
+// We need these types because of how supabase.rpc returns messages
+enum MessageCode {
+    MATCH_FINISHED_SUCCESSFULLY = 'MATCH_FINISHED_SUCCESSFULLY',
+    MATCH_NOT_FOUND = 'MATCH_NOT_FOUND',
+    FAILED_TO_INSERT_MATCH_HISTORY = 'FAILED_TO_INSERT_MATCH_HISTORY',
+    FAILED_TO_UPDATE_USER_DEBT = 'FAILED_TO_UPDATE_USER_DEBT',
+    FAILED_TO_INSERT_DEBT = 'FAILED_TO_INSERT_DEBT',
+    FAILED_TO_DELETE_MATCH = 'FAILED_TO_DELETE_MATCH',
+    UNEXPECTED_ERROR = 'UNEXPECTED_ERROR'
+}
+
+type RPCResponseData = {
+    success: boolean;
+    code: MessageCode;
+    metadata?: TranslationValues; 
+}
+
 export async function finishMatch(authToken: string, matchId: string) {
-    const genericMessages = await getTranslations("GenericMessages");
+    const t = await getTranslations("GenericMessages");
 
     if (!authToken || !matchId) {
-        return { success: false, message: genericMessages(authToken ? 'MATCH_ID_INVALID' : 'UNAUTHORIZED') };
+        return { success: false, message: t(authToken ? 'MATCH_ID_INVALID' : 'UNAUTHORIZED') };
     }
 
-    const verifyResult = await jwtVerify(authToken, new TextEncoder().encode(process.env.JWT_SECRET));
+    const verifyResult = await jwtVerify(
+        authToken, 
+        new TextEncoder().encode(process.env.JWT_SECRET)
+    );
+    
     if (!verifyResult) {
-        return { success: false, message: genericMessages('JWT_DECODE_ERROR') };
+        return { success: false, message: t('JWT_DECODE_ERROR') };
     }
 
     // Call the Supabase RPC function
-    const { data: result, error } = await supabase.rpc('finish_match', { p_match_id: matchId });
+    const { data, error } = await supabase.rpc('finish_match', {
+        p_match_id: matchId
+    });
+    const result = data as RPCResponseData;
 
     if (error) {
-        return { 
-            success: false, 
-            message: genericMessages('MATCH_FINISH_FAILED'),
-        };
+        return { success: false, message: t('MATCH_FINISH_FAILED') };
     }
 
     if (!result.success) {
-        return { 
-            success: false, 
-            message: genericMessages(result.message_code),
-        };
+        return { success: false, message: t(result.code, result.metadata) };
     }
 
     await upstashRedisCacheService.delete(`${CACHE_KEYS.MATCH_PREFIX}${matchId}`);
     revalidatePath("/");
 
-    return { success: true, message: genericMessages(result.message_code) };
+    return { success: true, message: t(result.code, result.metadata) };
 }
 
 /*
 
-CREATE OR REPLACE FUNCTION finish_match(p_match_id UUID)
-RETURNS JSONB AS $$
+CREATE OR REPLACE FUNCTION finish_match(p_match_id UUID) RETURNS JSONB AS $$
 DECLARE
     v_match RECORD;
     v_player RECORD;
     v_new_debt NUMERIC;
-    v_error_message TEXT;
 BEGIN
     -- Fetch match data
     SELECT * INTO v_match FROM matches WHERE id = p_match_id;
     IF NOT FOUND THEN
-        RETURN jsonb_build_object('success', false, 'message', 'Match not found');
+        RETURN jsonb_build_object('success', false, 'code', 'MATCH_ID_INVALID');
     END IF;
-
+    
     -- Insert into match_history
     BEGIN
         INSERT INTO match_history (
@@ -80,10 +97,9 @@ BEGIN
         );
     EXCEPTION
         WHEN OTHERS THEN
-            GET STACKED DIAGNOSTICS v_error_message = MESSAGE_TEXT;
-            RETURN jsonb_build_object('success', false, 'message', 'Failed to insert into match_history: ' || v_error_message);
+            RETURN jsonb_build_object('success', false, 'code', 'MATCH_HISTORY_INSERT_FAILED');
     END;
-
+    
     -- Process each player
     FOR v_player IN SELECT * FROM match_players WHERE match_id = p_match_id
     LOOP
@@ -96,15 +112,14 @@ BEGIN
                 RETURNING player_debt INTO v_new_debt;
             EXCEPTION
                 WHEN OTHERS THEN
-                    GET STACKED DIAGNOSTICS v_error_message = MESSAGE_TEXT;
-                    RETURN jsonb_build_object('success', false, 'message', 'Failed to update user debt: ' || v_error_message);
+                    RETURN jsonb_build_object('success', false, 'code', 'USER_DEBT_UPDATE_FAILED');
             END;
-
+            
             -- Insert into debts table
             BEGIN
                 INSERT INTO debts (player_name, player_debt, cristian_debt, reason, added_by)
                 SELECT 
-                    "fullName",  -- Note the double quotes around fullName
+                    "fullName",
                     v_match.price,
                     0,
                     'Unpaid match fee for match on ' || v_match.starts_at_day,
@@ -113,26 +128,23 @@ BEGIN
                 WHERE id = v_player.user_id;
             EXCEPTION
                 WHEN OTHERS THEN
-                    GET STACKED DIAGNOSTICS v_error_message = MESSAGE_TEXT;
-                    RETURN jsonb_build_object('success', false, 'message', 'Failed to insert into debts table: ' || v_error_message);
+                    RETURN jsonb_build_object('success', false, 'code', 'DEBT_CREATION_FAILED');
             END;
         END IF;
     END LOOP;
-
+    
     -- Delete the match
     BEGIN
         DELETE FROM matches WHERE id = p_match_id;
     EXCEPTION
         WHEN OTHERS THEN
-            GET STACKED DIAGNOSTICS v_error_message = MESSAGE_TEXT;
-            RETURN jsonb_build_object('success', false, 'message', 'Failed to delete match: ' || v_error_message);
+            RETURN jsonb_build_object('success', false, 'code', 'MATCH_DELETION_FAILED');
     END;
-
-    RETURN jsonb_build_object('success', true, 'message', 'Match finished successfully');
+    
+    RETURN jsonb_build_object('success', true, 'code', 'MATCH_FINISHED_SUCCESSFULLY');
 EXCEPTION
     WHEN OTHERS THEN
-        GET STACKED DIAGNOSTICS v_error_message = MESSAGE_TEXT;
-        RETURN jsonb_build_object('success', false, 'message', 'Unexpected error: ' || v_error_message);
+        RETURN jsonb_build_object('success', false, 'code', 'UNKNOWN_ERROR');
 END;
 $$ LANGUAGE plpgsql;
 

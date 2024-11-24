@@ -530,7 +530,7 @@
         "TEAM_SEARCH_FAILED": "Error al buscar equipo",
 
         "MATCH_HISTORY_INSERT_FAILED": "No se pudo agregar el partido al historial",
-        "MATCH_FINISHED": "El partido ha sido finalizado y movido al historial",
+        "MATCH_FINISHED_SUCCESSFULLY": "El partido ha sido finalizado y movido al historial",
         "MATCH_HISTORY_DELETION_FAILED": "¡Error al eliminar el partido del historial de partidos!",
         "MATCH_HISTORY_DELETED": "¡Partido eliminado exitosamente del historial de partidos!",
 

@@ -534,7 +534,7 @@
         "TEAM_SEARCH_FAILED": "Failed to search for team",
 
         "MATCH_HISTORY_INSERT_FAILED": "Failed to add match into history",
-        "MATCH_FINISHED": "Match has been finished and moved to history",
+        "MATCH_FINISHED_SUCCESSFULLY": "Match has been finished and moved to history",
         "MATCH_HISTORY_DELETION_FAILED": "Failed to delete match from match history!",
         "MATCH_HISTORY_DELETED": "Match successfully deleted from match history!",
 
