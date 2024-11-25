@@ -15,14 +15,16 @@ import { formatTime, formatDate } from "@/utils/dateUtils";
 import type { typesMatch } from "@/types/typesMatch";
 
 // LUCIDE ICONS
-import { MapPin, Users, Clock, User } from 'lucide-react';
+import { MapPin, Users, Clock, User, Star } from 'lucide-react';
 
 type MatchCardProps = {
     match: typesMatch;
+    isAdmin: boolean;
 };
 
 export const MatchCard = async ({ 
-    match 
+    match,
+    isAdmin
 }: MatchCardProps) => {
     const t = await getTranslations("MatchPage");
 
@@ -100,6 +102,12 @@ export const MatchCard = async ({
                                     <Users className="w-3 h-3 mr-1" />
                                     {placesLeft} {t('placesLeft')}
                                 </span>
+                                {isAdmin && match.match_level && (
+                                    <span className="text-xs bg-yellow-100 px-2 py-1 rounded-full text-yellow-600 flex items-center">
+                                        <Star className="w-3 h-3 mr-1" />
+                                        {t('matchLevel')}: {match.match_level}
+                                    </span>
+                                )}
                             </div>
                         </div>
                         {match.match_instructions && (

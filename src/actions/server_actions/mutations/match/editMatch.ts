@@ -47,7 +47,8 @@ export async function editMatch(authToken: string, matchId: string, editMatchDat
             match_type: editMatchData.match_type,
             match_gender: editMatchData.match_gender,
             match_duration: editMatchData.match_duration,
-            added_by: editMatchData.added_by
+            added_by: editMatchData.added_by,
+            match_level: editMatchData.match_level
         })
         .eq('id', matchId);
 

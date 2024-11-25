@@ -38,6 +38,7 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
     const date = url.searchParams.get('date');
     const gender = url.searchParams.get('gender');
     const isAdmin = url.searchParams.get('isAdmin') === 'true';
+    const playerLevel = url.searchParams.get('playerLevel');
 
     let matchesQuery = supabase
         .from('matches')
@@ -62,7 +63,14 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
         return NextResponse.json({ success: true, message: fetchMessages('NO_MATCHES_FOUND'), data: [] });
     }
 
-    const cachedMatches = await Promise.all(dbMatches.map(async (match) => {
+    const filteredMatches = dbMatches.filter(match => {
+        if (isAdmin) return true;
+        if (!playerLevel) return false;
+        // We add match.match_level && check here just in case if match has match_level NULL for some reason, so it doesn't throw error at .includes
+        return match.match_level && match.match_level.includes(playerLevel);
+    });
+
+    const cachedMatches = await Promise.all(filteredMatches.map(async (match) => {
         const cacheKey = `${CACHE_KEYS.MATCH_PREFIX}${match.id}`;
         const cachedMatch = await upstashRedisCacheService.get<typesMatch>(cacheKey);
         

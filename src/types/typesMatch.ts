@@ -17,4 +17,5 @@ export type typesMatch = {
     match_instructions: string;
     places_occupied: number;
     created_at: Date;
+    match_level: string;
 };

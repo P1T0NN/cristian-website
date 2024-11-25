@@ -77,13 +77,22 @@ export const MatchDetailsSection = ({
                 error={errors.match_gender}
             />
             <FormInputField
-                label={t("match_duration")}
+                label={t("matchDuration")}
                 name="match_duration"
                 type="number"
                 value={formData.match_duration}
                 onChange={handleInputChange}
                 placeholder={t('matchDurationPlaceholder')}
                 error={errors.match_duration}
+            />
+            <FormInputField
+                label={t("matchLevel")}
+                name="match_level"
+                type="text"
+                value={formData.match_level}
+                onChange={handleInputChange}
+                placeholder={t('matchLevelPlaceholder')}
+                error={errors.match_level}
             />
         </div>
     );

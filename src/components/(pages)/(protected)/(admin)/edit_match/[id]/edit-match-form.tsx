@@ -62,7 +62,8 @@ export const EditMatchForm = ({
             match_type: matchData.match_type || "",
             match_gender: matchData.match_gender || "",
             match_duration: matchData.match_duration || 60,
-            added_by: matchData.added_by || ""
+            added_by: matchData.added_by || "",
+            match_level: matchData.match_level || ""
         },
         validationSchema: addMatchSchema,
         onSubmit: async (values) => {

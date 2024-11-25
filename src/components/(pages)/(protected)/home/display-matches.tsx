@@ -26,8 +26,10 @@ export const DisplayMatches = async ({
 }: DisplayMatchesProps) => {
     const t = await getTranslations("HomePage");
 
-    const serverMatchesData = await serverFetchMatches(serverUserData.gender, serverUserData.isAdmin, date);
+    const serverMatchesData = await serverFetchMatches(serverUserData.gender, serverUserData.isAdmin, serverUserData.player_level, date);
     const matchesData = serverMatchesData.data as typesMatch[];
+
+    const isAdmin = serverUserData.isAdmin;
 
     return (
         <div className="space-y-4">
@@ -46,7 +48,11 @@ export const DisplayMatches = async ({
             ) : (
                 <div className="space-y-4">
                     {matchesData.map((match) => (
-                        <MatchCard key={match.id} match={match} />
+                        <MatchCard 
+                            key={match.id} 
+                            match={match} 
+                            isAdmin={isAdmin}
+                        />
                     ))}
                 </div>
             )}

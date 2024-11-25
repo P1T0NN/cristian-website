@@ -56,7 +56,8 @@ export const AddMatchDetails = ({
             match_type: "",
             match_gender: "",
             match_duration: 60,
-            added_by: serverUserData.fullName
+            added_by: serverUserData.fullName,
+            match_level: "",
         },
         validationSchema: addMatchSchema,
         onSubmit: async (values) => {

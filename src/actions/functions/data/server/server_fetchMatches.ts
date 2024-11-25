@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 // TYPES
 import type { APIResponse } from "@/types/responses/APIResponse";
 
-export async function serverFetchMatches(gender: string, isAdmin: boolean, date?: string): Promise<APIResponse> {
+export async function serverFetchMatches(gender: string, isAdmin: boolean, playerLevel: string, date?: string): Promise<APIResponse> {
     const cookieStore = await cookies();
     const authToken = cookieStore.get('auth_token')?.value;
 
@@ -20,6 +20,10 @@ export async function serverFetchMatches(gender: string, isAdmin: boolean, date?
 
     if (isAdmin !== undefined) {
         url.searchParams.append('isAdmin', isAdmin.toString());
+    }
+
+    if (playerLevel) {
+        url.searchParams.append('playerLevel', playerLevel);
     }
 
     const response = await fetch(url.toString(), {

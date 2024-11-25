@@ -28,7 +28,7 @@
     },
 
     "HomePage": {
-        "upcoming": "Próximos",
+        "upcoming": "Mis Partidos",
         "availableEvents": "Eventos disponibles",
         "refresh": "Actualizar",
         "noEventsAvailable": "No hay eventos disponibles en este momento."
@@ -110,7 +110,9 @@
         "locationUrl": "Enlace de ubicación",
         "locationUrlPlaceholder": "Pega el enlace de Google Maps",
         "matchDuration": "Duración del Partido (minutos)",
-        "matchDurationPlaceholder": "Ingrese la duración del partido en minutos"
+        "matchDurationPlaceholder": "Ingrese la duración del partido en minutos",
+        "matchLevel": "Nivel del Partido (ABCD)",
+        "matchLevelPlaceholder": "Ingrese el nivel del partido"
     },
 
     "AddDebtPage": {
@@ -228,7 +230,8 @@
         "makeMatchAdmin": "Hacer administrador de partido",
         "organizer": "Organizador",
         "switchTeam": "Cambiar de Equipo",
-        "playerSwitchedTeam": "El jugador cambió de equipo exitosamente"
+        "playerSwitchedTeam": "El jugador cambió de equipo exitosamente",
+        "matchLevel": "Match Nivel"
     },
 
     "EditMatchPage": {
@@ -674,7 +677,9 @@
         "REASON_TOO_LONG": "La razón no puede exceder los 255 caracteres",
         "LOCATION_NAME_REQUIRED": "Se requiere el nombre de la ubicación",
         "LOCATION_URL_REQUIRED": "Se requiere la URL de Google Maps de la ubicación",
-        "MATCH_DURATION_REQUIRED": "La duración del partido es obligatoria"
+        "MATCH_DURATION_REQUIRED": "La duración del partido es obligatoria",
+        "MATCH_LEVEL_REQUIRED": "El nivel del partido es obligatorio",
+        "MATCH_LEVEL_TOO_LONG": "El nivel del partido no puede tener más de 4 letras. (Máximo 'ABCD')"
     },
 
     "EmailTemplateMessages": {

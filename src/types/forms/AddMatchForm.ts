@@ -10,4 +10,5 @@ export type typesAddMatchForm = {
     match_gender: string;
     match_duration: number;
     added_by: string;
+    match_level: string;
 }

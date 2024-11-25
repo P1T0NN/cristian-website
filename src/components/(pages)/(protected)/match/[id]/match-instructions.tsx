@@ -31,7 +31,7 @@ export const MatchInstructions = async ({
             <CardContent className="p-4">
                 <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
-                        <div className="prose prose-sm dark:prose-invert max-w-none">
+                        <div className="whitespace-pre-wrap break-words">
                             {instructions || t('noInstructions')}
                         </div>
                     </div>

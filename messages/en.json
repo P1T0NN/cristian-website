@@ -28,7 +28,7 @@
     },
     
     "HomePage": {
-        "upcoming": "Upcoming",
+        "upcoming": "My Matches",
         "availableEvents": "Available Events",
         "refresh": "Refresh",
         "noEventsAvailable": "No events available at this time."
@@ -110,7 +110,9 @@
         "locationUrl": "Location Url",
         "locationUrlPlaceholder": "Paste google maps location link",
         "matchDuration": "Match Duration (minutes)",
-        "matchDurationPlaceholder": "Enter match duration in minutes"
+        "matchDurationPlaceholder": "Enter match duration in minutes",
+        "matchLevel": "Match Level (ABCD)",
+        "matchLevelPlaceholder": "Enter match level"
     },
 
     "AddDebtPage": {
@@ -228,7 +230,8 @@
         "makeMatchAdmin": "Make match admin",
         "organizer": "Organizer",
         "switchTeam": "Switch Team",
-        "playerSwitchedTeam": "Player switched team successfully"
+        "playerSwitchedTeam": "Player switched team successfully",
+        "matchLevel": "Match Level"
     },
 
     "EditMatchPage": {
@@ -672,7 +675,9 @@
         "REASON_TOO_LONG": "Reason cannot exceed 255 characters",
         "LOCATION_NAME_REQUIRED": "Location name is required",
         "LOCATION_URL_REQUIRED": "Google Maps URL of location is required",
-        "MATCH_DURATION_REQUIRED": "Match duration is required"
+        "MATCH_DURATION_REQUIRED": "Match duration is required",
+        "MATCH_LEVEL_REQUIRED": "Match level is required",
+        "MATCH_LEVEL_TOO_LONG": "Match level cannot be more than 4 letters. (Max 'ABCD')"
     },
 
     "EmailTemplateMessages": {

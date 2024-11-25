@@ -51,7 +51,8 @@ export const useZodSchemas = () => {
             errorMap: () => ({ message: t('MATCH_GENDER_REQUIRED') })
         }),
         match_duration: z.number().min(1, { message: t('MATCH_DURATION_REQUIRED') }),
-        added_by: z.string()
+        added_by: z.string(),
+        match_level: z.string().min(1, { message: t('MATCH_LEVEL_REQUIRED') }).max(4, { message: t('MATCH_LEVEL_TOO_LONG') })
     });
 
     const addDebtSchema = z.object({
