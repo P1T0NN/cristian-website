@@ -23,7 +23,7 @@ export const EditMatchDetails = async ({
 
     return (
         <>
-            <CardContent>
+            <CardContent className="p-4 sm:p-6">
                 <EditMatchForm
                     authToken={authToken}
                     matchId={matchId}
@@ -31,7 +31,7 @@ export const EditMatchDetails = async ({
                 />
             </CardContent>
 
-            <CardFooter className="flex w-full">
+            <CardFooter className="flex w-full p-4 sm:p-6">
                 <CancelEditButton />
             </CardFooter>
         </>

@@ -23,7 +23,7 @@ export const AddMatchButton = () => {
 
     return (
         <Button
-            className="font-bold rounded-lg w-[115px]"
+            className="font-bold rounded-lg w-full sm:w-[115px]"
             onClick={handleRedirectToAddMatch}
         >
             {t('newMatch')}

@@ -76,15 +76,16 @@ export const MatchCard = async ({
         <Link href={`/match/${match.id}`} className="block w-full">
             <Card className="w-full transition-shadow hover:shadow-md">
                 <CardContent className="p-4">
-                    <div className="flex items-start gap-4">
-                        <div className="flex flex-col items-center">
-                            <div className="text-3xl font-bold leading-none">{formattedTime}</div>
-                            <div className="text-sm text-muted-foreground mt-1">{formattedDate}</div>
-                        </div>
-                        <div className="flex-1 min-w-0">
+                    <div className="flex flex-col gap-4">
+                        <div className="flex justify-between items-start">
                             <div className="flex items-center gap-2">
-                                <h3 className="font-semibold text-lg truncate">{title}</h3>
+                                <div className="text-2xl font-bold leading-none">{formattedTime}</div>
+                                <div className="text-sm text-muted-foreground">{formattedDate}</div>
                             </div>
+                            <div className="font-semibold text-lg">{match.price}€</div>
+                        </div>
+                        <div>
+                            <h3 className="font-semibold text-lg truncate">{title}</h3>
                             <div className="flex flex-wrap items-center gap-2 mt-2">
                                 <span className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600">{format}</span>
                                 <span className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600 flex items-center">
@@ -100,23 +101,19 @@ export const MatchCard = async ({
                                     {placesLeft} {t('placesLeft')}
                                 </span>
                             </div>
-                            {match.match_instructions && (
-                                <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{match.match_instructions}</p>
-                            )}
                         </div>
-                        <div className="text-right flex flex-col items-end gap-1">
-                            <div className="font-semibold text-lg">{match.price}€</div>
-                        </div>
-                    </div>
-        
-                    <div className="w-full mt-3 flex items-center justify-between text-sm text-muted-foreground">
-                        <div className="flex items-center">
-                            <User className="w-4 h-4 mr-2" />
-                            {t('organizer')}: {match.added_by}
-                        </div>
-                        <div className="flex items-center">
-                            <MapPin className="w-4 h-4 mr-2" />
-                            {match.location}
+                        {match.match_instructions && (
+                            <p className="text-sm text-muted-foreground line-clamp-2">{match.match_instructions}</p>
+                        )}
+                        <div className="flex flex-col gap-2 text-sm text-muted-foreground">
+                            <div className="flex items-center">
+                                <User className="w-4 h-4 mr-2" />
+                                {t('organizer')}: {match.added_by}
+                            </div>
+                            <div className="flex items-center">
+                                <MapPin className="w-4 h-4 mr-2" />
+                                {match.location}
+                            </div>
                         </div>
                     </div>
                 </CardContent>

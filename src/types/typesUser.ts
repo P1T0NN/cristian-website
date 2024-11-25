@@ -18,6 +18,7 @@ export type typesUser = {
     dni: string;
     country: string;
     has_access: boolean;
+    balance: number;
     debts?: typesDebt[];
     matchPlayer?: typesMatchPlayer;
 };

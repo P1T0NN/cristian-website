@@ -89,7 +89,7 @@ export function SearchBar({
                     value={query}
                     onChange={handleInputChange}
                     placeholder="Search players or teams..."
-                    className="pr-10"
+                    className="pr-10 h-9 sm:h-10"
                     aria-expanded={isOpen}
                 />
                 <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -103,7 +103,7 @@ export function SearchBar({
                                 <Button
                                     key={user.id}
                                     variant="ghost"
-                                    className="w-full justify-start font-normal"
+                                    className="w-full justify-start font-normal text-sm"
                                     asChild
                                 >
                                     <Link 
@@ -123,7 +123,7 @@ export function SearchBar({
                                 <Button
                                     key={team.id}
                                     variant="ghost"
-                                    className="w-full justify-start font-normal"
+                                    className="w-full justify-start font-normal text-sm"
                                     asChild
                                 >
                                     <Link 

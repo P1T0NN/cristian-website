@@ -82,49 +82,56 @@ export const AddDebtForm = ({
     };
 
     return (
-        <div className="flex flex-col space-y-4">
-           <div className="relative w-[350px] space-y-1">
+        <div className="flex flex-col space-y-6">
+           <div className="space-y-2">
                 <Label htmlFor="player_name">{t("playerName")}</Label>
-                <Input
-                    type="text"
-                    name="player_name"
-                    value={formData.player_name}
-                    onChange={handleUserSearch}
-                    placeholder={t("playerNamePlaceholder")}
-                    autoComplete="off"
-                    disabled={!!initialPlayerName}
-                />
-                {errors.player_name && (
-                    <p className="text-red-500 text-sm">{errors.player_name}</p>
-                )}
-
-                {!initialPlayerName && (
-                    <SearchDropdown<User>
-                        authToken={authToken}
-                        searchTerm={formData.player_name}
-                        isDropdownOpen={showDropdown}
-                        setIsDropdownOpen={setShowDropdown}
-                        onSelect={handleUserSelect}
-                        fetchData={client_fetchUsers}
-                        getDisplayValue={(user) => user.fullName}
-                        queryKey="users"
+                <div className="relative">
+                    <Input
+                        type="text"
+                        id="player_name"
+                        name="player_name"
+                        value={formData.player_name}
+                        onChange={handleUserSearch}
+                        placeholder={t("playerNamePlaceholder")}
+                        autoComplete="off"
+                        disabled={!!initialPlayerName}
+                        className="w-full"
                     />
-                )}
+                    {errors.player_name && (
+                        <p className="text-red-500 text-sm mt-1">{errors.player_name}</p>
+                    )}
+
+                    {!initialPlayerName && (
+                        <div className="absolute z-10 w-full">
+                            <SearchDropdown<User>
+                                authToken={authToken}
+                                searchTerm={formData.player_name}
+                                isDropdownOpen={showDropdown}
+                                setIsDropdownOpen={setShowDropdown}
+                                onSelect={handleUserSelect}
+                                fetchData={client_fetchUsers}
+                                getDisplayValue={(user) => user.fullName}
+                                queryKey="users"
+                            />
+                        </div>
+                    )}
+                </div>
             </div>
 
-            {/* Rest of the component remains unchanged */}
-            <div className="flex flex-col space-y-2">
+            <div className="space-y-2">
                 <Label htmlFor="selectDebtType">{t("selectDebtType")}</Label>
-                <div className="flex space-x-4">
+                <div className="flex flex-wrap gap-2">
                     <Button
                         variant={selectedOption === "player" ? "secondary" : "outline"}
                         onClick={() => setSelectedOption("player")}
+                        className="flex-1"
                     >
                         {t("playerOwes")}
                     </Button>
                     <Button
                         variant={selectedOption === "cristian" ? "secondary" : "outline"}
                         onClick={() => setSelectedOption("cristian")}
+                        className="flex-1"
                     >
                         {t("iOwe")}
                     </Button>
@@ -132,41 +139,47 @@ export const AddDebtForm = ({
             </div>
 
             {selectedOption === "player" && (
-                <div className="relative w-[350px] space-y-1">
+                <div className="space-y-2">
                     <Label htmlFor="player_debt">{t("debt")}</Label>
                     <Input
                         type="number"
+                        id="player_debt"
                         name="player_debt"
                         value={formData.player_debt === 0 ? '' : formData.player_debt.toString()}
                         onChange={handleInputChange}
                         placeholder={t("playerDebtPlaceholder")}
+                        className="w-full"
                     />
                     {errors.player_debt && <p className="text-red-500 text-sm">{errors.player_debt}</p>}
                 </div>
             )}
 
             {selectedOption === "cristian" && (
-                <div className="relative w-[350px] space-y-1">
+                <div className="space-y-2">
                     <Label htmlFor="cristian_debt">{t("debt")}</Label>
                     <Input
                         type="number"
+                        id="cristian_debt"
                         name="cristian_debt"
                         value={formData.cristian_debt === 0 ? '' : formData.cristian_debt.toString()}
                         onChange={handleInputChange}
                         placeholder={t("cristianDebtPlaceholder")}
+                        className="w-full"
                     />
                     {errors.cristian_debt && <p className="text-red-500 text-sm">{errors.cristian_debt}</p>}
                 </div>
             )}
 
-            <div className="relative w-[350px] space-y-1">
+            <div className="space-y-2">
                 <Label htmlFor="reason">{t("reason")}</Label>
                 <Input
                     type="text"
+                    id="reason"
                     name="reason"
                     value={formData.reason}
                     onChange={handleInputChange}
                     placeholder={t("reasonPlaceholder")}
+                    className="w-full"
                 />
                 {errors.reason && <p className="text-red-500 text-sm">{errors.reason}</p>}
             </div>

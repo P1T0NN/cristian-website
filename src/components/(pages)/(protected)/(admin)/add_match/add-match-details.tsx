@@ -75,7 +75,7 @@ export const AddMatchDetails = ({
 
     return (
         <>
-            <CardContent>
+            <CardContent className="p-6">
                 <AddMatchForm
                     authToken={authToken}
                     formData={formData}
@@ -84,8 +84,12 @@ export const AddMatchDetails = ({
                 />
             </CardContent>
 
-            <CardFooter>
-                <Button disabled={isPending} className="w-[150px] font-bold" onClick={handleSubmit}>
+            <CardFooter className="flex justify-end p-6">
+                <Button 
+                    disabled={isPending} 
+                    className="w-full sm:w-[150px] font-bold" 
+                    onClick={handleSubmit}
+                >
                     {isPending ? t('adding') : t('addMatch')}
                 </Button>
             </CardFooter>

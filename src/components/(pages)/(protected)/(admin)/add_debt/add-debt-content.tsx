@@ -88,9 +88,9 @@ export const AddDebtContent = ({
 
     return (
         <div className="flex w-full h-full items-center justify-center">
-            <Card>
+            <Card className="w-full max-w-md">
                 <CardHeader>
-                    <CardTitle>{t("hello")} {serverUserData.fullName}</CardTitle>
+                    <CardTitle className="text-2xl">{t("hello")} {serverUserData.fullName}</CardTitle>
                     <CardDescription>{t("description")}</CardDescription>
                 </CardHeader>
 
@@ -107,7 +107,11 @@ export const AddDebtContent = ({
                 </CardContent>
 
                 <CardFooter>
-                    <Button disabled={isPending} className="w-[150px] font-bold" onClick={handleSubmit}>
+                    <Button 
+                        disabled={isPending} 
+                        className="w-full sm:w-[150px] font-bold" 
+                        onClick={handleSubmit}
+                    >
                         {isPending ? t("adding") : t("addDebt")}
                     </Button>
                 </CardFooter>

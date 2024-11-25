@@ -23,10 +23,10 @@ export const CancelEditButton = () => {
     return (
         <Button 
             variant="outline" 
-            className="w-full"
+            className="w-full sm:w-auto"
             onClick={handleCancelButton}
         >
             {t('cancel')}
         </Button>
-)
+    )
 }

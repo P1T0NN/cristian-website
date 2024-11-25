@@ -109,7 +109,7 @@
         "addNewLocation": "Location",
         "locationUrl": "Location Url",
         "locationUrlPlaceholder": "Paste google maps location link",
-        "match_duration": "Match Duration (minutes)",
+        "matchDuration": "Match Duration (minutes)",
         "matchDurationPlaceholder": "Enter match duration in minutes"
     },
 

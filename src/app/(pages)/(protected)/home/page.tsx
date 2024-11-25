@@ -27,11 +27,15 @@ export default async function HomePage({
 
     return (
         <div className="min-h-screen bg-background">
-            <main className="container mx-auto p-4 space-y-4">
-                <Suspense fallback={<DisplayCalendarLoading />} >
-                    <div className="flex w-full justify-between">
-                        <DisplayCalendar />
-                        <MyActiveMatches currentUserId={serverUserData.id} />
+            <main className="container mx-auto p-4 space-y-6">
+                <Suspense fallback={<DisplayCalendarLoading />}>
+                    <div className="flex flex-col gap-6">
+                        <div className="w-full">
+                            <DisplayCalendar />
+                        </div>
+                        <div className="w-full">
+                            <MyActiveMatches currentUserId={serverUserData.id} />
+                        </div>
                     </div>
                 </Suspense>
         

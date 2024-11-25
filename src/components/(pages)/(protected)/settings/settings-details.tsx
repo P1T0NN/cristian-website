@@ -31,11 +31,11 @@ export const SettingsDetails = async () => {
 
     return (
         <Tabs defaultValue="account" className="space-y-4">
-            <TabsList>
-                <TabsTrigger value="account">{t('account')}</TabsTrigger>
-                <TabsTrigger value="appearance">{t('appearance')}</TabsTrigger>
-                <TabsTrigger value="notifications">{t('notifications')}</TabsTrigger>
-                {/*<TabsTrigger value="security">{t('security')}</TabsTrigger>*/}
+            <TabsList className="flex flex-wrap justify-start gap-2">
+                <TabsTrigger value="account" className="flex-grow sm:flex-grow-0">{t('account')}</TabsTrigger>
+                <TabsTrigger value="appearance" className="flex-grow sm:flex-grow-0">{t('appearance')}</TabsTrigger>
+                <TabsTrigger value="notifications" className="flex-grow sm:flex-grow-0">{t('notifications')}</TabsTrigger>
+                {/*<TabsTrigger value="security" className="flex-grow sm:flex-grow-0">{t('security')}</TabsTrigger>*/}
             </TabsList>
 
             <TabsContent value="account">

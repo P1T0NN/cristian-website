@@ -82,7 +82,7 @@ export function EditPlayerDetails({
                     <DialogTitle>{t('editPlayerInformation')}</DialogTitle>
                 </DialogHeader>
 
-                <form action={handleEditPlayerDetails} className="space-y-4">
+                <form onSubmit={(e) => { e.preventDefault(); handleEditPlayerDetails(); }} className="space-y-4">
                     <FormInputField
                         label={t('phoneNumber')}
                         name="phoneNumber"
@@ -108,7 +108,8 @@ export function EditPlayerDetails({
                                 value={dni}
                                 onChange={(e) => setDNI(e.target.value)}
                                 placeholder={t('enterDNI')}
-                            />
+                            
+/>
                             <FormInputField
                                 label={t('playerLevel')}
                                 name="level"

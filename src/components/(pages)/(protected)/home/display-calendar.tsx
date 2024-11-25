@@ -42,30 +42,27 @@ export const DisplayCalendar = () => {
 
     return (
         <div className="space-y-4">
-            <div className="flex justify-between items-center">
-                <h2 className="text-xl font-semibold">
-                    {format(selectedDate, "EEEE d 'de' MMMM", { locale: es })}
-                </h2>
-            </div>
-            <div className="flex gap-2 overflow-x-auto pb-2 px-4">
+            <h2 className="text-xl font-semibold">
+                {format(selectedDate, "EEEE d 'de' MMMM", { locale: es })}
+            </h2>
+            <div className="grid grid-cols-7 gap-1">
                 {days.map((day) => (
                     <Link
                         key={day.number}
-                        prefetch={true}
                         href={`${PROTECTED_PAGE_ENDPOINTS.HOME_PAGE}/?date=${format(day.date, 'yyyy-MM-dd')}`}
-                        passHref
+                        className="block"
                     >
                         <Button
                             variant={isSameDay(day.date, selectedDate) ? "default" : "outline"}
                             className={cn(
-                                "flex-shrink-0 h-auto py-2",
+                                "w-full h-auto py-2",
                                 day.isToday && "border-primary"
                             )}
                             onClick={() => setSelectedDate(day.date)}
                         >
                             <div className="text-center">
-                                <div className="text-sm">{day.name}</div>
-                                <div className="text-2xl font-bold">{day.number}</div>
+                                <div className="text-xs">{day.name}</div>
+                                <div className="text-sm font-bold">{day.number}</div>
                             </div>
                         </Button>
                     </Link>

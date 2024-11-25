@@ -32,6 +32,14 @@ type PlayerDetailsProps = {
     currentUserData: typesUser;
 }
 
+const InfoItem = ({ icon, text, value }: { icon: React.ReactNode, text: string, value?: React.ReactNode }) => (
+    <div className="flex items-center space-x-4">
+        {icon}
+        <span className="flex-grow">{text}</span>
+        {value && value}
+    </div>
+)
+
 export const PlayerDetails = async ({
     playerId,
     currentUserData
@@ -50,14 +58,14 @@ export const PlayerDetails = async ({
     return (
         <Card className="max-w-4xl mx-auto">
             <CardHeader className="pb-0">
-                <div className="flex items-center space-x-4">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-4">
                     <Avatar className="h-20 w-20">
                         <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${playerData.fullName}`} />
                         <AvatarFallback>{playerData.fullName.split(' ').map(n => n[0]).join('').toUpperCase()}</AvatarFallback>
                     </Avatar>
-                    <div>
+                    <div className="text-center sm:text-left">
                         <CardTitle className="text-2xl font-bold">{playerData.fullName}</CardTitle>
-                        <div className="flex items-center mt-1 space-x-2">
+                        <div className="flex flex-wrap justify-center sm:justify-start items-center mt-1 gap-2">
                             {playerData.is_verified && (
                                 <Badge variant="secondary" className="text-xs">
                                     <CheckCircle className="w-3 h-3 mr-1" />
@@ -76,49 +84,18 @@ export const PlayerDetails = async ({
             </CardHeader>
             <CardContent className="pt-6">
                 <div className="grid gap-4 mb-6">
-                    <div className="flex items-center space-x-4">
-                        <Mail className="h-5 w-5 text-muted-foreground" />
-                        <span>{playerData.email}</span>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <Phone className="h-5 w-5 text-muted-foreground" />
-                        <span>{playerData.phoneNumber}</span>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <MapPin className="h-5 w-5 text-muted-foreground" />
-                        <span>{playerData.country || t('notProvided')}</span>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <Calendar className="h-5 w-5 text-muted-foreground" />
-                        <span>{t('joined')} {new Date(playerData.created_at).toLocaleDateString()}</span>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <IdCard className="h-5 w-5 text-muted-foreground" />
-                        <span>{t('dni')}: {playerData.dni || t('notProvided')}</span>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <Users className="h-5 w-5 text-muted-foreground" />
-                        <span>{t('playerPosition')}: {positionLabel || t('notProvided')}</span>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <Star className="h-5 w-5 text-muted-foreground" />
-                        <span>{t('playerLevel')}: {playerData.player_level || t('notProvided')}</span>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <Euro className="h-5 w-5 text-muted-foreground" />
-                        <span>
-                            {t('playerOwes')}: <span className="font-semibold text-red-500">{playerData.player_debt.toFixed(2)}€</span>
-                        </span>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <Euro className="h-5 w-5 text-muted-foreground" />
-                        <span>
-                            {t('iOwe')}: <span className="font-semibold text-green-500">{playerData.cristian_debt.toFixed(2)}€</span>
-                        </span>
-                    </div>
+                    <InfoItem icon={<Mail className="h-5 w-5 text-muted-foreground" />} text={playerData.email} />
+                    <InfoItem icon={<Phone className="h-5 w-5 text-muted-foreground" />} text={playerData.phoneNumber} />
+                    <InfoItem icon={<MapPin className="h-5 w-5 text-muted-foreground" />} text={playerData.country || t('notProvided')} />
+                    <InfoItem icon={<Calendar className="h-5 w-5 text-muted-foreground" />} text={`${t('joined')} ${new Date(playerData.created_at).toLocaleDateString()}`} />
+                    <InfoItem icon={<IdCard className="h-5 w-5 text-muted-foreground" />} text={`${t('dni')}: ${playerData.dni || t('notProvided')}`} />
+                    <InfoItem icon={<Users className="h-5 w-5 text-muted-foreground" />} text={`${t('playerPosition')}: ${positionLabel || t('notProvided')}`} />
+                    <InfoItem icon={<Star className="h-5 w-5 text-muted-foreground" />} text={`${t('playerLevel')}: ${playerData.player_level || t('notProvided')}`} />
+                    <InfoItem icon={<Euro className="h-5 w-5 text-muted-foreground" />} text={`${t('playerOwes')}: `} value={<span className="font-semibold text-red-500">{playerData.player_debt.toFixed(2)}€</span>} />
+                    <InfoItem icon={<Euro className="h-5 w-5 text-muted-foreground" />} text={`${t('iOwe')}: `} value={<span className="font-semibold text-green-500">{playerData.cristian_debt.toFixed(2)}€</span>} />
                 </div>
 
-                <div className="flex items-center mt-6 mb-6 space-x-4">
+                <div className="flex flex-wrap items-center mt-6 mb-6 gap-4">
                     {currentUserData.isAdmin && (
                         <Link 
                             className="flex items-center h-[35px] bg-primary text-secondary px-4 rounded hover:bg-primary/80 transition-all"

@@ -27,16 +27,16 @@ export const TeamTable = async ({
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead>{t("teamName")}</TableHead>
-                    <TableHead>{t("teamLevel")}</TableHead>
-                    <TableHead>{t("createdAt")}</TableHead>
-                    <TableHead>{t("actions")}</TableHead>
+                    <TableHead className="w-1/3">{t("teamName")}</TableHead>
+                    <TableHead className="w-1/4">{t("teamLevel")}</TableHead>
+                    <TableHead className="w-1/4">{t("createdAt")}</TableHead>
+                    <TableHead className="w-1/6">{t("actions")}</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
                 {teams.map((team) => (
                     <TableRow key={team.id}>
-                        <TableCell>{team.team_name}</TableCell>
+                        <TableCell className="font-medium">{team.team_name}</TableCell>
                         <TableCell>{team.team_level}</TableCell>
                         <TableCell>{new Date(team.created_at).toLocaleDateString()}</TableCell>
                         <TableCell>

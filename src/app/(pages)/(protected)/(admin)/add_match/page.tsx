@@ -19,10 +19,9 @@ export default async function AddMatchPage() {
     const serverUserData = await getUser() as typesUser;
 
     return (
-        <section className="flex w-full h-full py-10 justify-center">
-            <Card>
+        <section className="flex w-full min-h-screen py-6 px-4 sm:px-6 lg:px-8">
+            <Card className="w-full max-w-2xl mx-auto">
                 <UserDetails serverUserData={serverUserData} />
-
                 <AddMatchDetails authToken={authToken} serverUserData={serverUserData} />
             </Card>
         </section>

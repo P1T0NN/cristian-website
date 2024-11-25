@@ -109,7 +109,7 @@
         "addNewLocation": "Ubicación",
         "locationUrl": "Enlace de ubicación",
         "locationUrlPlaceholder": "Pega el enlace de Google Maps",
-        "match_duration": "Duración del Partido (minutos)",
+        "matchDuration": "Duración del Partido (minutos)",
         "matchDurationPlaceholder": "Ingrese la duración del partido en minutos"
     },
 

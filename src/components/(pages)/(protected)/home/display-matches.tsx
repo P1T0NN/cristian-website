@@ -1,6 +1,3 @@
-// NEXTJS IMPORTS
-import { revalidatePath } from 'next/cache';
-
 // LIBRARIES
 import { getTranslations } from 'next-intl/server';
 
@@ -32,21 +29,14 @@ export const DisplayMatches = async ({
     const serverMatchesData = await serverFetchMatches(serverUserData.gender, serverUserData.isAdmin, date);
     const matchesData = serverMatchesData.data as typesMatch[];
 
-    async function refreshMatches() {
-        'use server'
-        revalidatePath('/');
-    }
-
     return (
         <div className="space-y-4">
             <div className="flex justify-between items-center">
                 <h2 className="text-xl font-semibold">{t('availableEvents')}</h2>
-                <form action={refreshMatches}>
-                    <Button variant="ghost" size="sm" type="submit">
-                        <RefreshCcw className="w-4 h-4 mr-2" />
-                        {t('refresh')}
-                    </Button>
-                </form>
+                <Button variant="ghost" size="sm">
+                    <RefreshCcw className="w-4 h-4 mr-2" />
+                    {t('refresh')}
+                </Button>
             </div>
 
             {matchesData.length === 0 ? (

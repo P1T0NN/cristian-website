@@ -45,10 +45,10 @@ export const HeaderProtected = async ({
     return (
         <header className="w-full bg-transparent border-b border-bg-primary">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-20">
+                <div className="flex items-center justify-between h-16 sm:h-20">
                     <div className="flex items-center">
                         <Link href={PROTECTED_PAGE_ENDPOINTS.HOME_PAGE}>
-                            <h1 className="text-xl font-bold tracking-[2px]">{t('title')}</h1>
+                            <h1 className="text-lg sm:text-xl font-bold tracking-[2px]">{t('title')}</h1>
                         </Link>
                     </div>
 
@@ -58,22 +58,25 @@ export const HeaderProtected = async ({
                         </div>
                     )}
 
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-2 sm:space-x-3">
                         {serverUserData?.isAdmin && (
-                            <AddMatchButton />
+                            <div className="hidden sm:block">
+                                <AddMatchButton />
+                            </div>
                         )}
 
                         <Button
                             variant="secondary"
                             size="icon"
+                            className="h-8 w-8 sm:h-10 sm:w-10"
                         >
-                            <Bell />
+                            <Bell className="h-4 w-4 sm:h-5 sm:w-5" />
                         </Button>
 
                         {serverUserData ? (
                             <DropdownMenu>
                                 <DropdownMenuTrigger>
-                                    <div className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-secondary">
+                                    <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-secondary">
                                         {initials}
                                     </div>
                                 </DropdownMenuTrigger>
@@ -82,31 +85,31 @@ export const HeaderProtected = async ({
                                     <DropdownMenuSeparator />
                                     <Link href={`${PROTECTED_PAGE_ENDPOINTS.PLAYER_PAGE}/${serverUserData.id}`}>
                                         <DropdownMenuItem>
-                                            <User className="mr-2" /> {t('profile')}
+                                            <User className="mr-2 h-4 w-4" /> {t('profile')}
                                         </DropdownMenuItem>
                                     </Link>
                                     {serverUserData.isAdmin && (
                                         <>
                                             <Link href={ADMIN_PAGE_ENDPOINTS.MATCH_HISTORY}>
                                                 <DropdownMenuItem>
-                                                    <History className="mr-2" /> {t('matchHistory')}
+                                                    <History className="mr-2 h-4 w-4" /> {t('matchHistory')}
                                                 </DropdownMenuItem>
                                             </Link>
                                             <Link href={ADMIN_PAGE_ENDPOINTS.ADD_TEAM_PAGE}>
                                                 <DropdownMenuItem>
-                                                    <UserPlus className="mr-2" /> {t('createTeam')}
+                                                    <UserPlus className="mr-2 h-4 w-4" /> {t('createTeam')}
                                                 </DropdownMenuItem>
                                             </Link>
                                             <Link href={ADMIN_PAGE_ENDPOINTS.ACCESS_FOR_REGISTRATIONS}>
                                                 <DropdownMenuItem>
-                                                    <ClipboardList className="mr-2" /> {t('registrations')}
+                                                    <ClipboardList className="mr-2 h-4 w-4" /> {t('registrations')}
                                                 </DropdownMenuItem>
                                             </Link>
                                         </>
                                     )}
                                     <Link href={PROTECTED_PAGE_ENDPOINTS.SETTINGS_PAGE}>
                                         <DropdownMenuItem>
-                                            <Settings className="mr-2" /> {t('settings')}
+                                            <Settings className="mr-2 h-4 w-4" /> {t('settings')}
                                         </DropdownMenuItem>
                                     </Link>
                                     <DropdownMenuSeparator />
@@ -114,17 +117,21 @@ export const HeaderProtected = async ({
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         ) : (
-                            <div className="h-[40px] w-[40px] rounded-full bg-secondary animate-pulse" />
+                            <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-secondary animate-pulse" />
                         )}
                     </div>
                 </div>
             </div>
 
             {serverUserData?.isAdmin && authToken && (
-                <div className="md:hidden px-4 py-3">
+                <div className="md:hidden px-4 py-2">
                     <SearchBar authToken={authToken} />
                 </div>
             )}
+
+            <div className="sm:hidden px-4 py-2">
+                <AddMatchButton />
+            </div>
         </header>
     )
 };

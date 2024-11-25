@@ -17,7 +17,7 @@ async function AddDebtPageContent() {
     const serverUserData = await getUser() as typesUser;
 
     return (
-        <main className="flex flex-col w-full h-screen">
+        <main className="flex flex-col w-full min-h-screen p-4 sm:p-6 lg:p-8">
             <AddDebtContent authToken={authToken} serverUserData={serverUserData} />
         </main>
     );

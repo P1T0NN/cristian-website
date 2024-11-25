@@ -38,27 +38,27 @@ export const DebtsTable = async ({
     const authToken = cookieStore.get('auth_token')?.value as string;
     
     return (
-        <div>
-            <h3 className="text-lg font-semibold mb-4">Individual Debts</h3>
+        <div className="overflow-x-auto">
+            <h3 className="text-lg font-semibold mb-4">{t('individualDebts')}</h3>
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>{t('tableHeaderDate')}</TableHead>
-                        <TableHead>{t('tableHeaderPlayerOwes')}</TableHead>
-                        <TableHead>{t('tableHeaderIOwe')}</TableHead>
+                        <TableHead className="w-[100px]">{t('tableHeaderDate')}</TableHead>
+                        <TableHead className="w-[100px]">{t('tableHeaderPlayerOwes')}</TableHead>
+                        <TableHead className="w-[100px]">{t('tableHeaderIOwe')}</TableHead>
                         <TableHead>{t('tableHeaderReason')}</TableHead>
-                        <TableHead>{t('tableHeaderAddedBy')}</TableHead>
-                        {isCurrentUserAdmin && <TableHead>{t('tableHeaderActions')}</TableHead>}
+                        <TableHead className="w-[120px]">{t('tableHeaderAddedBy')}</TableHead>
+                        {isCurrentUserAdmin && <TableHead className="w-[80px]">{t('tableHeaderActions')}</TableHead>}
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {debts && debts.map((debt) => (
                         <TableRow key={debt.id}>
-                            <TableCell>{new Date(debt.created_at).toLocaleDateString()}</TableCell>
-                            <TableCell className="text-red-500">{debt.player_debt.toFixed(2)}€</TableCell>
-                            <TableCell className="text-green-500">{debt.cristian_debt.toFixed(2)}€</TableCell>
+                            <TableCell className="whitespace-nowrap">{new Date(debt.created_at).toLocaleDateString()}</TableCell>
+                            <TableCell className="text-red-500 whitespace-nowrap">{debt.player_debt.toFixed(2)}€</TableCell>
+                            <TableCell className="text-green-500 whitespace-nowrap">{debt.cristian_debt.toFixed(2)}€</TableCell>
                             <TableCell>{debt.reason}</TableCell>
-                            <TableCell>{debt.added_by}</TableCell>
+                            <TableCell className="whitespace-nowrap">{debt.added_by}</TableCell>
                             {isCurrentUserAdmin && (
                                 <TableCell>
                                     <AlertDialog>

@@ -60,8 +60,8 @@ export const verifyAuthWithRefresh = cache(async () => {
 })
 
 export const checkUserAccess = async (token: string): Promise<boolean> => {
-    const payload = await verifyToken(token).catch(error => {
-        console.error('Error verifying token:', error);
+    const payload = await verifyToken(token).catch(() => {
+        //console.error('Error verifying token:', error);
         return null;
     });
 

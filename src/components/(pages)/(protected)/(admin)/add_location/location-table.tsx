@@ -34,17 +34,22 @@ export const LocationTable = async ({
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead>{t("locationName")}</TableHead>
-                    <TableHead>{t("locationUrl")}</TableHead>
-                    <TableHead className="w-[100px]">{t("actions")}</TableHead>
+                    <TableHead className="w-1/3">{t("locationName")}</TableHead>
+                    <TableHead className="w-1/2">{t("locationUrl")}</TableHead>
+                    <TableHead className="w-1/6">{t("actions")}</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
                 {locationsData.map((location) => (
                     <TableRow key={location.id}>
-                        <TableCell>{location.location_name}</TableCell>
+                        <TableCell className="font-medium">{location.location_name}</TableCell>
                         <TableCell>
-                            <a href={location.location_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                            <a 
+                                href={location.location_url} 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="text-blue-500 hover:underline break-all"
+                            >
                                 {location.location_url}
                             </a>
                         </TableCell>
