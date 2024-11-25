@@ -24,7 +24,8 @@
         "matchHistory": "Match History",
         "createTeam": "Create Team",
         "profile": "Profile",
-        "registrations": "Registrations"
+        "registrations": "Registrations",
+        "home": "Home"
     },
     
     "HomePage": {
@@ -112,7 +113,10 @@
         "matchDuration": "Match Duration (minutes)",
         "matchDurationPlaceholder": "Enter match duration in minutes",
         "matchLevel": "Match Level (ABCD)",
-        "matchLevelPlaceholder": "Enter match level"
+        "matchLevelPlaceholder": "Enter match level",
+        "hasTeams": "Has Teams",
+        "yes": "Yes",
+        "no": "No"
     },
 
     "AddDebtPage": {
@@ -231,7 +235,16 @@
         "organizer": "Organizer",
         "switchTeam": "Switch Team",
         "playerSwitchedTeam": "Player switched team successfully",
-        "matchLevel": "Match Level"
+        "matchLevel": "Match Level",
+        "joinMatch": "Join Match",
+        "joiningMatch": "Joining match...",
+        "joinMatchConfirmTitle": "Join Match",
+        "joinMatchConfirmDescription": "Are you sure you want to join this match? Once you join, you'll be added to the player list and will be expected to participate. You cannot leave the match 10 hours before it starts, but you can request substitute!",
+        "makeTeams": "Sort teams",
+        "sorting": "Sorting...",
+        "sortTeams": "Sort Teams",
+        "sortTeamsConfirmTitle": "Sort Teams",
+        "sortTeamsConfirmDescription": "Are you sure you want to randomly sort players into teams? This action cannot be undone."
     },
 
     "EditMatchPage": {
@@ -582,6 +595,9 @@
 
         "USER_GRANT_ACCESS_FAILED": "Failed to grant access to user",
         "USER_ACCESS_GRANTED_SUCCESSFULLY": "User access granted successfully",
+
+        "TEAMS_SORT_FAILED": "Failed to sort teams",
+        "TEAMS_SORTED_SUCCESSFULLY": "Teams sorted successfully",
 
         "REDIS_CONNECTION_ERROR": "Unable to connect to the database. Please try again later.",
         "REDIS_DISCONNECTION_ERROR": "Error occurred while disconnecting from the database.",

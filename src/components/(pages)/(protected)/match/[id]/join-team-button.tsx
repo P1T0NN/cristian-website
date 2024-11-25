@@ -25,10 +25,10 @@ import { toast } from "sonner";
 import { managePlayer } from "@/actions/server_actions/mutations/match/managePlayer";
 
 type JoinTeamButtonProps = {
-    teamNumber: 1 | 2
-    matchId: string
-    currentUserId: string
-    authToken: string
+    teamNumber: 0 | 1 | 2;
+    matchId: string;
+    currentUserId: string;
+    authToken: string;
 }
 
 export const JoinTeamButton = ({
@@ -59,6 +59,18 @@ export const JoinTeamButton = ({
         })
     };
 
+    const buttonText = isPending 
+        ? (teamNumber === 0 ? t('joiningMatch') : t('joiningTeam'))
+        : (teamNumber === 0 ? t('joinMatch') : t('joinTeam', { teamNumber }));
+
+    const dialogTitle = teamNumber === 0 
+        ? t('joinMatchConfirmTitle')
+        : t('joinTeamConfirmTitle', { teamNumber });
+
+    const dialogDescription = teamNumber === 0
+        ? t('joinMatchConfirmDescription')
+        : t('joinTeamConfirmDescription', { teamNumber });
+
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -66,20 +78,20 @@ export const JoinTeamButton = ({
                     className="w-full"
                     disabled={isPending}
                 >
-                    {isPending ? t('joiningTeam') : t('joinTeam')}
+                    {buttonText}
                 </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>{t('joinTeamConfirmTitle')}</AlertDialogTitle>
+                    <AlertDialogTitle>{dialogTitle}</AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('joinTeamConfirmDescription')}
+                        {dialogDescription}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
                     <AlertDialogAction onClick={handleJoinTeam} disabled={isPending}>
-                        {isPending ? t('joiningTeam') : t('confirmJoin')}
+                        {isPending ? t('joiningMatch') : t('confirmJoin')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

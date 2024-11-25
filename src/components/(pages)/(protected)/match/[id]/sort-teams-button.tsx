@@ -3,14 +3,8 @@
 // REACTJS IMPORTS
 import { useTransition } from "react";
 
-// NEXTJS IMPORTS
-import { useRouter } from "next/navigation";
-
 // LIBRARIES
 import { useTranslations } from "next-intl";
-
-// CONFIG
-import { PROTECTED_PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
 import { 
@@ -26,34 +20,30 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-
-// SERVER ACTIONS
-import { finishMatch } from "@/actions/server_actions/mutations/match/finishMatch";
+import { sortTeams } from "@/actions/server_actions/mutations/match/sortTeams";
 
 // LUCIDE ICONS
-import { Check } from "lucide-react";
+import { Users } from 'lucide-react';
 
-type FinishMatchButtonProps = {
+type SortTeamsButtonProps = {
     authToken: string;
     matchId: string;
 }
 
-export const FinishMatchButton = ({
+export const SortTeamsButton = ({
     authToken,
     matchId
-}: FinishMatchButtonProps) => {
+}: SortTeamsButtonProps) => {
     const t = useTranslations("MatchPage");
-    const router = useRouter();
     
     const [isPending, startTransition] = useTransition();
     
-    const handleFinishMatch = () => {
+    const handleSortTeams = () => {
         startTransition(async () => {
-            const response = await finishMatch(authToken, matchId)
+            const response = await sortTeams(authToken, matchId)
 
             if (response.success) {
                 toast.success(response.message)
-                router.replace(PROTECTED_PAGE_ENDPOINTS.HOME_PAGE);
             } else {
                 toast.error(response.message)
             }
@@ -64,27 +54,27 @@ export const FinishMatchButton = ({
         <AlertDialog>
             <AlertDialogTrigger asChild>
                 <Button 
-                    className="bg-green-500 hover:bg-green-500/80 w-full sm:w-auto"
+                    className="bg-blue-500 hover:bg-blue-500/80 w-full sm:w-auto"
                     disabled={isPending}
                 >
-                    <Check className="mr-2 h-4 w-4" /> {isPending ? t('finishing') : t('finishMatch')}
+                    <Users className="mr-2 h-4 w-4" /> {isPending ? t('sorting') : t('sortTeams')}
                 </Button>
             </AlertDialogTrigger>
 
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>{t('finishConfirmTitle')}</AlertDialogTitle>
-                    <AlertDialogDescription>{t('finishConfirmDescription')}</AlertDialogDescription>
+                    <AlertDialogTitle>{t('sortTeamsConfirmTitle')}</AlertDialogTitle>
+                    <AlertDialogDescription>{t('sortTeamsConfirmDescription')}</AlertDialogDescription>
                 </AlertDialogHeader>
 
                 <AlertDialogFooter>
                     <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
                     <AlertDialogAction 
-                        className="bg-green-500 hover:bg-green-500/80"
-                        onClick={handleFinishMatch} 
+                        className="bg-blue-500 hover:bg-blue-500/80"
+                        onClick={handleSortTeams} 
                         disabled={isPending}
                     >
-                        {isPending ? t('finishing') : t('finishMatch')}
+                        {isPending ? t('sorting') : t('sortTeams')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

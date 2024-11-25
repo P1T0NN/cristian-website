@@ -130,7 +130,20 @@ export const HeaderProtected = async ({
             )}
 
             <div className="sm:hidden px-4 py-2">
-                <AddMatchButton />
+                {serverUserData?.isAdmin ? (
+                    <AddMatchButton />
+                ) : (
+                    <Button
+                        variant="default"
+                        size="default"
+                        className="w-full"
+                        asChild
+                    >
+                        <Link href={PROTECTED_PAGE_ENDPOINTS.HOME_PAGE}>
+                            {t('home')}
+                        </Link>
+                    </Button>
+                )}
             </div>
         </header>
     )

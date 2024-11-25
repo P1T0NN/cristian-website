@@ -63,7 +63,7 @@ export const DeleteMatchButton = ({
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
-                <Button variant="destructive" disabled={isPending}>
+                <Button variant="destructive" disabled={isPending} className="w-full sm:w-auto">
                     <Trash className="mr-2 h-4 w-4" /> {isPending ? t('deleting') : t('deleteMatch')}
                 </Button>
             </AlertDialogTrigger>

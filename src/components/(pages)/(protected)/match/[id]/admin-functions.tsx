@@ -3,18 +3,21 @@ import { getTranslations } from "next-intl/server";
 
 // COMPONENTS
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SortTeamsButton } from "./sort-teams-button";
 import { DeleteMatchButton } from './delete-match-button';
 import { FinishMatchButton } from './finish-match-button';
 import { EditMatchButton } from './edit-match-button';
 
 type AdminFunctionsProps = {
-    matchId: string
-    authToken: string
+    matchId: string;
+    authToken: string;
+    hasTeams: boolean;
 }
 
 export const AdminFunctions = async ({ 
     matchId, 
-    authToken 
+    authToken,
+    hasTeams
 }: AdminFunctionsProps) => {
     const t = await getTranslations("MatchPage");
 
@@ -24,7 +27,11 @@ export const AdminFunctions = async ({
                 <CardTitle>{t('adminFunctions')}</CardTitle>
             </CardHeader>
             
-            <CardContent className="flex flex-wrap gap-4">
+            <CardContent className="flex flex-wrap justify-center gap-4">
+                {!hasTeams && (
+                    <SortTeamsButton authToken={authToken} matchId={matchId} />
+                )}
+
                 <FinishMatchButton authToken={authToken} matchId={matchId} />
 
                 <EditMatchButton matchId={matchId}/>

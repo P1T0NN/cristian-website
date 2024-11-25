@@ -52,7 +52,8 @@ export const useZodSchemas = () => {
         }),
         match_duration: z.number().min(1, { message: t('MATCH_DURATION_REQUIRED') }),
         added_by: z.string(),
-        match_level: z.string().min(1, { message: t('MATCH_LEVEL_REQUIRED') }).max(4, { message: t('MATCH_LEVEL_TOO_LONG') })
+        match_level: z.string().min(1, { message: t('MATCH_LEVEL_REQUIRED') }).max(4, { message: t('MATCH_LEVEL_TOO_LONG') }),
+        has_teams: z.boolean()
     });
 
     const addDebtSchema = z.object({

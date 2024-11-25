@@ -23,7 +23,7 @@ export const PaymentStatusButton = ({
         <Tooltip>
             <TooltipTrigger asChild>
                 <div
-                    className={`inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 w-10 ${
+                    className={`inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-8 w-8 sm:h-10 sm:w-10 ${
                         isActive 
                             ? `${activeClass} hover:${activeClass.replace('bg-', 'bg-opacity-90 ')}` 
                             : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground'
@@ -32,6 +32,7 @@ export const PaymentStatusButton = ({
                     role="button"
                     tabIndex={disabled ? -1 : 0}
                     aria-disabled={disabled}
+                    aria-label={tooltipText}
                 >
                     {icon}
                 </div>

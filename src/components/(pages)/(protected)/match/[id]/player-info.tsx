@@ -31,6 +31,7 @@ type PlayerInfoProps = {
     isAdmin: boolean;
     currentUserMatchAdmin: boolean;
     handleShowAdminModal: () => void;
+    teamNumber: 0 | 1 | 2;
 }
 
 export const PlayerInfo = ({ 
@@ -39,7 +40,8 @@ export const PlayerInfo = ({
     player, 
     isAdmin,
     currentUserMatchAdmin,
-    handleShowAdminModal
+    handleShowAdminModal,
+    teamNumber
 }: PlayerInfoProps) => {
     const t = useTranslations("MatchPage");
 
@@ -110,7 +112,7 @@ export const PlayerInfo = ({
     const showPaymentControls = isAdmin || currentUserMatchAdmin;
 
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col w-full sm:w-auto">
             <div className="flex items-center space-x-2">
                 <Avatar>
                     <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${player.fullName}`} />
@@ -148,7 +150,7 @@ export const PlayerInfo = ({
                 )}
             </div>
             {showPaymentControls && (
-                <div className="flex mt-2 space-x-2">
+                <div className="flex flex-wrap mt-2 gap-2">
                     <PaymentStatusButton
                         status="paid"
                         isActive={player.matchPlayer?.has_paid}
@@ -178,37 +180,39 @@ export const PlayerInfo = ({
                     />
                     {isAdmin && (
                         <>
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <Button
-                                            className="w-10 h-10 bg-blue-500 hover:bg-blue-600"
-                                            onClick={handleSwitchTeam}
-                                            disabled={isPending}
-                                        >
-                                            <ArrowLeftRight size={16} className="text-white" />
-                                        </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                        <p>{t('switchTeam')}</p>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
+                           {teamNumber !== 0 && (
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Button
+                                                className="h-8 w-8 sm:h-10 sm:w-10 bg-blue-500 hover:bg-blue-600"
+                                                onClick={handleSwitchTeam}
+                                                disabled={isPending}
+                                            >
+                                                <ArrowLeftRight size={14} className="text-white sm:h-4 sm:w-4" />
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>{t('switchTeam')}</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            )}
                             <Button
-                                className="w-10 h-10"
+                                className="h-8 w-8 sm:h-10 sm:w-10"
                                 onClick={handleShowAdminModal}
                             >
-                                <User size={16} />
+                                <User size={14} className="sm:h-4 sm:w-4" />
                             </Button>
                             <TooltipProvider>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
                                         <Button
-                                            className={`w-10 h-10 ${player.matchPlayer?.has_match_admin ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-500 hover:bg-gray-600'}`}
+                                            className={`h-8 w-8 sm:h-10 sm:w-10 ${player.matchPlayer?.has_match_admin ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-500 hover:bg-gray-600'}`}
                                             onClick={handleToggleMatchAdmin}
                                             disabled={isPending}
                                         >
-                                            <Shield size={16} className="text-white" />
+                                            <Shield size={14} className="text-white sm:h-4 sm:w-4" />
                                         </Button>
                                     </TooltipTrigger>
                                     <TooltipContent>

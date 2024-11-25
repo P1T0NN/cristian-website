@@ -7,6 +7,7 @@ import { MatchInstructions } from '@/components/(pages)/(protected)/match/[id]/m
 import { DisplayTeamDetails } from '@/components/(pages)/(protected)/match/[id]/display-team-details';
 import { SwitchTeamColors } from '@/components/(pages)/(protected)/match/[id]/switch-team-colors';
 import { TeamCard } from '@/components/(pages)/(protected)/match/[id]/team-card';
+import { PlayerList } from '@/components/(pages)/(protected)/match/[id]/player-list';
 import { AdminFunctions } from '@/components/(pages)/(protected)/match/[id]/admin-functions';
 
 // SERVER ACTIONS
@@ -29,7 +30,14 @@ export default async function MatchPage({
     const authToken = cookieStore.get('auth_token')?.value as string;
 
     const serverUserData = await getUser() as typesUser;
-    const { match, team1Players, team2Players } = await serverFetchMatch(id);
+    const { match, team1Players, team2Players, unassignedPlayers } = await serverFetchMatch(id);
+
+    const allPlayers = [
+        ...(team1Players || []),
+        ...(team2Players || []),
+        ...(unassignedPlayers || [])
+    ];
+    const isUserInMatch = allPlayers.some(player => player.id === serverUserData.id);
 
     const isUserInTeam = (players: typesUser[] | undefined) => {
         return players?.some(player => player.id === serverUserData.id) ?? false
@@ -41,7 +49,7 @@ export default async function MatchPage({
             ? 2 
             : null
 
-    return (
+   return (
         <section className="space-y-6 p-4 max-w-4xl mx-auto">
             <MatchDetails serverMatchData={match} />
 
@@ -53,7 +61,7 @@ export default async function MatchPage({
 
             <DisplayTeamDetails match={match} />
 
-            <div className="flex items-center">
+            <div className="flex items-center justify-center">
                 {serverUserData.isAdmin && (
                     <SwitchTeamColors
                         matchId={id}
@@ -63,34 +71,52 @@ export default async function MatchPage({
                 )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <TeamCard
-                    teamName={match.team1_name}
-                    players={team1Players}
-                    teamNumber={1}
+            {match.has_teams ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <TeamCard
+                        teamName={match.team1_name}
+                        players={team1Players}
+                        teamNumber={1}
+                        currentUserId={serverUserData.id}
+                        userTeamNumber={userTeamNumber}
+                        matchId={id}
+                        matchType={match.match_type}
+                        isAdmin={serverUserData.isAdmin}
+                        authToken={authToken}
+                        isUserInMatch={isUserInMatch}
+                    />
+                    
+                    <TeamCard
+                        teamName={match.team2_name}
+                        players={team2Players}
+                        teamNumber={2}
+                        currentUserId={serverUserData.id}
+                        userTeamNumber={userTeamNumber}
+                        matchId={id}
+                        matchType={match.match_type}
+                        isAdmin={serverUserData.isAdmin}
+                        authToken={authToken}
+                        isUserInMatch={isUserInMatch}
+                    />
+                </div>
+            ) : (
+                <PlayerList
+                    players={allPlayers}
                     currentUserId={serverUserData.id}
-                    userTeamNumber={userTeamNumber}
                     matchId={id}
-                    matchType={match.match_type}
-                    isAdmin={serverUserData.isAdmin}
                     authToken={authToken}
-                />
-                
-                <TeamCard
-                    teamName={match.team2_name}
-                    players={team2Players}
-                    teamNumber={2}
-                    currentUserId={serverUserData.id}
-                    userTeamNumber={userTeamNumber}
-                    matchId={id}
-                    matchType={match.match_type}
+                    isUserInMatch={isUserInMatch}
                     isAdmin={serverUserData.isAdmin}
-                    authToken={authToken}
+                    matchType={match.match_type}
                 />
-            </div>
+            )}
 
             {serverUserData.isAdmin && (
-                <AdminFunctions matchId={id} authToken={authToken} />
+                <AdminFunctions 
+                    matchId={id} 
+                    authToken={authToken} 
+                    hasTeams={match.has_teams}
+                />
             )}
         </section>
     );

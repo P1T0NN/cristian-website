@@ -22,6 +22,7 @@ type TeamCardProps = {
     matchType: string;
     isAdmin: boolean;
     authToken: string;
+    isUserInMatch: boolean;
 }
 
 export const TeamCard = async ({
@@ -34,6 +35,7 @@ export const TeamCard = async ({
     matchType,
     isAdmin,
     authToken,
+    isUserInMatch
 }: TeamCardProps) => {
     const t = await getTranslations("MatchPage");
 
@@ -84,6 +86,7 @@ export const TeamCard = async ({
                         isAdmin={isAdmin}
                         authToken={authToken}
                         currentUserMatchAdmin={currentUserMatchAdmin}
+                        isUserInMatch={isUserInMatch}
                     />
                 ))}
 

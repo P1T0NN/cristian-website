@@ -39,7 +39,8 @@ export async function addMatch(authToken: string, addMatchData: typesAddMatchFor
                 match_gender: addMatchData.match_gender,
                 match_duration: addMatchData.match_duration,
                 added_by: addMatchData.added_by,
-                match_level: addMatchData.match_level
+                match_level: addMatchData.match_level,
+                has_teams: addMatchData.has_teams
             }
         ]);
 

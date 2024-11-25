@@ -18,13 +18,15 @@ type AddMatchFormProps = {
     errors: Record<string, string>;
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     authToken: string;
+    setFieldValue: (name: string, value: unknown) => void;
 }
 
 export const AddMatchForm = ({
     formData,
     errors,
     handleInputChange,
-    authToken
+    authToken,
+    setFieldValue
 }: AddMatchFormProps) => {
     const t = useTranslations("AddMatchPage");
 
@@ -63,6 +65,7 @@ export const AddMatchForm = ({
                 handleInputChange={handleInputChange}
                 handleSelectChange={handleSelectChange}
                 handleLocationChange={handleLocationChange}
+                setFieldValue={setFieldValue}
                 authToken={authToken}
                 t={t}
             />

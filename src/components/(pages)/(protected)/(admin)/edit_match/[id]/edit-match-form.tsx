@@ -60,10 +60,11 @@ export const EditMatchForm = ({
             starts_at_day: matchData.starts_at_day || "",
             starts_at_hour: matchData.starts_at_hour || "",
             match_type: matchData.match_type || "",
-            match_gender: matchData.match_gender || "",
+            match_gender: matchData.match_gender || "Male",
             match_duration: matchData.match_duration || 60,
             added_by: matchData.added_by || "",
-            match_level: matchData.match_level || ""
+            match_level: matchData.match_level || "",
+            has_teams: false
         },
         validationSchema: addMatchSchema,
         onSubmit: async (values) => {

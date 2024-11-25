@@ -2,9 +2,13 @@
 import { LocationField } from "./location-field";
 import { FormInputField } from "@/components/ui/forms/form-input-field";
 import { FormSelectField } from "@/components/ui/forms/form-select-field";
+import { Button } from "@/components/ui/button";
 
 // TYPES
 import type { typesAddMatchForm } from "@/types/forms/AddMatchForm";
+
+// LUCIDE ICONS
+import { Check, X } from 'lucide-react';
 
 type MatchDetailsSectionProps = {
     formData: typesAddMatchForm;
@@ -12,6 +16,7 @@ type MatchDetailsSectionProps = {
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     handleSelectChange: (name: string) => (value: string) => void;
     handleLocationChange: (locationName: string, locationUrl: string) => void;
+    setFieldValue: (name: string, value: unknown) => void;
     authToken: string;
     t: (key: string) => string;
 }
@@ -22,6 +27,7 @@ export const MatchDetailsSection = ({
     handleInputChange,
     handleSelectChange,
     handleLocationChange,
+    setFieldValue,
     authToken,
     t
 }: MatchDetailsSectionProps) => {
@@ -94,6 +100,32 @@ export const MatchDetailsSection = ({
                 placeholder={t('matchLevelPlaceholder')}
                 error={errors.match_level}
             />
+            <div className="space-y-2">
+                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    {t("hasTeams")}
+                </label>
+                <div className="flex space-x-2">
+                    <Button
+                        type="button"
+                        variant={formData.has_teams ? "default" : "outline"}
+                        onClick={() => setFieldValue('has_teams', true)}
+                    >
+                        <Check className="mr-2 h-4 w-4" />
+                        {t("yes")}
+                    </Button>
+                    <Button
+                        type="button"
+                        variant={!formData.has_teams ? "default" : "outline"}
+                        onClick={() => setFieldValue('has_teams', false)}
+                    >
+                        <X className="mr-2 h-4 w-4" />
+                        {t("no")}
+                    </Button>
+                </div>
+                {errors.has_teams && (
+                    <p className="text-sm text-red-500 mt-1">{errors.has_teams}</p>
+                )}
+            </div>
         </div>
     );
 };

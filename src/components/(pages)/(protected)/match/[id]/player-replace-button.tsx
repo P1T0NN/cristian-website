@@ -23,7 +23,7 @@ type PlayerReplaceButtonProps = {
     authToken: string;
     player: typesUser;
     matchId: string;
-    teamNumber: 1 | 2;
+    teamNumber: 0 | 1 | 2;
 }
 
 export const PlayerReplaceButton = ({
@@ -60,7 +60,7 @@ export const PlayerReplaceButton = ({
             size="sm"
             onClick={handleReplacePlayer}
             disabled={isPending}
-            className="text-white bg-yellow-500 hover:bg-yellow-500/80"
+            className="text-white bg-yellow-500 hover:bg-yellow-500/80 w-full sm:w-auto"
         >
             {isPending ? (
                 <>

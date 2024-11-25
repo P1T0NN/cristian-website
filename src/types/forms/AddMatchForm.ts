@@ -11,4 +11,5 @@ export type typesAddMatchForm = {
     match_duration: number;
     added_by: string;
     match_level: string;
+    has_teams?: boolean;
 }

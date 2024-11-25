@@ -16,11 +16,12 @@ import type { typesUser } from "@/types/typesUser";
 type PlayerItemProps = {
     player: typesUser;
     isCurrentUser: boolean;
-    teamNumber: 1 | 2;
+    teamNumber: 0 | 1 | 2;
     matchId: string;
     isAdmin: boolean;
     authToken: string;
     currentUserMatchAdmin: boolean;
+    isUserInMatch: boolean;
 }
 
 export const PlayerItem = ({ 
@@ -31,6 +32,7 @@ export const PlayerItem = ({
     isAdmin,
     authToken,
     currentUserMatchAdmin,
+    isUserInMatch,
 }: PlayerItemProps) => {
     const [showSubstituteDialog, setShowSubstituteDialog] = useState(false);
     const [showAdminModal, setShowAdminModal] = useState(false);
@@ -41,7 +43,7 @@ export const PlayerItem = ({
 
     return (
         <div 
-            className="flex items-center justify-between p-2 bg-muted rounded-lg transition-opacity duration-200 ease-in-out"
+            className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-2 bg-muted rounded-lg transition-opacity duration-200 ease-in-out"
         >
             <PlayerInfo 
                 authToken={authToken}
@@ -50,9 +52,10 @@ export const PlayerItem = ({
                 isAdmin={isAdmin}
                 currentUserMatchAdmin={currentUserMatchAdmin}
                 handleShowAdminModal={handleShowAdminModal}
+                teamNumber={teamNumber}
             />
 
-            <div className="flex items-center space-x-2 relative z-10">
+            <div className="flex items-center space-x-2 relative z-10 mt-2 sm:mt-0">
                 {isCurrentUser && !isAdmin ? (
                     <PlayerLeaveTeamButton 
                         authToken={authToken}
@@ -61,7 +64,7 @@ export const PlayerItem = ({
                         teamNumber={teamNumber}
                         setShowSubstituteDialog={setShowSubstituteDialog}
                     />
-                ) : player.matchPlayer?.substitute_requested && (
+                ) : (player.matchPlayer?.substitute_requested && !isUserInMatch) && (
                     <PlayerReplaceButton
                         authToken={authToken}
                         player={player}

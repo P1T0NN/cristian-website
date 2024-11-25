@@ -44,7 +44,7 @@ export const AddMatchDetails = ({
 
     const { addMatchSchema } = useZodSchemas();
 
-    const { formData, errors, handleInputChange, handleSubmit } = useForm({
+    const { formData, errors, handleInputChange, setFieldValue, handleSubmit } = useForm({
         initialValues: {
             location: "",
             location_url: "",
@@ -58,6 +58,7 @@ export const AddMatchDetails = ({
             match_duration: 60,
             added_by: serverUserData.fullName,
             match_level: "",
+            has_teams: false
         },
         validationSchema: addMatchSchema,
         onSubmit: async (values) => {
@@ -82,6 +83,7 @@ export const AddMatchDetails = ({
                     formData={formData}
                     errors={errors}
                     handleInputChange={handleInputChange}
+                    setFieldValue={setFieldValue}
                 />
             </CardContent>
 

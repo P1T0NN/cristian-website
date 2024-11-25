@@ -23,7 +23,7 @@ type PlayerLeaveTeamButtonProps = {
     authToken: string;
     player: typesUser;
     matchId: string;
-    teamNumber: 1 | 2;
+    teamNumber: 0 | 1 | 2;
     setShowSubstituteDialog: (isVisible: boolean) => void;
 }
 
@@ -69,6 +69,7 @@ export const PlayerLeaveTeamButton = ({
             size="sm"
             onClick={handleLeaveTeam}
             disabled={isPending}
+            className="w-full sm:w-auto"
         >
             {isPending ? (
                 <>

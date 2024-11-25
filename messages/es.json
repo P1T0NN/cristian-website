@@ -24,7 +24,8 @@
         "matchHistory": "Historial de Partidos",
         "createTeam": "Crear Equipo",
         "profile": "Perfil",
-        "registrations": "Registros"
+        "registrations": "Registros",
+        "home": "Inicio"
     },
 
     "HomePage": {
@@ -112,7 +113,10 @@
         "matchDuration": "Duración del Partido (minutos)",
         "matchDurationPlaceholder": "Ingrese la duración del partido en minutos",
         "matchLevel": "Nivel del Partido (ABCD)",
-        "matchLevelPlaceholder": "Ingrese el nivel del partido"
+        "matchLevelPlaceholder": "Ingrese el nivel del partido",
+        "hasTeams": "Tiene Equipos",
+        "yes": "Si",
+        "no": "No"
     },
 
     "AddDebtPage": {
@@ -231,7 +235,16 @@
         "organizer": "Organizador",
         "switchTeam": "Cambiar de Equipo",
         "playerSwitchedTeam": "El jugador cambió de equipo exitosamente",
-        "matchLevel": "Match Nivel"
+        "matchLevel": "Match Nivel",
+        "joinMatch": "Unirse al Partido",
+        "joiningMatch": "Uniéndose al partido...",
+        "joinMatchConfirmTitle": "Unirse al Partido",
+        "joinMatchConfirmDescription": "¿Estás seguro de que quieres unirte a este partido? Una vez que te unas, serás añadido a la lista de jugadores y se esperará que participes. No podrás abandonar el partido 10 horas antes de que comience, ¡pero puedes solicitar un sustituto!",
+        "makeTeams": "Ordenar equipos",
+        "sorting": "Ordenando...",
+        "sortTeams": "Ordenar Equipos",
+        "sortTeamsConfirmTitle": "Ordenar Equipos",
+        "sortTeamsConfirmDescription": "¿Estás seguro de que quieres ordenar aleatoriamente a los jugadores en equipos? Esta acción no se puede deshacer."
     },
 
     "EditMatchPage": {
@@ -578,6 +591,9 @@
 
         "USER_GRANT_ACCESS_FAILED": "No se pudo otorgar acceso al usuario",
         "USER_ACCESS_GRANTED_SUCCESSFULLY": "Acceso otorgado al usuario exitosamente",
+
+        "TEAMS_SORT_FAILED": "No se pudieron ordenar los equipos",
+        "TEAMS_SORTED_SUCCESSFULLY": "Equipos ordenados con éxito",
 
         "REDIS_CONNECTION_ERROR": "No se puede conectar a la base de datos. Inténtalo de nuevo más tarde.",
         "REDIS_DISCONNECTION_ERROR": "Error al desconectar de la base de datos.",

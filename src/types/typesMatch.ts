@@ -18,4 +18,5 @@ export type typesMatch = {
     places_occupied: number;
     created_at: Date;
     match_level: string;
+    has_teams: boolean;
 };

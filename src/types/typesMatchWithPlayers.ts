@@ -6,4 +6,5 @@ export type typesMatchWithPlayers = {
     match: typesMatch;
     team1Players: typesUser[];
     team2Players: typesUser[];
+    unassignedPlayers: typesUser[];
 }

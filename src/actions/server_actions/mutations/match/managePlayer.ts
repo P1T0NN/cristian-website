@@ -21,7 +21,7 @@ export async function managePlayer(
     authToken: string,
     matchId: string,
     userId: string,
-    teamNumber: 1 | 2,
+    teamNumber: 0 | 1 | 2,
     action: 'join' | 'leave' | 'requestSubstitute' | 'replacePlayer' | 'switchTeam'
 ): Promise<{ success: boolean; message: string; metadata?: Record<string, unknown> }> {
     const t = await getTranslations("GenericMessages");
@@ -36,7 +36,7 @@ export async function managePlayer(
         return { success: false, message: t('JWT_DECODE_ERROR') };
     }
 
-    if (!matchId || !userId || !teamNumber || !action) {
+    if (!matchId || !userId || !action) {
         return { success: false, message: t('MATCH_FETCH_INVALID_REQUEST') };
     }
 

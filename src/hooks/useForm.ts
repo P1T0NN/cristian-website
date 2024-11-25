@@ -17,10 +17,10 @@ export const useForm = <T extends Record<string, unknown>>({
     initialValues,
     validationSchema,
     onSubmit,
-}: UseFormProps<T>) => {
+  }: UseFormProps<T>) => {
     const [formData, setFormData] = useState<T>(initialValues);
     const [errors, setErrors] = useState<Record<string, string>>({});
-
+  
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type } = event.target;
         
@@ -34,10 +34,17 @@ export const useForm = <T extends Record<string, unknown>>({
             [name]: finalValue
         }));
     };
-
+  
+    const setFieldValue = (name: string, value: unknown) => {
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+  
     const handleSubmit = () => {
         const result = validationSchema.safeParse(formData);
-
+    
         if (!result.success) {
             const fieldErrors = mapZodErrors(result.error.errors);
             setErrors(fieldErrors);
@@ -46,11 +53,12 @@ export const useForm = <T extends Record<string, unknown>>({
             onSubmit(formData);
         }
     };
-
+  
     return {
         formData,
         errors,
         handleInputChange,
+        setFieldValue,
         handleSubmit,
     };
 };
