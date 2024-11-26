@@ -16,6 +16,7 @@ import { CACHE_KEYS } from '@/config';
 import type { APIResponse } from '@/types/responses/APIResponse';
 import type { typesMatch } from '@/types/typesMatch';
 import type { typesMatchWithPlayers } from '@/types/typesMatchWithPlayers';
+import type { typesUser } from '@/types/typesUser';
 
 const CACHE_TTL = 60 * 60 * 12; // 12 hours in seconds
 
@@ -43,7 +44,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>>
         return NextResponse.json({ success: false, message: fetchMessages('MATCH_FETCH_INVALID_REQUEST') }, { status: 400 });
     }
 
-    const [cacheResult, playersResult] = await Promise.all([
+    const [cacheResult, playersResult, temporaryPlayersResult] = await Promise.all([
         upstashRedisCacheService.get<typesMatch>(`${CACHE_KEYS.MATCH_PREFIX}${matchId}`),
         supabase.from('match_players').select(`
             *,
@@ -57,7 +58,8 @@ export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>>
                 isAdmin,
                 created_at
             )
-        `).eq('match_id', matchId)
+        `).eq('match_id', matchId),
+        supabase.from('temporary_players').select('*').eq('match_id', matchId)
     ]);
 
     let match: typesMatch | null = null;
@@ -87,14 +89,15 @@ export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>>
         return NextResponse.json({ success: false, message: fetchMessages('MATCH_NOT_FOUND') }, { status: 404 });
     }
 
-    if (playersResult.error) {
+    if (playersResult.error || temporaryPlayersResult.error) {
         return NextResponse.json({ success: false, message: fetchMessages('MATCH_FAILED_TO_FETCH') }, { status: 500 });
     }
 
     const players = playersResult.data || [];
+    const temporaryPlayers = temporaryPlayersResult.data || [];
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const mapPlayer = (p: any) => ({
+    const mapPlayer = (p: any): typesUser => ({
         ...p.user,
         matchPlayer: {
             id: p.id,
@@ -110,9 +113,42 @@ export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>>
         }
     });
 
-    const team1Players = players.filter(p => p.team_number === 1).map(mapPlayer);
-    const team2Players = players.filter(p => p.team_number === 2).map(mapPlayer);
-    const unassignedPlayers = players.filter(p => p.team_number === 0).map(mapPlayer);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mapTemporaryPlayer = (p: any): typesUser => ({
+        id: p.id,
+        email: '',
+        fullName: p.name,
+        phoneNumber: '',
+        gender: '',
+        is_verified: false,
+        isAdmin: false,
+        player_debt: 0,
+        cristian_debt: 0,
+        player_level: '',
+        player_position: '',
+        created_at: new Date(p.created_at),
+        dni: '',
+        country: '',
+        has_access: false,
+        balance: 0,
+        temporaryPlayer: {
+            id: p.id,
+            matchId: p.match_id,
+            team_number: p.team_number,
+            name: p.name,
+            added_by: p.added_by,
+            added_by_name: p.added_by_name
+        }
+    });
+
+    const allPlayers: typesUser[] = [
+        ...players.map(mapPlayer),
+        ...temporaryPlayers.map(mapTemporaryPlayer)
+    ];
+
+    const team1Players = allPlayers.filter(p => (p.matchPlayer?.team_number === 1) || (p.temporaryPlayer?.team_number === 1));
+    const team2Players = allPlayers.filter(p => (p.matchPlayer?.team_number === 2) || (p.temporaryPlayer?.team_number === 2));
+    const unassignedPlayers = allPlayers.filter(p => (p.matchPlayer?.team_number === 0) || (p.temporaryPlayer?.team_number === 0));
 
     const matchWithPlayers: typesMatchWithPlayers = {
         match,

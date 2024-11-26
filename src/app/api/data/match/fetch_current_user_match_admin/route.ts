@@ -44,6 +44,6 @@ export async function GET(req: NextRequest): Promise<NextResponse<APIResponse>> 
     return NextResponse.json({ 
         success: true, 
         message: fetchMessages('MATCH_SUCCESSFULLY_FETCHED'), 
-        data: { isMatchAdmin: data?.has_match_admin || false }
+        data: data?.has_match_admin || false
     });
 }

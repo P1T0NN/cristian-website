@@ -1,28 +1,25 @@
-"use client"
-
-// REACTJS IMPORTS
-import { useTransition } from "react";
-
 // LIBRARIES
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 
 // COMPONENTS
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { PaymentStatusButton } from "./payment-status-button";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import { HasPaidButton } from "./has-paid-button";
+import { HasDiscountButton } from "./has-discount-button";
+import { HasGratisButton } from "./has-gratis-button";
+import { SwitchTeamButton } from "./switch-team-button";
+import { AddPlayerMatchAdminButton } from "./add-player-match-admin-button";
+import { RemoveFriendButton } from "./remove-friend-button";
+import { ShowAdminModalButton } from "./show-admin-modal-button";
 
-// SERVER ACTIONS
-import { updatePaymentStatus } from "@/actions/server_actions/mutations/match/updatePaymentStatus";
-import { adminToggleMatchAdmin } from "@/actions/server_actions/mutations/match/adminToggleMatchAdmin";
-import { managePlayer } from "@/actions/server_actions/mutations/match/managePlayer";
+// UTILS
+import { getPositionLabel } from "@/utils/next-intl/getPlayerPositionLabel";
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
 
 // LUCIDE ICONS
-import { UserMinus, Gift, Percent, DollarSign, User, Shield, ArrowLeftRight } from 'lucide-react';
+import { UserMinus, Percent } from 'lucide-react';
 
 type PlayerInfoProps = {
     authToken: string;
@@ -30,97 +27,41 @@ type PlayerInfoProps = {
     player: typesUser;
     isAdmin: boolean;
     currentUserMatchAdmin: boolean;
-    handleShowAdminModal: () => void;
     teamNumber: 0 | 1 | 2;
+    currentUserId: string;
 }
 
-export const PlayerInfo = ({ 
+export const PlayerInfo = async ({ 
     authToken,
     matchId,
     player, 
     isAdmin,
     currentUserMatchAdmin,
-    handleShowAdminModal,
-    teamNumber
+    teamNumber,
+    currentUserId
 }: PlayerInfoProps) => {
-    const t = useTranslations("MatchPage");
-
-    const [isPending, startTransition] = useTransition();
-
-    const handleUpdatePaymentStatus = (status: 'paid' | 'discount' | 'gratis') => {
-        startTransition(async () => {
-            let hasPaid = status === 'paid' ? !player.matchPlayer?.has_paid : player.matchPlayer?.has_paid;
-            let hasDiscount = status === 'discount' ? !player.matchPlayer?.has_discount : player.matchPlayer?.has_discount;
-            let hasGratis = status === 'gratis' ? !player.matchPlayer?.has_gratis : player.matchPlayer?.has_gratis;
-
-            if (status === 'gratis' && hasGratis) {
-                hasPaid = true;
-                hasDiscount = false;
-            } else if (status === 'discount' && hasDiscount) {
-                hasGratis = false;
-            }
-
-            const result = await updatePaymentStatus(
-                authToken,
-                matchId,
-                player.id,
-                hasPaid || false,
-                hasDiscount || false,
-                hasGratis || false,
-                currentUserMatchAdmin
-            );
-
-            if (result.success) {
-                toast.success(t('paymentStatusUpdated'));
-            } else {
-                toast.error(result.message);
-            }
-        });
-    };
-
-    const handleToggleMatchAdmin = () => {
-        startTransition(async () => {
-            const response = await adminToggleMatchAdmin(authToken, matchId, player.id);
-
-            if (response.success) {
-                toast.success(response.message);
-            } else {
-                toast.error(response.message);
-            }
-        })
-    }
-
-    const handleSwitchTeam = () => {
-        startTransition(async () => {
-            const result = await managePlayer(
-                authToken,
-                matchId,
-                player.id,
-                player.matchPlayer?.team_number === 1 ? 2 : 1,
-                'switchTeam'
-            );
-
-            if (result.success) {
-                toast.success(t('playerSwitchedTeam'));
-            } else {
-                toast.error(result.message);
-            }
-        });
-    };
+    const t = await getTranslations("MatchPage");
 
     const nameColor = player.matchPlayer?.has_paid ? "text-green-500" : "text-red-500";
     const showPaymentControls = isAdmin || currentUserMatchAdmin;
+
+    const playerName = player.temporaryPlayer ? player.temporaryPlayer.name : player.fullName;
+    const playerPosition = player.temporaryPlayer 
+        ? t('temporaryPlayer') 
+        : await getPositionLabel(player.player_position || '');
+
+    const canRemoveTemporaryPlayer = player.temporaryPlayer && (player.temporaryPlayer.added_by === currentUserId || isAdmin);
 
     return (
         <div className="flex flex-col w-full sm:w-auto">
             <div className="flex items-center space-x-2">
                 <Avatar>
-                    <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${player.fullName}`} />
-                    <AvatarFallback>{player.fullName.charAt(0)}</AvatarFallback>
+                    <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${playerName}`} />
+                    <AvatarFallback>{playerName.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
                     <span className={`font-medium ${nameColor} flex items-center`}>
-                        {player.matchPlayer?.has_discount && (
+                        {player.matchPlayer?.has_discount && !player.temporaryPlayer && (
                             <TooltipProvider>
                                 <Tooltip>
                                     <TooltipTrigger>
@@ -132,11 +73,14 @@ export const PlayerInfo = ({
                                 </Tooltip>
                             </TooltipProvider>
                         )}
-                        {player.fullName}
+                        {playerName}
                     </span>
-                    <p className="text-sm text-muted-foreground">{player.player_position}</p>
+                    <p className="text-sm text-muted-foreground">{playerPosition}</p>
+                    {player.temporaryPlayer && player.temporaryPlayer.added_by_name && (
+                        <p className="text-xs text-muted-foreground">{t('addedBy', { name: player.temporaryPlayer.added_by_name })}</p>
+                    )}
                 </div>
-                {player.matchPlayer?.substitute_requested && (
+                {player.matchPlayer?.substitute_requested && !player.temporaryPlayer && (
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger>
@@ -148,78 +92,53 @@ export const PlayerInfo = ({
                         </Tooltip>
                     </TooltipProvider>
                 )}
+                {canRemoveTemporaryPlayer && (
+                    <RemoveFriendButton
+                        authToken={authToken}
+                        matchId={matchId}
+                        player={player}
+                    />
+                )}
             </div>
-            {showPaymentControls && (
+            {showPaymentControls && !player.temporaryPlayer && (
                 <div className="flex flex-wrap mt-2 gap-2">
-                    <PaymentStatusButton
-                        status="paid"
-                        isActive={player.matchPlayer?.has_paid}
-                        onClick={() => handleUpdatePaymentStatus('paid')}
-                        icon={<DollarSign size={16} />}
-                        activeClass="bg-blue-500 hover:bg-blue-600 text-white"
-                        tooltipText={player.matchPlayer?.has_paid ? t('markAsUnpaid') : t('markAsPaid')}
-                        disabled={isPending}
+                    <HasPaidButton 
+                        authToken={authToken}
+                        matchId={matchId}
+                        currentUserMatchAdmin={currentUserMatchAdmin}
+                        player={player}
                     />
-                    <PaymentStatusButton
-                        status="discount"
-                        isActive={player.matchPlayer?.has_discount}
-                        onClick={() => handleUpdatePaymentStatus('discount')}
-                        icon={<Percent size={16} />}
-                        activeClass="bg-yellow-500 hover:bg-yellow-600 text-white"
-                        tooltipText={player.matchPlayer?.has_discount ? t('removeDiscount') : t('applyDiscount')}
-                        disabled={isPending || player.matchPlayer?.has_gratis}
+                    <HasDiscountButton
+                        authToken={authToken}
+                        matchId={matchId}
+                        currentUserMatchAdmin={currentUserMatchAdmin}
+                        player={player}
                     />
-                    <PaymentStatusButton
-                        status="gratis"
-                        isActive={player.matchPlayer?.has_gratis}
-                        onClick={() => handleUpdatePaymentStatus('gratis')}
-                        icon={<Gift size={16} />}
-                        activeClass="bg-green-500 hover:bg-green-600 text-white"
-                        tooltipText={player.matchPlayer?.has_gratis ? t('removeGratis') : t('markAsGratis')}
-                        disabled={isPending}
+                    <HasGratisButton
+                        authToken={authToken}
+                        matchId={matchId}
+                        currentUserMatchAdmin={currentUserMatchAdmin}
+                        player={player}
                     />
                     {isAdmin && (
                         <>
                            {teamNumber !== 0 && (
-                                <TooltipProvider>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <Button
-                                                className="h-8 w-8 sm:h-10 sm:w-10 bg-blue-500 hover:bg-blue-600"
-                                                onClick={handleSwitchTeam}
-                                                disabled={isPending}
-                                            >
-                                                <ArrowLeftRight size={14} className="text-white sm:h-4 sm:w-4" />
-                                            </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>{t('switchTeam')}</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
+                                <SwitchTeamButton
+                                    authToken={authToken}
+                                    matchId={matchId}
+                                    player={player}
+                                />
                             )}
-                            <Button
-                                className="h-8 w-8 sm:h-10 sm:w-10"
-                                onClick={handleShowAdminModal}
-                            >
-                                <User size={14} className="sm:h-4 sm:w-4" />
-                            </Button>
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <Button
-                                            className={`h-8 w-8 sm:h-10 sm:w-10 ${player.matchPlayer?.has_match_admin ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-500 hover:bg-gray-600'}`}
-                                            onClick={handleToggleMatchAdmin}
-                                            disabled={isPending}
-                                        >
-                                            <Shield size={14} className="text-white sm:h-4 sm:w-4" />
-                                        </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                        <p>{player.matchPlayer?.has_match_admin ? t('removeMatchAdmin') : t('makeMatchAdmin')}</p>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
+                            <ShowAdminModalButton
+                                authToken={authToken}
+                                matchId={matchId}
+                                player={player}
+                            />
+                            <AddPlayerMatchAdminButton
+                                authToken={authToken}
+                                matchId={matchId}
+                                player={player}
+                            />
                         </>
                     )}
                 </div>

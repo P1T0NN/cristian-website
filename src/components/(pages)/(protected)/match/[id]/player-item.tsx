@@ -1,14 +1,6 @@
-"use client"
-
-// REACTJS IMPORTS
-import { useState } from "react";
-
 // COMPONENTS
 import { PlayerInfo } from "./player-info";
-import { PlayerLeaveTeamButton } from "./player-leave-team-button";
-import { PlayerReplaceButton } from "./player-replace-button";
-import { AdminActionsDialog } from "./admin-actions-dialog";
-import { SubstituteRequestDialog } from "./substitute-request-dialog";
+import { UserActions } from "./user-actions";
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
@@ -22,9 +14,10 @@ type PlayerItemProps = {
     authToken: string;
     currentUserMatchAdmin: boolean;
     isUserInMatch: boolean;
+    currentUserId: string;
 }
 
-export const PlayerItem = ({ 
+export const PlayerItem = async ({ 
     player, 
     isCurrentUser,
     teamNumber,
@@ -33,14 +26,8 @@ export const PlayerItem = ({
     authToken,
     currentUserMatchAdmin,
     isUserInMatch,
+    currentUserId
 }: PlayerItemProps) => {
-    const [showSubstituteDialog, setShowSubstituteDialog] = useState(false);
-    const [showAdminModal, setShowAdminModal] = useState(false);
-
-    const handleShowAdminModal = () => {
-        setShowAdminModal(true);
-    }
-
     return (
         <div 
             className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-2 bg-muted rounded-lg transition-opacity duration-200 ease-in-out"
@@ -51,47 +38,19 @@ export const PlayerItem = ({
                 player={player}
                 isAdmin={isAdmin}
                 currentUserMatchAdmin={currentUserMatchAdmin}
-                handleShowAdminModal={handleShowAdminModal}
                 teamNumber={teamNumber}
+                currentUserId={currentUserId}
             />
 
-            <div className="flex items-center space-x-2 relative z-10 mt-2 sm:mt-0">
-                {isCurrentUser && !isAdmin ? (
-                    <PlayerLeaveTeamButton 
-                        authToken={authToken}
-                        player={player}
-                        matchId={matchId}
-                        teamNumber={teamNumber}
-                        setShowSubstituteDialog={setShowSubstituteDialog}
-                    />
-                ) : (player.matchPlayer?.substitute_requested && !isUserInMatch) && (
-                    <PlayerReplaceButton
-                        authToken={authToken}
-                        player={player}
-                        matchId={matchId}
-                        teamNumber={teamNumber}
-                    />
-                )}
-            </div>
-
-            {showSubstituteDialog && (
-                <SubstituteRequestDialog
-                    authToken={authToken}
-                    matchId={matchId}
-                    playerId={player.id}
-                    onClose={() => setShowSubstituteDialog(false)}
-                />
-            )}
-
-            {showAdminModal && (
-                <AdminActionsDialog
-                    isOpen={showAdminModal}
-                    onClose={() => setShowAdminModal(false)}
-                    player={player}
-                    matchId={matchId}
-                    authToken={authToken}
-                />
-            )}
+            <UserActions
+                authToken={authToken}
+                matchId={matchId}
+                teamNumber={teamNumber}
+                player={player}
+                isCurrentUser={isCurrentUser}
+                isUserInMatch={isUserInMatch}
+                isAdmin={isAdmin}
+            />
         </div>
     )
 }

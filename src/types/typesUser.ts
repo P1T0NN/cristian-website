@@ -1,6 +1,7 @@
 // TYPES
 import type { typesDebt } from "./typesDebt";
 import type { typesMatchPlayer } from "./typesMatchPlayer";
+import type { typesTemporaryPlayer } from "./typesTemporaryPlayer";
 
 export type typesUser = {
     id: string;
@@ -21,6 +22,7 @@ export type typesUser = {
     balance: number;
     debts?: typesDebt[];
     matchPlayer?: typesMatchPlayer;
+    temporaryPlayer?: typesTemporaryPlayer;
 };
 
 // FOR LOGGING IN

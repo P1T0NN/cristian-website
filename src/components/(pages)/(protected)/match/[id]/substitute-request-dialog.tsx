@@ -29,16 +29,17 @@ type SubstituteRequestDialogProps = {
     matchId: string;
     playerId: string;
     authToken: string;
-    onClose: () => void;
+    setShowSubstituteDialog: (isVisible: boolean) => void;
 }
 
 export const SubstituteRequestDialog = ({
     matchId,
     playerId,
     authToken,
-    onClose
+    setShowSubstituteDialog
 }: SubstituteRequestDialogProps) => {
     const t = useTranslations("MatchPage");
+
     const [isPending, startTransition] = useTransition();
 
     const handleRequestSubstitute = () => {
@@ -53,7 +54,7 @@ export const SubstituteRequestDialog = ({
 
             if (response.success) {
                 toast.success(response.message);
-                onClose();
+                setShowSubstituteDialog(false);
             } else {
                 toast.error(response.message);
             }
@@ -61,7 +62,7 @@ export const SubstituteRequestDialog = ({
     };
 
     return (
-        <AlertDialog open={true} onOpenChange={onClose}>
+        <AlertDialog open={true} onOpenChange={setShowSubstituteDialog}>
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>{t('substituteRequestTitle')}</AlertDialogTitle>

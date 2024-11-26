@@ -5,6 +5,7 @@ import { getTranslations } from 'next-intl/server';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { PlayerItem } from './player-item';
 import { JoinTeamButton } from "./join-team-button";
+import { AddFriendButton } from './add-friend-button';
 
 // ACTIONS
 import { serverFetchCurrentUserMatchAdmin } from '@/actions/functions/data/server/server_fetchCurrentUserMatchAdmin';
@@ -75,6 +76,7 @@ export const PlayerList = async ({
                             authToken={authToken}
                             currentUserMatchAdmin={currentUserMatchAdmin}
                             isUserInMatch={isUserInMatch}
+                            currentUserId={currentUserId}
                         />
                     ))}
                 </div>
@@ -85,6 +87,16 @@ export const PlayerList = async ({
                             matchId={matchId}
                             currentUserId={currentUserId}
                             authToken={authToken}
+                        />
+                    </div>
+                )}
+                {(isUserInMatch || isAdmin) && currentPlayers < maxPlayers && (
+                    <div className="mt-4">
+                        <AddFriendButton
+                            matchId={matchId}
+                            teamNumber={0}
+                            authToken={authToken}
+                            isAdmin={isAdmin}
                         />
                     </div>
                 )}

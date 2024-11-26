@@ -14,6 +14,11 @@ export enum TranslationMessageCode {
     TEAMS_SORT_FAILED = 'TEAMS_SORT_FAILED',
     TEAMS_SORTED_SUCCESSFULLY = 'TEAMS_SORTED_SUCCESSFULLY',
 
+    // ADD/REMOVE FRIEND RPC FUNCTIONS
+    FRIEND_ADDED_SUCCESSFULLY = 'FRIEND_ADDED_SUCCESSFULLY',
+    FRIEND_REMOVED_SUCCESSFULLY = 'FRIEND_REMOVED_SUCCESSFULLY',
+    TEMPORARY_PLAYER_NOT_FOUND = 'TEMPORARY_PLAYER_NOT_FOUND',
+
     // GENERAL MESSAGES
     UNEXPECTED_ERROR = 'UNEXPECTED_ERROR'
 }
@@ -21,5 +26,5 @@ export enum TranslationMessageCode {
 export type RPCResponseData = {
     success: boolean;
     code: TranslationMessageCode;
-    metadata?: TranslationValues; 
+    metadata?: TranslationValues;
 }

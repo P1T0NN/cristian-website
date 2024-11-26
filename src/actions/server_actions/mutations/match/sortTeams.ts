@@ -24,33 +24,40 @@ export async function sortTeams(authToken: string, matchId: string) {
         return { success: false, message: t(authToken ? 'MATCH_ID_INVALID' : 'UNAUTHORIZED') };
     }
 
-    const verifyResult = await jwtVerify(
-        authToken, 
-        new TextEncoder().encode(process.env.JWT_SECRET)
-    );
-    
-    if (!verifyResult) {
-        return { success: false, message: t('JWT_DECODE_ERROR') };
+    try {
+        const verifyResult = await jwtVerify(
+            authToken, 
+            new TextEncoder().encode(process.env.JWT_SECRET)
+        );
+        
+        if (!verifyResult) {
+            return { success: false, message: t('JWT_DECODE_ERROR') };
+        }
+
+        // Call the Supabase RPC function
+        const { data, error } = await supabase.rpc('sort_teams', {
+            p_match_id: matchId
+        });
+        const result = data as RPCResponseData;
+
+        if (error) {
+            console.error('Error in sort_teams RPC:', error);
+            return { success: false, message: t('TEAMS_SORT_FAILED'), error: error.message };
+        }
+
+        if (!result.success) {
+            console.error('RPC function returned failure:', result);
+            return { success: false, message: t(result.code, result.metadata) };
+        }
+
+        await upstashRedisCacheService.delete(`${CACHE_KEYS.MATCH_PREFIX}${matchId}`);
+        revalidatePath("/");
+
+        return { success: true, message: t(result.code, result.metadata) };
+    } catch (error) {
+        console.error('Unexpected error in sortTeams:', error);
+        return { success: false, message: t('UNEXPECTED_ERROR'), error: error instanceof Error ? error.message : 'Unknown error' };
     }
-
-    // Call the Supabase RPC function
-    const { data, error } = await supabase.rpc('sort_teams', {
-        p_match_id: matchId
-    });
-    const result = data as RPCResponseData;
-
-    if (error) {
-        return { success: false, message: t('TEAMS_SORT_FAILED') };
-    }
-
-    if (!result.success) {
-        return { success: false, message: t(result.code, result.metadata) };
-    }
-
-    await upstashRedisCacheService.delete(`${CACHE_KEYS.MATCH_PREFIX}${matchId}`);
-    revalidatePath("/");
-
-    return { success: true, message: t(result.code, result.metadata) };
 }
 
 /*
@@ -81,38 +88,56 @@ BEGIN
         ELSE v_max_players := 11;
     END CASE;
 
-    -- Count total players
-    SELECT COUNT(*) INTO v_total_players FROM match_players WHERE match_id = p_match_id;
+    -- Count total players (including temporary players)
+    SELECT COUNT(*) INTO v_total_players 
+    FROM (
+        SELECT id FROM match_players WHERE match_id = p_match_id
+        UNION ALL
+        SELECT id FROM temporary_players WHERE match_id = p_match_id
+    ) AS all_players;
 
     -- Calculate players per team
     v_players_per_team := v_total_players / 2;
 
-    -- Sort players into teams
+    -- Sort players into teams (including temporary players)
     FOR v_player IN 
-        SELECT * FROM match_players 
-        WHERE match_id = p_match_id 
+        SELECT * FROM (
+            SELECT id, 'regular' AS player_type FROM match_players WHERE match_id = p_match_id
+            UNION ALL
+            SELECT id, 'temporary' AS player_type FROM temporary_players WHERE match_id = p_match_id
+        ) AS all_players
         ORDER BY RANDOM()
     LOOP
         IF v_team1_count < v_players_per_team THEN
-            UPDATE match_players 
-            SET team_number = 1 
-            WHERE id = v_player.id;
+            IF v_player.player_type = 'regular' THEN
+                UPDATE match_players SET team_number = 1 WHERE id = v_player.id;
+            ELSE
+                UPDATE temporary_players SET team_number = 1 WHERE id = v_player.id;
+            END IF;
             v_team1_count := v_team1_count + 1;
         ELSIF v_team2_count < v_players_per_team THEN
-            UPDATE match_players 
-            SET team_number = 2 
-            WHERE id = v_player.id;
+            IF v_player.player_type = 'regular' THEN
+                UPDATE match_players SET team_number = 2 WHERE id = v_player.id;
+            ELSE
+                UPDATE temporary_players SET team_number = 2 WHERE id = v_player.id;
+            END IF;
             v_team2_count := v_team2_count + 1;
         ELSE
             -- If there's an odd player, randomly assign to team 1 or 2
             IF random() < 0.5 THEN
-                UPDATE match_players 
-                SET team_number = 1 
-                WHERE id = v_player.id;
+                IF v_player.player_type = 'regular' THEN
+                    UPDATE match_players SET team_number = 1 WHERE id = v_player.id;
+                ELSE
+                    UPDATE temporary_players SET team_number = 1 WHERE id = v_player.id;
+                END IF;
+                v_team1_count := v_team1_count + 1;
             ELSE
-                UPDATE match_players 
-                SET team_number = 2 
-                WHERE id = v_player.id;
+                IF v_player.player_type = 'regular' THEN
+                    UPDATE match_players SET team_number = 2 WHERE id = v_player.id;
+                ELSE
+                    UPDATE temporary_players SET team_number = 2 WHERE id = v_player.id;
+                END IF;
+                v_team2_count := v_team2_count + 1;
             END IF;
         END IF;
     END LOOP;
@@ -123,7 +148,7 @@ BEGIN
     RETURN jsonb_build_object('success', true, 'code', 'TEAMS_SORTED_SUCCESSFULLY');
 EXCEPTION
     WHEN OTHERS THEN
-        RETURN jsonb_build_object('success', false, 'code', 'UNKNOWN_ERROR');
+        RETURN jsonb_build_object('success', false, 'code', 'UNKNOWN_ERROR', 'message', SQLERRM);
 END;
 $$ LANGUAGE plpgsql;
 

@@ -244,7 +244,19 @@
         "sorting": "Ordenando...",
         "sortTeams": "Ordenar Equipos",
         "sortTeamsConfirmTitle": "Ordenar Equipos",
-        "sortTeamsConfirmDescription": "¿Estás seguro de que quieres ordenar aleatoriamente a los jugadores en equipos? Esta acción no se puede deshacer."
+        "sortTeamsConfirmDescription": "¿Estás seguro de que quieres ordenar aleatoriamente a los jugadores en equipos? Esta acción no se puede deshacer.",
+        "removeTemporaryPlayer": "Eliminar jugador temporal",
+        "addedBy": "Añadido por {name}",
+        "addFriend": "Añadir Amigo",
+        "addFriendToMatch": "Añadir un amigo al partido",
+        "friendsName": "Nombre del Amigo",
+        "enterFriendName": "Ingresa el nombre de tu amigo",
+        "adding": "Añadiendo...",
+        "temporaryPlayer": "Jugador Temporal",
+        "addPlayer": "Agregar Jugador",
+        "addPlayerToMatch": "Agregar Jugador al Partido",
+        "playerName": "Nombre del Jugador",
+        "enterPlayerName": "Ingrese el nombre del jugador"
     },
 
     "EditMatchPage": {
@@ -586,6 +598,7 @@
         "PLAYER_REMOVED_SUCCESSFULLY": "Jugador eliminado del partido con éxito",
         "PAYMENT_STATUS_UPDATED_SUCCESSFULLY": "¡Estado de pago actualizado con éxito!",
         "MATCH_ADMIN_STATUS_UPDATED": "El estado de administrador de partido se ha actualizado con éxito",
+        "PLAYER_SWITCHED_TEAM_SUCCESSFULLY": "El jugador cambió de equipo exitosamente",
 
         "PLAYER_DETAILS_UPDATED": "Detalles del jugador actualizados con éxito",
 
@@ -594,6 +607,12 @@
 
         "TEAMS_SORT_FAILED": "No se pudieron ordenar los equipos",
         "TEAMS_SORTED_SUCCESSFULLY": "Equipos ordenados con éxito",
+
+        "FRIEND_ADDITION_FAILED": "No se pudo añadir al amigo",
+        "FRIEND_ADDED_SUCCESSFULLY": "Amigo añadido con éxito",
+        "FRIEND_REMOVAL_FAILED": "No se pudo eliminar al amigo",
+        "TEMPORARY_PLAYER_NOT_FOUND": "Jugador temporal no encontrado",
+        "FRIEND_REMOVED_SUCCESSFULLY": "Amigo eliminado con éxito",
 
         "REDIS_CONNECTION_ERROR": "No se puede conectar a la base de datos. Inténtalo de nuevo más tarde.",
         "REDIS_DISCONNECTION_ERROR": "Error al desconectar de la base de datos.",
@@ -619,7 +638,8 @@
         "OPERATION_FAILED": "¡Operación fallida! Intenta nuevamente.",
         "OPERATION_SUCCESS": "¡Operación exitosa!",
         "OPERATION_PARTIAL_SUCCESS": "Algunas operaciones han fallado",
-        "ACCESS_DENIED": "Acceso denegado. No tienes los permisos necesarios."
+        "ACCESS_DENIED": "Acceso denegado. No tienes los permisos necesarios.",
+        "UNEXPECTED_ERROR": "Se produjo un error inesperado. Por favor, inténtelo de nuevo más tarde."
     },
 
     "FetchMessages": {
