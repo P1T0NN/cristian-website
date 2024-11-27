@@ -28,7 +28,7 @@ import { getInitials } from "@/utils/getNameInitials";
 import type { typesUser } from "@/types/typesUser";
 
 // LUCIDE ICONS
-import { Bell, Settings, History, UserPlus, User, ClipboardList } from 'lucide-react';
+import { Settings, History, UserPlus, User, ClipboardList, Wallet } from 'lucide-react';
 
 type HeaderProps = {
     serverUserData: typesUser | undefined;
@@ -65,15 +65,22 @@ export const HeaderProtected = async ({
                             </div>
                         )}
 
-                        <Button
+                        {/*<Button
                             variant="secondary"
                             size="icon"
                             className="h-8 w-8 sm:h-10 sm:w-10"
                         >
                             <Bell className="h-4 w-4 sm:h-5 sm:w-5" />
-                        </Button>
+                        </Button>*/}
 
-                        {serverUserData ? (
+                        {serverUserData && (
+                            <div className="flex items-center bg-secondary rounded-full px-2 py-1 sm:px-3 sm:py-1">
+                                <Wallet className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                                <span className="text-xs sm:text-sm font-medium">{serverUserData.balance.toFixed(2)}</span>
+                            </div>
+                        )}
+
+{serverUserData ? (
                             <DropdownMenu>
                                 <DropdownMenuTrigger>
                                     <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-secondary">
