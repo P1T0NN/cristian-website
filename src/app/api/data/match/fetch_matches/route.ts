@@ -36,7 +36,6 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
 
     const url = new URL(req.url);
     const date = url.searchParams.get('date');
-    const time = url.searchParams.get('time');
     const gender = url.searchParams.get('gender');
     const isAdmin = url.searchParams.get('isAdmin') === 'true';
     const playerLevel = url.searchParams.get('playerLevel');
@@ -44,15 +43,10 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
     let matchesQuery = supabase
         .from('matches')
         .select('*')
-        .order('starts_at_day', { ascending: true })
-        .order('starts_at_hour', { ascending: true });
+        .order('created_at', { ascending: false });
 
     if (date) {
-        matchesQuery = matchesQuery.gte('starts_at_day', date);
-    }
-
-    if (time) {
-        matchesQuery = matchesQuery.gte('starts_at_hour', time);
+        matchesQuery = matchesQuery.eq('starts_at_day', date);
     }
 
     if (!isAdmin && gender) {
@@ -72,6 +66,7 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
     const filteredMatches = dbMatches.filter(match => {
         if (isAdmin) return true;
         if (!playerLevel) return false;
+        // We add match.match_level && check here just in case if match has match_level NULL for some reason, so it doesn't throw error at .includes
         return match.match_level && match.match_level.includes(playerLevel);
     });
 
