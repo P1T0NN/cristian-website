@@ -29,18 +29,21 @@ import { useZodSchemas } from "@/hooks/useZodSchema";
 import { editMatch } from "@/actions/server_actions/mutations/match/editMatch";
 
 // TYPES
-import { typesAddMatchForm } from "@/types/forms/AddMatchForm";
+import type { typesAddMatchForm } from "@/types/forms/AddMatchForm";
+import type { typesLocation } from "@/types/typesLocation";
 
 type EditMatchFormProps = {
     matchData: typesAddMatchForm;
     authToken: string;
     matchId: string;
+    defaultLocationsData: typesLocation[];
 }
 
 export const EditMatchForm = ({
     matchData,
     authToken,
-    matchId
+    matchId,
+    defaultLocationsData
 }: EditMatchFormProps) => {
     const t = useTranslations("AddMatchPage");
     const editMatchMessages = useTranslations("EditMatchPage");
@@ -117,6 +120,7 @@ export const EditMatchForm = ({
                 error={errors.location}
                 urlError={errors.location_url}
                 authToken={authToken}
+                defaultLocationsData={defaultLocationsData}
             />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
