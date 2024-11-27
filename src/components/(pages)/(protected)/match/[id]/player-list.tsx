@@ -57,6 +57,11 @@ export const PlayerList = async ({
     const maxPlayers = getMaxPlayers(matchType);
     const currentPlayers = players.length;
 
+    const currentUserPlayer = players.find(player => player.id === currentUserId);
+    const canAddFriend = (isUserInMatch || isAdmin) && 
+                         currentPlayers < maxPlayers && 
+                         (!currentUserPlayer || !currentUserPlayer.matchPlayer?.has_added_friend);
+
     return (
         <Card>
             <CardHeader>
@@ -92,7 +97,7 @@ export const PlayerList = async ({
                         />
                     </div>
                 )}
-                {(isUserInMatch || isAdmin) && currentPlayers < maxPlayers && (
+                {canAddFriend && (
                     <div className="mt-4">
                         <AddFriendButton
                             matchId={matchId}

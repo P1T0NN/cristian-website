@@ -87,6 +87,7 @@ DECLARE
     v_temp_player RECORD;
     v_updated_places_occupied INT;
     v_is_admin BOOLEAN;
+    v_remaining_friends INT;
 BEGIN
     -- Check if the user is an admin
     SELECT "isAdmin" INTO v_is_admin FROM users WHERE id = p_user_id;
@@ -120,6 +121,18 @@ BEGIN
     UPDATE matches
     SET places_occupied = v_updated_places_occupied
     WHERE id = p_match_id;
+
+    -- Check if the user has any remaining friends in this match
+    SELECT COUNT(*) INTO v_remaining_friends
+    FROM temporary_players
+    WHERE match_id = p_match_id AND added_by = p_user_id;
+
+    -- If no remaining friends, set has_added_friend to false
+    IF v_remaining_friends = 0 THEN
+        UPDATE match_players
+        SET has_added_friend = false
+        WHERE match_id = p_match_id AND user_id = p_user_id;
+    END IF;
 
     -- Return success message
     RETURN jsonb_build_object('success', true, 'code', 'FRIEND_REMOVED_SUCCESSFULLY');

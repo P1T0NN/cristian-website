@@ -122,6 +122,15 @@ BEGIN
         RETURN jsonb_build_object('success', false, 'code', 'UPDATE_FAILED', 'details', SQLERRM);
     END;
 
+    -- Update has_added_friend in match_players table
+    BEGIN
+        UPDATE match_players
+        SET has_added_friend = true
+        WHERE match_id = p_match_id AND user_id = p_user_id;
+    EXCEPTION WHEN OTHERS THEN
+        RETURN jsonb_build_object('success', false, 'code', 'UPDATE_FAILED', 'details', SQLERRM);
+    END;
+
     -- Return success message
     RETURN jsonb_build_object('success', true, 'code', 'FRIEND_ADDED_SUCCESSFULLY', 'data', row_to_json(v_temp_player));
 

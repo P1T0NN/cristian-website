@@ -65,6 +65,12 @@ export const TeamCard = async ({
     // because of react rerender when using .map in here: {isDefaultTeam && players?.map((player) => (
     const sortedPlayers = players?.sort((a, b) => (a.id).localeCompare(b.id)) || [];
 
+    const currentUserPlayer = sortedPlayers.find(player => player.id === currentUserId);
+    const canAddFriend = (isUserInMatch || isAdmin) && 
+                         !isFull && 
+                         (isAdmin || userTeamNumber === teamNumber) &&
+                         (!currentUserPlayer || !currentUserPlayer.matchPlayer?.has_added_friend);
+
     return (
         <Card>
             <CardHeader>
@@ -101,7 +107,7 @@ export const TeamCard = async ({
                     />
                 )}
 
-                {isDefaultTeam && !isFull && (isAdmin || userTeamNumber === teamNumber) && (
+                {isDefaultTeam && canAddFriend && (
                     <AddFriendButton
                         matchId={matchId}
                         teamNumber={teamNumber}

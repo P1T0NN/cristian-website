@@ -9,4 +9,5 @@ export type typesMatchPlayer = {
     has_discount: boolean;
     has_gratis: boolean;
     has_match_admin: boolean;
+    has_added_friend: boolean;
 }
