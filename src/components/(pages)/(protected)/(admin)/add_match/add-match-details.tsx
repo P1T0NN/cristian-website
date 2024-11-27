@@ -44,23 +44,24 @@ export const AddMatchDetails = ({
 
     const { addMatchSchema } = useZodSchemas();
 
-    const { formData, errors, handleInputChange, setFieldValue, handleSubmit } = useForm({
+    const { formData, errors, handleInputChange, setFieldValue, handleSubmit, validateForm } = useForm({
         initialValues: {
             location: "",
             location_url: "",
-            price: 0,
+            price: "4.5",
             team1_name: "",
             team2_name: "",
             starts_at_day: "",
             starts_at_hour: "",
-            match_type: "",
-            match_gender: "",
+            match_type: "F8",
+            match_gender: "Male",
             match_duration: 60,
             added_by: serverUserData.fullName,
             match_level: "",
             has_teams: false
         },
         validationSchema: addMatchSchema,
+        useToastForErrors: true,
         onSubmit: async (values) => {
             startTransition(async () => {
                 const result = await addMatch(authToken, values);
@@ -74,6 +75,12 @@ export const AddMatchDetails = ({
             });
         },
     });
+
+    const handleFormSubmit = () => {
+        if (validateForm()) {
+            handleSubmit();
+        }
+    };
 
     return (
         <>
@@ -91,7 +98,7 @@ export const AddMatchDetails = ({
                 <Button 
                     disabled={isPending} 
                     className="w-full sm:w-[150px] font-bold" 
-                    onClick={handleSubmit}
+                    onClick={handleFormSubmit}
                 >
                     {isPending ? t('adding') : t('addMatch')}
                 </Button>

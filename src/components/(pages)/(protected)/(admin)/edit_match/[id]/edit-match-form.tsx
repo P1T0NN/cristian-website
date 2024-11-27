@@ -54,7 +54,7 @@ export const EditMatchForm = ({
         initialValues: {
             location: matchData.location || "",
             location_url: matchData.location_url || "",
-            price: matchData.price || 0,
+            price: matchData.price?.toString() || "",
             team1_name: matchData.team1_name || "",
             team2_name: matchData.team2_name || "",
             starts_at_day: matchData.starts_at_day || "",
@@ -115,6 +115,7 @@ export const EditMatchForm = ({
                 locationUrl={formData.location_url}
                 onLocationChange={handleLocationChange}
                 error={errors.location}
+                urlError={errors.location_url}
                 authToken={authToken}
             />
 
@@ -122,7 +123,7 @@ export const EditMatchForm = ({
                 <FormInputField
                     label={t("price")}
                     name="price"
-                    type="number"
+                    type="text"
                     value={formData.price}
                     onChange={handleInputChange}
                     placeholder={t('pricePlaceholder')}

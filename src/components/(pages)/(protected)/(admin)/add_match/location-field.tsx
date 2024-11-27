@@ -32,6 +32,7 @@ type LocationFieldProps = {
     locationUrl: string;
     onLocationChange: (locationName: string, locationUrl: string) => void;
     error?: string;
+    urlError?: string;
     authToken: string;
 };
 
@@ -40,6 +41,7 @@ export const LocationField = ({
     locationUrl,
     onLocationChange, 
     error, 
+    urlError,
     authToken, 
 }: LocationFieldProps) => {
     const t = useTranslations("AddMatchPage");
@@ -130,6 +132,7 @@ export const LocationField = ({
                     className={`w-full mt-1 ${isLocationSelected ? 'bg-gray-100' : ''}`}
                     placeholder={t('locationUrlPlaceholder')}
                 />
+                {urlError && <p className="text-sm text-red-500 mt-1">{urlError}</p>}
             </div>
         </div>
     );

@@ -20,12 +20,10 @@ import { toast } from "sonner";
 
 // HOOKS
 import { useForm } from "@/hooks/useForm";
+import { useZodSchemas } from "@/hooks/useZodSchema";
 
 // SERVER ACTIONS
 import { registerUser } from "@/actions/server_actions/auth/registerUser";
-
-// ZOD
-import { registerSchema } from "@/zod/schema";
 
 export const RegisterContent = () => {
     const t = useTranslations('RegisterPage');
@@ -33,12 +31,17 @@ export const RegisterContent = () => {
 
     const [isPending, startTransition] = useTransition();
 
+    const { registerSchema } = useZodSchemas();
+
     const { formData, errors, handleInputChange, handleSubmit } = useForm({
           initialValues: {
             email: "",
             fullName: "",
             phoneNumber: "",
             gender: "",
+            country: "",
+            player_position: "",
+            dni: "",
             password: "",
             confirmPassword: "",
         },

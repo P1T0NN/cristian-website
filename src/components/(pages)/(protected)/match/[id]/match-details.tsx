@@ -25,7 +25,7 @@ export const MatchDetails = async ({
 }: MatchDetailsProps) => {
     const t = await getTranslations("MatchPage");
 
-    const formattedDate = await formatDate(serverMatchData.starts_at_day, true);
+    const formattedDate = await formatDate(serverMatchData.starts_at_day);
     const formattedMatchType = await formatMatchType(serverMatchData.match_type);
 
     return (

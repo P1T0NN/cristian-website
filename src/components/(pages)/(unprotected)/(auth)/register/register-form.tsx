@@ -1,22 +1,18 @@
+"use client"
+
 // LIBRARIES
 import { useTranslations } from 'next-intl';
 
 // COMPONENTS
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+import { FormSelectField } from '@/components/ui/forms/form-select-field';
+import { FormInputField } from '@/components/ui/forms/form-input-field';
 
 // TYPES
 import { typesRegisterForm } from "@/types/forms/RegisterForm";
 
 // LUCIDE ICONS
-import { Mail, Phone, LockKeyhole, User, PersonStanding } from "lucide-react";
+import { Mail, Phone, LockKeyhole, User, PersonStanding, CreditCard, Globe } from "lucide-react";
 
 type RegisterFormProps = {
     formData: typesRegisterForm;
@@ -35,108 +31,145 @@ export const RegisterForm = ({
 }: RegisterFormProps) => {
     const t = useTranslations('RegisterPage');
 
+    const genderOptions = [
+        { value: 'Male', label: t('Male') },
+        { value: 'Female', label: t('Female') },
+        { value: 'Other', label: t('Other') },
+    ];
+
+    const positionOptions = [
+        { value: 'Goalkeeper', label: t('goalkeeper') },
+        { value: 'Defender', label: t('defender') },
+        { value: 'Midfielder', label: t('midfielder') },
+        { value: 'Forward', label: t('attacker') },
+    ];
+
+    const handleSelectChange = (name: string) => (value: string) => {
+        handleInputChange({
+            target: { name, value }
+        } as React.ChangeEvent<HTMLInputElement>);
+    };
+
     return (
-        <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="space-y-8">
-            <div className="relative w-[350px] h-[35px] space-y-1">
-                <div className="flex flex-col">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    <Input
-                        type="email"
+        <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="w-full max-w-[350px]">
+            <div className="flex flex-col w-full space-y-4">
+                <div className="w-full">
+                    <FormInputField
                         name="email"
-                        className="pl-12 w-full"
-                        placeholder={t('emailPlaceholder')}
+                        type="email"
                         value={formData.email}
                         onChange={handleInputChange}
+                        placeholder={t('emailPlaceholder')}
+                        error={errors.email}
+                        autoComplete="email"
+                        icon={<Mail className="w-4 h-4" />}
                     />
                 </div>
-                {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-            </div>
 
-            <div className="relative w-[350px] h-[35px] space-y-1">
-                <div className="flex flex-col">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    <Input
-                        type="text"
+                <div className="w-full">
+                    <FormInputField
                         name="fullName"
-                        className="pl-12 w-full"
-                        placeholder={t('fullNamePlaceholder')}
+                        type="text"
                         value={formData.fullName}
                         onChange={handleInputChange}
+                        placeholder={t('fullNamePlaceholder')}
+                        error={errors.fullName}
+                        autoComplete="name"
+                        icon={<User className="w-4 h-4" />}
                     />
                 </div>
-                {errors.fullName && <p className="text-red-500 text-sm">{errors.fullName}</p>}
-            </div>
 
-            <div className="relative w-[350px] h-[35px] space-y-1">
-                <div className="flex flex-col">
-                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    <Input
-                        type="text"
+                <div className="w-full">
+                    <FormInputField
                         name="phoneNumber"
-                        className="pl-12 w-full"
-                        placeholder={t('phoneNumberPlaceholder')}
+                        type="tel"
                         value={formData.phoneNumber}
                         onChange={handleInputChange}
+                        placeholder={t('phoneNumberPlaceholder')}
+                        error={errors.phoneNumber}
+                        autoComplete="tel"
+                        icon={<Phone className="w-4 h-4" />}
                     />
                 </div>
-                {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber}</p>}
-            </div>
 
-            <div className="relative w-[350px] h-[35px] space-y-1">
-                <div className="flex flex-col">
-                    <PersonStanding className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    <Select
-                        onValueChange={(value) => handleInputChange({
-                            target: {
-                                name: 'gender',
-                                value
-                            }
-                        } as React.ChangeEvent<HTMLInputElement>)}
-                    >
-                        <SelectTrigger className='pl-12'>
-                            <SelectValue placeholder={t('genderPlaceholder')} />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="Male">{t('Male')}</SelectItem>
-                            <SelectItem value="Female">{t('Female')}</SelectItem>
-                            <SelectItem value="Other">{t('Other')}</SelectItem>
-                        </SelectContent>
-                    </Select>
+                <div className="w-full">
+                    <FormInputField
+                        name="country"
+                        type="text"
+                        value={formData.country}
+                        onChange={handleInputChange}
+                        placeholder={t('countryPlaceholder')}
+                        error={errors.country}
+                        autoComplete="country-name"
+                        icon={<Globe className="w-4 h-4" />}
+                    />
                 </div>
-                {errors.gender && <p className="text-red-500 text-sm">{errors.gender}</p>}
-            </div>
 
-            <div className="relative w-[350px] h-[35px] space-y-1">
-                <div className="flex flex-col">
-                    <LockKeyhole className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    <Input
-                        type="password"
+                <div className="w-full">
+                    <FormSelectField
+                        name="gender"
+                        value={formData.gender}
+                        onChange={handleSelectChange('gender')}
+                        options={genderOptions}
+                        placeholder={t('genderPlaceholder')}
+                        error={errors.gender}
+                        icon={<PersonStanding className="w-4 h-4" />}
+                    />
+                </div>
+
+                <div className="w-full">
+                    <FormSelectField
+                        name="player_position"
+                        value={formData.player_position}
+                        onChange={handleSelectChange('player_position')}
+                        options={positionOptions}
+                        placeholder={t('selectPlayerPosition')}
+                        error={errors.player_position}
+                        icon={<PersonStanding className="w-4 h-4" />}
+                    />
+                </div>
+
+                <div className="w-full">
+                    <FormInputField
+                        name="dni"
+                        type="text"
+                        value={formData.dni}
+                        onChange={handleInputChange}
+                        placeholder={t('enterDNI')}
+                        error={errors.dni}
+                        autoComplete="off"
+                        icon={<CreditCard className="w-4 h-4" />}
+                    />
+                </div>
+
+                <div className="w-full">
+                    <FormInputField
                         name="password"
-                        className="pl-12 w-full"
-                        placeholder={t('passwordPlaceholder')}
+                        type="password"
                         value={formData.password}
                         onChange={handleInputChange}
+                        placeholder={t('passwordPlaceholder')}
+                        error={errors.password}
+                        autoComplete="new-password"
+                        icon={<LockKeyhole className="w-4 h-4" />}
                     />
                 </div>
-                {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
-            </div>
 
-            <div className="relative w-[350px] h-[35px] space-y-1">
-                <div className="flex flex-col">
-                    <LockKeyhole className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    <Input
-                        type="password"
+                <div className="w-[350px] h-[35px]">
+                    <FormInputField
                         name="confirmPassword"
-                        className="pl-12 w-full"
-                        placeholder={t('confirmPasswordPlaceholder')}
+                        type="password"
                         value={formData.confirmPassword}
                         onChange={handleInputChange}
+                        placeholder={t('confirmPasswordPlaceholder')}
+                        error={errors.confirmPassword}
+                        autoComplete="new-password"
+                        icon={<LockKeyhole className="w-4 h-4" />}
                     />
                 </div>
-                {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword}</p>}
             </div>
 
-            <Button type="submit" className="w-full" disabled={isPending}>
+            <Button type="submit" className="w-full mt-6" disabled={isPending}>
                 {isPending ? t('signingUp') : t('signUp')}
             </Button>
         </form>

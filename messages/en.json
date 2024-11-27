@@ -60,7 +60,17 @@
         "signUp": "Sign up",
         "signingUp": "Signing up...",
         "alreadyUsing": "Already using an account?",
-        "logIn": "Log in"
+        "logIn": "Log in",
+        "playerPosition": "Player Position",
+        "selectPlayerPosition": "Select your player position",
+        "dni": "DNI",
+        "enterDNI": "Enter your DNI number",
+        "goalkeeper": "Goalkeeper",
+        "defender": "Defender",
+        "midfielder": "Midfielder",
+        "attacker": "Forward",
+        "countryPlaceholder": "Enter your country",
+        "country": "Country"
     },
 
     "ForgotPasswordPage": {
@@ -713,7 +723,13 @@
         "LOCATION_URL_REQUIRED": "Google Maps URL of location is required",
         "MATCH_DURATION_REQUIRED": "Match duration is required",
         "MATCH_LEVEL_REQUIRED": "Match level is required",
-        "MATCH_LEVEL_TOO_LONG": "Match level cannot be more than 4 letters. (Max 'ABCD')"
+        "MATCH_LEVEL_TOO_LONG": "Match level cannot be more than 4 letters. (Max 'ABCD')",
+        "PRICE_MUST_BE_POSITIVE": "Price must be positive",
+        "PICK_CORRECT_POSITION": "Please select a valid player position",
+        "DNI_TOO_SHORT": "DNI must be at least 6 characters long",
+        "DNI_TOO_LONG": "DNI cannot exceed 20 characters",
+        "COUNTRY_REQUIRED": "Country is required",
+        "COUNTRY_TOO_LONG": "Country name is too long"
     },
 
     "EmailTemplateMessages": {

@@ -60,7 +60,17 @@
         "signUp": "Registrarse",
         "signingUp": "Registrándose...",
         "alreadyUsing": "¿Ya tienes una cuenta?",
-        "logIn": "Iniciar sesión"
+        "logIn": "Iniciar sesión",
+        "playerPosition": "Posición del Jugador",
+        "selectPlayerPosition": "Selecciona tu posición de juego",
+        "dni": "DNI",
+        "enterDNI": "Introduce tu número de DNI",
+        "goalkeeper": "Portero",
+        "defender": "Defensa",
+        "midfielder": "Centrocampista",
+        "attacker": "Delantero",
+        "countryPlaceholder": "Ingrese su país",
+        "country": "País"
     },
 
     "ForgotPasswordPage": {
@@ -381,7 +391,7 @@
     },
 
     "ActiveMatchesPage": {
-        "activeMatches": "Partidos Activos",
+        "activeMatches": "Estás apuntado en los próximos Partidos",
         "noActiveMatches": "No tienes partidos activos",
         "placesLeft": "plazas disponibles"
     },
@@ -715,7 +725,13 @@
         "LOCATION_URL_REQUIRED": "Se requiere la URL de Google Maps de la ubicación",
         "MATCH_DURATION_REQUIRED": "La duración del partido es obligatoria",
         "MATCH_LEVEL_REQUIRED": "El nivel del partido es obligatorio",
-        "MATCH_LEVEL_TOO_LONG": "El nivel del partido no puede tener más de 4 letras. (Máximo 'ABCD')"
+        "MATCH_LEVEL_TOO_LONG": "El nivel del partido no puede tener más de 4 letras. (Máximo 'ABCD')",
+        "PRICE_MUST_BE_POSITIVE": "El precio debe ser positivo",
+        "PICK_CORRECT_POSITION": "Por favor, selecciona una posición de jugador válida",
+        "DNI_TOO_SHORT": "El DNI debe tener al menos 6 caracteres",
+        "DNI_TOO_LONG": "El DNI no puede exceder los 20 caracteres",
+        "COUNTRY_REQUIRED": "El país es obligatorio",
+        "COUNTRY_TOO_LONG": "El nombre del país es demasiado largo"
     },
 
     "EmailTemplateMessages": {

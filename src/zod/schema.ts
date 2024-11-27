@@ -8,6 +8,10 @@ export const registerSchema = z.object({
     gender: z.enum(['Male', 'Female', 'Other'], {
         errorMap: () => ({ message: 'Gender must be Male, Female, or Other' })
     }),
+    player_position: z.enum(['Goalkeeper', 'Defender', 'Midfielder', 'Forward'], {
+        errorMap: () => ({ message: "You must choose correct position" })
+    }),
+    dni: z.string().min(6, "DNI is too short").max(20, "DNI is too long"),
     password: z.string().min(6, 'Password must be at least 6 characters'),
     confirmPassword: z.string()
 }).refine((data) => data.password === data.confirmPassword, {

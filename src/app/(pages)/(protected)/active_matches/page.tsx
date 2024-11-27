@@ -16,8 +16,8 @@ export default async function ActiveMatchesPage() {
     const serverUserData = await getUser() as typesUser;
 
     return (
-        <div className="container mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold mb-6">{t('activeMatches')}</h1>
+        <div className="container mx-auto px-4 py-6 sm:py-8">
+            <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">{t('activeMatches')}</h1>
             <DisplayActiveMatches currentUserId={serverUserData.id} />
         </div>
     )

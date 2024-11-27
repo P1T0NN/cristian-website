@@ -109,7 +109,7 @@ export function EditPlayerDetails({
                                 onChange={(e) => setDNI(e.target.value)}
                                 placeholder={t('enterDNI')}
                             
-/>
+                            />
                             <FormInputField
                                 label={t('playerLevel')}
                                 name="level"

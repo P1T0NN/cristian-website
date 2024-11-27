@@ -51,13 +51,14 @@ export const MatchDetailsSection = ({
                 locationUrl={formData.location_url}
                 onLocationChange={handleLocationChange}
                 error={errors.location}
+                urlError={errors.location_url}
                 authToken={authToken}
             />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormInputField
                     label={t("price")}
                     name="price"
-                    type="number"
+                    type="text"
                     value={formData.price}
                     onChange={handleInputChange}
                     placeholder={t('pricePlaceholder')}

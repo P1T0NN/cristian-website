@@ -16,9 +16,14 @@ export const useZodSchemas = () => {
         email: z.string().email(t('INVALID_EMAIL')),
         fullName: z.string().min(1, t('FULL_NAME_REQUIRED')).max(50, t('FULL_NAME_TOO_LONG')),
         phoneNumber: z.string().min(1, t('PHONE_NUMBER_REQUIRED')).max(20, t('PHONE_NUMBER_TOO_LONG')),
+        country: z.string().min(1, t('COUNTRY_REQUIRED')).max(56, t('COUNTRY_TOO_LONG')),
         gender: z.enum(['Male', 'Female', 'Other'], {
             errorMap: () => ({ message: t('PICK_CORRECT_GENDER') })
         }),
+        player_position: z.enum(['Goalkeeper', 'Defender', 'Midfielder', 'Forward'], {
+            errorMap: () => ({ message: t('PICK_CORRECT_POSITION') })
+        }),
+        dni: z.string().min(6, t('DNI_TOO_SHORT')).max(20, t('DNI_TOO_LONG')),
         password: z.string().min(6, t('PASSWORD_TOO_SHORT')),
         confirmPassword: z.string()
     }).refine((data) => data.password === data.confirmPassword, {
@@ -41,7 +46,12 @@ export const useZodSchemas = () => {
     const addMatchSchema = z.object({
         location: z.string().min(1, { message: t('LOCATION_REQUIRED') }),
         location_url: z.string().min(1, { message: t('LOCATION_URL_REQUIRED') }),
-        price: z.number().min(0, { message: t('PRICE_REQUIRED') }),
+        price: z.string({ required_error: t('PRICE_REQUIRED') })
+            .min(1, { message: t('PRICE_REQUIRED') })
+            .refine(
+                (val) => /^\d+(\.\d{1,2})?$/.test(val),
+                { message: t('PRICE_MUST_BE_POSITIVE') }
+            ),
         team1_name: z.string().min(1, { message: t('TEAM1_NAME_REQUIRED') }).max(255, { message: t('TEAM_NAME_TOO_LONG') }),
         team2_name: z.string().min(1, { message: t('TEAM2_NAME_REQUIRED') }).max(255, { message: t('TEAM_NAME_TOO_LONG') }),
         starts_at_day: z.string().min(1, { message: t('START_DAY_REQUIRED') }),

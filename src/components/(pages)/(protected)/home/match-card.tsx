@@ -111,7 +111,7 @@ export const MatchCard = async ({
                             </div>
                         </div>
                         {match.match_instructions && (
-                            <p className="text-sm text-muted-foreground line-clamp-2">{match.match_instructions}</p>
+                            <p className="text-sm text-muted-foreground whitespace-pre-wrap break-words">{match.match_instructions}</p>
                         )}
                         <div className="flex flex-col gap-2 text-sm text-muted-foreground">
                             <div className="flex items-center">

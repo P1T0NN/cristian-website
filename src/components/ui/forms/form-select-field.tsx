@@ -14,36 +14,44 @@ type Option = {
 };
 
 type FormSelectFieldProps = {
-    label: string;
     name: string;
     value: string;
     onChange: (value: string) => void;
     options: Option[];
     placeholder?: string;
+    label?: string;
     error?: string;
+    icon?: React.ReactNode;
 };
 
 export const FormSelectField = ({
-    label,
     name,
     value,
     onChange,
     options,
     placeholder,
-    error
+    error,
+    icon
 }: FormSelectFieldProps) => (
-    <FormFieldBase label={label} name={name} error={error}>
-        <Select value={value} onValueChange={(newValue) => onChange(newValue)}>
-            <SelectTrigger id={name} className="transition-all duration-200 ease-in-out focus:ring-2 focus:ring-primary focus:border-transparent">
-                <SelectValue placeholder={placeholder} />
-            </SelectTrigger>
-            <SelectContent>
-                {options.map((option) => (
-                    <SelectItem key={option.value} value={option.value} className="cursor-pointer hover:bg-primary hover:text-primary-foreground">
-                        {option.label}
-                    </SelectItem>
-                ))}
-            </SelectContent>
-        </Select>
+    <FormFieldBase name={name} error={error}>
+        <div className="relative">
+            {icon && (
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 z-10">
+                    {icon}
+                </div>
+            )}
+            <Select value={value} onValueChange={onChange}>
+                <SelectTrigger id={name} className={`transition-all duration-200 ease-in-out focus:ring-2 focus:ring-primary focus:border-transparent ${icon ? 'pl-10' : ''} ${error ? 'border-red-500' : ''}`}>
+                    <SelectValue placeholder={placeholder} />
+                </SelectTrigger>
+                <SelectContent>
+                    {options.map((option) => (
+                        <SelectItem key={option.value} value={option.value} className="cursor-pointer hover:bg-primary hover:text-primary-foreground">
+                            {option.label}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+        </div>
     </FormFieldBase>
 );
