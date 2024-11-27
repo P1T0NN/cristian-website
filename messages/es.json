@@ -168,7 +168,10 @@
         "deleteLocationConfirmation": "¿Estás seguro de que deseas eliminar la ubicación? Esta acción no se puede deshacer.",
         "cancel": "Cancelar",
         "locationDeletedSuccess": "Ubicación eliminada con éxito",
-        "locationDeletedError": "Error al eliminar la ubicación. Inténtalo de nuevo."
+        "locationDeletedError": "Error al eliminar la ubicación. Inténtalo de nuevo.",
+        "markAsDefault": "Marcar como predeterminado",
+        "removeAsDefault": "Quitar como predeterminado",
+        "updating": "Actualizando..."
     },
 
     "MatchPage": {
@@ -694,7 +697,10 @@
         "ACTIVE_MATCHES_FETCH_FAILED": "¡No se pudieron obtener los partidos activos del usuario!",
         "ACTIVE_MATCHES_FETCHED": "¡Partidos activos obtenidos con éxito!",
 
-        "USERS_WITH_NO_ACCESS_FETCHED": "Usuarios sin acceso obtenidos exitosamente"
+        "USERS_WITH_NO_ACCESS_FETCHED": "Usuarios sin acceso obtenidos exitosamente",
+
+        "DEFAULT_LOCATIONS_FETCHED": "Ubicaciones predeterminadas obtenidas con éxito",
+        "FAILED_TO_FETCH_DEFAULT_LOCATIONS": "Error al obtener las ubicaciones predeterminadas"
     },
 
     "ZodErrors": {

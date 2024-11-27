@@ -12,6 +12,7 @@ import { useTeamSearch } from "./hooks/use-team-search";
 
 // TYPES
 import type { typesAddMatchForm } from "@/types/forms/AddMatchForm";
+import type { typesLocation } from "@/types/typesLocation";
 
 type AddMatchFormProps = {
     formData: typesAddMatchForm;
@@ -19,6 +20,7 @@ type AddMatchFormProps = {
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     authToken: string;
     setFieldValue: (name: string, value: unknown) => void;
+    defaultLocationsData: typesLocation[];
 }
 
 export const AddMatchForm = ({
@@ -26,7 +28,8 @@ export const AddMatchForm = ({
     errors,
     handleInputChange,
     authToken,
-    setFieldValue
+    setFieldValue,
+    defaultLocationsData
 }: AddMatchFormProps) => {
     const t = useTranslations("AddMatchPage");
 
@@ -67,6 +70,7 @@ export const AddMatchForm = ({
                 handleLocationChange={handleLocationChange}
                 setFieldValue={setFieldValue}
                 authToken={authToken}
+                defaultLocationsData={defaultLocationsData}
                 t={t}
             />
 

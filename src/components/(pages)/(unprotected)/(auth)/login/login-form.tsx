@@ -1,5 +1,4 @@
-// REACTJS IMPORTS
-import React from "react";
+"use client"
 
 // LIBRARIES
 import { useTranslations } from 'next-intl';

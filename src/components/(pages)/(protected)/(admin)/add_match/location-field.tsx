@@ -34,6 +34,7 @@ type LocationFieldProps = {
     error?: string;
     urlError?: string;
     authToken: string;
+    defaultLocationsData: typesLocation[];
 };
 
 export const LocationField = ({ 
@@ -43,6 +44,7 @@ export const LocationField = ({
     error, 
     urlError,
     authToken, 
+    defaultLocationsData
 }: LocationFieldProps) => {
     const t = useTranslations("AddMatchPage");
     const router = useRouter();
@@ -81,6 +83,11 @@ export const LocationField = ({
         setIsLocationSelected(true);
     };
 
+    const handleDefaultLocationSelect = (location: typesLocation) => {
+        onLocationChange(location.location_name, location.location_url);
+        setIsLocationSelected(true);
+    };
+
     return (
         <div className="relative space-y-4">
             <div className="flex items-center justify-between">
@@ -95,6 +102,21 @@ export const LocationField = ({
                     <span>{t("addNewLocation")}</span>
                 </Button>
             </div>
+
+            {defaultLocationsData.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-2">
+                    {defaultLocationsData.map((location) => (
+                        <Button
+                            key={location.id}
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDefaultLocationSelect(location)}
+                        >
+                            {location.location_name}
+                        </Button>
+                    ))}
+                </div>
+            )}
 
             <div className="relative">
                 <Input

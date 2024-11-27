@@ -17,6 +17,7 @@ import { serverFetchLocations } from '@/actions/functions/data/server/server_fet
 
 // TYPES
 import type { typesLocation } from "@/types/typesLocation";
+import { MarkAsDefaultLocationButton } from './mark-as-default-location-button';
 
 type LocationTableProps = {
     authToken: string;
@@ -52,6 +53,12 @@ export const LocationTable = async ({
                             >
                                 {location.location_url}
                             </a>
+                        </TableCell>
+                        <TableCell>
+                            <MarkAsDefaultLocationButton
+                                location={location}
+                                authToken={authToken}
+                            />
                         </TableCell>
                         <TableCell>
                             <DeleteLocationDialog

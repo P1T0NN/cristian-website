@@ -45,10 +45,10 @@ export const LoginContent = () => {
                 const result = await loginUser(values.email, values.password);
 
                 if (result.success) {
-                    toast.success("Logged in successfully");
+                    toast.success(result.message);
                     router.replace(PROTECTED_PAGE_ENDPOINTS.HOME_PAGE);
                 } else {
-                    toast.error(result.message || "Error logging in");
+                    toast.error(result.message);
                 }
             });
         },

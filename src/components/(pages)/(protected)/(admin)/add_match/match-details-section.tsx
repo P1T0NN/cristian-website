@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 
 // TYPES
 import type { typesAddMatchForm } from "@/types/forms/AddMatchForm";
+import type { typesLocation } from "@/types/typesLocation";
 
 // LUCIDE ICONS
 import { Check, X } from 'lucide-react';
@@ -18,6 +19,7 @@ type MatchDetailsSectionProps = {
     handleLocationChange: (locationName: string, locationUrl: string) => void;
     setFieldValue: (name: string, value: unknown) => void;
     authToken: string;
+    defaultLocationsData: typesLocation[];
     t: (key: string) => string;
 }
 
@@ -29,6 +31,7 @@ export const MatchDetailsSection = ({
     handleLocationChange,
     setFieldValue,
     authToken,
+    defaultLocationsData,
     t
 }: MatchDetailsSectionProps) => {
     const matchTypeOptions = [
@@ -53,6 +56,7 @@ export const MatchDetailsSection = ({
                 error={errors.location}
                 urlError={errors.location_url}
                 authToken={authToken}
+                defaultLocationsData={defaultLocationsData}
             />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormInputField

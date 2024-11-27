@@ -27,15 +27,18 @@ import { addMatch } from "@/actions/server_actions/mutations/match/addMatch";
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
+import type { typesLocation } from "@/types/typesLocation";
 
 type AddMatchDetailsProps = {
     authToken: string;
     serverUserData: typesUser;
+    defaultLocationsData: typesLocation[];
 }
 
 export const AddMatchDetails = ({ 
     authToken, 
-    serverUserData 
+    serverUserData,
+    defaultLocationsData
 }: AddMatchDetailsProps) => {
     const t = useTranslations("AddMatchPage");
     const router = useRouter();
@@ -91,6 +94,7 @@ export const AddMatchDetails = ({
                     errors={errors}
                     handleInputChange={handleInputChange}
                     setFieldValue={setFieldValue}
+                    defaultLocationsData={defaultLocationsData}
                 />
             </CardContent>
 

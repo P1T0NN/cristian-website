@@ -168,7 +168,10 @@
         "deleteLocationConfirmation": "Are you sure you want to delete the location? This action cannot be undone.",
         "cancel": "Cancel",
         "locationDeletedSuccess": "Location deleted successfully",
-        "locationDeletedError": "Failed to delete location. Please try again."
+        "locationDeletedError": "Failed to delete location. Please try again.",
+        "markAsDefault": "Mark as Default",
+        "removeAsDefault": "Remove as Default",
+        "updating": "Updating..."
     },
 
     "MatchPage": {
@@ -692,7 +695,10 @@
         "ACTIVE_MATCHES_FETCH_FAILED": "Failed to fetch active matches for user!",
         "ACTIVE_MATCHES_FETCHED": "Active matches fetched successfully!",
 
-        "USERS_WITH_NO_ACCESS_FETCHED": "Users without access successfully fetched"
+        "USERS_WITH_NO_ACCESS_FETCHED": "Users without access successfully fetched",
+
+        "DEFAULT_LOCATIONS_FETCHED": "Default locations fetched successfully",
+        "FAILED_TO_FETCH_DEFAULT_LOCATIONS": "Failed to fetch default locations"
     },
 
     "ZodErrors": {

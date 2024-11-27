@@ -22,7 +22,9 @@ export default async function AddLocationPage() {
             </div>
             
             <div className="overflow-x-auto">
-                <LocationTable authToken={authToken} />
+                <LocationTable 
+                    authToken={authToken} 
+                />
             </div>
         </div>
     );
