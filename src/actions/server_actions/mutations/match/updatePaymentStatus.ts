@@ -15,7 +15,8 @@ export async function updatePaymentStatus(
     hasPaid: boolean,
     hasDiscount: boolean,
     hasGratis: boolean,
-    currentUserMatchAdmin: boolean
+    currentUserMatchAdmin: boolean,
+    isTemporaryPlayer: boolean
 ) {
     const genericMessages = await getTranslations("GenericMessages");
 
@@ -49,14 +50,17 @@ export async function updatePaymentStatus(
     }
 
     // Update the payment status
+    const tableName = isTemporaryPlayer ? 'temporary_players' : 'match_players';
+    const idColumn = isTemporaryPlayer ? 'id' : 'user_id';
+
     const { error: updateError } = await supabase
-        .from('match_players')
+        .from(tableName)
         .update({
             has_paid: hasPaid,
             has_discount: hasDiscount,
             has_gratis: hasGratis
         })
-        .match({ match_id: matchId, user_id: playerId });
+        .match({ match_id: matchId, [idColumn]: playerId });
 
     if (updateError) {
         return { success: false, message: genericMessages('OPERATION_FAILED') };

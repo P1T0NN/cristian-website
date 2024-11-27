@@ -37,9 +37,16 @@ export const HasDiscountButton = ({
 
     const handleUpdatePaymentStatus = () => {
         startTransition(async () => {
-            const newDiscountStatus = !player.matchPlayer?.has_discount;
-            const newPaidStatus = player.matchPlayer?.has_paid || false;
-            let newGratisStatus = player.matchPlayer?.has_gratis || false;
+            const isTemporaryPlayer = !!player.temporaryPlayer;
+            const newDiscountStatus = isTemporaryPlayer
+                ? !player.temporaryPlayer?.has_discount
+                : !player.matchPlayer?.has_discount;
+            const newPaidStatus = isTemporaryPlayer
+                ? player.temporaryPlayer?.has_paid || false
+                : player.matchPlayer?.has_paid || false;
+            let newGratisStatus = isTemporaryPlayer
+                ? player.temporaryPlayer?.has_gratis || false
+                : player.matchPlayer?.has_gratis || false;
 
             if (newDiscountStatus) {
                 newGratisStatus = false;
@@ -48,30 +55,39 @@ export const HasDiscountButton = ({
             const result = await updatePaymentStatus(
                 authToken,
                 matchId,
-                player.id,
+                isTemporaryPlayer ? player.temporaryPlayer!.id : player.id,
                 newPaidStatus,
                 newDiscountStatus,
                 newGratisStatus,
-                currentUserMatchAdmin
+                currentUserMatchAdmin,
+                isTemporaryPlayer
             );
 
             if (result.success) {
-                toast.success(result.message);
+                toast.success(t('paymentStatusUpdated'));
             } else {
                 toast.error(result.message);
             }
         });
     };
 
+    const isDiscount = player.temporaryPlayer
+        ? player.temporaryPlayer.has_discount
+        : player.matchPlayer?.has_discount;
+
+    const isGratis = player.temporaryPlayer
+        ? player.temporaryPlayer.has_gratis
+        : player.matchPlayer?.has_gratis;
+
     return (
         <PaymentStatusButton
             status="discount"
-            isActive={player.matchPlayer?.has_discount}
+            isActive={isDiscount}
             onClick={handleUpdatePaymentStatus}
             icon={<Percent size={16} />}
             activeClass="bg-yellow-500 hover:bg-yellow-600 text-white"
-            tooltipText={player.matchPlayer?.has_discount ? t('removeDiscount') : t('applyDiscount')}
-            disabled={isPending || player.matchPlayer?.has_gratis}
+            tooltipText={isDiscount ? t('removeDiscount') : t('applyDiscount')}
+            disabled={isPending || isGratis}
         />
     )
 }

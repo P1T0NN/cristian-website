@@ -37,6 +37,8 @@ export const PlayerList = async ({
     const serverCurrentUserMatchAdmin = await serverFetchCurrentUserMatchAdmin(matchId);
     const currentUserMatchAdmin = serverCurrentUserMatchAdmin.data as boolean;
 
+    // We have to add this, because if we dont and we make player has_paid to true or any payment action, player will be moved from his current index position in team to the bottom
+    // because of react rerender when using .map in here: {isDefaultTeam && players?.map((player) => (
     const sortedPlayers = players.sort((a, b) => (a.id).localeCompare(b.id));
 
     const getMaxPlayers = (type: string) => {

@@ -137,7 +137,10 @@ export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>>
             team_number: p.team_number,
             name: p.name,
             added_by: p.added_by,
-            added_by_name: p.added_by_name
+            added_by_name: p.added_by_name,
+            has_paid: p.has_paid,
+            has_discount: p.has_discount,
+            has_gratis: p.has_gratis
         }
     });
 

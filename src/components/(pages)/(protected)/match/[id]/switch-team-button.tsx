@@ -32,17 +32,23 @@ export const SwitchTeamButton = ({
     player
 }: SwitchTeamButtonProps) => {
     const t = useTranslations("MatchPage");
-
     const [isPending, startTransition] = useTransition();
 
     const handleSwitchTeam = () => {
         startTransition(async () => {
+            const isTemporaryPlayer = !!player.temporaryPlayer;
+            const currentTeam = isTemporaryPlayer 
+                ? player.temporaryPlayer?.team_number 
+                : player.matchPlayer?.team_number;
+            const newTeam = currentTeam === 1 ? 2 : 1;
+
             const result = await managePlayer(
                 authToken,
                 matchId,
-                player.id,
-                player.matchPlayer?.team_number === 1 ? 2 : 1,
-                'switchTeam'
+                isTemporaryPlayer ? player.temporaryPlayer?.id as string : player.id,
+                newTeam,
+                'switchTeam',
+                isTemporaryPlayer
             );
 
             if (result.success) {

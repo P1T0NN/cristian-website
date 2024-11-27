@@ -37,9 +37,16 @@ export const HasGratisButton = ({
 
     const handleUpdatePaymentStatus = () => {
         startTransition(async () => {
-            const newGratisStatus = !player.matchPlayer?.has_gratis;
-            let newPaidStatus = player.matchPlayer?.has_paid || false;
-            let newDiscountStatus = player.matchPlayer?.has_discount || false;
+            const isTemporaryPlayer = !!player.temporaryPlayer;
+            const newGratisStatus = isTemporaryPlayer
+                ? !player.temporaryPlayer?.has_gratis
+                : !player.matchPlayer?.has_gratis;
+            let newPaidStatus = isTemporaryPlayer
+                ? player.temporaryPlayer?.has_paid || false
+                : player.matchPlayer?.has_paid || false;
+            let newDiscountStatus = isTemporaryPlayer
+                ? player.temporaryPlayer?.has_discount || false
+                : player.matchPlayer?.has_discount || false;
 
             if (newGratisStatus) {
                 newPaidStatus = true;
@@ -49,11 +56,12 @@ export const HasGratisButton = ({
             const result = await updatePaymentStatus(
                 authToken,
                 matchId,
-                player.id,
+                isTemporaryPlayer ? player.temporaryPlayer!.id : player.id,
                 newPaidStatus,
                 newDiscountStatus,
                 newGratisStatus,
-                currentUserMatchAdmin
+                currentUserMatchAdmin,
+                isTemporaryPlayer
             );
 
             if (result.success) {
@@ -64,14 +72,18 @@ export const HasGratisButton = ({
         });
     };
 
+    const isGratis = player.temporaryPlayer
+        ? player.temporaryPlayer.has_gratis
+        : player.matchPlayer?.has_gratis;
+
     return (
         <PaymentStatusButton
             status="gratis"
-            isActive={player.matchPlayer?.has_gratis}
+            isActive={isGratis}
             onClick={handleUpdatePaymentStatus}
             icon={<Gift size={16} />}
             activeClass="bg-green-500 hover:bg-green-600 text-white"
-            tooltipText={player.matchPlayer?.has_gratis ? t('removeGratis') : t('markAsGratis')}
+            tooltipText={isGratis ? t('removeGratis') : t('markAsGratis')}
             disabled={isPending}
         />
     )

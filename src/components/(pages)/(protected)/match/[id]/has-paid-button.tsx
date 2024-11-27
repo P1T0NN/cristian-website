@@ -38,16 +38,20 @@ export const HasPaidButton = ({
 
     const handleUpdatePaymentStatus = () => {
         startTransition(async () => {
-            const newPaidStatus = !player.matchPlayer?.has_paid;
+            const isTemporaryPlayer = !!player.temporaryPlayer;
+            const newPaidStatus = isTemporaryPlayer 
+                ? !player.temporaryPlayer?.has_paid
+                : !player.matchPlayer?.has_paid;
             
             const result = await updatePaymentStatus(
                 authToken,
                 matchId,
-                player.id,
+                isTemporaryPlayer ? player.temporaryPlayer!.id : player.id,
                 newPaidStatus,
-                player.matchPlayer?.has_discount || false,
-                player.matchPlayer?.has_gratis || false,
-                currentUserMatchAdmin
+                isTemporaryPlayer ? player.temporaryPlayer?.has_discount || false : player.matchPlayer?.has_discount || false,
+                isTemporaryPlayer ? player.temporaryPlayer?.has_gratis || false : player.matchPlayer?.has_gratis || false,
+                currentUserMatchAdmin,
+                isTemporaryPlayer
             );
 
             if (result.success) {
@@ -58,14 +62,16 @@ export const HasPaidButton = ({
         });
     };
 
+    const isPaid = player.temporaryPlayer ? player.temporaryPlayer.has_paid : player.matchPlayer?.has_paid;
+
     return (
         <PaymentStatusButton
             status="paid"
-            isActive={player.matchPlayer?.has_paid}
+            isActive={isPaid}
             onClick={handleUpdatePaymentStatus}
             icon={<DollarSign size={16} />}
-            activeClass="bg-blue-500 hover:bg-blue-600 text-white"
-            tooltipText={player.matchPlayer?.has_paid ? t('markAsUnpaid') : t('markAsPaid')}
+            activeClass="bg-green-500 hover:bg-green-600 text-white"
+            tooltipText={isPaid ? t('markAsUnpaid') : t('markAsPaid')}
             disabled={isPending}
         />
     )

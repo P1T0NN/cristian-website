@@ -42,7 +42,12 @@ export const PlayerInfo = async ({
 }: PlayerInfoProps) => {
     const t = await getTranslations("MatchPage");
 
-    const nameColor = player.matchPlayer?.has_paid ? "text-green-500" : "text-red-500";
+    const nameColor = (player.temporaryPlayer 
+        ? player.temporaryPlayer.has_paid 
+        : player.matchPlayer?.has_paid) 
+        ? "text-green-500" 
+        : "text-red-500";
+
     const showPaymentControls = isAdmin || currentUserMatchAdmin;
 
     const playerName = player.temporaryPlayer ? player.temporaryPlayer.name : player.fullName;
@@ -61,7 +66,8 @@ export const PlayerInfo = async ({
                 </Avatar>
                 <div className="flex flex-col">
                     <span className={`font-medium ${nameColor} flex items-center`}>
-                        {player.matchPlayer?.has_discount && !player.temporaryPlayer && (
+                        {((player.matchPlayer?.has_discount && !player.temporaryPlayer) || 
+                          (player.temporaryPlayer?.has_discount)) && (
                             <TooltipProvider>
                                 <Tooltip>
                                     <TooltipTrigger>
@@ -100,7 +106,7 @@ export const PlayerInfo = async ({
                     />
                 )}
             </div>
-            {showPaymentControls && !player.temporaryPlayer && (
+            {showPaymentControls && (
                 <div className="flex flex-wrap mt-2 gap-2">
                     <HasPaidButton 
                         authToken={authToken}
@@ -129,16 +135,20 @@ export const PlayerInfo = async ({
                                     player={player}
                                 />
                             )}
-                            <ShowAdminModalButton
-                                authToken={authToken}
-                                matchId={matchId}
-                                player={player}
-                            />
-                            <AddPlayerMatchAdminButton
-                                authToken={authToken}
-                                matchId={matchId}
-                                player={player}
-                            />
+                            {!player.temporaryPlayer && (
+                                <ShowAdminModalButton
+                                    authToken={authToken}
+                                    matchId={matchId}
+                                    player={player}
+                                />
+                            )}
+                            {!player.temporaryPlayer && (
+                                <AddPlayerMatchAdminButton
+                                    authToken={authToken}
+                                    matchId={matchId}
+                                    player={player}
+                                />
+                            )}
                         </>
                     )}
                 </div>
