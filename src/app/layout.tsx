@@ -8,6 +8,7 @@ import "./globals.css";
 // LIBRARIES
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 // PROVIDERS
 import { ThemeProvider } from "@/providers/theme-provider";
@@ -44,6 +45,7 @@ export default async function RootLayout({
             >
               {children}
               <Toaster />
+              <SpeedInsights />
             </ThemeProvider>
           </NextIntlClientProvider>
         </body>
