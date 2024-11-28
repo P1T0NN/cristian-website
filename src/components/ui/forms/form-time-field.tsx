@@ -1,7 +1,7 @@
 "use client"
 
 // REACTJS IMPORTS
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // COMPONENTS
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,7 @@ type FormTimeFieldProps = {
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
     error?: string
     disableArrows?: boolean
+    every15Min?: boolean
 }
 
 export const FormTimeField = ({
@@ -26,10 +27,17 @@ export const FormTimeField = ({
     value,
     onChange,
     error,
-    disableArrows = false
+    disableArrows = false,
+    every15Min = false
 }: FormTimeFieldProps) => {
     const [hours, setHours] = useState(value.split(':')[0] || '00')
     const [minutes, setMinutes] = useState(value.split(':')[1] || '00')
+
+    useEffect(() => {
+        const [newHours, newMinutes] = value.split(':');
+        setHours(newHours || '00');
+        setMinutes(newMinutes || '00');
+    }, [value]);
 
     const handleHoursChange = (newHours: string) => {
         const parsedHours = parseInt(newHours)
@@ -40,8 +48,12 @@ export const FormTimeField = ({
     }
 
     const handleMinutesChange = (newMinutes: string) => {
-        const parsedMinutes = parseInt(newMinutes)
+        let parsedMinutes = parseInt(newMinutes)
         if (parsedMinutes >= 0 && parsedMinutes <= 59) {
+            if (every15Min) {
+                parsedMinutes = Math.round(parsedMinutes / 15) * 15
+                if (parsedMinutes === 60) parsedMinutes = 0
+            }
             setMinutes(parsedMinutes.toString().padStart(2, '0'))
             updateValue(hours, parsedMinutes.toString().padStart(2, '0'))
         }
@@ -54,8 +66,14 @@ export const FormTimeField = ({
 
     const incrementHours = () => handleHoursChange((parseInt(hours) + 1).toString())
     const decrementHours = () => handleHoursChange((parseInt(hours) - 1).toString())
-    const incrementMinutes = () => handleMinutesChange((parseInt(minutes) + 1).toString())
-    const decrementMinutes = () => handleMinutesChange((parseInt(minutes) - 1).toString())
+    const incrementMinutes = () => {
+        const increment = every15Min ? 15 : 1
+        handleMinutesChange((parseInt(minutes) + increment).toString())
+    }
+    const decrementMinutes = () => {
+        const decrement = every15Min ? 15 : 1
+        handleMinutesChange((parseInt(minutes) - decrement).toString())
+    }
 
     return (
         <div className="space-y-2">

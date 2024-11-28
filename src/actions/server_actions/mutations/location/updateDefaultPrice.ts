@@ -14,11 +14,14 @@ import { upstashRedisCacheService } from '@/services/server/redis-cache.service'
 // CONFIG
 import { CACHE_KEYS } from '@/config';
 
-export async function markAsDefaultLocation(authToken: string, locationId: number, isDefault: boolean) {
-    const t = await getTranslations("GenericMessages");
+// TYPES
+import type { APIResponse } from '@/types/responses/APIResponse';
+
+export async function updateDefaultPrice(authToken: string, locationId: number, defaultPrice: string): Promise<APIResponse> {
+    const t = await getTranslations('GenericMessages');
 
     if (!authToken) {
-        return { success: false, message: t('UNAUTHORIZED') }
+        return { success: false, message: t('UNAUTHORIZED') };
     }
 
     const { payload } = await jwtVerify(authToken, new TextEncoder().encode(process.env.JWT_SECRET));
@@ -27,14 +30,13 @@ export async function markAsDefaultLocation(authToken: string, locationId: numbe
         return { success: false, message: t('JWT_DECODE_ERROR') };
     }
 
-    // Update the specified location
-    const { data, error } = await supabase
+    const { error } = await supabase
         .from('locations')
-        .update({ is_default: isDefault })
+        .update({ default_price: defaultPrice })
         .eq('id', locationId);
 
     if (error) {
-        return { success: false, message: isDefault ? t('DEFAULT_LOCATION_SET_FAILED') : t('DEFAULT_LOCATION_UNSET_FAILED') };
+        return { success: false, message: t('DEFAULT_PRICE_UPDATE_ERROR') };
     }
 
     // Invalidate the locations cache
@@ -42,5 +44,5 @@ export async function markAsDefaultLocation(authToken: string, locationId: numbe
 
     revalidatePath("/");
 
-    return { success: true, message: isDefault ? t('DEFAULT_LOCATION_SET') : t('DEFAULT_LOCATION_UNSET'), data };
+    return { success: true, message: t('DEFAULT_PRICE_UPDATED') };
 }

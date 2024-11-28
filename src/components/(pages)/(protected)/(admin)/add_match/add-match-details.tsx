@@ -55,7 +55,7 @@ export const AddMatchDetails = ({
             team1_name: "",
             team2_name: "",
             starts_at_day: "",
-            starts_at_hour: "",
+            starts_at_hour: "08:00",
             match_type: "F8",
             match_gender: "Male",
             match_duration: 60,

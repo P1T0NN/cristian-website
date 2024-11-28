@@ -9,18 +9,18 @@ export const formatTime = (timeStr: string): string => {
     return format(new Date(`2000-01-01T${timeStr}`), 'HH:mm');
 };
 
-export const formatDate = async (dateStr: string): Promise<string> => {
+export const formatDate = async (dateStr: string, showTomorrow: boolean = false): Promise<string> => {
     const locale = await getUserLocale();
     const date = new Date(dateStr);
     const localeObj = locale === 'es' ? es : undefined;
 
     if (locale === "es") {
         if (isToday(date)) return "Hoy";
-        if (isTomorrow(date)) return "Mañana";
+        if (isTomorrow(date) && showTomorrow) return "Mañana";
         return format(date, "EEEE, d 'de' MMMM", { locale: es });
     } else {
         if (isToday(date)) return "Today";
-        if (isTomorrow(date)) return "Tomorrow";
+        if (isTomorrow(date) && showTomorrow) return "Tomorrow";
         return format(date, "EEEE, do MMMM", { locale: localeObj });
     }
 };

@@ -14,7 +14,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from 'sonner';
 
@@ -88,27 +87,32 @@ export const AccountSettings = ({
                     <Input id="email" value={serverUserData.email} disabled />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="language">{t('language')}</Label>
-                    <Select 
-                        defaultValue={currentLocale}
-                        onValueChange={handleLanguageChange}
-                        disabled={isPending}
-                    >
-                        <SelectTrigger id="language" className={isPending ? 'opacity-50' : ''}>
-                            <SelectValue placeholder={t('selectLanguage')} />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="en">{t('english')}</SelectItem>
-                            <SelectItem value="es">{t('spanish')}</SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <Label>{t('language')}</Label>
+                    <div className="flex space-x-2">
+                        <Button
+                            variant={currentLocale === 'en' ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => handleLanguageChange('en')}
+                            disabled={isPending}
+                        >
+                            English
+                        </Button>
+                        <Button
+                            variant={currentLocale === 'es' ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => handleLanguageChange('es')}
+                            disabled={isPending}
+                        >
+                            Español
+                        </Button>
+                    </div>
                 </div>
             </CardContent>
             <CardFooter>
                 <Button 
                     className="w-full" 
                     onClick={handleSaveFullName} 
-                    disabled={isPending|| fullName === serverUserData.fullName}
+                    disabled={isPending || fullName === serverUserData.fullName}
                 >
                     {isPending ? t('saving') : t('saveChanges')}
                 </Button>

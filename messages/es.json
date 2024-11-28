@@ -171,7 +171,19 @@
         "locationDeletedError": "Error al eliminar la ubicación. Inténtalo de nuevo.",
         "markAsDefault": "Marcar como predeterminado",
         "removeAsDefault": "Quitar como predeterminado",
-        "updating": "Actualizando..."
+        "updating": "Actualizando...",
+        "updateDefaultPrice": "Actualizar precio predeterminado",
+        "addDefaultPrice": "Añadir precio predeterminado",
+        "setDefaultPrice": "Establecer precio predeterminado",
+        "price": "Precio",
+        "enterPrice": "Ingrese el precio",
+        "saving": "Guardando...",
+        "save": "Guardar",
+        "PRICE_CANNOT_BE_EMPTY": "El precio no puede estar vacío",
+        "DEFAULT_PRICE_UPDATE_ERROR": "Error al actualizar el precio predeterminado",
+        "DEFAULT_PRICE_UPDATED": "Precio predeterminado actualizado con éxito",
+        "defaultPrice": "Precio predeterminado",
+        "notSet": "No establecido"
     },
 
     "MatchPage": {
@@ -474,6 +486,7 @@
         "USER_CREATION_FAILED": "La creación del usuario falló",
         "REGISTRATION_SUCCESS_WITH_EMAIL": "Usuario registrado con éxito. Por favor, revisa tu correo electrónico para verificar tu cuenta.",
         "REGISTRATION_SUCCESS_WITHOUT_EMAIL": "Usuario registrado con éxito, pero hubo un problema al enviar el correo de verificación. Por favor, contacta con soporte.",
+        "FULLNAME_ALREADY_EXISTS": "Este nombre completo ya está en uso, ¡por favor contacte al administrador para más información!",
 
         "PASSWORD_RESET_REQUEST_SENT": "Si existe un usuario con ese correo electrónico, se ha enviado un enlace para restablecer la contraseña.",
 

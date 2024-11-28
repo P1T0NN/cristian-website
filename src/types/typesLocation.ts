@@ -3,4 +3,5 @@ export type typesLocation = {
     location_name: string;
     location_url: string;
     is_default: boolean;
+    default_price: string;
 }

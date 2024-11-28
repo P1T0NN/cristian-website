@@ -30,7 +30,7 @@ import { Plus } from "lucide-react";
 type LocationFieldProps = {
     locationName: string;
     locationUrl: string;
-    onLocationChange: (locationName: string, locationUrl: string) => void;
+    onLocationChange: (locationName: string, locationUrl: string, defaultPrice: string | null) => void
     error?: string;
     urlError?: string;
     authToken: string;
@@ -57,7 +57,7 @@ export const LocationField = ({
     };
 
     const handleLocationSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-        onLocationChange(event.target.value, locationUrl);
+        onLocationChange(event.target.value, locationUrl, null);
         setIsLocationSelected(false);
         
         if (searchTimeoutRef.current) {
@@ -74,17 +74,17 @@ export const LocationField = ({
     };
 
     const handleLocationUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        onLocationChange(locationName, event.target.value);
+        onLocationChange(locationName, event.target.value, null);
     };
 
     const handleLocationSelect = (location: typesLocation) => {
-        onLocationChange(location.location_name, location.location_url);
+        onLocationChange(location.location_name, location.location_url, location.default_price);
         setShowDropdown(false);
         setIsLocationSelected(true);
     };
 
     const handleDefaultLocationSelect = (location: typesLocation) => {
-        onLocationChange(location.location_name, location.location_url);
+        onLocationChange(location.location_name, location.location_url, location.default_price);
         setIsLocationSelected(true);
     };
 

@@ -1,3 +1,5 @@
+"use client"
+
 // COMPONENTS
 import { LocationField } from "./location-field";
 import { FormInputField } from "@/components/ui/forms/form-input-field";
@@ -16,7 +18,7 @@ type MatchDetailsSectionProps = {
     errors: Record<string, string>;
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     handleSelectChange: (name: string) => (value: string) => void;
-    handleLocationChange: (locationName: string, locationUrl: string) => void;
+    handleLocationChange: (locationName: string, locationUrl: string, defaultPrice: string | null) => void;
     setFieldValue: (name: string, value: unknown) => void;
     authToken: string;
     defaultLocationsData: typesLocation[];
@@ -46,13 +48,30 @@ export const MatchDetailsSection = ({
         { value: 'Mixed', label: t('genderMixed') }
     ];
 
+    const handleLocationChangeWithPrice = (locationName: string, locationUrl: string, defaultPrice: string | null) => {
+        handleLocationChange(locationName, locationUrl, defaultPrice);
+        if (defaultPrice) {
+            setFieldValue('price', defaultPrice);
+        }
+    };
+
+    const toggleMatchLevel = (level: string) => {
+        const currentLevels = formData.match_level.split('');
+        const updatedLevels = currentLevels.includes(level)
+            ? currentLevels.filter(l => l !== level)
+            : [...currentLevels, level].sort();
+        setFieldValue('match_level', updatedLevels.join(''));
+    };
+    
+    const isLevelActive = (level: string) => formData.match_level.includes(level);
+
     return (
         <div className="space-y-4">
             <h3 className="text-lg font-semibold">{t("matchDetails")}</h3>
             <LocationField
                 locationName={formData.location}
                 locationUrl={formData.location_url}
-                onLocationChange={handleLocationChange}
+                onLocationChange={handleLocationChangeWithPrice}
                 error={errors.location}
                 urlError={errors.location_url}
                 authToken={authToken}
@@ -96,15 +115,26 @@ export const MatchDetailsSection = ({
                 placeholder={t('matchDurationPlaceholder')}
                 error={errors.match_duration}
             />
-            <FormInputField
-                label={t("matchLevel")}
-                name="match_level"
-                type="text"
-                value={formData.match_level}
-                onChange={handleInputChange}
-                placeholder={t('matchLevelPlaceholder')}
-                error={errors.match_level}
-            />
+            <div className="space-y-2">
+                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    {t("matchLevel")}
+                </label>
+                <div className="flex space-x-2">
+                    {['A', 'B', 'C', 'D'].map((level) => (
+                        <Button
+                            key={level}
+                            type="button"
+                            variant={isLevelActive(level) ? "default" : "outline"}
+                            onClick={() => toggleMatchLevel(level)}
+                        >
+                            {level}
+                        </Button>
+                    ))}
+                </div>
+                {errors.match_level && (
+                    <p className="text-sm text-red-500 mt-1">{errors.match_level}</p>
+                )}
+            </div>
             <div className="space-y-2">
                 <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                     {t("hasTeams")}

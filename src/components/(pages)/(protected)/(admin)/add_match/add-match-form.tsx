@@ -51,13 +51,12 @@ export const AddMatchForm = ({
         } as React.ChangeEvent<HTMLInputElement>);
     };
 
-    const handleLocationChange = (locationName: string, locationUrl: string) => {
-        handleInputChange({
-            target: { name: 'location', value: locationName }
-        } as React.ChangeEvent<HTMLInputElement>);
-        handleInputChange({
-            target: { name: 'location_url', value: locationUrl }
-        } as React.ChangeEvent<HTMLInputElement>);
+    const handleLocationChange = (locationName: string, locationUrl: string, defaultPrice: string | null) => {
+        setFieldValue('location', locationName);
+        setFieldValue('location_url', locationUrl);
+        if (defaultPrice) {
+            setFieldValue('price', defaultPrice);
+        }
     };
 
     return (

@@ -40,13 +40,20 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
     const isAdmin = url.searchParams.get('isAdmin') === 'true';
     const playerLevel = url.searchParams.get('playerLevel');
 
+    const currentDate = new Date();
+    const currentDateString = currentDate.toISOString().split('T')[0]; // YYYY-MM-DD
+    const currentTimeString = currentDate.toTimeString().split(' ')[0].slice(0, 5); // HH:MM
+
     let matchesQuery = supabase
         .from('matches')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('starts_at_day', { ascending: true })
+        .order('starts_at_hour', { ascending: true });
 
     if (date) {
         matchesQuery = matchesQuery.eq('starts_at_day', date);
+    } else {
+        matchesQuery = matchesQuery.gte('starts_at_day', currentDateString);
     }
 
     if (!isAdmin && gender) {
@@ -66,8 +73,14 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
     const filteredMatches = dbMatches.filter(match => {
         if (isAdmin) return true;
         if (!playerLevel) return false;
-        // We add match.match_level && check here just in case if match has match_level NULL for some reason, so it doesn't throw error at .includes
-        return match.match_level && match.match_level.includes(playerLevel);
+        if (match.match_level && !match.match_level.includes(playerLevel)) return false;
+
+        // For non-admin users, filter out matches that have already started
+        if (match.starts_at_day === currentDateString && match.starts_at_hour < currentTimeString) {
+            return false;
+        }
+
+        return true;
     });
 
     const cachedMatches = await Promise.all(filteredMatches.map(async (match) => {

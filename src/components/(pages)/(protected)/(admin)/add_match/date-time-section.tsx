@@ -36,6 +36,7 @@ export const DateTimeSection = ({
                 value={formData.starts_at_hour}
                 onChange={handleInputChange}
                 error={errors.starts_at_hour}
+                every15Min
             />
         </div>
     );

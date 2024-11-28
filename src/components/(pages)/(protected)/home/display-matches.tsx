@@ -32,14 +32,19 @@ export const DisplayMatches = async ({
         serverUserData.player_level, 
         date
     );
-    const matchesData = serverMatchesData.data as typesMatch[];
 
-    // Sort matches by starts_at_hour
-    matchesData.sort((a, b) => {
-        if (a.starts_at_hour < b.starts_at_hour) return -1;
-        if (a.starts_at_hour > b.starts_at_hour) return 1;
-        return 0;
-    });
+    let matchesData: typesMatch[] = [];
+
+    if (serverMatchesData.success && Array.isArray(serverMatchesData.data)) {
+        matchesData = serverMatchesData.data;
+
+        // Sort matches by starts_at_hour
+        matchesData.sort((a, b) => {
+            if (a.starts_at_hour < b.starts_at_hour) return -1;
+            if (a.starts_at_hour > b.starts_at_hour) return 1;
+            return 0;
+        });
+    }
 
     const isAdmin = serverUserData.isAdmin;
 

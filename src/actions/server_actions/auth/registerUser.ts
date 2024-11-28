@@ -19,6 +19,7 @@ type RegisterUserProps = {
     email: string;
     password: string;
     confirmPassword: string;
+    fullName: string;
     [key: string]: string | number | boolean;
 }
 
@@ -26,21 +27,36 @@ export async function registerUser(userData: RegisterUserProps): Promise<APIResp
     const t = await getTranslations('GenericMessages');
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { email, password, confirmPassword: _, ...otherFields } = userData;
+    const { email, password, confirmPassword: _, fullName, ...otherFields } = userData;
 
-    // Check if user already exists
-    const { data: existingUser, error: existingUserError } = await supabase
+    // Check if user with the same email already exists
+    const { data: existingUserEmail, error: existingUserEmailError } = await supabase
         .from('users')
         .select('id')
         .eq('email', email)
         .single();
 
-    if (existingUserError && existingUserError.code !== 'PGRST116') {
+    if (existingUserEmailError && existingUserEmailError.code !== 'PGRST116') {
         return { success: false, message: t('REGISTRATION_ERROR') };
     }
 
-    if (existingUser) {
+    if (existingUserEmail) {
         return { success: false, message: t('USER_ALREADY_EXISTS') };
+    }
+
+    // Check if user with the same fullName already exists
+    const { data: existingUserFullName, error: existingUserFullNameError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('fullName', fullName)
+        .single();
+
+    if (existingUserFullNameError && existingUserFullNameError.code !== 'PGRST116') {
+        return { success: false, message: t('REGISTRATION_ERROR') };
+    }
+
+    if (existingUserFullName) {
+        return { success: false, message: t('FULLNAME_ALREADY_EXISTS') };
     }
 
     // If no existing user, proceed with registration
@@ -49,6 +65,7 @@ export async function registerUser(userData: RegisterUserProps): Promise<APIResp
     const userDataToInsert = {
         email,
         password: hashedPassword,
+        fullName,
         ...otherFields
     };
 
@@ -68,7 +85,6 @@ export async function registerUser(userData: RegisterUserProps): Promise<APIResp
 
     const emailResult = await sendVerificationEmail(user.email);
     if (!emailResult.success) {
-        //console.error('Failed to send verification email:', emailResult.message);
         // Optionally, you might want to delete the created user here
         // since the email verification failed
     }

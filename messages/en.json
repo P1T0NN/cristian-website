@@ -171,7 +171,19 @@
         "locationDeletedError": "Failed to delete location. Please try again.",
         "markAsDefault": "Mark as Default",
         "removeAsDefault": "Remove as Default",
-        "updating": "Updating..."
+        "updating": "Updating...",
+        "updateDefaultPrice": "Update Default Price",
+        "addDefaultPrice": "Add Default Price",
+        "setDefaultPrice": "Set Default Price",
+        "price": "Price",
+        "enterPrice": "Enter price",
+        "saving": "Saving...",
+        "save": "Save",
+        "PRICE_CANNOT_BE_EMPTY": "Price cannot be empty",
+        "DEFAULT_PRICE_UPDATE_ERROR": "Error updating default price",
+        "DEFAULT_PRICE_UPDATED": "Default price updated successfully",
+        "defaultPrice": "Default Price",
+        "notSet": "Not set"
     },
 
     "MatchPage": {
@@ -476,6 +488,7 @@
         "USER_CREATION_FAILED": "User creation failed",
         "REGISTRATION_SUCCESS_WITH_EMAIL": "If user with that email doesn't exist already, we have sent you an email verification link!",
         "REGISTRATION_SUCCESS_WITHOUT_EMAIL": "If user with that email doesn't exist already, we have sent you an email verification link!",
+        "FULLNAME_ALREADY_EXISTS": "This full name is already taken, please contact administrator for more informations!",
 
         "PASSWORD_RESET_REQUEST_SENT": "If a user with that email exists, a password reset link has been sent.",
 
