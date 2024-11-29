@@ -25,19 +25,19 @@ export async function finishMatch(authToken: string, matchId: string) {
         return { success: false, message: t(authToken ? 'MATCH_ID_INVALID' : 'UNAUTHORIZED') };
     }
 
-    const verifyResult = await jwtVerify(
-        authToken, 
-        new TextEncoder().encode(process.env.JWT_SECRET)
-    );
-    
-    if (!verifyResult) {
+    try {
+        await jwtVerify(
+            authToken, 
+            new TextEncoder().encode(process.env.JWT_SECRET)
+        );
+    } catch {
         return { success: false, message: t('JWT_DECODE_ERROR') };
     }
 
-    // Call the Supabase RPC function
     const { data, error } = await supabase.rpc('finish_match', {
         p_match_id: matchId
     });
+
     const result = data as RPCResponseData;
 
     if (error) {
@@ -45,13 +45,16 @@ export async function finishMatch(authToken: string, matchId: string) {
     }
 
     if (!result.success) {
-        return { success: false, message: t(result.code, result.metadata) };
+        return { 
+            success: false, 
+            message: t(result.code)
+        };
     }
 
     await upstashRedisCacheService.delete(`${CACHE_KEYS.MATCH_PREFIX}${matchId}`);
     revalidatePath("/");
 
-    return { success: true, message: t(result.code, result.metadata) };
+    return { success: true, message: t(result.code) };
 }
 
 /*

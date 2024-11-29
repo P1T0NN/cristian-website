@@ -21,6 +21,13 @@ import { upstashRedisCacheService } from '@/services/server/redis-cache.service'
 //  ON DELETE CASCADE;
 // So now when we delete match all associated rows will be deleted, so do not worry about cleaning up in code manually other tables (rows)
 
+/* Same goes for temporary_players table
+ALTER TABLE temporary_players
+ADD CONSTRAINT fk_temporary_players_match
+FOREIGN KEY (match_id) REFERENCES matches(id)
+ON DELETE CASCADE;
+*/
+
 export async function deleteMatch(authToken: string, matchId: string) {
     const genericMessages = await getTranslations("GenericMessages");
 
