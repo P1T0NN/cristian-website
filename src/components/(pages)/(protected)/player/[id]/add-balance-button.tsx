@@ -27,13 +27,15 @@ import { Euro } from 'lucide-react';
 import { addBalance } from '@/actions/server_actions/mutations/user/addBalance';
 
 type AddBalanceButtonProps = {
-    playerId: string;
     authToken: string;
+    playerId: string;
+    isAdmin: boolean;
 }
 
 export function AddBalanceButton({ 
-    playerId, 
-    authToken 
+    authToken,
+    playerId,
+    isAdmin
 }: AddBalanceButtonProps) {
     const t = useTranslations('PlayerPage');
 
@@ -50,7 +52,7 @@ export function AddBalanceButton({
 
         startTransition(async () => {
             const numericAmount = parseFloat(amount);
-            const result = await addBalance(authToken, playerId, numericAmount);
+            const result = await addBalance(authToken, playerId, numericAmount, isAdmin);
             
             if (result.success) {
                 toast.success(result.message);

@@ -107,8 +107,9 @@ export const PlayerDetails = async ({
                                 {t('addDebt')}
                             </Link>
                             <AddBalanceButton
-                                playerId={playerId}
                                 authToken={authToken}
+                                playerId={playerId}
+                                isAdmin={currentUserData.isAdmin}
                             />
                         </>
                     )}

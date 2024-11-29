@@ -8,10 +8,14 @@ import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 import { jwtVerify } from 'jose';
 
-export async function addBalance(authToken: string, playerId: string, amount: number) {
+export async function addBalance(authToken: string, playerId: string, amount: number, isAdmin: boolean) {
     const genericMessages = await getTranslations("GenericMessages");
 
     if (!authToken) {
+        return { success: false, message: genericMessages('UNAUTHORIZED') };
+    }
+
+    if (!isAdmin) {
         return { success: false, message: genericMessages('UNAUTHORIZED') };
     }
 
