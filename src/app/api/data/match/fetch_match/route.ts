@@ -110,7 +110,8 @@ export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>>
             has_discount: p.has_discount,
             has_gratis: p.has_gratis,
             has_match_admin: p.has_match_admin,
-            has_added_friend: p.has_added_friend
+            has_added_friend: p.has_added_friend,
+            has_entered_with_balance: p.has_entered_with_balance
         }
     });
 

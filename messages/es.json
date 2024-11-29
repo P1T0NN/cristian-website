@@ -281,7 +281,8 @@
         "addPlayer": "Agregar Jugador",
         "addPlayerToMatch": "Agregar Jugador al Partido",
         "playerName": "Nombre del Jugador",
-        "enterPlayerName": "Ingrese el nombre del jugador"
+        "enterPlayerName": "Ingrese el nombre del jugador",
+        "enteredWithBalance": "Entró con saldo"
     },
 
     "EditMatchPage": {
@@ -365,7 +366,14 @@
         "phoneNumber": "Número de Teléfono",
         "enterPhoneNumber": "Ingrese su número de teléfono",
         "country": "País",
-        "enterCountry": "Ingrese su país"
+        "enterCountry": "Ingrese su país",
+        "balance": "Saldo",
+        "addBalance": "Añadir Saldo",
+        "addBalanceDescription": "Ingrese la cantidad para añadir al saldo del jugador.",
+        "amount": "Cantidad",
+        "adding": "Añadiendo...",
+        "invalidAmount": "Por favor, ingrese una cantidad válida",
+        "enterAmount": "Ingrese el monto"
     },
 
     "AddTeamPage": {
@@ -639,6 +647,9 @@
         "FRIEND_REMOVAL_FAILED": "No se pudo eliminar al amigo",
         "TEMPORARY_PLAYER_NOT_FOUND": "Jugador temporal no encontrado",
         "FRIEND_REMOVED_SUCCESSFULLY": "Amigo eliminado con éxito",
+
+        "BALANCE_UPDATE_FAILED": "Error al actualizar el saldo",
+        "BALANCE_ADDED": "Saldo añadido con éxito",
 
         "REDIS_CONNECTION_ERROR": "No se puede conectar a la base de datos. Inténtalo de nuevo más tarde.",
         "REDIS_DISCONNECTION_ERROR": "Error al desconectar de la base de datos.",

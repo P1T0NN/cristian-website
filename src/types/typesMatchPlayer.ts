@@ -10,4 +10,5 @@ export type typesMatchPlayer = {
     has_gratis: boolean;
     has_match_admin: boolean;
     has_added_friend: boolean;
+    has_entered_with_balance: boolean;
 }

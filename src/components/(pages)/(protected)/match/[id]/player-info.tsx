@@ -19,7 +19,7 @@ import { getPositionLabel } from "@/utils/next-intl/getPlayerPositionLabel";
 import type { typesUser } from "@/types/typesUser";
 
 // LUCIDE ICONS
-import { UserMinus, Percent } from 'lucide-react';
+import { UserMinus, Percent, Wallet } from 'lucide-react';
 
 type PlayerInfoProps = {
     authToken: string;
@@ -57,6 +57,8 @@ export const PlayerInfo = async ({
 
     const canRemoveTemporaryPlayer = player.temporaryPlayer && (player.temporaryPlayer.added_by === currentUserId || isAdmin);
 
+    const hasEnteredWithBalance = player.matchPlayer?.has_entered_with_balance;
+
     return (
         <div className="flex flex-col w-full sm:w-auto">
             <div className="flex items-center space-x-2">
@@ -80,6 +82,18 @@ export const PlayerInfo = async ({
                             </TooltipProvider>
                         )}
                         {playerName}
+                        {(isAdmin || currentUserMatchAdmin) && hasEnteredWithBalance && (
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger>
+                                        <Wallet className="text-blue-500 ml-1" size={16} />
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>{t('enteredWithBalance')}</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        )}
                     </span>
                     <p className="text-sm text-muted-foreground">{playerPosition}</p>
                     {player.temporaryPlayer && player.temporaryPlayer.added_by_name && (

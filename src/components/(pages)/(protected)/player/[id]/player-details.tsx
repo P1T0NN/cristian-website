@@ -14,6 +14,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { DebtsTable } from "./debts-table";
 import { EditPlayerDetails } from "./edit-player-details";
+import { AddBalanceButton } from "./add-balance-button";
 
 // ACTIONS
 import { serverFetchPlayer } from "@/actions/functions/data/server/server_fetchPlayer";
@@ -25,7 +26,7 @@ import { getPositionLabel } from "@/utils/next-intl/getPlayerPositionLabel";
 import type { typesUser } from "@/types/typesUser";
 
 // LUCIDE ICONS
-import { CheckCircle, Shield, Mail, Calendar, Phone, Euro, BadgeIcon as IdCard, Users, Star, MapPin } from 'lucide-react';
+import { CheckCircle, Wallet, Shield, Mail, Calendar, Phone, Euro, BadgeIcon as IdCard, Users, Star, MapPin } from 'lucide-react';
 
 type PlayerDetailsProps = {
     playerId: string;
@@ -93,16 +94,23 @@ export const PlayerDetails = async ({
                     <InfoItem icon={<Star className="h-5 w-5 text-muted-foreground" />} text={`${t('playerLevel')}: ${playerData.player_level || t('notProvided')}`} />
                     <InfoItem icon={<Euro className="h-5 w-5 text-muted-foreground" />} text={`${t('playerOwes')}: `} value={<span className="font-semibold text-red-500">{playerData.player_debt.toFixed(2)}€</span>} />
                     <InfoItem icon={<Euro className="h-5 w-5 text-muted-foreground" />} text={`${t('iOwe')}: `} value={<span className="font-semibold text-green-500">{playerData.cristian_debt.toFixed(2)}€</span>} />
+                    <InfoItem icon={<Wallet className="h-5 w-5 text-muted-foreground" />} text={`${t('balance')}: `} value={<span className={`font-semibold ${playerData.balance >= 0 ? 'text-blue-500' : 'text-red-500'}`}>{playerData.balance.toFixed(2)}€</span>} />
                 </div>
 
                 <div className="flex flex-wrap items-center mt-6 mb-6 gap-4">
                     {currentUserData.isAdmin && (
-                        <Link 
-                            className="flex items-center h-[35px] bg-primary text-secondary px-4 rounded hover:bg-primary/80 transition-all"
-                            href={`${ADMIN_PAGE_ENDPOINTS.ADD_DEBT_PAGE}?playerName=${encodeURIComponent(playerData.fullName)}`}
-                        >
-                            {t('addDebt')}
-                        </Link>
+                        <>
+                            <Link 
+                                className="flex items-center h-[35px] bg-primary text-secondary px-4 rounded hover:bg-primary/80 transition-all"
+                                href={`${ADMIN_PAGE_ENDPOINTS.ADD_DEBT_PAGE}?playerName=${encodeURIComponent(playerData.fullName)}`}
+                            >
+                                {t('addDebt')}
+                            </Link>
+                            <AddBalanceButton
+                                playerId={playerId}
+                                authToken={authToken}
+                            />
+                        </>
                     )}
                     <EditPlayerDetails
                         authToken={authToken}

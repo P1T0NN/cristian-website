@@ -281,7 +281,8 @@
         "addPlayer": "Add Player",
         "addPlayerToMatch": "Add Player to Match",
         "playerName": "Player's Name",
-        "enterPlayerName": "Enter player's name"
+        "enterPlayerName": "Enter player's name",
+        "enteredWithBalance": "Entered with balance"
     },
 
     "EditMatchPage": {
@@ -365,7 +366,14 @@
         "phoneNumber": "Phone Number",
         "enterPhoneNumber": "Enter your phone number",
         "country": "Country",
-        "enterCountry": "Enter your country"
+        "enterCountry": "Enter your country",
+        "balance": "Balance",
+        "addBalance": "Add Balance",
+        "addBalanceDescription": "Enter the amount to add to the player's balance.",
+        "amount": "Amount",
+        "adding": "Adding...",
+        "invalidAmount": "Please enter a valid amount",
+        "enterAmount": "Enter Amount"
     },
 
     "AddTeamPage": {
@@ -643,6 +651,9 @@
         "FRIEND_REMOVAL_FAILED": "Failed to remove friend",
         "TEMPORARY_PLAYER_NOT_FOUND": "Temporary player not found",
         "FRIEND_REMOVED_SUCCESSFULLY": "Friend removed successfully",
+
+        "BALANCE_UPDATE_FAILED": "Failed to update balance",
+        "BALANCE_ADDED": "Balance successfully added",
 
         "REDIS_CONNECTION_ERROR": "Unable to connect to the database. Please try again later.",
         "REDIS_DISCONNECTION_ERROR": "Error occurred while disconnecting from the database.",
