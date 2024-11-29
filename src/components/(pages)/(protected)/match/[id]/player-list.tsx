@@ -44,13 +44,13 @@ export const PlayerList = async ({
     const getMaxPlayers = (type: string) => {
         switch (type) {
             case 'F7':
-                return 14; // 7 players per team * 2 teams
+                return 14;
             case 'F8':
-                return 16; // 8 players per team * 2 teams
+                return 16;
             case 'F11':
-                return 22; // 11 players per team * 2 teams
+                return 22;
             default:
-                return 22; // Default to 22 if matchType is not recognized
+                return 22;
         }
     };
 
@@ -60,7 +60,7 @@ export const PlayerList = async ({
     const currentUserPlayer = players.find(player => player.id === currentUserId);
     const canAddFriend = (isUserInMatch || isAdmin) && 
                          currentPlayers < maxPlayers && 
-                         (!currentUserPlayer || !currentUserPlayer.matchPlayer?.has_added_friend);
+                         (isAdmin || !currentUserPlayer || !currentUserPlayer.matchPlayer?.has_added_friend);
 
     return (
         <Card>

@@ -52,7 +52,7 @@ export const TeamCard = async ({
             case 'F11':
                 return 11;
             default:
-                return 11; // Default to 11 if matchType is not recognized
+                return 11;
         }
     };
 
@@ -69,7 +69,7 @@ export const TeamCard = async ({
     const canAddFriend = (isUserInMatch || isAdmin) && 
                          !isFull && 
                          (isAdmin || userTeamNumber === teamNumber) &&
-                         (!currentUserPlayer || !currentUserPlayer.matchPlayer?.has_added_friend);
+                         (isAdmin || !currentUserPlayer || !currentUserPlayer.matchPlayer?.has_added_friend);
 
     return (
         <Card>
