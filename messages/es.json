@@ -410,7 +410,11 @@
         "deleteConfirmTitle": "¿Estás absolutamente seguro?",
         "deleteConfirmDescription": "Esta acción no se puede deshacer. Esto eliminará permanentemente este partido del historial.",
         "cancel": "Cancelar",
-        "deleting": "Eliminando..."
+        "deleting": "Eliminando...",
+        "paid": "Pagado",
+        "discount": "Descuento",
+        "gratis": "Gratis",
+        "balance": "Saldo"
     },
 
     "ActiveMatchesPage": {
@@ -650,6 +654,7 @@
 
         "BALANCE_UPDATE_FAILED": "Error al actualizar el saldo",
         "BALANCE_ADDED": "Saldo añadido con éxito",
+        "REFUND_FAILED": "¡Error al reembolsar el dinero al jugador que se unió con saldo!",
 
         "REDIS_CONNECTION_ERROR": "No se puede conectar a la base de datos. Inténtalo de nuevo más tarde.",
         "REDIS_DISCONNECTION_ERROR": "Error al desconectar de la base de datos.",

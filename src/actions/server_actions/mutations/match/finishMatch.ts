@@ -26,10 +26,7 @@ export async function finishMatch(authToken: string, matchId: string) {
     }
 
     try {
-        await jwtVerify(
-            authToken, 
-            new TextEncoder().encode(process.env.JWT_SECRET)
-        );
+        await jwtVerify(authToken, new TextEncoder().encode(process.env.JWT_SECRET));
     } catch {
         return { success: false, message: t('JWT_DECODE_ERROR') };
     }
@@ -45,10 +42,7 @@ export async function finishMatch(authToken: string, matchId: string) {
     }
 
     if (!result.success) {
-        return { 
-            success: false, 
-            message: t(result.code)
-        };
+        return { success: false, message: t(result.code) };
     }
 
     await upstashRedisCacheService.delete(`${CACHE_KEYS.MATCH_PREFIX}${matchId}`);
@@ -66,6 +60,7 @@ DECLARE
     v_new_debt NUMERIC;
     v_price_numeric NUMERIC;
     v_current_debt NUMERIC;
+    v_match_history_id UUID;
 BEGIN
     SELECT * INTO v_match FROM matches WHERE id = p_match_id;
     IF NOT FOUND THEN
@@ -82,17 +77,21 @@ BEGIN
         v_match.match_gender, v_match.created_at, v_match.location, v_match.added_by,
         v_match.location_url, v_match.team1_color, v_match.team2_color,
         v_match.match_instructions, NOW()
-    );
+    ) RETURNING id INTO v_match_history_id;
     
     v_price_numeric := v_match.price::NUMERIC;
     
     FOR v_player IN SELECT * FROM match_players WHERE match_id = p_match_id
     LOOP
-        IF v_player.has_entered_with_balance THEN
-            UPDATE users
-            SET balance = balance - v_price_numeric
-            WHERE id = v_player.user_id;
-        ELSIF NOT v_player.has_paid AND NOT v_player.has_gratis THEN
+        -- Insert player into match_history_players
+        INSERT INTO match_history_players (
+            match_history_id, user_id, team_number, has_paid, has_discount, has_gratis, has_entered_with_balance
+        ) VALUES (
+            v_match_history_id, v_player.user_id, v_player.team_number, v_player.has_paid, 
+            v_player.has_discount, v_player.has_gratis, v_player.has_entered_with_balance
+        );
+
+        IF NOT v_player.has_paid AND NOT v_player.has_gratis AND NOT v_player.has_entered_with_balance THEN
             SELECT COALESCE(player_debt, 0) INTO v_current_debt
             FROM users
             WHERE id = v_player.user_id;

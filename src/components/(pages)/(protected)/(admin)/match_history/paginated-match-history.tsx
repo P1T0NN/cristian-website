@@ -5,9 +5,10 @@ import { useState } from 'react';
 
 // LIBRARIES
 import { format as dateFormat } from 'date-fns';
+import { useTranslations } from 'next-intl';
 
 // COMPONENTS
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { 
     Pagination, 
     PaginationContent, 
@@ -17,6 +18,7 @@ import {
     PaginationPrevious
 } from "@/components/ui/pagination";
 import { DeleteMatchFromHistoryDialog } from './delete-match-from-history-dialog';
+import { Badge } from '@/components/ui/badge';
 
 // UTILS
 import { formatTime } from "@/utils/dateUtils";
@@ -25,7 +27,7 @@ import { formatTime } from "@/utils/dateUtils";
 import { typesMatchHistory } from '@/types/typesMatchHistory';
 
 // LUCIDE ICONS
-import { MapPin } from "lucide-react";
+import { MapPin, Users, CreditCard, Ticket, Gift } from 'lucide-react';
 
 type PaginatedMatchHistoryProps = {
     authToken: string;
@@ -38,6 +40,8 @@ export const PaginatedMatchHistory = ({
     authToken,
     matchHistory
 }: PaginatedMatchHistoryProps) => {
+    const t = useTranslations('MatchHistoryPage');
+
     const [currentPage, setCurrentPage] = useState(1);
 
     const totalPages = Math.ceil(matchHistory.length / ITEMS_PER_PAGE);
@@ -67,37 +71,56 @@ export const PaginatedMatchHistory = ({
                     return (
                         <Card key={match.id} className="w-full transition-shadow hover:shadow-md">
                             <CardContent className="p-4">
-                                <div className="flex items-start gap-4">
-                                    <div className="flex flex-col items-center">
-                                        <div className="text-3xl font-bold leading-none">{formattedTime}</div>
-                                        <div className="text-sm text-muted-foreground mt-1">{formattedDate}</div>
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-2">
-                                            <h3 className="font-semibold text-lg truncate">{title}</h3>
+                                <div className="flex items-start justify-between">
+                                    <div className="flex items-start gap-4">
+                                        <div className="flex flex-col items-center">
+                                            <div className="text-3xl font-bold leading-none">{formattedTime}</div>
+                                            <div className="text-sm text-muted-foreground mt-1">{formattedDate}</div>
                                         </div>
-                                        <div className="flex flex-wrap items-center gap-2 mt-2">
-                                            <span className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600">{format}</span>
-                                            <div className="flex items-center gap-1">
-                                                <span className={`w-2.5 h-2.5 rounded-full ${match.team1_color ? 'bg-black' : 'bg-white border border-gray-300'}`} />
-                                                <span className={`w-2.5 h-2.5 rounded-full ${match.team2_color ? 'bg-black' : 'bg-white border border-gray-300'}`} />
+                                        <div>
+                                            <h3 className="font-semibold text-lg">{title}</h3>
+                                            <div className="flex flex-wrap items-center gap-2 mt-2">
+                                                <Badge variant="secondary">{format}</Badge>
+                                                <div className="flex items-center gap-1">
+                                                    <span className={`w-3 h-3 rounded-full ${match.team1_color || 'bg-gray-300'}`} />
+                                                    <span className={`w-3 h-3 rounded-full ${match.team2_color || 'bg-gray-300'}`} />
+                                                </div>
                                             </div>
+                                            {match.match_instructions && (
+                                                <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{match.match_instructions}</p>
+                                            )}
                                         </div>
-                                        {match.match_instructions && (
-                                            <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{match.match_instructions}</p>
-                                        )}
                                     </div>
-                                    <div className="text-right flex flex-col items-end gap-1">
+                                    <div className="text-right">
                                         <div className="font-semibold text-lg">{match.price}€</div>
-
                                         <DeleteMatchFromHistoryDialog authToken={authToken} match={match} />
                                     </div>
                                 </div>
-                                <div className="w-full mt-3 flex items-center justify-center py-2 px-4 text-sm font-medium rounded-md">
+                                <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-2">
+                                    <div className="flex items-center">
+                                        <Users className="w-4 h-4 mr-2" />
+                                        <span className="text-sm">{t('paid')}: {match.playerStats.playersPaid}</span>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <Ticket className="w-4 h-4 mr-2" />
+                                        <span className="text-sm">{t('discount')}: {match.playerStats.playersWithDiscount}</span>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <Gift className="w-4 h-4 mr-2" />
+                                        <span className="text-sm">{t('gratis')}: {match.playerStats.playersWithGratis}</span>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <CreditCard className="w-4 h-4 mr-2" />
+                                        <span className="text-sm">{t('balance')}: {match.playerStats.playersEnteredWithBalance}</span>
+                                    </div>
+                                </div>
+                            </CardContent>
+                            <CardFooter className="bg-muted/50 py-2 px-4">
+                                <div className="w-full flex items-center justify-center text-sm font-medium">
                                     <MapPin className="w-4 h-4 mr-2" />
                                     {match.location}
                                 </div>
-                            </CardContent>
+                            </CardFooter>
                         </Card>
                     );
                 })}

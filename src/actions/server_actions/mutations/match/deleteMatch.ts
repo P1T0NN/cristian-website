@@ -32,12 +32,12 @@ export async function deleteMatch(authToken: string, matchId: string) {
     const genericMessages = await getTranslations("GenericMessages");
 
     if (!authToken) {
-        return { success: false, message: genericMessages('UNAUTHORIZED') }
+        return { success: false, message: genericMessages('UNAUTHORIZED') };
     }
 
     const { payload } = await jwtVerify(authToken, new TextEncoder().encode(process.env.JWT_SECRET));
 
-    if (!payload) {
+    if (!payload || typeof payload.sub !== 'string') {
         return { success: false, message: genericMessages('JWT_DECODE_ERROR') };
     }
 
@@ -45,17 +45,58 @@ export async function deleteMatch(authToken: string, matchId: string) {
         return { success: false, message: genericMessages('MATCH_ID_INVALID') };
     }
 
-    const { error } = await supabase
+    // Fetch match details
+    const { data: match, error: matchError } = await supabase
+        .from('matches')
+        .select('price')
+        .eq('id', matchId)
+        .single();
+
+    if (matchError || !match) {
+        return { success: false, message: genericMessages('MATCH_FETCH_FAILED') };
+    }
+
+    // Fetch players who joined with balance
+    const { data: players, error: playersError } = await supabase
+        .from('match_players')
+        .select('user_id')
+        .eq('match_id', matchId)
+        .eq('has_entered_with_balance', true);
+
+    if (playersError) {
+        return { success: false, message: genericMessages('PLAYERS_FETCH_FAILED') };
+    }
+
+    // Refund players
+    if (players && players.length > 0) {
+        const refundPromises = players.map(player => 
+            supabase.rpc('refund_player', {
+                p_user_id: player.user_id,
+                p_match_id: matchId
+            })
+        );
+
+        const refundResults = await Promise.all(refundPromises);
+        const refundErrors = refundResults.filter(result => result.error);
+
+        if (refundErrors.length > 0) {
+            return { success: false, message: genericMessages('REFUND_FAILED') };
+        }
+    }
+
+    // Delete the match
+    const { error: deleteError } = await supabase
         .from('matches')
         .delete()
-        .match({ id: matchId });
+        .eq('id', matchId);
 
-    if (error) {
+    if (deleteError) {
         return { success: false, message: genericMessages('MATCH_DELETION_FAILED') };
     }
 
     // Delete the specific match cache
     await upstashRedisCacheService.delete(`${CACHE_KEYS.MATCH_PREFIX}${matchId}`);
+
 
     revalidatePath("/");
 

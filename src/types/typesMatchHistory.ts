@@ -1,8 +1,5 @@
 export type typesMatchHistory = {
     id: string;
-    added_by: string;
-    location: string;
-    location_url: string;
     price: number;
     team1_name: string;
     team2_name: string;
@@ -10,10 +7,27 @@ export type typesMatchHistory = {
     starts_at_hour: string;
     match_type: string;
     match_gender: string;
-    // I made it bool because it's less expensive action then string
-    team1_color: boolean;
-    team2_color: boolean;
+    created_at: string;
+    location: string;
+    added_by: string;
+    location_url: string;
+    team1_color: string;
+    team2_color: string;
     match_instructions: string;
-    created_at: Date;
-    finished_at: Date;
-};
+    finished_at: string;
+    players: {
+        has_paid: boolean;
+        has_discount: boolean;
+        has_gratis: boolean;
+        has_entered_with_balance: boolean;
+        user: {
+            fullName: string;
+        };
+    }[];
+    playerStats: {
+        playersPaid: number;
+        playersWithDiscount: number;
+        playersWithGratis: number;
+        playersEnteredWithBalance: string[];
+    };
+}

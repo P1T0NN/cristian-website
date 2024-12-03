@@ -410,7 +410,11 @@
         "deleteConfirmTitle": "Are you absolutely sure?",
         "deleteConfirmDescription": "This action cannot be undone. This will permanently delete this match from the history.",
         "cancel": "Cancel",
-        "deleting": "Deleting..."
+        "deleting": "Deleting...",
+        "paid": "Paid",
+        "discount": "Discount",
+        "gratis": "Gratis",
+        "balance": "Balance"
     },
 
     "ActiveMatchesPage": {
@@ -654,6 +658,7 @@
 
         "BALANCE_UPDATE_FAILED": "Failed to update balance",
         "BALANCE_ADDED": "Balance successfully added",
+        "REFUND_FAILED": "Failed to refund money to player who joined with balance!",
 
         "REDIS_CONNECTION_ERROR": "Unable to connect to the database. Please try again later.",
         "REDIS_DISCONNECTION_ERROR": "Error occurred while disconnecting from the database.",
