@@ -14,6 +14,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
   server:
     image: ghcr.io/p1t0nn/crys-sports:latest
+    labels:
+      - "traefik.http.routers.guestbook.rule=Host(`crys-sports.com`)"
     container_name: crys-sports
     secrets:
       - database_url
