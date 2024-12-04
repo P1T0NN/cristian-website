@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   reverse-proxy:
     image: traefik:v3.1
@@ -17,8 +15,6 @@ services:
   server:
     image: ghcr.io/p1t0nn/crys-sports:latest
     container_name: crys-sports
-    environment:
-      - NEXT_PUBLIC_FRONTEND_URL=${NEXT_PUBLIC_FRONTEND_URL}
     secrets:
       - database_url
       - supabase_url
