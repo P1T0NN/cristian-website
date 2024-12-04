@@ -67,7 +67,7 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
 
     // Map players data
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const mapPlayer = (p: any): typesUser => ({
+    const mapPlayer = (p: any): typesUser & { matchHistoryPlayer: any } => ({
         id: p.user.id,
         fullName: p.user.fullName,
         email: '',
@@ -101,9 +101,9 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
         
         const playerStats = {
             playersPaid: matchPlayers.filter(p => p.matchHistoryPlayer?.has_paid).length,
-            playersWithDiscount: matchPlayers.filter(p => p.matchHistoryPlayer?.has_discount).length,
-            playersWithGratis: matchPlayers.filter(p => p.matchHistoryPlayer?.has_gratis).length,
-            playersEnteredWithBalance: matchPlayers.filter(p => p.matchHistoryPlayer?.has_entered_with_balance).length
+            playersWithDiscount: matchPlayers.filter(p => p.matchHistoryPlayer?.has_discount),
+            playersWithGratis: matchPlayers.filter(p => p.matchHistoryPlayer?.has_gratis),
+            playersEnteredWithBalance: matchPlayers.filter(p => p.matchHistoryPlayer?.has_entered_with_balance)
         };
 
         return {

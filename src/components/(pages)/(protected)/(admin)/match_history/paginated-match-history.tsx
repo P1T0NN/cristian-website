@@ -24,7 +24,7 @@ import { Badge } from '@/components/ui/badge';
 import { formatTime } from "@/utils/dateUtils";
 
 // TYPES
-import { typesMatchHistory } from '@/types/typesMatchHistory';
+import type { typesMatchHistory } from '@/types/typesMatchHistory';
 
 // LUCIDE ICONS
 import { MapPin, Users, CreditCard, Ticket, Gift } from 'lucide-react';
@@ -57,6 +57,10 @@ export const PaginatedMatchHistory = ({
             case "F11": return "11v11"
             default: return type
         }
+    };
+
+    const formatPlayerNames = (players: { fullName: string }[]) => {
+        return players.length > 0 ? ` (${players.map(p => p.fullName).join(', ')})` : '';
     };
 
     return (
@@ -96,22 +100,31 @@ export const PaginatedMatchHistory = ({
                                         <DeleteMatchFromHistoryDialog authToken={authToken} match={match} />
                                     </div>
                                 </div>
-                                <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-2">
+                                <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-2">
                                     <div className="flex items-center">
-                                        <Users className="w-4 h-4 mr-2" />
+                                        <Users className="w-4 h-4 mr-2 flex-shrink-0" />
                                         <span className="text-sm">{t('paid')}: {match.playerStats.playersPaid}</span>
                                     </div>
                                     <div className="flex items-center">
-                                        <Ticket className="w-4 h-4 mr-2" />
-                                        <span className="text-sm">{t('discount')}: {match.playerStats.playersWithDiscount}</span>
+                                        <Ticket className="w-4 h-4 mr-2 flex-shrink-0" />
+                                        <span className="text-sm">
+                                            {t('discount')}: {match.playerStats.playersWithDiscount.length}
+                                            {formatPlayerNames(match.playerStats.playersWithDiscount)}
+                                        </span>
                                     </div>
                                     <div className="flex items-center">
-                                        <Gift className="w-4 h-4 mr-2" />
-                                        <span className="text-sm">{t('gratis')}: {match.playerStats.playersWithGratis}</span>
+                                        <Gift className="w-4 h-4 mr-2 flex-shrink-0" />
+                                        <span className="text-sm">
+                                            {t('gratis')}: {match.playerStats.playersWithGratis.length}
+                                            {formatPlayerNames(match.playerStats.playersWithGratis)}
+                                        </span>
                                     </div>
                                     <div className="flex items-center">
-                                        <CreditCard className="w-4 h-4 mr-2" />
-                                        <span className="text-sm">{t('balance')}: {match.playerStats.playersEnteredWithBalance}</span>
+                                        <CreditCard className="w-4 h-4 mr-2 flex-shrink-0" />
+                                        <span className="text-sm">
+                                            {t('balance')}: {match.playerStats.playersEnteredWithBalance.length}
+                                            {formatPlayerNames(match?.playerStats.playersEnteredWithBalance)}
+                                        </span>
                                     </div>
                                 </div>
                             </CardContent>
