@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  reverse-proxy:
+    image: traefik:v3.1
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker"
+    ports:
+      # The HTTP Port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # so that Traefik can listen to Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+  server:
+    image: ghcr.io/p1t0nn/crys-sports:latest
+    container_name: crys-sports
+    environment:
+      - NEXT_PUBLIC_FRONTEND_URL=${NEXT_PUBLIC_FRONTEND_URL}
+    secrets:
+      - database_url
+      - supabase_url
+      - supabase_anon_key
+      - resend_api_key
+      - jwt_secret
+      - redis_url
+      - redis_token
+    restart: always
+    volumes:
+      - ./app:/app
+    networks:
+      - crys-sports-network
+
+networks:
+  crys-sports-network:
+    driver: bridge
+
+volumes:
+  app-data:
+
+secrets:
+  database_url:
+    file: ./secrets/database_url.txt
+  supabase_url:
+    file: ./secrets/supabase_url.txt
+  supabase_anon_key:
+    file: ./secrets/supabase_anon_key.txt
+  resend_api_key:
+    file: ./secrets/resend_api_key.txt
+  jwt_secret:
+    file: ./secrets/jwt_secret.txt
+  redis_url:
+    file: ./secrets/redis_url.txt
+  redis_token:
+    file: ./secrets/redis_token.txt
