@@ -20,7 +20,10 @@ services:
   crys-sports:
     image: ghcr.io/p1t0nn/crys-sports:latest
     labels:
+      # traefik.enable=true must be set because we do "--providers.docker.exposedbydefault=false"
+      - "traefik.enable=true"
       - "traefik.http.routers.crys-sports.rule=Host(`crys-sports.com`) || Host(`www.crys-sports.com`)"
+      - "traefik.http.routers.crys-sports.entrypoints=websecure"
     secrets:
       - database_url
       - supabase_url
