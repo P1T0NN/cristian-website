@@ -36,6 +36,8 @@ services:
       - redis_url
       - redis_token
     environment:
+      # We can hardcode NEXT_PUBLIC_FRONTEND_URL since it is meant to be public
+      - NEXT_PUBLIC_FRONTEND_URL=https://crys-sports.com
       - DATABASE_URL=/run/secrets/database_url
       - SUPABASE_URL=/run/secrets/supabase_url
       - SUPABASE_ANON_KEY=/run/secrets/supabase_anon_key
