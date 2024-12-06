@@ -23,7 +23,7 @@ services:
     image: ghcr.io/p1t0nn/crys-sports:latest
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.server.rule=Host(`crys-sports.com`)"
+      - "traefik.http.routers.server.rule=Host(`crys-sports.com`) || Host(`www.crys-sports.com`)"
       - "traefik.http.services.server.loadbalancer.server.port=3000"
     container_name: crys-sports
     ports:
