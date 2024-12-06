@@ -7,12 +7,14 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.websecure.forwardedHeaders.trustedIPs=173.245.48.0/20,103.21.244.0/22,103.22.200.0/22,103.31.4.0/22,141.101.64.0/18,108.162.192.0/18,190.93.240.0/20,188.114.96.0/20,197.234.240.0/22,198.41.128.0/17,162.158.0.0/15,104.16.0.0/13,104.24.0.0/14,172.64.0.0/13,131.0.72.0/22"
     ports:
       - "80:80"
       - "443:443"
       - "8080:8080"
     volumes:
-      # So that traefik can listen to docker socket
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - crys-sports-network
@@ -20,10 +22,11 @@ services:
   crys-sports:
     image: ghcr.io/p1t0nn/crys-sports:latest
     labels:
-      # traefik.enable=true must be set because we do "--providers.docker.exposedbydefault=false"
       - "traefik.enable=true"
       - "traefik.http.routers.crys-sports.rule=Host(`crys-sports.com`) || Host(`www.crys-sports.com`)"
       - "traefik.http.routers.crys-sports.entrypoints=websecure"
+      - "traefik.http.services.crys-sports.loadbalancer.server.port=3000"
+      - "traefik.http.routers.crys-sports.tls=true"
     secrets:
       - database_url
       - supabase_url
