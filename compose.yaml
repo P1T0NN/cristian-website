@@ -35,6 +35,14 @@ services:
       - jwt_secret
       - redis_url
       - redis_token
+    environment:
+      - DATABASE_URL=/run/secrets/database_url
+      - SUPABASE_URL=/run/secrets/supabase_url
+      - SUPABASE_ANON_KEY=/run/secrets/supabase_anon_key
+      - RESEND_API_KEY=/run/secrets/resend_api_key
+      - JWT_SECRET=/run/secrets/jwt_secret
+      - REDIS_URL=/run/secrets/redis_url
+      - REDIS_TOKEN=/run/secrets/redis_token
     restart: always
     networks:
       - crys-sports-network
@@ -45,16 +53,16 @@ networks:
 
 secrets:
   database_url:
-    file: /home/ognjen/secrets/database_url.txt
+    external: true
   supabase_url:
-    file: /home/ognjen/secrets/supabase_url.txt
+    external: true
   supabase_anon_key:
-    file: /home/ognjen/secrets/supabase_anon_key.txt
+    external: true
   resend_api_key:
-    file: /home/ognjen/secrets/resend_api_key.txt
+    external: true
   jwt_secret:
-    file: /home/ognjen/secrets/jwt_secret.txt
+    external: true
   redis_url:
-    file: /home/ognjen/secrets/redis_url.txt
+    external: true
   redis_token:
-    file: /home/ognjen/secrets/redis_token.txt
+    external: true
