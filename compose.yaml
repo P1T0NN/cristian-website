@@ -38,36 +38,26 @@ services:
     environment:
       # We can hardcode NEXT_PUBLIC_FRONTEND_URL since it is meant to be public
       - NEXT_PUBLIC_FRONTEND_URL=https://crys-sports.com
-      - DATABASE_URL=/run/secrets/database_url
-      - SUPABASE_URL=/run/secrets/supabase_url
-      - SUPABASE_ANON_KEY=/run/secrets/supabase_anon_key
-      - RESEND_API_KEY=/run/secrets/resend_api_key
-      - JWT_SECRET=/run/secrets/jwt_secret
-      - REDIS_URL=/run/secrets/redis_url
-      - REDIS_TOKEN=/run/secrets/redis_token
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
+    restart: always
     networks:
       - crys-sports-network
 
 networks:
   crys-sports-network:
-    driver: overlay
+    driver: bridge
 
 secrets:
   database_url:
-    external: true
+    file: /home/ognjen/secrets/database_url.txt
   supabase_url:
-    external: true
+    file: /home/ognjen/secrets/supabase_url.txt
   supabase_anon_key:
-    external: true
+    file: /home/ognjen/secrets/supabase_anon_key.txt
   resend_api_key:
-    external: true
+    file: /home/ognjen/secrets/resend_api_key.txt
   jwt_secret:
-    external: true
+    file: /home/ognjen/secrets/jwt_secret.txt
   redis_url:
-    external: true
+    file: /home/ognjen/secrets/redis_url.txt
   redis_token:
-    external: true
+    file: /home/ognjen/secrets/redis_token.txt
