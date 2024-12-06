@@ -45,13 +45,16 @@ services:
       - JWT_SECRET=/run/secrets/jwt_secret
       - REDIS_URL=/run/secrets/redis_url
       - REDIS_TOKEN=/run/secrets/redis_token
-    restart: always
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
     networks:
       - crys-sports-network
 
 networks:
   crys-sports-network:
-    driver: bridge
+    driver: overlay
 
 secrets:
   database_url:
