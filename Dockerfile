@@ -1,38 +1,37 @@
-FROM oven/bun:1 as base
-WORKDIR /app
+FROM oven/bun:alpine AS base
 
-# Install dependencies
-FROM base as deps
+# Stage 1: Install dependencies
+FROM base AS deps
+WORKDIR /app
 COPY package.json bun.lockb ./
 RUN bun install --frozen-lockfile
 
-# Build the application
-FROM base as builder
+# Stage 2: Build the application
+FROM base AS builder
+WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN bun run build
 
-# Production image
+# Stage 3: Production server
 FROM base AS runner
 WORKDIR /app
-
 ENV NODE_ENV=production
 
-# Create a non-root user
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 bunuser
-
-# Copy built artifacts
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/package.json ./package.json
+# Copy necessary files
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/bun.lockb ./bun.lockb
 
-# Set correct permissions
-RUN chown -R bunuser:nodejs /app
-
-USER bunuser
+# Set the correct permission for prerender cache
+RUN mkdir -p .next/cache
+RUN chmod -R 777 .next/cache
 
 EXPOSE 3000
 
-# Replace with your actual entry point
-CMD ["bun", "run", "dist/index.js"]
+RUN ls -la /app
+
+# Start the Next.js application
+CMD ["bun", "run", "next", "start"]

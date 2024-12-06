@@ -4,19 +4,30 @@ services:
     command:
       - "--api.insecure=true"
       - "--providers.docker"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"  # Add this line
     ports:
-      # The HTTP Port
       - "80:80"
-      # The Web UI (enabled by --api.insecure=true)
+      - "443:443"  # Add this line
       - "8080:8080"
     volumes:
-      # so that Traefik can listen to Docker events
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - crys-sports-network
+
   server:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: ghcr.io/p1t0nn/crys-sports:latest
     labels:
-      - "traefik.http.routers.guestbook.rule=Host(`crys-sports.com`)"
+      - "traefik.enable=true"
+      - "traefik.http.routers.server.rule=Host(`crys-sports.com`)"
+      - "traefik.http.services.server.loadbalancer.server.port=3000"
     container_name: crys-sports
+    ports:
+      - "3000:3000"  # Add this line for debugging
     secrets:
       - database_url
       - supabase_url
@@ -26,8 +37,6 @@ services:
       - redis_url
       - redis_token
     restart: always
-    volumes:
-      - ./app:/app
     networks:
       - crys-sports-network
 
@@ -35,21 +44,18 @@ networks:
   crys-sports-network:
     driver: bridge
 
-volumes:
-  app-data:
-
 secrets:
   database_url:
-    file: ./secrets/database_url.txt
+    file: /home/ognjen/secrets/database_url.txt
   supabase_url:
-    file: ./secrets/supabase_url.txt
+    file: /home/ognjen/secrets/supabase_url.txt
   supabase_anon_key:
-    file: ./secrets/supabase_anon_key.txt
+    file: /home/ognjen/secrets/supabase_anon_key.txt
   resend_api_key:
-    file: ./secrets/resend_api_key.txt
+    file: /home/ognjen/secrets/resend_api_key.txt
   jwt_secret:
-    file: ./secrets/jwt_secret.txt
+    file: /home/ognjen/secrets/jwt_secret.txt
   redis_url:
-    file: ./secrets/redis_url.txt
+    file: /home/ognjen/secrets/redis_url.txt
   redis_token:
-    file: ./secrets/redis_token.txt
+    file: /home/ognjen/secrets/redis_token.txt
