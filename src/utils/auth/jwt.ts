@@ -27,19 +27,21 @@ async function generateFingerprint(userId: string): Promise<string> {
     return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
 }
 
-export async function generateToken(userId: string): Promise<string> {
+export async function generateToken(userId: string, isAdmin: boolean, hasAccess: boolean): Promise<string> {
     const secretKey = new TextEncoder().encode(process.env.JWT_SECRET);
     const fingerprint = await generateFingerprint(userId);
     
     const now = Math.floor(Date.now() / 1000);
     
     return new SignJWT({ 
-      sub: userId,
+        sub: userId,
+        isAdmin,
+        has_access: hasAccess
     })
-      .setProtectedHeader({ alg: 'HS256', fingerprint })
-      .setIssuedAt(now)
-      .setExpirationTime(now + DEFAULT_JWT_EXPIRATION_TIME)
-      .sign(secretKey);
+        .setProtectedHeader({ alg: 'HS256', fingerprint })
+        .setIssuedAt(now)
+        .setExpirationTime(now + DEFAULT_JWT_EXPIRATION_TIME)
+        .sign(secretKey);
 }
 
 export async function verifyToken(token: string): Promise<typesTokenPayload> {
@@ -62,6 +64,8 @@ export async function verifyToken(token: string): Promise<typesTokenPayload> {
     return {
         sub: payload.sub,
         iat: payload.iat as number,
-        exp: payload.exp as number
+        exp: payload.exp as number,
+        isAdmin: payload.isAdmin as boolean,
+        has_access: payload.has_access as boolean
     };
 }

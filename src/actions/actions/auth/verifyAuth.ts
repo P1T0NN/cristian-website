@@ -1,4 +1,4 @@
-"use server"
+import 'server-only'
 
 // REACTJS IMPORTS
 import { cache } from 'react';
@@ -25,7 +25,7 @@ export const verifyAuth = async (token: string) => {
     }
 }
 
-export const verifyAuthWithRefresh = cache(async () => {
+export const verifyAuthWithRefresh = async () => {
     const cookieStore = await cookies();
     const authToken = cookieStore.get('auth_token')?.value;
     const refreshToken = cookieStore.get('refresh_token')?.value;
@@ -57,7 +57,7 @@ export const verifyAuthWithRefresh = cache(async () => {
     }
 
     redirect('/login');
-})
+}
 
 export const checkUserAccess = async (token: string): Promise<boolean> => {
     const payload = await verifyToken(token).catch(() => {

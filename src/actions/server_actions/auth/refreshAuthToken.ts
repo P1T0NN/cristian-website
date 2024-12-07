@@ -18,18 +18,32 @@ export async function refreshAuthToken(refreshToken: string) {
     const t = await getTranslations('GenericMessages');
     const cookieStore = await cookies();
 
-    const { data: tokenData, error } = await supabase
+    // Fetch the user_id from the refresh_tokens table
+    const { data: tokenData, error: tokenError } = await supabase
         .from('refresh_tokens')
         .select('user_id')
         .eq('token', refreshToken)
-        .single()
+        .single();
 
-    if (error || !tokenData) {
+    if (tokenError || !tokenData) {
         cookieStore.delete('refresh_token');
         return { success: false, message: t('INVALID_REFRESH_TOKEN') };
-    };
+    }
 
-    const newAuthToken = await generateToken(tokenData.user_id)
+    // Fetch the user data including isAdmin and has_access
+    const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('isAdmin, has_access')
+        .eq('id', tokenData.user_id)
+        .single();
+
+    if (userError || !userData) {
+        cookieStore.delete('refresh_token');
+        return { success: false, message: t('USER_NOT_FOUND') };
+    }
+
+    // Generate the new auth token with the fetched user data
+    const newAuthToken = await generateToken(tokenData.user_id, userData.isAdmin, userData.has_access);
 
     cookieStore.set('auth_token', newAuthToken, {
         httpOnly: true,

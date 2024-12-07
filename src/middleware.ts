@@ -8,9 +8,8 @@ import { format } from 'date-fns';
 // CONFIG
 import { getAllProtectedRoutes, ADMIN_PAGE_ENDPOINTS, DEFAULT_JWT_EXPIRATION_TIME, PROTECTED_PAGE_ENDPOINTS } from './config';
 
-// SERVER ACTIONS
-import { checkIfUserIsAdmin } from './actions/server_actions/auth/checkIfUserIsAdmin';
-import { checkUserAccess } from '@/actions/actions/auth/verifyAuth';
+// UTILS
+import { verifyToken } from './utils/auth/jwt';
 
 // ACTIONS
 import { verifyAuthWithRefresh } from '@/actions/actions/auth/verifyAuth';
@@ -31,7 +30,6 @@ export async function middleware(request: NextRequest) {
     if (path === PROTECTED_PAGE_ENDPOINTS.HOME_PAGE) {
         const dateParam = request.nextUrl.searchParams.get('date');
         if (!dateParam) {
-            // Redirect to the home page with the current date in the URL
             return redirectToHome(request);
         }
     }
@@ -64,8 +62,8 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL('/login', request.url));
         }
 
-        // Check if user has access
-        const hasAccess = await checkUserAccess(validToken);
+        // While this method should work, it actually only works in Vercels infrastructure. It will throw errors if we self host, because we use Cache in Middleware (Which is Edge)
+        /*const hasAccess = await checkUserAccess(validToken);
         if (!hasAccess) {
             return NextResponse.redirect(new URL('/unauthorized', request.url));
         }
@@ -75,6 +73,25 @@ export async function middleware(request: NextRequest) {
             if (!isAdmin) {
                 return NextResponse.redirect(new URL('/home', request.url));
             }
+        }*/
+
+
+        // Therefore we put has_access and isAdmin checks in JWT and check it like that, to kind of go around it
+        try {
+            const payload = await verifyToken(validToken);
+
+            // Check if user has access
+            if (!payload.has_access) {
+                return NextResponse.redirect(new URL('/unauthorized', request.url));
+            }
+
+            // Check if user is admin for admin routes
+            if (isAdminRoute && !payload.isAdmin) {
+                return NextResponse.redirect(new URL('/home', request.url));
+            }
+        } catch {
+            // Token is invalid or expired
+            return NextResponse.redirect(new URL('/login', request.url));
         }
     }
 

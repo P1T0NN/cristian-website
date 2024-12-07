@@ -56,7 +56,7 @@ export async function loginUser(email: string, password: string): Promise<APIRes
         return { success: false, message: t('EMAIL_NOT_VERIFIED') };
     }
 
-    const token = await generateToken(user.id);
+    const token = await generateToken(user.id, user.isAdmin, user.has_access);
     const refreshToken = generateRefreshToken();
 
     // Check for existing refresh token

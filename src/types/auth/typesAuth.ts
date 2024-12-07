@@ -29,6 +29,8 @@ export interface typesTokenPayload {
     sub: string; // standard JWT claim for subject (user ID)
     iat: number; // issued at
     exp: number; // expiration time
+    isAdmin: boolean;
+    has_access: boolean;
 }
 
 export type typesVerificationEmail = {
