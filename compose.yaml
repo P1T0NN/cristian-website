@@ -27,16 +27,17 @@ services:
       - "traefik.http.routers.crys-sports.entrypoints=websecure"
       - "traefik.http.services.crys-sports.loadbalancer.server.port=3000"
       - "traefik.http.routers.crys-sports.tls=true"
+    secrets:
+      - database_url
+      - supabase_url
+      - supabase_anon_key
+      - resend_api_key
+      - jwt_secret
+      - redis_url
+      - redis_token
     environment:
       # We can hardcode NEXT_PUBLIC_FRONTEND_URL since it is meant to be public
       - NEXT_PUBLIC_FRONTEND_URL=https://crys-sports.com
-      - DATABASE_URL=${DATABASE_URL}
-      - SUPABASE_URL=${SUPABASE_URL}
-      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
-      - RESEND_API_KEY=${RESEND_API_KEY}
-      - JWT_SECRET=${JWT_SECRET}
-      - REDIS_URL=${REDIS_URL}
-      - REDIS_TOKEN=${REDIS_TOKEN}
     restart: always
     networks:
       - crys-sports-network
@@ -44,3 +45,19 @@ services:
 networks:
   crys-sports-network:
     driver: bridge
+
+secrets:
+  database_url:
+    file: /home/ognjen/secrets/database_url.txt
+  supabase_url:
+    file: /home/ognjen/secrets/supabase_url.txt
+  supabase_anon_key:
+    file: /home/ognjen/secrets/supabase_anon_key.txt
+  resend_api_key:
+    file: /home/ognjen/secrets/resend_api_key.txt
+  jwt_secret:
+    file: /home/ognjen/secrets/jwt_secret.txt
+  redis_url:
+    file: /home/ognjen/secrets/redis_url.txt
+  redis_token:
+    file: /home/ognjen/secrets/redis_token.txt
