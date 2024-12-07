@@ -10,7 +10,7 @@ import { getAllProtectedRoutes, ADMIN_PAGE_ENDPOINTS, DEFAULT_JWT_EXPIRATION_TIM
 
 // SERVER ACTIONS
 import { checkIfUserIsAdmin } from './actions/server_actions/auth/checkIfUserIsAdmin';
-import { checkUserAccess } from '@/actions/actions/auth/verifyAuth';
+//import { checkUserAccess } from '@/actions/actions/auth/verifyAuth';
 
 // ACTIONS
 import { verifyAuthWithRefresh } from '@/actions/actions/auth/verifyAuth';
@@ -64,11 +64,7 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL('/login', request.url));
         }
 
-        // Check if user has access
-        const hasAccess = await checkUserAccess(validToken);
-        if (!hasAccess) {
-            return NextResponse.redirect(new URL('/unauthorized', request.url));
-        }
+        // The checkUserAccess function call has been removed from here
 
         if (isAdminRoute) {
             const isAdmin = await checkIfUserIsAdmin(validToken);
