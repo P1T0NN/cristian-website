@@ -1,4 +1,4 @@
-import 'server-only'
+import "use server"
 
 // REACTJS IMPORTS
 import { cache } from 'react';
