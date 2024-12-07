@@ -77,21 +77,16 @@ export async function middleware(request: NextRequest) {
 
 
         // Therefore we put has_access and isAdmin checks in JWT and check it like that, to kind of go around it
-        try {
-            const payload = await verifyToken(validToken);
+        const payload = await verifyToken(validToken);
 
-            // Check if user has access
-            if (!payload.has_access) {
-                return NextResponse.redirect(new URL('/unauthorized', request.url));
-            }
+        // Check if user has access
+        if (!payload.has_access) {
+            return NextResponse.redirect(new URL('/unauthorized', request.url));
+        }
 
-            // Check if user is admin for admin routes
-            if (isAdminRoute && !payload.isAdmin) {
-                return NextResponse.redirect(new URL('/home', request.url));
-            }
-        } catch {
-            // Token is invalid or expired
-            return NextResponse.redirect(new URL('/login', request.url));
+        // Check if user is admin for admin routes
+        if (isAdminRoute && !payload.isAdmin) {
+            return NextResponse.redirect(new URL('/home', request.url));
         }
     }
 
