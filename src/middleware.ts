@@ -6,7 +6,11 @@ import type { NextRequest } from 'next/server';
 import { format } from 'date-fns';
 
 // CONFIG
-import { getAllProtectedRoutes, DEFAULT_JWT_EXPIRATION_TIME, PROTECTED_PAGE_ENDPOINTS } from './config';
+import { getAllProtectedRoutes, ADMIN_PAGE_ENDPOINTS, DEFAULT_JWT_EXPIRATION_TIME, PROTECTED_PAGE_ENDPOINTS } from './config';
+
+// SERVER ACTIONS
+import { checkIfUserIsAdmin } from './actions/server_actions/auth/checkIfUserIsAdmin';
+import { checkUserAccess } from '@/actions/actions/auth/verifyAuth';
 
 // ACTIONS
 import { verifyAuthWithRefresh } from '@/actions/actions/auth/verifyAuth';
@@ -22,10 +26,12 @@ export async function middleware(request: NextRequest) {
     const path = request.nextUrl.pathname;
 
     const isProtectedRoute = getAllProtectedRoutes().some(route => path.startsWith(route));
+    const isAdminRoute = Object.values(ADMIN_PAGE_ENDPOINTS).some(route => path.startsWith(route));
 
     if (path === PROTECTED_PAGE_ENDPOINTS.HOME_PAGE) {
         const dateParam = request.nextUrl.searchParams.get('date');
         if (!dateParam) {
+            // Redirect to the home page with the current date in the URL
             return redirectToHome(request);
         }
     }
@@ -56,6 +62,19 @@ export async function middleware(request: NextRequest) {
 
         if (!validToken) {
             return NextResponse.redirect(new URL('/login', request.url));
+        }
+
+        // Check if user has access
+        const hasAccess = await checkUserAccess();
+        if (!hasAccess) {
+            return NextResponse.redirect(new URL('/unauthorized', request.url));
+        }
+
+        if (isAdminRoute) {
+            const isAdmin = await checkIfUserIsAdmin();
+            if (!isAdmin) {
+                return NextResponse.redirect(new URL('/home', request.url));
+            }
         }
     }
 

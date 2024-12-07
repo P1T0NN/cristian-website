@@ -59,11 +59,11 @@ export const verifyAuthWithRefresh = cache(async () => {
     redirect('/login');
 })
 
-export const checkUserAccess = async (token: string): Promise<boolean> => {
-    const payload = await verifyToken(token).catch(() => {
-        //console.error('Error verifying token:', error);
-        return null;
-    });
+export const checkUserAccess = async (): Promise<boolean> => {
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get('auth_token')?.value;
+
+    const payload = await verifyToken(authToken as string);
 
     if (!payload) {
         return false;
