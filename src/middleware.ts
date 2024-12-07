@@ -59,7 +59,7 @@ export async function middleware(request: NextRequest) {
         }
 
         // Verify the token and extract payload directly
-        const payload = await verifyToken(validToken as string);
+        const payload = await verifyToken(authToken);
 
         // Check user access
         if (!payload.has_access) {
