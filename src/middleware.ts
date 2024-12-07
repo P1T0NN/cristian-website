@@ -58,8 +58,12 @@ export async function middleware(request: NextRequest) {
             }
         }
 
+        if (!validToken) {
+            return NextResponse.redirect(new URL('/login', request.url));
+        }
+
         // Verify the token and extract payload directly
-        const payload = await verifyToken(authToken);
+        const payload = await verifyToken(authToken as string);
 
         // Check user access
         if (!payload.has_access) {
@@ -69,10 +73,6 @@ export async function middleware(request: NextRequest) {
         // Check admin route access
         if (isAdminRoute && !payload.isAdmin) {
             return NextResponse.redirect(new URL('/home', request.url));
-        }
-
-        if (!validToken) {
-            return NextResponse.redirect(new URL('/login', request.url));
         }
     }
 
