@@ -11,9 +11,6 @@ import { getAllProtectedRoutes, ADMIN_PAGE_ENDPOINTS, DEFAULT_JWT_EXPIRATION_TIM
 // UTILS
 import { verifyToken } from './utils/auth/jwt';
 
-// ACTIONS
-import { verifyAuthWithRefresh } from '@/actions/actions/auth/verifyAuth';
-
 async function redirectToHome(req: NextRequest) {
     const currentDate = format(new Date(), 'yyyy-MM-dd');
     return NextResponse.redirect(new URL(`${PROTECTED_PAGE_ENDPOINTS.HOME_PAGE}?date=${currentDate}`, req.url));
@@ -35,17 +32,16 @@ export async function middleware(request: NextRequest) {
     }
 
     if (isProtectedRoute) {
-        let validToken = authToken;
-
+        // If no auth token, try to refresh
         if (!authToken && refreshToken) {
-            const result = await verifyAuthWithRefresh();
+            const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/verify_auth_with_refresh`);
+            const result = await res.json();
 
             if (!result.isAuth) {
                 return NextResponse.redirect(new URL('/login', request.url));
             }
 
-            if ('newAuthToken' in result && result.newAuthToken) {
-                validToken = result.newAuthToken;
+            if (result.newAuthToken) {
                 const response = NextResponse.next();
                 response.cookies.set('auth_token', result.newAuthToken, {
                     httpOnly: true,
@@ -58,13 +54,13 @@ export async function middleware(request: NextRequest) {
             }
         }
 
-        if (!validToken) {
+        if (!authToken) {
             return NextResponse.redirect(new URL('/login', request.url));
         }
 
         try {
             // Verify the token and extract payload directly
-            const payload = await verifyToken(validToken);
+            const payload = await verifyToken(authToken);
 
             // Check user access
             if (!payload.has_access) {
