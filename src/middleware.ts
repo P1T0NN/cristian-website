@@ -4,12 +4,10 @@ import type { NextRequest } from 'next/server';
 
 // LIBRARIES
 import { format } from 'date-fns';
+import { jwtVerify } from 'jose';
 
 // CONFIG
 import { getAllProtectedRoutes, ADMIN_PAGE_ENDPOINTS, DEFAULT_JWT_EXPIRATION_TIME, PROTECTED_PAGE_ENDPOINTS } from './config';
-
-// UTILS
-import { verifyToken } from './utils/auth/jwt';
 
 // ACTIONS
 import { verifyAuthWithRefresh } from '@/actions/actions/auth/verifyAuth';
@@ -63,7 +61,11 @@ export async function middleware(request: NextRequest) {
         }
 
         // Verify the token and extract payload directly
-        const payload = await verifyToken(authToken as string);
+        const secretKey = new TextEncoder().encode(process.env.JWT_SECRET);
+    
+        const { payload } = await jwtVerify(validToken, secretKey, {
+            algorithms: ['HS256']
+        });
 
         // Check user access
         if (!payload.has_access) {
