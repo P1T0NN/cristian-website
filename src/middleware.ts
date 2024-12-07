@@ -11,6 +11,9 @@ import { getAllProtectedRoutes, ADMIN_PAGE_ENDPOINTS, DEFAULT_JWT_EXPIRATION_TIM
 // UTILS
 import { verifyToken } from './utils/auth/jwt';
 
+// ACTIONS
+import { verifyAuthWithRefresh } from '@/actions/actions/auth/verifyAuth';
+
 async function redirectToHome(req: NextRequest) {
     const currentDate = format(new Date(), 'yyyy-MM-dd');
     return NextResponse.redirect(new URL(`${PROTECTED_PAGE_ENDPOINTS.HOME_PAGE}?date=${currentDate}`, req.url));
@@ -32,16 +35,17 @@ export async function middleware(request: NextRequest) {
     }
 
     if (isProtectedRoute) {
-        // If no auth token, try to refresh
+        let validToken = authToken;
+
         if (!authToken && refreshToken) {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/verify_auth_with_refresh`);
-            const result = await res.json();
+            const result = await verifyAuthWithRefresh();
 
             if (!result.isAuth) {
                 return NextResponse.redirect(new URL('/login', request.url));
             }
 
-            if (result.newAuthToken) {
+            if ('newAuthToken' in result && result.newAuthToken) {
+                validToken = result.newAuthToken;
                 const response = NextResponse.next();
                 response.cookies.set('auth_token', result.newAuthToken, {
                     httpOnly: true,
@@ -54,25 +58,20 @@ export async function middleware(request: NextRequest) {
             }
         }
 
-        if (!authToken) {
-            return NextResponse.redirect(new URL('/login', request.url));
+        // Verify the token and extract payload directly
+        const payload = await verifyToken(validToken as string);
+
+        // Check user access
+        if (!payload.has_access) {
+            return NextResponse.redirect(new URL('/unauthorized', request.url));
         }
 
-        try {
-            // Verify the token and extract payload directly
-            const payload = await verifyToken(authToken);
+        // Check admin route access
+        if (isAdminRoute && !payload.isAdmin) {
+            return NextResponse.redirect(new URL('/home', request.url));
+        }
 
-            // Check user access
-            if (!payload.has_access) {
-                return NextResponse.redirect(new URL('/unauthorized', request.url));
-            }
-
-            // Check admin route access
-            if (isAdminRoute && !payload.isAdmin) {
-                return NextResponse.redirect(new URL('/home', request.url));
-            }
-        } catch {
-            // Token verification failed
+        if (!validToken) {
             return NextResponse.redirect(new URL('/login', request.url));
         }
     }
