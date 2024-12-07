@@ -34,7 +34,7 @@ export async function middleware(request: NextRequest) {
     if (isProtectedRoute) {
         // If no auth token, try to refresh
         if (!authToken && refreshToken) {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/verify_auth_with_refresh`);
+            const res = await fetch(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/verify_auth_with_refresh`);
             const result = await res.json();
 
             if (!result.isAuth) {
