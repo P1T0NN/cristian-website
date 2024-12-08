@@ -1,6 +1,6 @@
 "use client"
 
-// REACTJS IMPORTS
+// REACJTS IMPORTS
 import { useTransition, useState } from "react";
 
 // LIBRARIES
@@ -20,25 +20,25 @@ import {
 } from "@/components/ui/dialog";
 
 // SERVER ACTIONS
-import { grantUserAccess } from "@/actions/server_actions/mutations/user/grantUserAccess";
+import { denyUserAccess } from "@/actions/server_actions/mutations/user/denyUserAccess";
 
-type GrantUserAccessButtonProps = {
+type DenyUserAccessButtonProps = {
     authToken: string;
     userId: string;
 }
 
-export const GrantUserAccessButton = ({
+export const DenyUserAccessButton = ({
     authToken,
     userId
-}: GrantUserAccessButtonProps) => {
+}: DenyUserAccessButtonProps) => {
     const t = useTranslations("AccessForRegistrationPage");
 
     const [isPending, startTransition] = useTransition();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-    const handleGiveUserRegistrationAccess = () => {
+    const handleDenyUserAccess = () => {
         startTransition(async () => {
-            const response = await grantUserAccess(authToken, userId)
+            const response = await denyUserAccess(authToken, userId)
 
             if (response.success) {
                 toast.success(response.message);
@@ -54,17 +54,17 @@ export const GrantUserAccessButton = ({
             <DialogTrigger asChild>
                 <Button 
                     type="button"
-                    variant="outline" 
+                    variant="destructive" 
                     size="sm"
                 >
-                    {isPending ? t('givingAccess') : t('grantAccess')}
+                    {isPending ? t('denyingAccess') : t('denyAccess')}
                 </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>{t('confirmAccessTitle')}</DialogTitle>
+                    <DialogTitle>{t('confirmDenyAccessTitle')}</DialogTitle>
                     <DialogDescription>
-                        {t('confirmAccessDescription')}
+                        {t('confirmDenyAccessDescription')}
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
@@ -72,10 +72,11 @@ export const GrantUserAccessButton = ({
                         {t('cancel')}
                     </Button>
                     <Button 
-                        onClick={handleGiveUserRegistrationAccess}
+                        onClick={handleDenyUserAccess}
                         disabled={isPending}
+                        variant="destructive"
                     >
-                        {isPending ? t('givingAccess') : t('confirmGrant')}
+                        {isPending ? t('denyingAccess') : t('confirmDeny')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

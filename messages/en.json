@@ -20,7 +20,7 @@
         "loading": "Loading...",
         "error": "There was an error...",
         "noResults": "No results found",
-        "title": "Cris Futbol",
+        "title": "Crys Sports",
         "matchHistory": "Match History",
         "createTeam": "Create Team",
         "profile": "Profile",
@@ -444,7 +444,13 @@
         "confirmAccessTitle": "Confirm Access Grant",
         "confirmAccessDescription": "If you grant access, this user will be able to see your website data and matches. Are you sure you want to proceed?",
         "cancel": "Cancel",
-        "confirmGrant": "Yes, Grant Access"
+        "confirmGrant": "Yes, Grant Access",
+        "actions": "Actions",
+        "denyAccess": "Deny Access",
+        "denyingAccess": "Denying Access...",
+        "confirmDenyAccessTitle": "Confirm Access Denial",
+        "confirmDenyAccessDescription": "Are you sure you want to deny access and delete this user? This action cannot be undone.",
+        "confirmDeny": "Confirm Deny"
     },
 
     "FilterModalComponent": {
@@ -646,6 +652,8 @@
 
         "USER_GRANT_ACCESS_FAILED": "Failed to grant access to user",
         "USER_ACCESS_GRANTED_SUCCESSFULLY": "User access granted successfully",
+        "USER_DENY_ACCESS_FAILED": "Failed to deny user access",
+        "USER_ACCESS_DENIED_SUCCESSFULLY": "User access denied and account deleted successfully",
 
         "TEAMS_SORT_FAILED": "Failed to sort teams",
         "TEAMS_SORTED_SUCCESSFULLY": "Teams sorted successfully",

@@ -20,7 +20,7 @@
         "loading": "Cargando...",
         "error": "Hubo un error...",
         "noResults": "No se encontraron resultados",
-        "title": "Cris Fútbol",
+        "title": "Crys Sports",
         "matchHistory": "Historial de Partidos",
         "createTeam": "Crear Equipo",
         "profile": "Perfil",
@@ -444,7 +444,13 @@
         "confirmAccessTitle": "Confirmar Otorgamiento de Acceso",
         "confirmAccessDescription": "Si otorga acceso, este usuario podrá ver los datos de su sitio web y los partidos. ¿Está seguro de que desea continuar?",
         "cancel": "Cancelar",
-        "confirmGrant": "Sí, Otorgar Acceso"
+        "confirmGrant": "Sí, Otorgar Acceso",
+        "actions": "Acciones",
+        "denyAccess": "Denegar Acceso",
+        "denyingAccess": "Denegando Acceso...",
+        "confirmDenyAccessTitle": "Confirmar Denegación de Acceso",
+        "confirmDenyAccessDescription": "¿Estás seguro de que quieres denegar el acceso y eliminar a este usuario? Esta acción no se puede deshacer.",
+        "confirmDeny": "Confirmar Denegación"
     },
 
     "FilterModalComponent": {
@@ -642,6 +648,8 @@
 
         "USER_GRANT_ACCESS_FAILED": "No se pudo otorgar acceso al usuario",
         "USER_ACCESS_GRANTED_SUCCESSFULLY": "Acceso otorgado al usuario exitosamente",
+        "USER_DENY_ACCESS_FAILED": "Error al denegar acceso al usuario",
+        "USER_ACCESS_DENIED_SUCCESSFULLY": "Acceso denegado y cuenta de usuario eliminada exitosamente",
 
         "TEAMS_SORT_FAILED": "No se pudieron ordenar los equipos",
         "TEAMS_SORTED_SUCCESSFULLY": "Equipos ordenados con éxito",
