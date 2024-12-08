@@ -1,8 +1,22 @@
 services:
+  watchtower:
+    image: containrrr/watchtower
+    command:
+      - "--label-enable"
+      - "--interval"
+      # Interval set on every 30s we check for new image
+      - "30"
+      # In some short window of time, all containers might stop working and when users hit website it will not work, instead
+      # this option fixes that and there is always one running before changes come
+      - "--rolling-restart"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
   reverse-proxy:
     image: traefik:v3.1
     command:
-      - "--api.insecure=true"
+      # For production we have to comment this!
+      # - "--api.insecure=true"
       - "--providers.docker"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
@@ -13,9 +27,11 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "8080:8080"
+      # For production we have to comment this!
+      #- "8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
     networks:
       - crys-sports-network
 
@@ -27,6 +43,8 @@ services:
       - "traefik.http.routers.crys-sports.entrypoints=websecure"
       - "traefik.http.services.crys-sports.loadbalancer.server.port=3000"
       - "traefik.http.routers.crys-sports.tls=true"
+      # For WatchTower to monitor our crys-sports container
+      - ".com.centurylinklabs.watchtower.enable=true"
     secrets:
       - database_url
       - supabase_url

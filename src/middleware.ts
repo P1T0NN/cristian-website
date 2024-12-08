@@ -60,7 +60,9 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL('/login', request.url));
         }
 
-        // Verify the token and extract payload directly
+        // We cannot use verifyToken util function. It gives some headers error, instead we have to directly use jwtVerify.
+        // const payload = await verifyToken(authToken as string);
+
         const secretKey = new TextEncoder().encode(process.env.JWT_SECRET);
     
         const { payload } = await jwtVerify(validToken, secretKey, {
