@@ -54,7 +54,7 @@ export async function sendResetPasswordEmail(email: string): Promise<APIResponse
     const resetUrl = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/reset_password?token=${resetToken}`;
 
     await resend.emails.send({
-        from: 'Cris Futbol <onboarding@resend.dev>',
+        from: 'Cris Futbol <noreply@crys-sports.com>',
         to: email,
         subject: t('PASSWORD_RESET_EMAIL_SUBJECT'),
         react: PasswordResetEmailTemplate({ resetUrl }),

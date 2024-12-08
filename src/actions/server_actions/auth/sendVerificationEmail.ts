@@ -54,7 +54,7 @@ export async function sendVerificationEmail(email: string): Promise<APIResponse>
     const verificationUrl = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/verify_email?token=${verificationToken}`;
 
     await resend.emails.send({
-        from: 'Cris Futbol <onboarding@resend.dev>',
+        from: 'Cris Futbol <noreply@crys-sports.com>',
         to: email,
         subject: t('VERIFICATION_EMAIL_SUBJECT'),
         react: VerificationEmailTemplate({ verificationUrl }),
