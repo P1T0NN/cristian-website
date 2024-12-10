@@ -264,7 +264,7 @@
         "joinMatch": "Join Match",
         "joiningMatch": "Joining match...",
         "joinMatchConfirmTitle": "Join Match",
-        "joinMatchConfirmDescription": "Are you sure you want to join this match? Once you join, you'll be added to the player list and will be expected to participate. You cannot leave the match 8 hours before it starts, but you can request substitute!",
+        "joinMatchConfirmDescription": "Are you sure you want to join this match? Once you join, you'll be added to the list of players and will be expected to participate. You won't be able to leave the match 8 hours before it starts, but you can request a substitute!",
         "makeTeams": "Sort teams",
         "sorting": "Sorting...",
         "sortTeams": "Sort Teams",
@@ -287,6 +287,8 @@
         "phoneNumber": "Phone Number (With +34 or other)",
         "enterPhoneNumber": "Enter phone number",
         "invalidPhoneNumber": "Please enter a valid phone number",
+        "confirmReplace": "Confirm Replacement",
+        "replaceConfirmationMessage": "Are you sure you want to replace this person? If you do, you must follow all the rules from FAQ, and you automatically agree to pay for the match.",
         "MatchFAQ": {
             "title": "Frequently Asked Questions",
             "startTimeDuration": {

@@ -228,7 +228,10 @@ BEGIN
                 DELETE FROM match_players
                 WHERE match_id = p_match_id AND user_id = p_user_id;
 
-                IF v_user.balance >= v_match.price::numeric THEN
+                -- Check the balance of the user who is replacing
+                SELECT balance INTO v_updated_balance FROM users WHERE id = p_auth_user_id;
+
+                IF v_updated_balance >= v_match.price::numeric THEN
                     UPDATE users
                     SET balance = balance - v_match.price::numeric
                     WHERE id = p_auth_user_id
@@ -265,8 +268,14 @@ BEGIN
             ELSE 'OPERATION_SUCCESSFUL'
         END,
         'metadata', jsonb_build_object(
-            'has_paid', CASE WHEN p_action = 'join' AND NOT p_is_temporary_player THEN v_user.balance >= v_match.price::numeric ELSE NULL END,
-            'has_entered_with_balance', CASE WHEN p_action = 'join' AND NOT p_is_temporary_player THEN v_user.balance >= v_match.price::numeric ELSE NULL END,
+            'has_paid', CASE 
+                WHEN p_action IN ('join', 'replacePlayer') AND NOT p_is_temporary_player THEN v_updated_balance >= v_match.price::numeric 
+                ELSE NULL 
+            END,
+            'has_entered_with_balance', CASE 
+                WHEN p_action IN ('join', 'replacePlayer') AND NOT p_is_temporary_player THEN v_updated_balance >= v_match.price::numeric 
+                ELSE NULL 
+            END,
             'updated_balance', v_updated_balance
         )
     );
@@ -296,5 +305,6 @@ GRANT EXECUTE ON FUNCTION manage_player(UUID, UUID, UUID, INT, TEXT, BOOLEAN) TO
 GRANT USAGE ON SCHEMA public TO anon, authenticated;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE matches, match_players, temporary_players TO anon, authenticated;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated;
+
 
 */

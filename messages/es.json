@@ -264,7 +264,7 @@
         "joinMatch": "Unirse al Partido",
         "joiningMatch": "Uniéndose al partido...",
         "joinMatchConfirmTitle": "Unirse al Partido",
-        "joinMatchConfirmDescription": "¿Estás seguro de que quieres unirte a este partido? Una vez que te unas, serás añadido a la lista de jugadores y se esperará que participes. No podrás abandonar el partido 8 horas antes de que comience, ¡pero puedes solicitar un sustituto!",
+        "joinMatchConfirmDescription": "¿Estás seguro de que quieres unirte a este partido? Una vez que te unas, serás añadido a la lista de jugadores y se esperará que participes. No podrás abandonar el partido 8 horas antes de que comience ¡pero puedes solicitar un sustituto!",
         "makeTeams": "Ordenar equipos",
         "sorting": "Ordenando...",
         "sortTeams": "Ordenar Equipos",
@@ -289,6 +289,8 @@
         "phoneNumber": "Número de teléfono (Con +34 o otro)",
         "enterPhoneNumber": "Introduce el número de teléfono",
         "invalidPhoneNumber": "Por favor, introduce un número de teléfono válido",
+        "confirmReplace": "Confirmar Reemplazo",
+        "replaceConfirmationMessage": "¿Estás seguro de que quieres reemplazar a esta persona? Si lo haces, debes seguir todas las reglas del FAQ, y automáticamente aceptas pagar por el partido.",
         "MatchFAQ": {
             "title": "Preguntas Frecuentes",
             "startTimeDuration": {

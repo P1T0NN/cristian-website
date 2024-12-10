@@ -1,7 +1,7 @@
 "use client"
 
 // REACTJS IMPORTS
-import { useTransition } from "react";
+import { useTransition, useState } from "react";
 
 // LIBRARIES
 import { useTranslations } from "next-intl";
@@ -9,6 +9,15 @@ import { useTranslations } from "next-intl";
 // COMPONENTS
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 
 // SERVER ACTIONS
 import { managePlayer } from "@/actions/server_actions/mutations/match/managePlayer";
@@ -17,7 +26,7 @@ import { managePlayer } from "@/actions/server_actions/mutations/match/managePla
 import type { typesUser } from "@/types/typesUser";
 
 // LUCIDE ICONS
-import { Loader2 } from "lucide-react";
+import { Loader2 } from 'lucide-react';
 
 type PlayerReplaceButtonProps = {
     authToken: string;
@@ -35,6 +44,7 @@ export const PlayerReplaceButton = ({
     const t = useTranslations("MatchPage");
 
     const [isPending, startTransition] = useTransition();
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const handleReplacePlayer = () => {
         startTransition(async () => {
@@ -51,25 +61,48 @@ export const PlayerReplaceButton = ({
             } else {
                 toast.error(response.message);
             }
+            setIsDialogOpen(false);
         });
     };
 
     return (
-        <Button
-            variant="secondary"
-            size="sm"
-            onClick={handleReplacePlayer}
-            disabled={isPending}
-            className="text-white bg-yellow-500 hover:bg-yellow-500/80 w-full sm:w-auto"
-        >
-            {isPending ? (
-                <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t('replacing')}
-                </>
-            ) : (
-                t('replace')
-            )}
-        </Button>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+                <Button
+                    variant="secondary"
+                    size="sm"
+                    className="text-white bg-yellow-500 hover:bg-yellow-500/80 w-full sm:w-auto"
+                >
+                    {t('replace')}
+                </Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>{t('confirmReplace')}</DialogTitle>
+                    <DialogDescription>
+                        {t('replaceConfirmationMessage')}
+                    </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                    <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                        {t('cancel')}
+                    </Button>
+                    <Button
+                        variant="default"
+                        onClick={handleReplacePlayer}
+                        disabled={isPending}
+                    >
+                        {isPending ? (
+                            <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                {t('replacing')}
+                            </>
+                        ) : (
+                            t('confirmReplace')
+                        )}
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     )
 }
