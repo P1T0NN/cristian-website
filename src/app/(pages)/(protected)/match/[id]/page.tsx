@@ -9,6 +9,7 @@ import { SwitchTeamColors } from '@/components/(pages)/(protected)/match/[id]/sw
 import { TeamCard } from '@/components/(pages)/(protected)/match/[id]/team-card';
 import { PlayerList } from '@/components/(pages)/(protected)/match/[id]/player-list';
 import { AdminFunctions } from '@/components/(pages)/(protected)/match/[id]/admin-functions';
+import { MatchFAQ } from '@/components/(pages)/(protected)/match/[id]/match-faq';
 
 // SERVER ACTIONS
 import { getUser } from '@/actions/actions/auth/verifyAuth';
@@ -118,6 +119,8 @@ export default async function MatchPage({
                     hasTeams={match.has_teams}
                 />
             )}
+
+            <MatchFAQ /> 
         </section>
     );
 }

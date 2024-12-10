@@ -282,7 +282,50 @@
         "addPlayerToMatch": "Agregar Jugador al Partido",
         "playerName": "Nombre del Jugador",
         "enterPlayerName": "Ingrese el nombre del jugador",
-        "enteredWithBalance": "Entró con saldo"
+        "enteredWithBalance": "Entró con saldo",
+        "lastPlacesLeft": "¡Últimas plazas!",
+        "matchCompleted": "Partido completo",
+        "MatchFAQ": {
+            "title": "Preguntas Frecuentes",
+            "howItWorks": {
+                "question": "¿Cómo Funcionamos?",
+                "answer1": "EN 'CRYS SPORTS' queremos que hacer deporte sea una tarea sencilla por ello:",
+                "answer2": "¡No te preocupes de nada, solo ponte equipaje y a jugar!",
+                "answer3": "¡Es muy simple! No necesitas tener un equipo.",
+                "answer4": "TODOS NUESTROS PARTIDOS SON AMISTOSOS y pueden participar personas de cualquier nivel.",
+                "answer5": "Portero: Si no tenemos portero asignado, Todos los jugadores se turnaran durante 7 minutos"
+            },
+            "equipment": {
+                "question": "¿Qué equipaje se Necesita?",
+                "answer1": "LLEVAMOS SIEMPRE UNA CAMISETA BLANCA Y UNA CAMISETA NEGRA (ambos colores obligatorio)",
+                "answer2": "Recomendamos zapatillas de tacos o multi-tacos para todos los partidos en Césped Artifical",
+                "answer3": "PROHIBIDO LOS TACOS DE METAL",
+                "answer4": "Para el Futbol SALA: Recomendamos Deportivas lisas o normales o zapatos especiales de sala.",
+                "answer5": "Las Espinilleras es de elección libre, pero no son obligatorias"
+            },
+            "weather": {
+                "question": "¿Qué pasa si hace mal tiempo?",
+                "answer1": "En 'Crys Sports' ¡Amamos el fútbol bajo el agua!",
+                "answer2": "Así que con Frío, Soleado, lloviendo o Nevando, Hacemos deporte.",
+                "answer3": "A excepción de condiciones extremas (como alertas), Siempre jugamos, los partidos NO SE SUSPENDEN"
+            },
+            "cancellation": {
+                "question": "¿Qué Pasa si ya no puedo acudir al partido?",
+                "answer1": "Si te ha surgido un inconveniente puedes quitarte siempre que estes en un plazo de 8 horas antes del partido.",
+                "answer2": "Una vez pasado este tiempo, tienes la opción de 'solicitar un reemplazo'",
+                "answer3": "Una vez solicitado, cualquiera puede sustituirte y la organización intentará buscarte un sustituto",
+                "answer4": "Pero si por alguna situación la plaza no se ocupara, tu perderías el Dinero/saldo/Tiket de ese partido o lo deberas abonar próximo partido."
+            },
+            "facilities": {
+                "question": "Duchas y Vestuario",
+                "answer1": "¡En casi todos los campos, podrás hacer uso de los vestuarios y sus duchas!",
+                "answer2": "PERO OJO! si tu partido acaba 22:45 o más tarde....",
+                "answer3": "22:45 LAS DUCHAS ESTARAN CERRADAS",
+                "answer4": "Para más detalle consulta a tu Organizador antes de empezar y te indicará si hay posibilidad de usar las duchas.",
+                "answer5": "¡Se responsable y cuida las instalaciones!",
+                "answer6": "Si alguien provoca algún daño o es causa de algún problema con la instalación, se le podrá prohibir el acceso para siempre a los eventos."
+            }
+        }
     },
 
     "EditMatchPage": {

@@ -46,6 +46,15 @@ export const MatchDetails = async ({
             <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                     <div className="flex flex-col items-center">
+                        <Clock className="h-5 w-5 text-muted-foreground mb-2" />
+                        <span className="text-sm font-medium">{formatTime(serverMatchData.starts_at_hour)}h</span>
+                        <span className="text-xs text-muted-foreground">{serverMatchData.match_duration} {t('minutes')}</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                        <Calendar className="h-5 w-5 text-muted-foreground mb-2" />
+                        <span className="text-sm font-medium uppercase">{formattedDate}</span>
+                    </div>
+                    <div className="flex flex-col items-center">
                         <MapPin className="h-5 w-5 text-muted-foreground mb-2" />
                         <span className="text-sm font-medium uppercase">{serverMatchData.location}</span>
                         {serverMatchData.location_url && (
@@ -59,15 +68,6 @@ export const MatchDetails = async ({
                                 {t('viewMap')}
                             </a>
                         )}
-                    </div>
-                    <div className="flex flex-col items-center">
-                        <Calendar className="h-5 w-5 text-muted-foreground mb-2" />
-                        <span className="text-sm font-medium uppercase">{formattedDate}</span>
-                    </div>
-                    <div className="flex flex-col items-center">
-                        <Clock className="h-5 w-5 text-muted-foreground mb-2" />
-                        <span className="text-sm font-medium">{formatTime(serverMatchData.starts_at_hour)}h</span>
-                        <span className="text-xs text-muted-foreground">{serverMatchData.match_duration} {t('minutes')}</span>
                     </div>
                     <div className="flex flex-col items-center">
                         <Coins className="h-5 w-5 text-muted-foreground mb-2" />

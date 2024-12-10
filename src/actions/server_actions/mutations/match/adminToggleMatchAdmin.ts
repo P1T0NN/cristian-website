@@ -8,6 +8,12 @@ import { jwtVerify } from 'jose';
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
+// SERVICES
+import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
+
+// CONFIG
+import { CACHE_KEYS } from '@/config';
+
 export async function adminToggleMatchAdmin(
     authToken: string,
     matchId: string,
@@ -19,7 +25,7 @@ export async function adminToggleMatchAdmin(
         return { success: false, message: genericMessages('UNAUTHORIZED') };
     }
 
-    const { payload } = await jwtVerify(authToken, new TextEncoder().encode(process.env.JWT_SECRET));
+    const { payload } = await jwtVerify(authToken, new TextEncoder().encode(process.env.JWT_SECRET!));
 
     if (!payload) {
         return { success: false, message: genericMessages('JWT_DECODE_ERROR') };
@@ -61,6 +67,42 @@ export async function adminToggleMatchAdmin(
 
     if (updateError) {
         return { success: false, message: genericMessages('OPERATION_FAILED') };
+    }
+
+    // If the new status is true, update the added_by column in the matches table
+    if (newStatus) {
+        // Fetch the user's full name
+        const { data: playerData, error: playerError } = await supabase
+            .from('users')
+            .select('fullName')
+            .eq('id', playerId)
+            .single();
+
+        if (playerError || !playerData) {
+            return { success: false, message: genericMessages('OPERATION_FAILED') };
+        }
+
+        // Update the added_by column in the matches table
+        const { error: matchUpdateError } = await supabase
+            .from('matches')
+            .update({ added_by: playerData.fullName })
+            .eq('id', matchId);
+
+        if (matchUpdateError) {
+            return { success: false, message: genericMessages('OPERATION_FAILED') };
+        }
+
+        // Update the cache
+        const cacheKey = `${CACHE_KEYS.MATCH_PREFIX}${matchId}`;
+        const cachedMatch = await upstashRedisCacheService.get<{ added_by?: string }>(cacheKey);
+        
+        if (cachedMatch.success && cachedMatch.data) {
+            const updatedCachedMatch = { 
+                ...cachedMatch.data, 
+                added_by: playerData.fullName
+            };
+            await upstashRedisCacheService.set(cacheKey, updatedCachedMatch, 60 * 60 * 12); // 12 hours TTL
+        }
     }
 
     revalidatePath("/");

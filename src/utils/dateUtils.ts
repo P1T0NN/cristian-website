@@ -6,7 +6,7 @@ import { es } from 'date-fns/locale';
 import { getUserLocale } from '@/services/server/locale';
 
 export const formatTime = (timeStr: string): string => {
-    return format(new Date(`2000-01-01T${timeStr}`), 'HH:mm');
+    return format(new Date(`2000-01-01T${timeStr}`), 'hh:mma');
 };
 
 export const formatDate = async (dateStr: string, showTomorrow: boolean = false): Promise<string> => {
