@@ -10,6 +10,7 @@ import { TeamCard } from '@/components/(pages)/(protected)/match/[id]/team-card'
 import { PlayerList } from '@/components/(pages)/(protected)/match/[id]/player-list';
 import { AdminFunctions } from '@/components/(pages)/(protected)/match/[id]/admin-functions';
 import { MatchFAQ } from '@/components/(pages)/(protected)/match/[id]/match-faq';
+import { FAQWarning } from '@/components/(pages)/(protected)/match/[id]/faq-warning';
 
 // SERVER ACTIONS
 import { getUser } from '@/actions/actions/auth/verifyAuth';
@@ -52,6 +53,8 @@ export default async function MatchPage({
 
    return (
         <section className="space-y-6 p-4 max-w-4xl mx-auto">
+            <FAQWarning />
+            
             <MatchDetails serverMatchData={match} />
 
             <MatchInstructions 
@@ -120,7 +123,9 @@ export default async function MatchPage({
                 />
             )}
 
-            <MatchFAQ /> 
+            <div id="match-faq">
+                <MatchFAQ />
+            </div>
         </section>
     );
 }

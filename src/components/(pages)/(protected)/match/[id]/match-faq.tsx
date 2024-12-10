@@ -7,10 +7,10 @@ import {
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
-} from "@/components/ui/accordion";
+} from "@/components/ui/accordion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-// LUCIDE ICONS
+// LUCIDE ICONS;
 import { AlertCircle, Shirt, Users, CloudRain, Calendar, ShowerHeadIcon as Shower } from 'lucide-react';
 
 export const MatchFAQ = async () => {
@@ -101,6 +101,9 @@ export const MatchFAQ = async () => {
                                 <p>{t('cancellation.answer2')}</p>
                                 <p>{t('cancellation.answer3')}</p>
                                 <p>{t('cancellation.answer4')}</p>
+                                <p className="bg-red-100 dark:bg-red-900 p-2 rounded-md text-red-600 dark:text-red-400 font-medium">
+                                    {t('cancellation.answer5')}
+                                </p>
                             </div>
                         </AccordionContent>
                     </AccordionItem>

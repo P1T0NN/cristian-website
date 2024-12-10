@@ -285,6 +285,7 @@
         "enteredWithBalance": "Entró con saldo",
         "lastPlacesLeft": "¡Últimas plazas!",
         "matchCompleted": "Partido completo",
+        "checkFAQWarning": "¡Antes de continuar, revisa las preguntas frecuentes al final!",
         "MatchFAQ": {
             "title": "Preguntas Frecuentes",
             "howItWorks": {
@@ -314,7 +315,8 @@
                 "answer1": "Si te ha surgido un inconveniente puedes quitarte siempre que estes en un plazo de 8 horas antes del partido.",
                 "answer2": "Una vez pasado este tiempo, tienes la opción de 'solicitar un reemplazo'",
                 "answer3": "Una vez solicitado, cualquiera puede sustituirte y la organización intentará buscarte un sustituto",
-                "answer4": "Pero si por alguna situación la plaza no se ocupara, tu perderías el Dinero/saldo/Tiket de ese partido o lo deberas abonar próximo partido."
+                "answer4": "Pero si por alguna situación la plaza no se ocupara, tu perderías el Dinero/saldo/Tiket de ese partido o lo deberas abonar próximo partido.",
+                "answer5": "¡Cuidado! Si esta situación se repite, podrás ser expulsado de todos nuestros eventos."
             },
             "facilities": {
                 "question": "Duchas y Vestuario",
