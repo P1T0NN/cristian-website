@@ -98,7 +98,7 @@ export const PlayerInfo = async ({
                     {player.temporaryPlayer && player.temporaryPlayer.added_by_name && (
                         <p className="text-xs text-muted-foreground">{t('addedBy', { name: player.temporaryPlayer.added_by_name })}</p>
                     )}
-                    {player.temporaryPlayer && player.temporaryPlayer.phone_number && (
+                    {isAdmin && player.temporaryPlayer && player.temporaryPlayer.phone_number && (
                         <p className="text-xs text-muted-foreground flex items-center">
                             <Phone className="mr-1" size={12} />
                             {player.temporaryPlayer.phone_number}
