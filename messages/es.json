@@ -264,7 +264,7 @@
         "joinMatch": "Unirse al Partido",
         "joiningMatch": "Uniéndose al partido...",
         "joinMatchConfirmTitle": "Unirse al Partido",
-        "joinMatchConfirmDescription": "¿Estás seguro de que quieres unirte a este partido? Una vez que te unas, serás añadido a la lista de jugadores y se esperará que participes. No podrás abandonar el partido 10 horas antes de que comience, ¡pero puedes solicitar un sustituto!",
+        "joinMatchConfirmDescription": "¿Estás seguro de que quieres unirte a este partido? Una vez que te unas, serás añadido a la lista de jugadores y se esperará que participes. No podrás abandonar el partido 8 horas antes de que comience, ¡pero puedes solicitar un sustituto!",
         "makeTeams": "Ordenar equipos",
         "sorting": "Ordenando...",
         "sortTeams": "Ordenar Equipos",
@@ -291,6 +291,13 @@
         "invalidPhoneNumber": "Por favor, introduce un número de teléfono válido",
         "MatchFAQ": {
             "title": "Preguntas Frecuentes",
+            "startTimeDuration": {
+                "question": "Hora de Inicio y Duración",
+                "answer1": "Todos Nuestros Partidos Comienzan 15min' después de la hora indicada.",
+                "answer2": "ROGAMOS ESTAR esos minutos previos, antes en el campo, para prepararse",
+                "answer3": "Los partidos tendrán la Duración marcada en cada partido (pudiendo alternar 5min' menos o 20min extras, según las necesidades del organizador.)",
+                "answer4": "No se podrá abandonar antes un partido! Salvo por una lesión"
+            },
             "howItWorks": {
                 "question": "¿Cómo Funcionamos?",
                 "answer1": "EN 'CRYS SPORTS' queremos que hacer deporte sea una tarea sencilla por ello:",

@@ -11,7 +11,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 // LUCIDE ICONS;
-import { AlertCircle, Shirt, Users, CloudRain, Calendar, ShowerHeadIcon as Shower } from 'lucide-react';
+import { AlertCircle, Shirt, Users, CloudRain, Calendar, ShowerHeadIcon as Shower, Clock } from 'lucide-react';
 
 export const MatchFAQ = async () => {
     const t = await getTranslations('MatchPage.MatchFAQ');
@@ -26,6 +26,27 @@ export const MatchFAQ = async () => {
             </CardHeader>
             <CardContent>
                 <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value="start-time-duration">
+                        <AccordionTrigger className="text-left">
+                            <span className="flex items-center gap-2">
+                                <Clock className="h-4 w-4" />
+                                {t('startTimeDuration.question')}
+                            </span>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                            <div className="space-y-2">
+                                <p>{t('startTimeDuration.answer1')}</p>
+                                <p className="bg-yellow-100 dark:bg-yellow-900 p-2 rounded-md font-medium">
+                                    {t('startTimeDuration.answer2')}
+                                </p>
+                                <p>{t('startTimeDuration.answer3')}</p>
+                                <p className="bg-red-100 dark:bg-red-900 p-2 rounded-md text-red-600 dark:text-red-400 font-medium">
+                                    {t('startTimeDuration.answer4')}
+                                </p>
+                            </div>
+                        </AccordionContent>
+                    </AccordionItem>
+
                     <AccordionItem value="how-it-works">
                         <AccordionTrigger className="text-left">
                             <span className="flex items-center gap-2">

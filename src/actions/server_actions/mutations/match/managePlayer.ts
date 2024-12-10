@@ -113,10 +113,12 @@ DECLARE
     v_match RECORD;
     v_user RECORD;
     v_current_time TIMESTAMP;
-    v_ten_hours_before_match TIMESTAMP;
+    v_eight_hours_before_match TIMESTAMP;
     v_updated_places_occupied INT;
     v_table_name TEXT;
     v_id_column TEXT;
+    v_has_entered_with_balance BOOLEAN;
+    v_updated_balance NUMERIC;
 BEGIN
     SELECT * INTO v_match FROM matches WHERE id = p_match_id;
     IF NOT FOUND THEN
@@ -129,7 +131,7 @@ BEGIN
     END IF;
 
     v_current_time := CURRENT_TIMESTAMP;
-    v_ten_hours_before_match := (v_match.starts_at_day || ' ' || v_match.starts_at_hour)::TIMESTAMP - INTERVAL '10 hours';
+    v_eight_hours_before_match := (v_match.starts_at_day || ' ' || v_match.starts_at_hour)::TIMESTAMP - INTERVAL '8 hours';
     v_updated_places_occupied := COALESCE(v_match.places_occupied, 0);
 
     IF p_is_temporary_player THEN
@@ -140,7 +142,7 @@ BEGIN
         v_id_column := 'user_id';
     END IF;
 
-    IF p_action = 'leave' AND v_current_time > v_ten_hours_before_match THEN
+    IF p_action = 'leave' AND v_current_time > v_eight_hours_before_match THEN
         RETURN jsonb_build_object('success', false, 'code', 'TOO_LATE_TO_LEAVE', 'metadata', jsonb_build_object('canRequestSubstitute', true));
     END IF;
 
@@ -153,6 +155,11 @@ BEGIN
                 IF v_user.balance >= v_match.price::numeric THEN
                     INSERT INTO match_players (match_id, user_id, team_number, has_paid, has_entered_with_balance)
                     VALUES (p_match_id, p_user_id, p_team_number, true, true);
+                    
+                    UPDATE users
+                    SET balance = balance - v_match.price::numeric
+                    WHERE id = p_user_id
+                    RETURNING balance INTO v_updated_balance;
                 ELSE
                     INSERT INTO match_players (match_id, user_id, team_number, has_paid, has_entered_with_balance)
                     VALUES (p_match_id, p_user_id, p_team_number, false, false);
@@ -161,6 +168,19 @@ BEGIN
             v_updated_places_occupied := v_updated_places_occupied + 1;
 
         WHEN 'leave' THEN
+            IF NOT p_is_temporary_player THEN
+                SELECT has_entered_with_balance INTO v_has_entered_with_balance
+                FROM match_players
+                WHERE match_id = p_match_id AND user_id = p_user_id;
+
+                IF v_has_entered_with_balance THEN
+                    UPDATE users
+                    SET balance = balance + v_match.price::numeric
+                    WHERE id = p_user_id
+                    RETURNING balance INTO v_updated_balance;
+                END IF;
+            END IF;
+
             EXECUTE format('DELETE FROM %I WHERE match_id = $1 AND %I = $2', v_table_name, v_id_column)
             USING p_match_id, p_user_id;
             v_updated_places_occupied := GREATEST(v_updated_places_occupied - 1, 0);
@@ -195,11 +215,31 @@ BEGIN
 
         WHEN 'replacePlayer' THEN
             IF NOT p_is_temporary_player THEN
+                SELECT has_entered_with_balance INTO v_has_entered_with_balance
+                FROM match_players
+                WHERE match_id = p_match_id AND user_id = p_user_id;
+
+                IF v_has_entered_with_balance THEN
+                    UPDATE users
+                    SET balance = balance + v_match.price::numeric
+                    WHERE id = p_user_id;
+                END IF;
+
                 DELETE FROM match_players
                 WHERE match_id = p_match_id AND user_id = p_user_id;
 
-                INSERT INTO match_players (match_id, user_id, team_number)
-                VALUES (p_match_id, p_auth_user_id, p_team_number);
+                IF v_user.balance >= v_match.price::numeric THEN
+                    UPDATE users
+                    SET balance = balance - v_match.price::numeric
+                    WHERE id = p_auth_user_id
+                    RETURNING balance INTO v_updated_balance;
+
+                    INSERT INTO match_players (match_id, user_id, team_number, has_paid, has_entered_with_balance)
+                    VALUES (p_match_id, p_auth_user_id, p_team_number, true, true);
+                ELSE
+                    INSERT INTO match_players (match_id, user_id, team_number, has_paid, has_entered_with_balance)
+                    VALUES (p_match_id, p_auth_user_id, p_team_number, false, false);
+                END IF;
             ELSE
                 RETURN jsonb_build_object(
                     'success', false, 
@@ -226,7 +266,8 @@ BEGIN
         END,
         'metadata', jsonb_build_object(
             'has_paid', CASE WHEN p_action = 'join' AND NOT p_is_temporary_player THEN v_user.balance >= v_match.price::numeric ELSE NULL END,
-            'has_entered_with_balance', CASE WHEN p_action = 'join' AND NOT p_is_temporary_player THEN v_user.balance >= v_match.price::numeric ELSE NULL END
+            'has_entered_with_balance', CASE WHEN p_action = 'join' AND NOT p_is_temporary_player THEN v_user.balance >= v_match.price::numeric ELSE NULL END,
+            'updated_balance', v_updated_balance
         )
     );
 

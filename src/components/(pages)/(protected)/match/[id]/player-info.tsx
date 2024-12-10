@@ -50,7 +50,21 @@ export const PlayerInfo = async ({
 
     const showPaymentControls = isAdmin || currentUserMatchAdmin;
 
+    const getDisplayName = (fullName: string) => {
+        if (isAdmin) {
+            return fullName;
+        }
+        const nameParts = fullName.split(' ');
+        if (nameParts.length > 1) {
+            const firstName = nameParts[0];
+            const lastNameInitial = nameParts[nameParts.length - 1].charAt(0);
+            return `${firstName} ${lastNameInitial}.`;
+        }
+        return fullName;
+    };
+
     const playerName = player.temporaryPlayer ? player.temporaryPlayer.name : player.fullName;
+    const displayName = getDisplayName(playerName);
     const playerPosition = player.temporaryPlayer 
         ? t('temporaryPlayer') 
         : await getPositionLabel(player.player_position || '');
@@ -58,6 +72,7 @@ export const PlayerInfo = async ({
     const canRemoveTemporaryPlayer = player.temporaryPlayer && (player.temporaryPlayer.added_by === currentUserId || isAdmin);
 
     const hasEnteredWithBalance = player.matchPlayer?.has_entered_with_balance;
+
     return (
         <div className="flex flex-col w-full sm:w-auto">
             <div className="flex items-center space-x-2">
@@ -80,7 +95,7 @@ export const PlayerInfo = async ({
                                 </Tooltip>
                             </TooltipProvider>
                         )}
-                        {playerName}
+                        {displayName}
                         {(isAdmin || currentUserMatchAdmin) && hasEnteredWithBalance && (
                             <TooltipProvider>
                                 <Tooltip>
@@ -96,7 +111,7 @@ export const PlayerInfo = async ({
                     </span>
                     <p className="text-sm text-muted-foreground">{playerPosition}</p>
                     {player.temporaryPlayer && player.temporaryPlayer.added_by_name && (
-                        <p className="text-xs text-muted-foreground">{t('addedBy', { name: player.temporaryPlayer.added_by_name })}</p>
+                        <p className="text-xs text-muted-foreground">{t('addedBy', { name: getDisplayName(player.temporaryPlayer.added_by_name) })}</p>
                     )}
                     {isAdmin && player.temporaryPlayer && player.temporaryPlayer.phone_number && (
                         <p className="text-xs text-muted-foreground flex items-center">

@@ -264,7 +264,7 @@
         "joinMatch": "Join Match",
         "joiningMatch": "Joining match...",
         "joinMatchConfirmTitle": "Join Match",
-        "joinMatchConfirmDescription": "Are you sure you want to join this match? Once you join, you'll be added to the player list and will be expected to participate. You cannot leave the match 10 hours before it starts, but you can request substitute!",
+        "joinMatchConfirmDescription": "Are you sure you want to join this match? Once you join, you'll be added to the player list and will be expected to participate. You cannot leave the match 8 hours before it starts, but you can request substitute!",
         "makeTeams": "Sort teams",
         "sorting": "Sorting...",
         "sortTeams": "Sort Teams",
@@ -289,6 +289,13 @@
         "invalidPhoneNumber": "Please enter a valid phone number",
         "MatchFAQ": {
             "title": "Frequently Asked Questions",
+            "startTimeDuration": {
+                "question": "Start Time and Duration",
+                "answer1": "All our matches start 15 minutes after the indicated time.",
+                "answer2": "WE REQUEST THAT YOU BE on the field those previous minutes to prepare.",
+                "answer3": "The matches will have the duration marked for each match (may alternate 5 minutes less or 20 minutes extra, according to the organizer's needs).",
+                "answer4": "You cannot leave a match early! Except for an injury."
+            },
             "howItWorks": {
                 "question": "How does it work?",
                 "answer1": "At CRYS SPORTS, we want to make sports a simple task for everyone:",
