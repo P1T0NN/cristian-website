@@ -31,17 +31,29 @@ export function AddFriendButton({
 }: AddFriendButtonProps) {
     const t = useTranslations('MatchPage');
     const [isPending, startTransition] = useTransition();
-
     const [isOpen, setIsOpen] = useState(false);
     const [friendName, setFriendName] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+
+    const isPhoneNumberValid = (number: string) => {
+        // This regex allows for more flexible phone number formats
+        const phoneRegex = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/;
+        return phoneRegex.test(number.trim());
+    };
 
     const handleAddFriend = async () => {
+        if (!isPhoneNumberValid(phoneNumber)) {
+            toast.error(t('invalidPhoneNumber'));
+            return;
+        }
+
         startTransition(async () => {
-            const result = await addFriend(authToken, matchId, teamNumber, friendName);
+            const result = await addFriend(authToken, matchId, teamNumber, friendName, phoneNumber.trim());
             
             if (result.success) {
                 setIsOpen(false);
                 setFriendName('');
+                setPhoneNumber('');
                 toast.success(result.message);
             } else {
                 toast.error(result.message);
@@ -64,18 +76,34 @@ export function AddFriendButton({
                     <DialogTitle>{dialogTitle}</DialogTitle>
                 </DialogHeader>
 
-                <div className="space-y-2">
-                    <Label htmlFor="friendName">{nameLabel}</Label>
-                    <Input
-                        id="friendName"
-                        value={friendName}
-                        onChange={(e) => setFriendName(e.target.value)}
-                        placeholder={namePlaceholder}
-                    />
+                <div className="space-y-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="friendName">{nameLabel}</Label>
+                        <Input
+                            id="friendName"
+                            value={friendName}
+                            onChange={(e) => setFriendName(e.target.value)}
+                            placeholder={namePlaceholder}
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="phoneNumber">{t('phoneNumber')}</Label>
+                        <Input
+                            id="phoneNumber"
+                            value={phoneNumber}
+                            onChange={(e) => setPhoneNumber(e.target.value)}
+                            placeholder={t('enterPhoneNumber')}
+                        />
+                    </div>
+                    <Button 
+                        type="button" 
+                        onClick={handleAddFriend} 
+                        disabled={isPending || !friendName || !phoneNumber}
+                        className="w-full"
+                    >
+                        {isPending ? t('adding') : buttonText}
+                    </Button>
                 </div>
-                <Button type="button" onClick={handleAddFriend} disabled={isPending}>
-                    {isPending ? t('adding') : buttonText}
-                </Button>
             </DialogContent>
         </Dialog>
     )

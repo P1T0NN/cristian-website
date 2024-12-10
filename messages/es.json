@@ -286,6 +286,9 @@
         "lastPlacesLeft": "¡Últimas plazas!",
         "matchCompleted": "Partido completo",
         "checkFAQWarning": "¡Antes de continuar, revisa las preguntas frecuentes al final!",
+        "phoneNumber": "Número de teléfono (Con +34 o otro)",
+        "enterPhoneNumber": "Introduce el número de teléfono",
+        "invalidPhoneNumber": "Por favor, introduce un número de teléfono válido",
         "MatchFAQ": {
             "title": "Preguntas Frecuentes",
             "howItWorks": {

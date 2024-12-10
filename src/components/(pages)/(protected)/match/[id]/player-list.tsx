@@ -69,6 +69,16 @@ export const PlayerList = async ({
                 <CardDescription>
                     {t('players')} {currentPlayers}/{maxPlayers}
                 </CardDescription>
+                {canAddFriend && (
+                    <div className="mt-4">
+                        <AddFriendButton
+                            matchId={matchId}
+                            teamNumber={0}
+                            authToken={authToken}
+                            isAdmin={isAdmin}
+                        />
+                    </div>
+                )}
             </CardHeader>
             <CardContent>
                 <div className="space-y-2">
@@ -94,16 +104,6 @@ export const PlayerList = async ({
                             matchId={matchId}
                             currentUserId={currentUserId}
                             authToken={authToken}
-                        />
-                    </div>
-                )}
-                {canAddFriend && (
-                    <div className="mt-4">
-                        <AddFriendButton
-                            matchId={matchId}
-                            teamNumber={0}
-                            authToken={authToken}
-                            isAdmin={isAdmin}
                         />
                     </div>
                 )}

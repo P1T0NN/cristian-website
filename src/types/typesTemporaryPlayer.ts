@@ -8,4 +8,5 @@ export type typesTemporaryPlayer = {
     has_paid: boolean;
     has_discount: boolean;
     has_gratis: boolean;
+    phone_number: string;
 };

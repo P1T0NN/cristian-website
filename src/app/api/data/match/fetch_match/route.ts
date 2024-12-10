@@ -46,20 +46,26 @@ export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>>
 
     const [cacheResult, playersResult, temporaryPlayersResult] = await Promise.all([
         upstashRedisCacheService.get<typesMatch>(`${CACHE_KEYS.MATCH_PREFIX}${matchId}`),
-        supabase.from('match_players').select(`
-            *,
-            user:users (
-                id,
-                email,
-                fullName,
-                player_position,
-                phoneNumber,
-                is_verified,
-                isAdmin,
-                created_at
-            )
-        `).eq('match_id', matchId),
-        supabase.from('temporary_players').select('*').eq('match_id', matchId)
+        supabase
+            .from('match_players')
+            .select(`
+                *,
+                user:users (
+                    id,
+                    email,
+                    fullName,
+                    player_position,
+                    phoneNumber,
+                    is_verified,
+                    isAdmin,
+                    created_at
+                )
+            `)
+            .eq('match_id', matchId),
+        supabase
+            .from('temporary_players')
+            .select('*')
+            .eq('match_id', matchId)
     ]);
 
     let match: typesMatch | null = null;
@@ -120,7 +126,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>>
         id: p.id,
         email: '',
         fullName: p.name,
-        phoneNumber: '',
+        phoneNumber: p.phone_number || '',
         gender: '',
         is_verified: false,
         isAdmin: false,
@@ -142,9 +148,11 @@ export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>>
             added_by_name: p.added_by_name,
             has_paid: p.has_paid,
             has_discount: p.has_discount,
-            has_gratis: p.has_gratis
+            has_gratis: p.has_gratis,
+            phone_number: p.phone_number
         }
     });
+    
 
     const allPlayers: typesUser[] = [
         ...players.map(mapPlayer),

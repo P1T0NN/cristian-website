@@ -282,7 +282,53 @@
         "addPlayerToMatch": "Add Player to Match",
         "playerName": "Player's Name",
         "enterPlayerName": "Enter player's name",
-        "enteredWithBalance": "Entered with balance"
+        "enteredWithBalance": "Entered with balance",
+        "checkFAQWarning": "Before you proceed, check FAQ at the bottom!",
+        "phoneNumber": "Phone Number (With +34 or other)",
+        "enterPhoneNumber": "Enter phone number",
+        "invalidPhoneNumber": "Please enter a valid phone number",
+        "MatchFAQ": {
+            "title": "Frequently Asked Questions",
+            "howItWorks": {
+                "question": "How does it work?",
+                "answer1": "At CRYS SPORTS, we want to make sports a simple task for everyone:",
+                "answer2": "Don't worry about anything, just bring your equipment and play!!",
+                "answer3": "It's very simple! You don't need to have a team.",
+                "answer4": "ALL OUR MATCHES ARE FRIENDLY and people of any level can participate.",
+                "answer5": "Goalkeeper: If we don't have an assigned goalkeeper, all players will rotate every 7 minutes"
+            },
+            "equipment": {
+                "question": "What equipment is needed?",
+                "answer1": "WE ALWAYS BRING A WHITE SHIRT AND A BLACK SHIRT (both colors mandatory)",
+                "answer2": "We recommend cleats or multi-cleats for all matches on Artificial Turf",
+                "answer3": "NO METAL CLEATS ALLOWED",
+                "answer4": "For Indoor Soccer: We recommend smooth or normal sneakers or special indoor shoes.",
+                "answer5": "Shin guards are optional, but not mandatory"
+            },
+            "weather": {
+                "question": "What happens in bad weather?",
+                "answer1": "At 'Crys Sports' we play football rain or shine!",
+                "answer2": "So whether it's Cold, Sunny, Raining or Snowing, We play sports.",
+                "answer3": "Except in extreme conditions (like alerts), we always play, matches ARE NOT SUSPENDED"
+            },
+            "cancellation": {
+                "question": "What if I can't attend the match?",
+                "answer1": "If you have an issue, you can remove yourself as long as you're within 8 hours before the match.",
+                "answer2": "After this time, you have the option to 'request a replacement'",
+                "answer3": "Once requested, anyone can substitute you and the organization will try to find you a substitute",
+                "answer4": "But if for some reason the spot is not filled, you would lose the Money/balance/Ticket for that match or you would have to pay for the next match.",
+                "answer5": "Warning! If this situation repeats, you may be expelled from all our events."
+            },
+            "facilities": {
+                "question": "Showers and Changing Rooms",
+                "answer1": "In almost all fields, you can use the changing rooms and showers!",
+                "answer2": "BUT! if your match ends at 22:45 or later....",
+                "answer3": "22:45 SHOWERS WILL BE CLOSED",
+                "answer4": "For more details consult your Organizer before starting and they will indicate if there is a possibility of using the showers.",
+                "answer5": "Be responsible and take care of the facilities!",
+                "answer6": "If someone breaks something or causes any problem with the facility, they may be prohibited from accessing events forever."
+            }
+        }
     },
 
     "EditMatchPage": {

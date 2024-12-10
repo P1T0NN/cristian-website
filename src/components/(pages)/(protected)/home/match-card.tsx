@@ -101,7 +101,7 @@ export const MatchCard = async ({
                             <div className="font-semibold text-lg">{match.price}€</div>
                         </div>
                         <div>
-                            <h3 className="font-semibold text-lg truncate">{title}</h3>
+                            {isAdmin && <h3 className="font-semibold text-lg truncate">{title}</h3>}
                             <div className="flex flex-wrap items-center gap-2 mt-2">
                                 <span className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600">{format}</span>
                                 <span className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600 flex items-center">

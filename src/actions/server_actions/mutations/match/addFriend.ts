@@ -17,7 +17,7 @@ import { CACHE_KEYS } from '@/config';
 // TYPES
 import type { RPCResponseData } from '@/types/responses/RPCResponseData';
 
-export async function addFriend(authToken: string, matchId: string, teamNumber: 0 | 1 | 2, friendName: string) {
+export async function addFriend(authToken: string, matchId: string, teamNumber: 0 | 1 | 2, friendName: string, phoneNumber: string) {
     const t = await getTranslations("GenericMessages");
 
     if (!authToken) {
@@ -36,7 +36,8 @@ export async function addFriend(authToken: string, matchId: string, teamNumber: 
         p_user_id: userId,
         p_match_id: matchId,
         p_team_number: teamNumber,
-        p_friend_name: friendName
+        p_friend_name: friendName,
+        p_phone_number: phoneNumber
     });
 
     const result = data as RPCResponseData;
@@ -82,7 +83,8 @@ CREATE OR REPLACE FUNCTION add_temporary_player(
     p_user_id UUID,
     p_match_id UUID,
     p_team_number INT,
-    p_friend_name TEXT
+    p_friend_name TEXT,
+    p_phone_number TEXT
 ) RETURNS JSONB AS $$
 DECLARE
     v_match RECORD;
@@ -106,8 +108,8 @@ BEGIN
 
     -- Insert temporary player
     BEGIN
-        INSERT INTO temporary_players (match_id, team_number, name, added_by, added_by_name)
-        VALUES (p_match_id, p_team_number, p_friend_name, p_user_id, v_user."fullName")
+        INSERT INTO temporary_players (match_id, team_number, name, added_by, added_by_name, phone_number)
+        VALUES (p_match_id, p_team_number, p_friend_name, p_user_id, v_user."fullName", p_phone_number)
         RETURNING * INTO v_temp_player;
     EXCEPTION WHEN OTHERS THEN
         RETURN jsonb_build_object('success', false, 'code', 'INSERT_FAILED', 'details', SQLERRM);

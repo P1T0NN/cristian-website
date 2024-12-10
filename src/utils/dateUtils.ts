@@ -6,7 +6,17 @@ import { es } from 'date-fns/locale';
 import { getUserLocale } from '@/services/server/locale';
 
 export const formatTime = (timeStr: string): string => {
-    return format(new Date(`2000-01-01T${timeStr}`), 'hh:mma');
+    const date = new Date(`2000-01-01T${timeStr}`);
+    const hours = date.getHours();
+    //const minutes = date.getMinutes();
+    
+    if (hours >= 12) {
+        // PM: Use 24-hour format
+        return format(date, 'HH:mm') + 'PM';
+    } else {
+        // AM: Use 12-hour format
+        return format(date, 'hh:mm') + 'AM';
+    }
 };
 
 export const formatDate = async (dateStr: string, showTomorrow: boolean = false): Promise<string> => {

@@ -75,10 +75,18 @@ export const TeamCard = async ({
         <Card>
             <CardHeader>
                 <CardTitle>{teamName}</CardTitle>
-                <CardDescription>
+                <CardDescription className="flex flex-col">
                     {t('players')} {currentPlayers}/{maxPlayers}
                     {!isDefaultTeam && (
                         <span className="block text-red-500 mt-1">{t('teamIsFull')}</span>
+                    )}
+                    {isDefaultTeam && canAddFriend && (
+                        <AddFriendButton
+                            matchId={matchId}
+                            teamNumber={teamNumber}
+                            authToken={authToken}
+                            isAdmin={isAdmin}
+                        />
                     )}
                 </CardDescription>
             </CardHeader>
@@ -104,15 +112,6 @@ export const TeamCard = async ({
                         matchId={matchId}
                         currentUserId={currentUserId}
                         authToken={authToken}
-                    />
-                )}
-
-                {isDefaultTeam && canAddFriend && (
-                    <AddFriendButton
-                        matchId={matchId}
-                        teamNumber={teamNumber}
-                        authToken={authToken}
-                        isAdmin={isAdmin}
                     />
                 )}
             </CardContent>
