@@ -336,6 +336,13 @@
                 "answer4": "Para más detalle consulta a tu Organizador antes de empezar y te indicará si hay posibilidad de usar las duchas.",
                 "answer5": "¡Se responsable y cuida las instalaciones!",
                 "answer6": "Si alguien provoca algún daño o es causa de algún problema con la instalación, se le podrá prohibir el acceso para siempre a los eventos."
+            },
+            "contact": {
+                "title": "¿Todavía tienes dudas o preguntas?",
+                "message": "Contacta aquí.",
+                "phoneNumber": "Teléfono",
+                "email": "Correo electrónico",
+                "emailButton": "Enviar correo"
             }
         }
     },

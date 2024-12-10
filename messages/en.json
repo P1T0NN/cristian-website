@@ -334,6 +334,13 @@
                 "answer4": "For more details consult your Organizer before starting and they will indicate if there is a possibility of using the showers.",
                 "answer5": "Be responsible and take care of the facilities!",
                 "answer6": "If someone breaks something or causes any problem with the facility, they may be prohibited from accessing events forever."
+            },
+            "contact": {
+                "title": "Still have questions or concerns?",
+                "message": "Contact us here.",
+                "phoneNumber": "Phone",
+                "email": "Email",
+                "emailButton": "Send Email"
             }
         }
     },

@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 import { jwtVerify } from 'jose';
 
 // CONFIG
-import { getAllProtectedRoutes, ADMIN_PAGE_ENDPOINTS, DEFAULT_JWT_EXPIRATION_TIME, PROTECTED_PAGE_ENDPOINTS } from './config';
+import { getAllProtectedRoutes, PUBLIC_PAGE_ENDPOINTS, ADMIN_PAGE_ENDPOINTS, DEFAULT_JWT_EXPIRATION_TIME, PROTECTED_PAGE_ENDPOINTS } from './config';
 
 // ACTIONS
 import { verifyAuthWithRefresh } from '@/actions/actions/auth/verifyAuth';
@@ -22,8 +22,17 @@ export async function middleware(request: NextRequest) {
     const refreshToken = request.cookies.get('refresh_token')?.value;
     const path = request.nextUrl.pathname;
 
+    const isPublicRoute = Object.values(PUBLIC_PAGE_ENDPOINTS).some(route => path === route);
     const isProtectedRoute = getAllProtectedRoutes().some(route => path.startsWith(route));
     const isAdminRoute = Object.values(ADMIN_PAGE_ENDPOINTS).some(route => path.startsWith(route));
+
+    if (path === '/') {
+        return NextResponse.redirect(new URL('/login', request.url));
+    }
+
+    if (isPublicRoute && (authToken || refreshToken)) {
+        return redirectToHome(request);
+    }
 
     if (path === PROTECTED_PAGE_ENDPOINTS.HOME_PAGE) {
         const dateParam = request.nextUrl.searchParams.get('date');
