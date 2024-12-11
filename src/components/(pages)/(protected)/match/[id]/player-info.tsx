@@ -135,7 +135,7 @@ export const PlayerInfo = async ({
                     />
                     {isAdmin && (
                         <>
-                           {teamNumber !== 0 && !isDefaultTeam && (
+                           {teamNumber !== 0 && isDefaultTeam && (
                                 <SwitchTeamButton
                                     authToken={authToken}
                                     matchId={matchId}
