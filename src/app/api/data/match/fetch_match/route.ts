@@ -149,7 +149,8 @@ export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>>
             has_paid: p.has_paid,
             has_discount: p.has_discount,
             has_gratis: p.has_gratis,
-            phone_number: p.phone_number
+            phone_number: p.phone_number,
+            substitute_requested: p.substitute_requested
         }
     });
     

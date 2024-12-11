@@ -9,4 +9,5 @@ export type typesTemporaryPlayer = {
     has_discount: boolean;
     has_gratis: boolean;
     phone_number: string;
+    substitute_requested: boolean;
 };

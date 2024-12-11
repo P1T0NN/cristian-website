@@ -295,6 +295,9 @@
         "invalidPhoneNumber": "Please enter a valid phone number",
         "confirmReplace": "Confirm Replacement",
         "replaceConfirmationMessage": "Are you sure you want to replace this person? If you do, you must follow all the rules from FAQ, and you automatically agree to pay for the match.",
+        "confirmRemoveTitle": "Confirm Removal",
+        "confirmRemoveDescription": "Are you sure you want to remove this player? This action cannot be undone.",
+        "remove": "Remove",
         "MatchFAQ": {
             "title": "Frequently Asked Questions",
             "startTimeDuration": {
@@ -709,7 +712,7 @@
         "MATCH_HISTORY_DELETED": "Match successfully deleted from match history!",
 
         "TOO_LATE_TO_LEAVE": "It's too late to leave the team. You can request a substitute instead.",
-        "SUBSTITUTE_REQUESTED_SUCCESSFULLY'": "Requested substitute successfully!",
+        "SUBSTITUTE_REQUESTED_SUCCESSFULLY": "Requested substitute successfully!",
         "PLAYER_REPLACED_SUCCESSFULLY": "You replaced player successfully!",
         "PLAYER_REMOVED_SUCCESSFULLY": "You removed the player successfully!",
         "PAYMENT_STATUS_UPDATED_SUCCESSFULLY": "Successfully updated payment status!",

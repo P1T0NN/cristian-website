@@ -120,7 +120,7 @@ export const PlayerInfo = async ({
                         </p>
                     )}
                 </div>
-                {player.matchPlayer?.substitute_requested && !player.temporaryPlayer && (
+                {player.matchPlayer?.substitute_requested || player.temporaryPlayer?.substitute_requested && (
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger>

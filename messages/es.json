@@ -297,6 +297,9 @@
         "invalidPhoneNumber": "Por favor, introduce un número de teléfono válido",
         "confirmReplace": "Confirmar Reemplazo",
         "replaceConfirmationMessage": "¿Estás seguro de que quieres reemplazar a esta persona? Si lo haces, debes seguir todas las reglas del FAQ, y automáticamente aceptas pagar por el partido.",
+        "confirmRemoveTitle": "Confirmar Eliminación",
+        "confirmRemoveDescription": "¿Estás seguro de que quieres eliminar a este jugador? Esta acción no se puede deshacer.",
+        "remove": "Eliminar",
         "MatchFAQ": {
             "title": "Preguntas Frecuentes",
             "startTimeDuration": {

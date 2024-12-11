@@ -32,16 +32,30 @@ export async function removeFriend(authToken: string, matchId: string, temporary
 
     const userId = payload.sub;
 
+    // Check if the user is an admin
+    const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('isAdmin')
+        .eq('id', userId)
+        .single();
+
+    if (userError) {
+        return { success: false, message: t('USER_FETCH_ERROR') };
+    }
+
+    const isAdmin = userData.isAdmin;
+
     const { data, error } = await supabase.rpc('remove_temporary_player', {
         p_user_id: userId,
         p_match_id: matchId,
-        p_temporary_player_id: temporaryPlayerId
+        p_temporary_player_id: temporaryPlayerId,
+        p_is_admin: isAdmin
     });
 
     const result = data as RPCResponseData;
 
     if (error) {
-        return { success: false, message: t('OPERATION_FAILED') };
+        return { success: false, message: t('OPERATION_FAILED'), metadata: { error: error.message } };
     }
 
     if (!result.success) {
@@ -80,26 +94,44 @@ OUR SUPABASE RPC FUNCTION
 CREATE OR REPLACE FUNCTION remove_temporary_player(
     p_user_id UUID,
     p_match_id UUID,
-    p_temporary_player_id UUID
+    p_temporary_player_id UUID,
+    p_is_admin BOOLEAN
 ) RETURNS JSONB AS $$
 DECLARE
     v_match RECORD;
     v_temp_player RECORD;
     v_updated_places_occupied INT;
-    v_is_admin BOOLEAN;
     v_remaining_friends INT;
+    v_current_time TIMESTAMP;
+    v_eight_hours_before_match TIMESTAMP;
 BEGIN
-    -- Check if the user is an admin
-    SELECT "isAdmin" INTO v_is_admin FROM users WHERE id = p_user_id;
-
     -- Fetch match details
     SELECT * INTO v_match FROM matches WHERE id = p_match_id;
     IF NOT FOUND THEN
         RETURN jsonb_build_object('success', false, 'code', 'MATCH_NOT_FOUND');
     END IF;
 
-    -- Fetch and delete temporary player
-    IF v_is_admin THEN
+    -- Calculate time variables
+    v_current_time := CURRENT_TIMESTAMP;
+    v_eight_hours_before_match := (v_match.starts_at_day || ' ' || v_match.starts_at_hour)::TIMESTAMP - INTERVAL '8 hours';
+
+    -- Check if it's after 8 hours before the match
+    IF v_current_time > v_eight_hours_before_match AND NOT p_is_admin THEN
+        -- Update temporary player to request substitute
+        UPDATE temporary_players
+        SET substitute_requested = true
+        WHERE id = p_temporary_player_id AND match_id = p_match_id AND added_by = p_user_id
+        RETURNING * INTO v_temp_player;
+
+        IF FOUND THEN
+            RETURN jsonb_build_object('success', true, 'code', 'SUBSTITUTE_REQUESTED', 'canRequestSubstitute', true);
+        ELSE
+            RETURN jsonb_build_object('success', false, 'code', 'TEMPORARY_PLAYER_NOT_FOUND');
+        END IF;
+    END IF;
+
+    -- Proceed with removal (either before 8 hours or if user is admin)
+    IF p_is_admin THEN
         -- If user is admin, allow removal of any temporary player
         DELETE FROM temporary_players
         WHERE id = p_temporary_player_id AND match_id = p_match_id

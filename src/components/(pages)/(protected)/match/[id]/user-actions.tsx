@@ -42,7 +42,7 @@ export const UserActions = ({
                     teamNumber={teamNumber}
                     setShowSubstituteDialog={setShowSubstituteDialog}
                 />
-            ) : (player.matchPlayer?.substitute_requested && !isUserInMatch) && (
+            ) : (player.matchPlayer?.substitute_requested && !isUserInMatch || player.temporaryPlayer?.substitute_requested && !isUserInMatch) && (
                 <PlayerReplaceButton
                     authToken={authToken}
                     player={player}
