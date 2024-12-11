@@ -1,5 +1,3 @@
-"use server"
-
 // NEXTJS IMPORTS
 import { headers } from 'next/headers';
 
