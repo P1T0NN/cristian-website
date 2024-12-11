@@ -103,6 +103,7 @@ export const TeamCard = async ({
                         currentUserMatchAdmin={currentUserMatchAdmin}
                         isUserInMatch={isUserInMatch}
                         currentUserId={currentUserId}
+                        isDefaultTeam={isDefaultTeam}
                     />
                 ))}
 

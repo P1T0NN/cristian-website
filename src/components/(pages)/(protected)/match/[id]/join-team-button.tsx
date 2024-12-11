@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 // SERVER ACTIONS
-import { managePlayer } from "@/actions/server_actions/mutations/match/managePlayer";
+import { joinMatch } from "@/actions/server_actions/mutations/match/joinMatch";
 
 type JoinTeamButtonProps = {
     teamNumber: 0 | 1 | 2;
@@ -34,7 +34,6 @@ type JoinTeamButtonProps = {
 export const JoinTeamButton = ({
     teamNumber,
     matchId,
-    currentUserId,
     authToken
 }: JoinTeamButtonProps) => {
     const t = useTranslations("MatchPage");
@@ -43,12 +42,10 @@ export const JoinTeamButton = ({
 
     const handleJoinTeam = () => {
         startTransition(async () => {
-            const response = await managePlayer(
+            const response = await joinMatch(
                 authToken,
                 matchId,
-                currentUserId,
-                teamNumber,
-                'join'
+                teamNumber
             )
 
             if (response.success) {

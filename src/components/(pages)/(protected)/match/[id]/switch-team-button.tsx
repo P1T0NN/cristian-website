@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 // SERVER ACTIONS
-import { managePlayer } from "@/actions/server_actions/mutations/match/managePlayer";
+import { switchTeam } from "@/actions/server_actions/mutations/match/switchTeam";
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
@@ -37,24 +37,19 @@ export const SwitchTeamButton = ({
     const handleSwitchTeam = () => {
         startTransition(async () => {
             const isTemporaryPlayer = !!player.temporaryPlayer;
-            const currentTeam = isTemporaryPlayer 
-                ? player.temporaryPlayer?.team_number 
-                : player.matchPlayer?.team_number;
-            const newTeam = currentTeam === 1 ? 2 : 1;
+            const playerId = isTemporaryPlayer ? player.temporaryPlayer?.id as string : player.id;
 
-            const result = await managePlayer(
+            const response = await switchTeam(
                 authToken,
                 matchId,
-                isTemporaryPlayer ? player.temporaryPlayer?.id as string : player.id,
-                newTeam,
-                'switchTeam',
+                playerId,
                 isTemporaryPlayer
             );
 
-            if (result.success) {
-                toast.success(result.message);
+            if (response.success) {
+                toast.success(response.message);
             } else {
-                toast.error(result.message);
+                toast.error(response.message);
             }
         });
     };

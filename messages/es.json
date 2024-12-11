@@ -300,6 +300,7 @@
         "confirmRemoveTitle": "Confirmar Eliminación",
         "confirmRemoveDescription": "¿Estás seguro de que quieres eliminar a este jugador? Esta acción no se puede deshacer.",
         "remove": "Eliminar",
+        "replaceTemporaryPlayerConfirmationMessage": "¿Estás seguro de que quieres reemplazar a este jugador temporal?",
         "MatchFAQ": {
             "title": "Preguntas Frecuentes",
             "startTimeDuration": {
@@ -674,6 +675,7 @@
 
         "PLAYER_JOINED_SUCCESSFULLY": "Jugador añadido exitosamente.",
         "PLAYER_LEFT_SUCCESSFULLY": "Jugador salió exitosamente.",
+        "PLAYER_LEAVE_FAILED": "¡No se pudo abandonar el partido!",
 
         "DEBT_CREATION_FAILED": "Error al añadir deuda. ¡Por favor intenta de nuevo!",
         "DEBT_CREATED_AND_USER_UPDATED": "¡Deuda añadida exitosamente!",
@@ -716,6 +718,11 @@
         "PAYMENT_STATUS_UPDATED_SUCCESSFULLY": "¡Estado de pago actualizado con éxito!",
         "MATCH_ADMIN_STATUS_UPDATED": "El estado de administrador de partido se ha actualizado con éxito",
         "PLAYER_SWITCHED_TEAM_SUCCESSFULLY": "El jugador cambió de equipo exitosamente",
+        "FRIEND_REMOVE_FAILED": "No se pudo eliminar al amigo",
+        "MATCH_LEAVE_FAILED": "No se pudo abandonar el partido",
+        "MATCH_LEFT_SUCCESSFULLY": "Has abandonado el partido con éxito",
+        "PLAYER_JOIN_FAILED": "No se pudo unir como jugador",
+        "SUBSTITUTE_REQUEST_FAILED": "No se pudo solicitar un sustituto",
 
         "PLAYER_DETAILS_UPDATED": "Detalles del jugador actualizados con éxito",
 

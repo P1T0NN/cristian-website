@@ -4,9 +4,9 @@
 import { useState } from "react";
 
 // COMPONENTS
-import { PlayerLeaveTeamButton } from "./player-leave-team-button";
-import { PlayerReplaceButton } from "./player-replace-button";
-import { SubstituteRequestDialog } from "./substitute-request-dialog";
+import { RemoveFriendButton } from "./remove-friend-button";
+import { ReplaceTemporaryPlayerButton } from "./replace-temporary-player-button";
+import { TemporaryPlayerSubstituteRequestDialog } from "./temporary-player-substitute-request-dialog";
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
@@ -21,7 +21,7 @@ type UserActionsProps = {
     isAdmin: boolean;
 }
 
-export const UserActions = ({
+export const TemporaryPlayerActions = ({
     authToken,
     matchId,
     teamNumber,
@@ -35,14 +35,13 @@ export const UserActions = ({
     return (
         <div className="flex items-center space-x-2 relative z-10 mt-2 sm:mt-0">
             {isCurrentUser && !isAdmin ? (
-                <PlayerLeaveTeamButton 
+                <RemoveFriendButton
                     authToken={authToken}
                     player={player}
                     matchId={matchId}
-                    setShowSubstituteDialog={setShowSubstituteDialog}
                 />
-            ) : (player.matchPlayer?.substitute_requested && !isUserInMatch) && (
-                <PlayerReplaceButton
+            ) : (player.temporaryPlayer?.substitute_requested && !isUserInMatch) && (
+                <ReplaceTemporaryPlayerButton
                     authToken={authToken}
                     player={player}
                     matchId={matchId}
@@ -51,9 +50,10 @@ export const UserActions = ({
             )}
 
             {showSubstituteDialog && (
-                <SubstituteRequestDialog
+                <TemporaryPlayerSubstituteRequestDialog
                     authToken={authToken}
                     matchId={matchId}
+                    temporaryPlayerId={player.temporaryPlayer?.id as string}
                     setShowSubstituteDialog={setShowSubstituteDialog}
                 />
             )}

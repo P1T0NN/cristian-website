@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/dialog";
 
 // SERVER ACTIONS
-import { replacePlayer } from "@/actions/server_actions/mutations/match/replacePlayer";
+import { replaceTemporaryPlayer } from "@/actions/server_actions/mutations/match/replaceTemporaryPlayers";
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
@@ -28,19 +28,19 @@ import type { typesUser } from "@/types/typesUser";
 // LUCIDE ICONS
 import { Loader2 } from 'lucide-react';
 
-type PlayerReplaceButtonProps = {
+type ReplaceTemporaryPlayerButtonProps = {
     authToken: string;
     player: typesUser;
     matchId: string;
     teamNumber: 0 | 1 | 2;
 }
 
-export const PlayerReplaceButton = ({
+export const ReplaceTemporaryPlayerButton = ({
     authToken,
     player,
     matchId,
     teamNumber
-}: PlayerReplaceButtonProps) => {
+}: ReplaceTemporaryPlayerButtonProps) => {
     const t = useTranslations("MatchPage");
 
     const [isPending, startTransition] = useTransition();
@@ -48,10 +48,10 @@ export const PlayerReplaceButton = ({
 
     const handleReplacePlayer = () => {
         startTransition(async () => {
-            const response = await replacePlayer(
+            const response = await replaceTemporaryPlayer(
                 authToken,
                 matchId,
-                player.id,
+                player.temporaryPlayer?.id as string,
                 teamNumber
             );
 
@@ -79,7 +79,7 @@ export const PlayerReplaceButton = ({
                 <DialogHeader>
                     <DialogTitle>{t('confirmReplace')}</DialogTitle>
                     <DialogDescription>
-                        {t('replaceConfirmationMessage')}
+                        {t('replaceTemporaryPlayerConfirmationMessage')}
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
@@ -105,3 +105,4 @@ export const PlayerReplaceButton = ({
         </Dialog>
     )
 }
+

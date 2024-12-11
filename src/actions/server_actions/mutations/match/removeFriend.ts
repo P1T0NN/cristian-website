@@ -59,11 +59,7 @@ export async function removeFriend(authToken: string, matchId: string, temporary
     }
 
     if (!result.success) {
-        return { 
-            success: false, 
-            message: t(result.code, result.metadata),
-            metadata: result.metadata
-        };
+        return { success: false, message: t('FRIEND_REMOVE_FAILED') };
     }
 
     // Update the cache
@@ -80,11 +76,7 @@ export async function removeFriend(authToken: string, matchId: string, temporary
 
     revalidatePath("/");
 
-    return { 
-        success: result.success, 
-        message: t(result.code, result.metadata),
-        metadata: result.metadata
-    };
+    return { success: true, message: t('FRIEND_REMOVED_SUCCESSFULLY') };
 }
 
 /*

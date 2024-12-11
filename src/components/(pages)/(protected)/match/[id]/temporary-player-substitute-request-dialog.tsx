@@ -20,31 +20,34 @@ import {
 } from "@/components/ui/alert-dialog";
 
 // SERVER ACTIONS
-import { requestSubstitute } from "@/actions/server_actions/mutations/match/requestSubstitute";
+import { requestTemporaryPlayerSubstitute } from "@/actions/server_actions/mutations/match/requestTemporaryPlayerSubstitute";
 
 // LUCIDE ICONS
 import { Loader2 } from "lucide-react";
 
-type SubstituteRequestDialogProps = {
+type TemporaryPlayerSubstituteRequestDialogProps = {
     matchId: string;
     authToken: string;
+    temporaryPlayerId: string;
     setShowSubstituteDialog: (isVisible: boolean) => void;
 }
 
-export const SubstituteRequestDialog = ({
+export const TemporaryPlayerSubstituteRequestDialog = ({
     matchId,
     authToken,
+    temporaryPlayerId,
     setShowSubstituteDialog
-}: SubstituteRequestDialogProps) => {
+}: TemporaryPlayerSubstituteRequestDialogProps) => {
     const t = useTranslations("MatchPage");
 
     const [isPending, startTransition] = useTransition();
 
     const handleRequestSubstitute = () => {
         startTransition(async () => {
-            const response = await requestSubstitute(
+            const response = await requestTemporaryPlayerSubstitute(
                 authToken,
-                matchId
+                matchId,
+                temporaryPlayerId
             );
 
             if (response.success) {

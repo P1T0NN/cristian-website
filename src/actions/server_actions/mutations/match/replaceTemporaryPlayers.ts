@@ -11,7 +11,7 @@ import { getTranslations } from 'next-intl/server';
 // TYPES
 import type { RPCResponseData } from '@/types/responses/RPCResponseData';
 
-export async function requestSubstitute(authToken: string, matchId: string) {
+export async function replaceTemporaryPlayer(authToken: string, matchId: string, temporaryPlayerId: string, teamNumber: number) {
     const t = await getTranslations("GenericMessages");
 
     if (!authToken) {
@@ -29,9 +29,11 @@ export async function requestSubstitute(authToken: string, matchId: string) {
         return { success: false, message: t('JWT_DECODE_ERROR') };
     }
 
-    const { data, error } = await supabase.rpc('request_substitute', {
+    const { data, error } = await supabase.rpc('replace_temporary_player', {
         p_auth_user_id: authUserId,
-        p_match_id: matchId
+        p_match_id: matchId,
+        p_temporary_player_id: temporaryPlayerId,
+        p_team_number: teamNumber
     });
 
     const result = data as RPCResponseData;
@@ -41,10 +43,10 @@ export async function requestSubstitute(authToken: string, matchId: string) {
     }
 
     if (!result.success) {
-        return { success: false, message: t('SUBSTITUTE_REQUEST_FAILED')};
+        return { success: false, message: t('PLAYER_REPLACE_FAILED') };
     }
 
     revalidatePath("/");
 
-    return { success: true, message: t('SUBSTITUTE_REQUESTED_SUCCESSFULLY')};
+    return { success: true, message: t('PLAYER_REPLACED_SUCCESSFULLY') };
 }

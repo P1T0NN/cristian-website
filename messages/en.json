@@ -298,6 +298,7 @@
         "confirmRemoveTitle": "Confirm Removal",
         "confirmRemoveDescription": "Are you sure you want to remove this player? This action cannot be undone.",
         "remove": "Remove",
+        "replaceTemporaryPlayerConfirmationMessage": "Are you sure you want to replace this temporary player?",
         "MatchFAQ": {
             "title": "Frequently Asked Questions",
             "startTimeDuration": {
@@ -675,6 +676,7 @@
 
         "PLAYER_JOINED_SUCCESSFULLY": "Player joined successfully!",
         "PLAYER_LEFT_SUCCESSFULLY": "Player left successfully!",
+        "PLAYER_LEAVE_FAILED": "Failed to leave match!",
 
         "DEBT_CREATION_FAILED": "Failed to add a debt. Please try again!",
         "DEBT_CREATED_AND_USER_UPDATED": "Debt has been added successfully!",
@@ -718,6 +720,7 @@
         "PAYMENT_STATUS_UPDATED_SUCCESSFULLY": "Successfully updated payment status!",
         "MATCH_ADMIN_STATUS_UPDATED": "Match admin status has been updated successfully",
         "PLAYER_SWITCHED_TEAM_SUCCESSFULLY": "Player switched team successfully",
+        "PLAYER_REPLACE_FAILED": "Player replacement failed",
 
         "PLAYER_DETAILS_UPDATED": "Player details updated successfully",
 
@@ -734,6 +737,13 @@
         "FRIEND_REMOVAL_FAILED": "Failed to remove friend",
         "TEMPORARY_PLAYER_NOT_FOUND": "Temporary player not found",
         "FRIEND_REMOVED_SUCCESSFULLY": "Friend removed successfully",
+        "TEMPORARY_PLAYER_SUBSTITUTE_REQUEST_FAILED": "Temporary player substitute request failed",
+        "TEMPORARY_PLAYER_SUBSTITUTE_REQUESTED": "Temporary player substitute requested",
+        "FRIEND_REMOVE_FAILED": "Failed to remove friend",
+        "MATCH_LEAVE_FAILED": "Failed to leave match",
+        "MATCH_LEFT_SUCCESSFULLY": "Successfully left the match",
+        "PLAYER_JOIN_FAILED": "Failed to join as player",
+        "SUBSTITUTE_REQUEST_FAILED": "Failed to request substitute",
 
         "BALANCE_UPDATE_FAILED": "Failed to update balance",
         "BALANCE_ADDED": "Balance successfully added",

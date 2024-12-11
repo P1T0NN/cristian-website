@@ -1,5 +1,7 @@
 // COMPONENTS
 import { PlayerInfo } from "./player-info";
+import { TemporaryPlayerInfo } from "./temporary-player-info";
+import { TemporaryPlayerActions } from "./temporary-player-actions";
 import { UserActions } from "./user-actions";
 
 // TYPES
@@ -15,6 +17,7 @@ type PlayerItemProps = {
     currentUserMatchAdmin: boolean;
     isUserInMatch: boolean;
     currentUserId: string;
+    isDefaultTeam?: boolean;
 }
 
 export const PlayerItem = async ({ 
@@ -26,21 +29,35 @@ export const PlayerItem = async ({
     authToken,
     currentUserMatchAdmin,
     isUserInMatch,
-    currentUserId
+    currentUserId,
+    isDefaultTeam
 }: PlayerItemProps) => {
     return (
         <div 
             className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-2 bg-muted rounded-lg transition-opacity duration-200 ease-in-out"
         >
-            <PlayerInfo 
-                authToken={authToken}
-                matchId={matchId}
-                player={player}
-                isAdmin={isAdmin}
-                currentUserMatchAdmin={currentUserMatchAdmin}
-                teamNumber={teamNumber}
-                currentUserId={currentUserId}
-            />
+            {player.temporaryPlayer ? (
+                <TemporaryPlayerInfo 
+                    authToken={authToken}
+                    matchId={matchId}
+                    player={player}
+                    isAdmin={isAdmin}
+                    currentUserMatchAdmin={currentUserMatchAdmin}
+                    teamNumber={teamNumber}
+                    currentUserId={currentUserId}
+                    isDefaultTeam={isDefaultTeam as boolean}
+                />
+            ) : (
+                <PlayerInfo 
+                    authToken={authToken}
+                    matchId={matchId}
+                    player={player}
+                    isAdmin={isAdmin}
+                    currentUserMatchAdmin={currentUserMatchAdmin}
+                    teamNumber={teamNumber}
+                    isDefaultTeam={isDefaultTeam as boolean}
+                />
+            )}
 
             <UserActions
                 authToken={authToken}
@@ -51,6 +68,18 @@ export const PlayerItem = async ({
                 isUserInMatch={isUserInMatch}
                 isAdmin={isAdmin}
             />
+
+            {player.temporaryPlayer && (
+                <TemporaryPlayerActions
+                    authToken={authToken}
+                    matchId={matchId}
+                    teamNumber={teamNumber}
+                    player={player}
+                    isCurrentUser={isCurrentUser}
+                    isUserInMatch={isUserInMatch}
+                    isAdmin={isAdmin}
+                />
+            )}
         </div>
     )
 }
