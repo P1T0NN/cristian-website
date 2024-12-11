@@ -1,4 +1,10 @@
 {
+    "NotFoundPage": {
+        "title": "404 - Página no encontrada",
+        "message": "¡Ups! La página que estás buscando no existe.",
+        "homeLink": "Volver aqui"
+    },
+
     "UnauthorizedPage": {
         "title": "Acceso Restringido",
         "description": "Tu cuenta está pendiente de aprobación o ha sido restringida.",

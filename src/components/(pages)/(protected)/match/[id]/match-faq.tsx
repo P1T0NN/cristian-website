@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 // LUCIDE ICONS;
-import { AlertCircle, Shirt, Phone, Users, CloudRain, Calendar, ShowerHeadIcon as Shower, Clock, Mail, MessageCircle } from 'lucide-react';
+import { AlertCircle, Shirt, Users, CloudRain, Calendar, ShowerHeadIcon as Shower, Clock, Mail, MessageCircle } from 'lucide-react';
 
 export const MatchFAQ = async () => {
     const t = await getTranslations('MatchPage.MatchFAQ');
@@ -158,10 +158,6 @@ export const MatchFAQ = async () => {
                     <h3 className="text-lg font-semibold">{t('contact.title')}</h3>
                     <p>{t('contact.message')}</p>
                     <div className="space-y-2">
-                        <p className="flex items-center">
-                            <Phone className="mr-2 h-4 w-4" />
-                            <span className="font-medium">{t('contact.phoneNumber')}:</span> +34 661 180 764
-                        </p>
                         <p className="flex items-center">
                             <Mail className="mr-2 h-4 w-4" />
                             <span className="font-medium">{t('contact.email')}:</span> nitageorge89@gmail.com

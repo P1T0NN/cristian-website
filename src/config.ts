@@ -1,5 +1,5 @@
 export const GLOBAL_RATE_LIMIT = 1000;
-export const DEFAULT_JWT_EXPIRATION_TIME = 30 * 60; // 30 minutes default
+export const DEFAULT_JWT_EXPIRATION_TIME = 5; // 30 minutes default
 export const DEFAULT_REFRESH_TOKEN_EXPIRATION_TIME = 7 * 24 * 60 * 60; // 7 days
 
 export const CACHE_KEYS = {
