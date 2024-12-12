@@ -101,19 +101,17 @@ export async function middleware(request: NextRequest) {
     }
 
     if (isProtectedRoute) {
-        let validToken = authToken;
-
         if (!authToken && refreshToken) {
             const result = await refreshAuthToken(refreshToken, request);
-            const response = NextResponse.next();
 
             if (!result.success) {
+                const response = NextResponse.redirect(new URL('/login', request.url));
                 response.cookies.delete('refresh_token');
-                return NextResponse.redirect(new URL('/login', request.url));
+                return response;
             }
 
             if (result.newAuthToken) {
-                validToken = result.newAuthToken;
+                const response = NextResponse.next();
                 response.cookies.set('auth_token', result.newAuthToken, {
                     httpOnly: true,
                     secure: process.env.NODE_ENV === 'production',
@@ -125,28 +123,28 @@ export async function middleware(request: NextRequest) {
             }
         }
 
-        if (!validToken) {
+        if (!authToken) {
             return NextResponse.redirect(new URL('/login', request.url));
         }
 
         const secretKey = new TextEncoder().encode(process.env.JWT_SECRET);
     
-        const { payload } = await jwtVerify(validToken, secretKey, {
-            algorithms: ['HS256']
-        }).catch(() => ({ payload: null }));
+        try {
+            const { payload } = await jwtVerify(authToken, secretKey, {
+                algorithms: ['HS256']
+            });
 
-        if (!payload) {
-            return NextResponse.redirect(new URL('/login', request.url));
-        }
+            if (!payload.has_access) {
+                return NextResponse.redirect(new URL('/unauthorized', request.url));
+            }
 
-        // Check user access
-        if (!payload.has_access) {
-            return NextResponse.redirect(new URL('/unauthorized', request.url));
-        }
-
-        // Check admin route access
-        if (isAdminRoute && !payload.isAdmin) {
-            return NextResponse.redirect(new URL('/home', request.url));
+            if (isAdminRoute && !payload.isAdmin) {
+                return NextResponse.redirect(new URL('/home', request.url));
+            }
+        } catch {
+            const response = NextResponse.redirect(new URL('/login', request.url));
+            response.cookies.delete('auth_token');
+            return response;
         }
     }
 
