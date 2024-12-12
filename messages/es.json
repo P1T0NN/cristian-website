@@ -303,6 +303,18 @@
         "replaceTemporaryPlayerConfirmationMessage": "¿Estás seguro de que quieres reemplazar a este jugador temporal?",
         "organizador": "Organizador",
         "organizadorTooltip": "Este jugador es un organizador del partido",
+        "confirmLeaveMatchTitle": "Confirmar salida del partido",
+        "confirmLeaveMatchDescription": "¿Estás seguro de que quieres abandonar este partido? Esta acción no se puede deshacer.",
+        "confirm": "Confirmar",
+        "confirmRemoveFriendTitle": "Confirmar eliminación de amigo",
+        "confirmRemoveFriendDescription": "¿Estás seguro de que quieres eliminar a este amigo del partido? Esta acción no se puede deshacer.",
+        "cancelSubstitution": "Cancelar sustitución",
+        "canceling": "Cancelando...",
+        "confirmCancelSubstitutionTitle": "Confirmar Cancelación de Sustitución",
+        "confirmCancelSubstitutionDescription": "¿Estás seguro de que quieres cancelar tu solicitud de sustitución? Esta acción no se puede deshacer.",
+        "cancelTemporaryPlayerSubstitution": "Cancelar sustitución",
+        "confirmCancelTemporaryPlayerSubstitutionTitle": "Confirmar Cancelación de Sustitución de Amigo",
+        "confirmCancelTemporaryPlayerSubstitutionDescription": "¿Estás seguro de que quieres cancelar la solicitud de sustitución para tu amigo? Esta acción no se puede deshacer.",
         "MatchFAQ": {
             "title": "Preguntas Frecuentes",
             "startTimeDuration": {
@@ -741,10 +753,19 @@
         "FRIEND_REMOVAL_FAILED": "No se pudo eliminar al amigo",
         "TEMPORARY_PLAYER_NOT_FOUND": "Jugador temporal no encontrado",
         "FRIEND_REMOVED_SUCCESSFULLY": "Amigo eliminado con éxito",
+        "TEMPORARY_PLAYER_SUBSTITUTE_REQUEST_FAILED": "La solicitud de sustitución del jugador temporal ha fallado",
+        "TEMPORARY_PLAYER_SUBSTITUTE_REQUESTED": "Se ha solicitado la sustitución del jugador temporal",
+        "SUBSTITUTE_ALREADY_REQUESTED": "Ya se ha solicitado un sustituto",
 
         "BALANCE_UPDATE_FAILED": "Error al actualizar el saldo",
         "BALANCE_ADDED": "Saldo añadido con éxito",
         "REFUND_FAILED": "¡Error al reembolsar el dinero al jugador que se unió con saldo!",
+
+        "CANCEL_SUBSTITUTION_FAILED": "No se pudo cancelar la solicitud de sustitución",
+        "SUBSTITUTION_REQUEST_CANCELED": "Solicitud de sustitución cancelada con éxito",
+
+        "CANCEL_TEMPORARY_PLAYER_SUBSTITUTION_FAILED": "No se pudo cancelar la solicitud de sustitución del amigo",
+        "TEMPORARY_PLAYER_SUBSTITUTION_REQUEST_CANCELED": "Solicitud de sustitución del amigo cancelada con éxito",
 
         "REDIS_CONNECTION_ERROR": "No se puede conectar a la base de datos. Inténtalo de nuevo más tarde.",
         "REDIS_DISCONNECTION_ERROR": "Error al desconectar de la base de datos.",

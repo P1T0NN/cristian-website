@@ -301,6 +301,18 @@
         "replaceTemporaryPlayerConfirmationMessage": "Are you sure you want to replace this temporary player?",
         "organizador": "Organizer",
         "organizadorTooltip": "This player is a match organizer",
+        "confirmLeaveMatchTitle": "Confirm Leave Match",
+        "confirmLeaveMatchDescription": "Are you sure you want to leave this match? This action cannot be undone.",
+        "confirm": "Confirm",
+        "confirmRemoveFriendTitle": "Confirm Remove Friend",
+        "confirmRemoveFriendDescription": "Are you sure you want to remove this friend from the match? This action cannot be undone.",
+        "cancelSubstitution": "Cancel substitution",
+        "canceling": "Canceling...",
+        "confirmCancelSubstitutionTitle": "Confirm Cancel Substitution",
+        "confirmCancelSubstitutionDescription": "Are you sure you want to cancel your substitution request? This action cannot be undone.",
+        "cancelTemporaryPlayerSubstitution": "Cancel friend substitution",
+        "confirmCancelTemporaryPlayerSubstitutionTitle": "Confirm Cancel Friend Substitution",
+        "confirmCancelTemporaryPlayerSubstitutionDescription": "Are you sure you want to cancel the substitution request for your friend? This action cannot be undone.",
         "MatchFAQ": {
             "title": "Frequently Asked Questions",
             "startTimeDuration": {
@@ -746,10 +758,17 @@
         "MATCH_LEFT_SUCCESSFULLY": "Successfully left the match",
         "PLAYER_JOIN_FAILED": "Failed to join as player",
         "SUBSTITUTE_REQUEST_FAILED": "Failed to request substitute",
+        "SUBSTITUTE_ALREADY_REQUESTED": "You already requested substitute for your friend!",
 
         "BALANCE_UPDATE_FAILED": "Failed to update balance",
         "BALANCE_ADDED": "Balance successfully added",
         "REFUND_FAILED": "Failed to refund money to player who joined with balance!",
+
+        "CANCEL_SUBSTITUTION_FAILED": "Failed to cancel substitution request",
+        "SUBSTITUTION_REQUEST_CANCELED": "Substitution request canceled successfully",
+
+        "CANCEL_TEMPORARY_PLAYER_SUBSTITUTION_FAILED": "Failed to cancel friend substitution request",
+        "TEMPORARY_PLAYER_SUBSTITUTION_REQUEST_CANCELED": "Friend substitution request canceled successfully",
 
         "REDIS_CONNECTION_ERROR": "Unable to connect to the database. Please try again later.",
         "REDIS_DISCONNECTION_ERROR": "Error occurred while disconnecting from the database.",

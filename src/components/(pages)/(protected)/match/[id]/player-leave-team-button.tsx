@@ -1,7 +1,7 @@
 "use client"
 
 // REACTJS IMPORTS
-import { useTransition } from "react";
+import { useTransition, useState } from "react";
 
 // LIBRARIES
 import { useTranslations } from "next-intl";
@@ -9,74 +9,87 @@ import { useTranslations } from "next-intl";
 // COMPONENTS
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 
 // SERVER ACTIONS
 import { leaveMatch } from "@/actions/server_actions/mutations/match/leaveTeam";
-
-// TYPES
-import type { typesUser } from "@/types/typesUser";
 
 // LUCIDE ICONS
 import { Loader2 } from "lucide-react";
 
 type PlayerLeaveTeamButtonProps = {
     authToken: string;
-    player: typesUser;
     matchId: string;
     setShowSubstituteDialog: (isVisible: boolean) => void;
 }
 
 export const PlayerLeaveTeamButton = ({
     authToken,
-    player,
     matchId,
     setShowSubstituteDialog
 }: PlayerLeaveTeamButtonProps) => {
     const t = useTranslations("MatchPage");
-
     const [isPending, startTransition] = useTransition();
 
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+
     const handleLeaveTeam = () => {
-        if (player.matchPlayer?.substitute_requested) {
-            toast.error(t('substituteAlreadyRequested'));
-            return;
-        }
-    
         startTransition(async () => {
-            const response = await leaveMatch(
-                authToken,
-                matchId
-            );
+            const response = await leaveMatch(authToken, matchId);
     
             if (response.success) {
                 toast.success(response.message);
             } else if (response.metadata && response.metadata.canRequestSubstitute) {
                 setShowSubstituteDialog(true);
             } else {
-                toast.error(response.message || t('MATCH_LEAVE_FAILED'));
+                toast.error(response.message);
             }
+            setIsDialogOpen(false);
         });
     };
 
     return (
-        <Button
-            variant="destructive"
-            size="sm"
-            onClick={handleLeaveTeam}
-            disabled={isPending}
-            className="w-full sm:w-auto"
-        >
-            {isPending ? (
-                <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t('leaving')}
-                </>
-            ) : (
-                t('leaveTeam')
-            )}
-        </Button>
-    )
-}
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+                <Button
+                    variant="destructive"
+                    size="sm"
+                    disabled={isPending}
+                    className="w-full sm:w-auto"
+                >
+                    {isPending ? (
+                        <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            {t('leaving')}
+                        </>
+                    ) : (
+                        t('leaveTeam')
+                    )}
+                </Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>{t('confirmLeaveMatchTitle')}</DialogTitle>
+                    <DialogDescription>{t('confirmLeaveMatchDescription')}</DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                    <Button variant="outline" onClick={() => setIsDialogOpen(false)}>{t('cancel')}</Button>
+                    <Button variant="destructive" onClick={handleLeaveTeam} disabled={isPending}>
+                        {isPending ? t('leaving') : t('confirm')}
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+};
 
 /* SUPABASE RPC FUNCTION
 

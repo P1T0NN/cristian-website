@@ -7,6 +7,7 @@ import { useState } from "react";
 import { PlayerLeaveTeamButton } from "./player-leave-team-button";
 import { PlayerReplaceButton } from "./player-replace-button";
 import { SubstituteRequestDialog } from "./substitute-request-dialog";
+import { CancelSubstitutionButton } from "./cancel-substitution-button";
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
@@ -34,14 +35,21 @@ export const UserActions = ({
 
     return (
         <div className="flex items-center space-x-2 relative z-10 mt-2 sm:mt-0">
-            {isCurrentUser && !isAdmin ? (
-                <PlayerLeaveTeamButton 
-                    authToken={authToken}
-                    player={player}
-                    matchId={matchId}
-                    setShowSubstituteDialog={setShowSubstituteDialog}
-                />
-            ) : (player.matchPlayer?.substitute_requested && !isUserInMatch) && (
+            {isCurrentUser && !isAdmin && (
+                player.matchPlayer?.substitute_requested ? (
+                    <CancelSubstitutionButton 
+                        authToken={authToken}
+                        matchId={matchId}
+                    />
+                ) : (
+                    <PlayerLeaveTeamButton 
+                        authToken={authToken}
+                        matchId={matchId}
+                        setShowSubstituteDialog={setShowSubstituteDialog}
+                    />
+                )
+            )}
+            {!isCurrentUser && player.matchPlayer?.substitute_requested && !isUserInMatch && (
                 <PlayerReplaceButton
                     authToken={authToken}
                     player={player}

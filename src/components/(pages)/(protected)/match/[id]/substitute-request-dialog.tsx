@@ -9,18 +9,19 @@ import { useTranslations } from "next-intl";
 // COMPONENTS
 import { toast } from "sonner";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
 // SERVER ACTIONS
 import { requestSubstitute } from "@/actions/server_actions/mutations/match/requestSubstitute";
+import { requestTemporaryPlayerSubstitute } from "@/actions/server_actions/mutations/match/requestTemporaryPlayerSubstitute";
 
 // LUCIDE ICONS
 import { Loader2 } from "lucide-react";
@@ -29,12 +30,16 @@ type SubstituteRequestDialogProps = {
     matchId: string;
     authToken: string;
     setShowSubstituteDialog: (isVisible: boolean) => void;
+    isForTemporaryPlayer?: boolean;
+    temporaryPlayerId?: string;
 }
 
 export const SubstituteRequestDialog = ({
     matchId,
     authToken,
-    setShowSubstituteDialog
+    setShowSubstituteDialog,
+    isForTemporaryPlayer = false,
+    temporaryPlayerId
 }: SubstituteRequestDialogProps) => {
     const t = useTranslations("MatchPage");
 
@@ -42,10 +47,24 @@ export const SubstituteRequestDialog = ({
 
     const handleRequestSubstitute = () => {
         startTransition(async () => {
-            const response = await requestSubstitute(
-                authToken,
-                matchId
-            );
+            let response;
+
+            if (isForTemporaryPlayer) {
+                if (!temporaryPlayerId) {
+                    toast.error(t('temporaryPlayerIdMissing'));
+                    return;
+                }
+                response = await requestTemporaryPlayerSubstitute(
+                    authToken,
+                    matchId,
+                    temporaryPlayerId
+                );
+            } else {
+                response = await requestSubstitute(
+                    authToken,
+                    matchId
+                );
+            }
 
             if (response.success) {
                 toast.success(response.message);

@@ -22,7 +22,7 @@ import type { RPCResponseData } from '@/types/responses/RPCResponseData';
 export async function removeFriend(authToken: string, matchId: string, temporaryPlayerId: string) {
     const t = await getTranslations("GenericMessages");
 
-    const { isAuth, userId } = await verifyAuth(authToken);
+    const { isAuth, userId: authUserId } = await verifyAuth(authToken);
                 
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
@@ -32,37 +32,23 @@ export async function removeFriend(authToken: string, matchId: string, temporary
         return { success: false, message: t('MATCH_ID_INVALID') };
     }
 
-    // Check if the user is an admin
-    const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('isAdmin')
-        .eq('id', userId)
-        .single();
-
-    if (userError) {
-        return { success: false, message: t('USER_FETCH_ERROR') };
-    }
-
-    const isAdmin = userData.isAdmin;
-
     const { data, error } = await supabase.rpc('remove_temporary_player', {
-        p_user_id: userId,
+        p_user_id: authUserId,
         p_match_id: matchId,
-        p_temporary_player_id: temporaryPlayerId,
-        p_is_admin: isAdmin
+        p_temporary_player_id: temporaryPlayerId
     });
 
     const result = data as RPCResponseData;
 
     if (error) {
-        return { success: false, message: t('OPERATION_FAILED'), metadata: { error: error.message } };
+        return { success: false, message: t('OPERATION_FAILED') };
     }
 
     if (!result.success) {
-        return { success: false, message: t('FRIEND_REMOVE_FAILED') };
+        return { success: false, message: t('FRIEND_REMOVE_FAILED'), metadata: result.metadata };
     }
 
-    // Update the cache
+    // Update the match cache
     const cacheKey = `${CACHE_KEYS.MATCH_PREFIX}${matchId}`;
     const cachedMatch = await upstashRedisCacheService.get<{ places_occupied?: number }>(cacheKey);
     
@@ -76,75 +62,55 @@ export async function removeFriend(authToken: string, matchId: string, temporary
 
     revalidatePath("/");
 
-    return { success: true, message: t('FRIEND_REMOVED_SUCCESSFULLY') };
+    return { success: true, message: t("FRIEND_REMOVED_SUCCESSFULLY"), metadata: result.metadata };
 }
 
-/*
-
-OUR SUPABASE RPC FUNCTION
+/* SUPABASE RPC FUNCTION
 
 CREATE OR REPLACE FUNCTION remove_temporary_player(
     p_user_id UUID,
     p_match_id UUID,
-    p_temporary_player_id UUID,
-    p_is_admin BOOLEAN
-) RETURNS JSONB AS $$
+    p_temporary_player_id UUID
+) RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 DECLARE
     v_match RECORD;
     v_temp_player RECORD;
-    v_updated_places_occupied INT;
-    v_remaining_friends INT;
     v_current_time TIMESTAMP;
     v_eight_hours_before_match TIMESTAMP;
+    v_updated_places_occupied INT;
+    v_remaining_friends INT;
 BEGIN
-    -- Fetch match details
     SELECT * INTO v_match FROM matches WHERE id = p_match_id;
     IF NOT FOUND THEN
         RETURN jsonb_build_object('success', false, 'code', 'MATCH_NOT_FOUND');
     END IF;
 
-    -- Calculate time variables
-    v_current_time := CURRENT_TIMESTAMP;
-    v_eight_hours_before_match := (v_match.starts_at_day || ' ' || v_match.starts_at_hour)::TIMESTAMP - INTERVAL '8 hours';
-
-    -- Check if it's after 8 hours before the match
-    IF v_current_time > v_eight_hours_before_match AND NOT p_is_admin THEN
-        -- Update temporary player to request substitute
-        UPDATE temporary_players
-        SET substitute_requested = true
-        WHERE id = p_temporary_player_id AND match_id = p_match_id AND added_by = p_user_id
-        RETURNING * INTO v_temp_player;
-
-        IF FOUND THEN
-            RETURN jsonb_build_object('success', true, 'code', 'SUBSTITUTE_REQUESTED', 'canRequestSubstitute', true);
-        ELSE
-            RETURN jsonb_build_object('success', false, 'code', 'TEMPORARY_PLAYER_NOT_FOUND');
-        END IF;
-    END IF;
-
-    -- Proceed with removal (either before 8 hours or if user is admin)
-    IF p_is_admin THEN
-        -- If user is admin, allow removal of any temporary player
-        DELETE FROM temporary_players
-        WHERE id = p_temporary_player_id AND match_id = p_match_id
-        RETURNING * INTO v_temp_player;
-    ELSE
-        -- If user is not admin, only allow removal if they added the player
-        DELETE FROM temporary_players
-        WHERE id = p_temporary_player_id AND match_id = p_match_id AND added_by = p_user_id
-        RETURNING * INTO v_temp_player;
-    END IF;
-
+    SELECT * INTO v_temp_player FROM temporary_players 
+    WHERE id = p_temporary_player_id AND match_id = p_match_id AND added_by = p_user_id;
     IF NOT FOUND THEN
         RETURN jsonb_build_object('success', false, 'code', 'TEMPORARY_PLAYER_NOT_FOUND');
     END IF;
 
-    v_updated_places_occupied := GREATEST(COALESCE(v_match.places_occupied, 0) - 1, 0);
+    v_current_time := CURRENT_TIMESTAMP;
+    v_eight_hours_before_match := (v_match.starts_at_day || ' ' || v_match.starts_at_hour)::TIMESTAMP - INTERVAL '8 hours';
 
-    -- Update places_occupied in matches table
+    IF v_current_time > v_eight_hours_before_match THEN
+        RETURN jsonb_build_object('success', false, 'code', 'TOO_LATE_TO_REMOVE', 'metadata', jsonb_build_object('canRequestSubstitute', true));
+    END IF;
+
+    -- Remove the temporary player
+    DELETE FROM temporary_players
+    WHERE id = p_temporary_player_id AND match_id = p_match_id AND added_by = p_user_id;
+
+    -- Update the places occupied
     UPDATE matches
-    SET places_occupied = v_updated_places_occupied
-    WHERE id = p_match_id;
+    SET places_occupied = places_occupied - 1
+    WHERE id = p_match_id
+    RETURNING places_occupied INTO v_updated_places_occupied;
 
     -- Check if the user has any remaining friends in this match
     SELECT COUNT(*) INTO v_remaining_friends
@@ -158,13 +124,28 @@ BEGIN
         WHERE match_id = p_match_id AND user_id = p_user_id;
     END IF;
 
-    -- Return success message
-    RETURN jsonb_build_object('success', true, 'code', 'FRIEND_REMOVED_SUCCESSFULLY');
+    RETURN jsonb_build_object(
+        'success', true, 
+        'code', 'FRIEND_REMOVED_SUCCESSFULLY',
+        'metadata', jsonb_build_object(
+            'updated_places_occupied', v_updated_places_occupied,
+            'remaining_friends', v_remaining_friends
+        )
+    );
 
 EXCEPTION
     WHEN OTHERS THEN
-        RETURN jsonb_build_object('success', false, 'code', 'UNEXPECTED_ERROR', 'details', SQLERRM);
+        RETURN jsonb_build_object(
+            'success', false, 
+            'code', 'UNEXPECTED_ERROR', 
+            'message', SQLERRM,
+            'sqlstate', SQLSTATE,
+            'detail', COALESCE(SQLERRM, 'Unknown error'),
+            'context', 'remove_temporary_player function'
+        );
 END;
-$$ LANGUAGE plpgsql;
+$$;
+
+GRANT EXECUTE ON FUNCTION remove_temporary_player(UUID, UUID, UUID) TO anon, authenticated;
 
 */

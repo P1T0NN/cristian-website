@@ -44,7 +44,6 @@ export const PlayerItem = async ({
                     isAdmin={isAdmin}
                     currentUserMatchAdmin={currentUserMatchAdmin}
                     teamNumber={teamNumber}
-                    currentUserId={currentUserId}
                     isDefaultTeam={isDefaultTeam as boolean}
                 />
             ) : (
@@ -59,18 +58,18 @@ export const PlayerItem = async ({
                 />
             )}
 
-            <UserActions
-                authToken={authToken}
-                matchId={matchId}
-                teamNumber={teamNumber}
-                player={player}
-                isCurrentUser={isCurrentUser}
-                isUserInMatch={isUserInMatch}
-                isAdmin={isAdmin}
-            />
-
-            {player.temporaryPlayer && (
+            {player.temporaryPlayer ? (
                 <TemporaryPlayerActions
+                    authToken={authToken}
+                    matchId={matchId}
+                    teamNumber={teamNumber}
+                    player={player}
+                    currentUserId={currentUserId}
+                    isUserInMatch={isUserInMatch}
+                    isAdmin={isAdmin}
+                />
+            ) : (
+                <UserActions
                     authToken={authToken}
                     matchId={matchId}
                     teamNumber={teamNumber}
@@ -78,7 +77,7 @@ export const PlayerItem = async ({
                     isCurrentUser={isCurrentUser}
                     isUserInMatch={isUserInMatch}
                     isAdmin={isAdmin}
-                />
+                /> 
             )}
         </div>
     )

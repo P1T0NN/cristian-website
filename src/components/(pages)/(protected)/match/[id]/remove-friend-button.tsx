@@ -1,7 +1,7 @@
 "use client"
 
 // REACTJS IMPORTS
-import { useTransition } from "react";
+import { useTransition, useState } from "react";
 
 // LIBRARIES
 import { useTranslations } from "next-intl";
@@ -10,60 +10,91 @@ import { useTranslations } from "next-intl";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 
 // SERVER ACTIONS
 import { removeFriend } from "@/actions/server_actions/mutations/match/removeFriend";
 
-// TYPES
-import type { typesUser } from "@/types/typesUser";
-
 // LUCIDE ICONS
-import { X } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
 
 type RemoveFriendButtonProps = {
     authToken: string;
     matchId: string;
-    player: typesUser;
+    temporaryPlayerId: string;
+    setShowSubstituteDialog: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const RemoveFriendButton = ({
     authToken,
     matchId,
-    player
+    temporaryPlayerId,
+    setShowSubstituteDialog
 }: RemoveFriendButtonProps) => {
     const t = useTranslations("MatchPage");
-
     const [isPending, startTransition] = useTransition();
+    
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const handleRemoveTemporaryPlayer = () => {
         startTransition(async () => {
-            const result = await removeFriend(authToken, matchId, player.temporaryPlayer!.id);
+            const response = await removeFriend(authToken, matchId, temporaryPlayerId);
 
-            if (result.success) {
-                toast.success(result.message);
+            if (response.success) {
+                toast.success(response.message);
+            } else if (response.metadata && response.metadata.canRequestSubstitute) {
+                setShowSubstituteDialog(true);
             } else {
-                toast.error(result.message);
+                toast.error(response.message);
             }
+            setIsDialogOpen(false);
         });
     };
 
     return (
-        <TooltipProvider>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={handleRemoveTemporaryPlayer}
-                        disabled={isPending}
-                    >
-                        <X size={14} />
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <DialogTrigger asChild>
+                            <Button
+                                variant="destructive"
+                                size="sm"
+                                disabled={isPending}
+                            >
+                                {isPending ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                    <X size={14} />
+                                )}
+                            </Button>
+                        </DialogTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>{t('removeTemporaryPlayer')}</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>{t('confirmRemoveFriendTitle')}</DialogTitle>
+                    <DialogDescription>{t('confirmRemoveFriendDescription')}</DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                    <Button variant="outline" onClick={() => setIsDialogOpen(false)}>{t('cancel')}</Button>
+                    <Button variant="destructive" onClick={handleRemoveTemporaryPlayer} disabled={isPending}>
+                        {isPending ? t('removing') : t('confirm')}
                     </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                    <p>{t('removeTemporaryPlayer')}</p>
-                </TooltipContent>
-            </Tooltip>
-        </TooltipProvider>
-    )
-}
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+};

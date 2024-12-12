@@ -8,13 +8,12 @@ import { HasPaidButton } from "./has-paid-button";
 import { HasDiscountButton } from "./has-discount-button";
 import { HasGratisButton } from "./has-gratis-button";
 import { SwitchTeamButton } from "./switch-team-button";
-import { RemoveFriendButton } from "./remove-friend-button";
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
 
 // LUCIDE ICONS
-import { Percent, Phone } from 'lucide-react';
+import { Percent, Phone, UserMinus } from 'lucide-react';
 
 type TemporaryPlayerInfoProps = {
     authToken: string;
@@ -23,7 +22,6 @@ type TemporaryPlayerInfoProps = {
     isAdmin: boolean;
     currentUserMatchAdmin: boolean;
     teamNumber: 0 | 1 | 2;
-    currentUserId: string;
     isDefaultTeam: boolean;
 }
 
@@ -34,7 +32,6 @@ export const TemporaryPlayerInfo = async ({
     isAdmin,
     currentUserMatchAdmin,
     teamNumber,
-    currentUserId,
     isDefaultTeam
 }: TemporaryPlayerInfoProps) => {
     const t = await getTranslations("MatchPage");
@@ -57,7 +54,6 @@ export const TemporaryPlayerInfo = async ({
     };
 
     const displayName = getDisplayName(player.temporaryPlayer?.name || '');
-    const canRemoveTemporaryPlayer = player.temporaryPlayer?.added_by === currentUserId || isAdmin;
 
     return (
         <div className="flex flex-col w-full sm:w-auto">
@@ -93,12 +89,17 @@ export const TemporaryPlayerInfo = async ({
                         </p>
                     )}
                 </div>
-                {canRemoveTemporaryPlayer && (
-                    <RemoveFriendButton
-                        authToken={authToken}
-                        matchId={matchId}
-                        player={player}
-                    />
+                {player.temporaryPlayer?.substitute_requested && (
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <UserMinus className="text-yellow-500" size={20} />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>{t('substituteRequested')}</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
                 )}
             </div>
             {showPaymentControls && (
