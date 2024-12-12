@@ -6,7 +6,6 @@ import { revalidatePath } from 'next/cache';
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
-import { jwtVerify } from 'jose';
 
 // SERVICES
 import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
@@ -14,50 +13,45 @@ import { upstashRedisCacheService } from '@/services/server/redis-cache.service'
 // CONFIG
 import { CACHE_KEYS } from '@/config';
 
+// ACTIONS
+import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
+
 // TYPES
 import { RPCResponseData } from '@/types/responses/RPCResponseData';
 
 export async function sortTeams(authToken: string, matchId: string) {
     const t = await getTranslations("GenericMessages");
 
-    if (!authToken || !matchId) {
-        return { success: false, message: t(authToken ? 'MATCH_ID_INVALID' : 'UNAUTHORIZED') };
+    const { isAuth } = await verifyAuth(authToken);
+                
+    if (!isAuth) {
+        return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    try {
-        const verifyResult = await jwtVerify(
-            authToken, 
-            new TextEncoder().encode(process.env.JWT_SECRET)
-        );
-        
-        if (!verifyResult) {
-            return { success: false, message: t('JWT_DECODE_ERROR') };
-        }
-
-        // Call the Supabase RPC function
-        const { data, error } = await supabase.rpc('sort_teams', {
-            p_match_id: matchId
-        });
-        const result = data as RPCResponseData;
-
-        if (error) {
-            console.error('Error in sort_teams RPC:', error);
-            return { success: false, message: t('TEAMS_SORT_FAILED'), error: error.message };
-        }
-
-        if (!result.success) {
-            console.error('RPC function returned failure:', result);
-            return { success: false, message: t(result.code, result.metadata) };
-        }
-
-        await upstashRedisCacheService.delete(`${CACHE_KEYS.MATCH_PREFIX}${matchId}`);
-        revalidatePath("/");
-
-        return { success: true, message: t(result.code, result.metadata) };
-    } catch (error) {
-        console.error('Unexpected error in sortTeams:', error);
-        return { success: false, message: t('UNEXPECTED_ERROR'), error: error instanceof Error ? error.message : 'Unknown error' };
+    if (!matchId) {
+        return { success: false, message: t('MATCH_ID_INVALID') };
     }
+
+    // Call the Supabase RPC function
+    const { data, error } = await supabase.rpc('sort_teams', {
+        p_match_id: matchId
+    });
+    const result = data as RPCResponseData;
+
+    if (error) {
+        console.error('Error in sort_teams RPC:', error);
+        return { success: false, message: t('TEAMS_SORT_FAILED'), error: error.message };
+    }
+
+    if (!result.success) {
+        console.error('RPC function returned failure:', result);
+        return { success: false, message: t(result.code, result.metadata) };
+    }
+
+    await upstashRedisCacheService.delete(`${CACHE_KEYS.MATCH_PREFIX}${matchId}`);
+    revalidatePath("/");
+
+    return { success: true, message: t(result.code, result.metadata) };
 }
 
 /*

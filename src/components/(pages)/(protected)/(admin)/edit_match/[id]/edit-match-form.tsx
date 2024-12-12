@@ -111,6 +111,18 @@ export const EditMatchForm = ({
         { value: 'Mixed', label: t('genderMixed') }
     ];
 
+    const toggleMatchLevel = (level: string) => {
+        const currentLevels = formData.match_level.split('');
+        const updatedLevels = currentLevels.includes(level)
+            ? currentLevels.filter(l => l !== level)
+            : [...currentLevels, level].sort();
+        handleInputChange({
+            target: { name: 'match_level', value: updatedLevels.join('') }
+        } as React.ChangeEvent<HTMLInputElement>);
+    };
+
+    const isLevelActive = (level: string) => formData.match_level.includes(level);
+
     return (
         <div className="flex flex-col space-y-4">
             <LocationField
@@ -143,6 +155,27 @@ export const EditMatchForm = ({
                     placeholder={t('matchDurationPlaceholder')}
                     error={errors.match_duration}
                 />
+
+                <div className="space-y-2">
+                    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        {t("matchLevel")}
+                    </label>
+                    <div className="flex space-x-2">
+                        {['A', 'B', 'C', 'D'].map((level) => (
+                            <Button
+                                key={level}
+                                type="button"
+                                variant={isLevelActive(level) ? "default" : "outline"}
+                                onClick={() => toggleMatchLevel(level)}
+                            >
+                                {level}
+                            </Button>
+                        ))}
+                    </div>
+                    {errors.match_level && (
+                        <p className="text-sm text-red-500 mt-1">{errors.match_level}</p>
+                    )}
+                </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

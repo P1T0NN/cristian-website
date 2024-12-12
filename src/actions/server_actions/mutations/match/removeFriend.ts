@@ -4,7 +4,6 @@
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
-import { jwtVerify } from 'jose';
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
@@ -14,23 +13,24 @@ import { upstashRedisCacheService } from '@/services/server/redis-cache.service'
 // CONFIG
 import { CACHE_KEYS } from '@/config';
 
+// ACTIONS
+import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
+
 // TYPES
 import type { RPCResponseData } from '@/types/responses/RPCResponseData';
 
 export async function removeFriend(authToken: string, matchId: string, temporaryPlayerId: string) {
     const t = await getTranslations("GenericMessages");
 
-    if (!authToken) {
-        return { success: false, message: t('UNAUTHORIZED') }
+    const { isAuth, userId } = await verifyAuth(authToken);
+                
+    if (!isAuth) {
+        return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    const { payload } = await jwtVerify(authToken, new TextEncoder().encode(process.env.JWT_SECRET));
-
-    if (!payload || typeof payload.sub !== 'string') {
-        return { success: false, message: t('JWT_DECODE_ERROR') };
+    if (!matchId) {
+        return { success: false, message: t('MATCH_ID_INVALID') };
     }
-
-    const userId = payload.sub;
 
     // Check if the user is an admin
     const { data: userData, error: userError } = await supabase

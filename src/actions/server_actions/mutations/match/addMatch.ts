@@ -6,7 +6,9 @@ import { revalidatePath } from 'next/cache';
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
-import { jwtVerify } from 'jose';
+
+// ACTIONS
+import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
 
 // TYPES
 import type { typesAddMatchForm } from '@/types/forms/AddMatchForm';
@@ -14,14 +16,10 @@ import type { typesAddMatchForm } from '@/types/forms/AddMatchForm';
 export async function addMatch(authToken: string, addMatchData: typesAddMatchForm) {
     const genericMessages = await getTranslations("GenericMessages");
 
-    if (!authToken) {
-        return { success: false, message: genericMessages('UNAUTHORIZED') }
-    }
-
-    const { payload } = await jwtVerify(authToken, new TextEncoder().encode(process.env.JWT_SECRET));
-
-    if (!payload) {
-        return { success: false, message: genericMessages('JWT_DECODE_ERROR') };
+    const { isAuth } = await verifyAuth(authToken);
+    
+    if (!isAuth) {
+        return { success: false, message: genericMessages('UNAUTHORIZED') };
     }
 
     // Convert match_level to uppercase

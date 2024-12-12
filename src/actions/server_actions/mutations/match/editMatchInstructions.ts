@@ -6,10 +6,12 @@ import { revalidatePath } from "next/cache";
 // LIBRARIES
 import { getTranslations } from "next-intl/server";
 import { supabase } from "@/lib/supabase/supabase";
-import { jwtVerify } from "jose";
 
 // SERVICES
 import { upstashRedisCacheService } from "@/services/server/redis-cache.service";
+
+// ACTIONS
+import { verifyAuth } from "@/actions/actions/auth/verifyAuth";
 
 // CONFIG
 import { CACHE_KEYS } from "@/config";
@@ -21,14 +23,10 @@ export const editMatchInstructions = async (
 ) => {
     const genericMessages = await getTranslations("GenericMessages");
 
-    if (!authToken) {
-        return { success: false, message: genericMessages('UNAUTHORIZED') }
-    }
-
-    const { payload } = await jwtVerify(authToken, new TextEncoder().encode(process.env.JWT_SECRET));
-
-    if (!payload) {
-        return { success: false, message: genericMessages('JWT_DECODE_ERROR') };
+   const { isAuth } = await verifyAuth(authToken);
+       
+    if (!isAuth) {
+        return { success: false, message: genericMessages('UNAUTHORIZED') };
     }
 
     if (!matchId) {

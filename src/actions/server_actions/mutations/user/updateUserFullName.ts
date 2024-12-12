@@ -5,7 +5,6 @@ import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
 import { getTranslations } from 'next-intl/server';
-import { jwtVerify } from 'jose';
 import { supabase } from '@/lib/supabase/supabase';
 
 // CONFIG
@@ -14,22 +13,19 @@ import { CACHE_KEYS } from '@/config';
 // SERVICES
 import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
 
+// ACTIONS
+import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
+
 const CACHE_TTL = 300; // 5 minutes in seconds
 
 export async function updateUserFullName(authToken: string, fullName: string) {
     const genericMessages = await getTranslations("GenericMessages");
 
-    if (!authToken) {
+    const { isAuth, userId } = await verifyAuth(authToken);
+                        
+    if (!isAuth) {
         return { success: false, message: genericMessages('UNAUTHORIZED') };
     }
-
-    const { payload } = await jwtVerify(authToken, new TextEncoder().encode(process.env.JWT_SECRET)).catch(() => ({ payload: null }));
-
-    if (!payload) {
-        return { success: false, message: genericMessages('JWT_DECODE_ERROR') };
-    }
-
-    const userId = payload.sub;
 
     if (!fullName) {
         return { success: false, message: genericMessages('FULL_NAME_REQUIRED') };

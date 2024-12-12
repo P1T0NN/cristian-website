@@ -6,13 +6,15 @@ import { revalidatePath } from 'next/cache';
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
-import { jwtVerify } from 'jose';
 
 // CONFIG
 import { CACHE_KEYS } from '@/config';
 
 // SERVICES
 import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
+
+// ACTIONS
+import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
 
 // In match_players table when we delete match we run this SQL:
 //  ALTER TABLE match_players
@@ -31,14 +33,10 @@ ON DELETE CASCADE;
 export async function deleteMatch(authToken: string, matchId: string) {
     const genericMessages = await getTranslations("GenericMessages");
 
-    if (!authToken) {
+    const { isAuth } = await verifyAuth(authToken);
+    
+    if (!isAuth) {
         return { success: false, message: genericMessages('UNAUTHORIZED') };
-    }
-
-    const { payload } = await jwtVerify(authToken, new TextEncoder().encode(process.env.JWT_SECRET));
-
-    if (!payload || typeof payload.sub !== 'string') {
-        return { success: false, message: genericMessages('JWT_DECODE_ERROR') };
     }
 
     if (!matchId) {

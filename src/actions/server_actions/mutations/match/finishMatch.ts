@@ -6,13 +6,15 @@ import { revalidatePath } from 'next/cache';
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
-import { jwtVerify } from 'jose';
 
 // SERVICES
 import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
 
 // CONFIG
 import { CACHE_KEYS } from '@/config';
+
+// ACTIONS
+import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
 
 // TYPES
 // We need this type because of how supabase.rpc returns messages
@@ -21,14 +23,14 @@ import { RPCResponseData } from '@/types/responses/RPCResponseData';
 export async function finishMatch(authToken: string, matchId: string) {
     const t = await getTranslations("GenericMessages");
 
-    if (!authToken || !matchId) {
-        return { success: false, message: t(authToken ? 'MATCH_ID_INVALID' : 'UNAUTHORIZED') };
+    const { isAuth } = await verifyAuth(authToken);
+        
+    if (!isAuth) {
+        return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    try {
-        await jwtVerify(authToken, new TextEncoder().encode(process.env.JWT_SECRET));
-    } catch {
-        return { success: false, message: t('JWT_DECODE_ERROR') };
+    if (!matchId) {
+        return { success: false, message: t('MATCH_ID_INVALID') };
     }
 
     const { data, error } = await supabase.rpc('finish_match', {

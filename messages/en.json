@@ -233,7 +233,7 @@
         "finishConfirmTitle": "Are you sure you want to finish this match?",
         "finishConfirmDescription": "This action will move the match to the history and remove it from active matches. This cannot be undone.",
         "joinTeamConfirmTitle": "Confirm Team Join",
-        "joinTeamConfirmDescription": "By joining the team, you accept that you will pay for this match in cash. Are you sure you want to join the team?",
+        "joinTeamConfirmDescription": "By joining the team, you accept that you will pay for this match in cash or with your money balance if you have. Are you sure you want to join the team?",
         "confirmJoin": "Yes, Join Team",
         "substituteRequestTitle": "Request Substitute",
         "substituteRequestDescription": "It's too late to leave the team. Would you like to request a substitute?",
@@ -299,6 +299,8 @@
         "confirmRemoveDescription": "Are you sure you want to remove this player? This action cannot be undone.",
         "remove": "Remove",
         "replaceTemporaryPlayerConfirmationMessage": "Are you sure you want to replace this temporary player?",
+        "organizador": "Organizer",
+        "organizadorTooltip": "This player is a match organizer",
         "MatchFAQ": {
             "title": "Frequently Asked Questions",
             "startTimeDuration": {

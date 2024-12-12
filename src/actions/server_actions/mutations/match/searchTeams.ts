@@ -3,7 +3,9 @@
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
-import { jwtVerify } from 'jose';
+
+// ACTIONS
+import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
 
 // TYPES
 type SearchResult = {
@@ -13,14 +15,10 @@ type SearchResult = {
 export async function searchTeams(authToken: string, query: string): Promise<{ success: boolean; message?: string; data?: SearchResult }> {
     const genericMessages = await getTranslations("GenericMessages")
 
-    if (!authToken) {
-        return { success: false, message: genericMessages('UNAUTHORIZED') }
-    }
-
-    const { payload } = await jwtVerify(authToken, new TextEncoder().encode(process.env.JWT_SECRET))
-
-    if (!payload) {
-        return { success: false, message: genericMessages('JWT_DECODE_ERROR') }
+    const { isAuth } = await verifyAuth(authToken);
+                
+    if (!isAuth) {
+        return { success: false, message: genericMessages('UNAUTHORIZED') };
     }
 
     // Search for teams

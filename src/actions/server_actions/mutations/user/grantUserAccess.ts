@@ -6,7 +6,9 @@ import { revalidatePath } from 'next/cache';
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
-import { jwtVerify } from 'jose';
+
+// ACTIONS
+import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
 
 // TYPES
 import type { APIResponse } from '@/types/responses/APIResponse';
@@ -14,14 +16,10 @@ import type { APIResponse } from '@/types/responses/APIResponse';
 export async function grantUserAccess(authToken: string, userId: string): Promise<APIResponse> {
     const t = await getTranslations("GenericMessages");
 
-    if (!authToken) {
+    const { isAuth } = await verifyAuth(authToken);
+                        
+    if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
-    }
-
-    try {
-        await jwtVerify(authToken, new TextEncoder().encode(process.env.JWT_SECRET));
-    } catch {
-        return { success: false, message: t('JWT_DECODE_ERROR') };
     }
 
     if (!userId) {

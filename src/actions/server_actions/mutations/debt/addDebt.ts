@@ -6,7 +6,9 @@ import { revalidatePath } from 'next/cache';
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
-import { jwtVerify } from 'jose';
+
+// ACTIONS
+import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
 
 // TYPES
 import type { typesAddDebtForm } from '@/types/forms/AddDebtForm';
@@ -16,14 +18,10 @@ export async function addDebt(authToken: string, addDebtData: typesAddDebtForm) 
     const genericMessages = await getTranslations("GenericMessages");
     const fetchMessages = await getTranslations("FetchMessages");
 
-    if (!authToken) {
-        return { success: false, message: genericMessages('UNAUTHORIZED') }
-    }
-
-    const { payload } = await jwtVerify(authToken, new TextEncoder().encode(process.env.JWT_SECRET));
-
-    if (!payload) {
-        return { success: false, message: genericMessages('JWT_DECODE_ERROR') };
+    const { isAuth } = await verifyAuth(authToken);
+                        
+    if (!isAuth) {
+        return { success: false, message: genericMessages('UNAUTHORIZED') };
     }
 
     // Parallel execution of debt insertion and user fetch

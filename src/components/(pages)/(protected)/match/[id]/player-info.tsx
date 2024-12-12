@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 // COMPONENTS
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
 import { HasPaidButton } from "./has-paid-button";
 import { HasDiscountButton } from "./has-discount-button";
 import { HasGratisButton } from "./has-gratis-button";
@@ -85,6 +86,20 @@ export const PlayerInfo = async ({
                             </TooltipProvider>
                         )}
                         {displayName}
+                        {player.matchPlayer?.has_match_admin && (
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger>
+                                        <Badge variant="secondary" className="ml-2">
+                                            {t('organizador')}
+                                        </Badge>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>{t('organizadorTooltip')}</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        )}
                         {(isAdmin || currentUserMatchAdmin) && hasEnteredWithBalance && (
                             <TooltipProvider>
                                 <Tooltip>

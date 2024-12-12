@@ -4,9 +4,11 @@
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
-import { jwtVerify } from 'jose';
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
+
+// ACTIONS
+import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
 
 export async function updatePaymentStatus(
     authToken: string,
@@ -20,14 +22,10 @@ export async function updatePaymentStatus(
 ) {
     const genericMessages = await getTranslations("GenericMessages");
 
-    if (!authToken) {
+    const { isAuth, userId } = await verifyAuth(authToken);
+                        
+    if (!isAuth) {
         return { success: false, message: genericMessages('UNAUTHORIZED') };
-    }
-
-    const { payload } = await jwtVerify(authToken, new TextEncoder().encode(process.env.JWT_SECRET));
-
-    if (!payload) {
-        return { success: false, message: genericMessages('JWT_DECODE_ERROR') };
     }
 
     if (!matchId || !playerId || typeof hasPaid !== 'boolean' || typeof hasDiscount !== 'boolean' || typeof hasGratis !== 'boolean') {
@@ -38,7 +36,7 @@ export async function updatePaymentStatus(
     const { data: userData, error: userError } = await supabase
         .from('users')
         .select('isAdmin')
-        .eq('id', payload.sub)
+        .eq('id', userId)
         .single();
 
     const isAuthorized = 

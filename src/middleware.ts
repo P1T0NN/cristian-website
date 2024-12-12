@@ -121,10 +121,8 @@ export async function middleware(request: NextRequest) {
                     maxAge: DEFAULT_JWT_EXPIRATION_TIME,
                     path: '/'
                 });
-            } else {
-                return NextResponse.redirect(new URL('/login', request.url));
+                return response;
             }
-            return response;
         }
 
         if (!validToken) {

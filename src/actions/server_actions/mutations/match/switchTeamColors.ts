@@ -6,12 +6,15 @@ import { revalidatePath } from 'next/cache'
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
-import { jwtVerify } from 'jose';
 
 // SERVICES
 import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
 
-const MATCH_CACHE_KEY_PREFIX = 'match:';
+// CONFIG
+import { CACHE_KEYS } from '@/config';
+
+// ACTIONS
+import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
 
 export async function switchTeamColors(
     authToken: string,
@@ -20,14 +23,14 @@ export async function switchTeamColors(
 ) {
     const genericMessages = await getTranslations("GenericMessages");
 
-    if (!authToken) {
-        return { success: false, message: genericMessages('UNAUTHORIZED') }
+    const { isAuth } = await verifyAuth(authToken);
+                    
+    if (!isAuth) {
+        return { success: false, message: genericMessages('UNAUTHORIZED') };
     }
 
-    const { payload } = await jwtVerify(authToken, new TextEncoder().encode(process.env.JWT_SECRET));
-
-    if (!payload) {
-        return { success: false, message: genericMessages('JWT_DECODE_ERROR') };
+    if (!matchId) {
+        return { success: false, message: genericMessages('MATCH_ID_INVALID') };
     }
 
     // Fetch current match data
@@ -66,7 +69,7 @@ export async function switchTeamColors(
     }
 
     // Invalidate the specific match cache
-    await upstashRedisCacheService.delete(`${MATCH_CACHE_KEY_PREFIX}${matchId}`);
+    await upstashRedisCacheService.delete(`${CACHE_KEYS.MATCH_PREFIX}${matchId}`);
 
     revalidatePath("/");
 

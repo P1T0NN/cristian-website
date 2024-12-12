@@ -121,7 +121,7 @@ export const TemporaryPlayerInfo = async ({
                         currentUserMatchAdmin={currentUserMatchAdmin}
                         player={player}
                     />
-                    {isAdmin && teamNumber !== 0 && !isDefaultTeam && (
+                    {isAdmin && teamNumber !== 0 && isDefaultTeam && (
                         <SwitchTeamButton
                             authToken={authToken}
                             matchId={matchId}

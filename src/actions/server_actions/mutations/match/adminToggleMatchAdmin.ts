@@ -4,12 +4,14 @@
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
-import { jwtVerify } from 'jose';
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
 // SERVICES
 import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
+
+// ACTIONS
+import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
 
 // CONFIG
 import { CACHE_KEYS } from '@/config';
@@ -21,14 +23,10 @@ export async function adminToggleMatchAdmin(
 ) {
     const genericMessages = await getTranslations("GenericMessages");
 
-    if (!authToken) {
+    const { isAuth, userId } = await verifyAuth(authToken);
+    
+    if (!isAuth) {
         return { success: false, message: genericMessages('UNAUTHORIZED') };
-    }
-
-    const { payload } = await jwtVerify(authToken, new TextEncoder().encode(process.env.JWT_SECRET!));
-
-    if (!payload) {
-        return { success: false, message: genericMessages('JWT_DECODE_ERROR') };
     }
 
     if (!matchId || !playerId) {
@@ -39,7 +37,7 @@ export async function adminToggleMatchAdmin(
     const { data: userData, error: userError } = await supabase
         .from('users')
         .select('isAdmin')
-        .eq('id', payload.sub)
+        .eq('id', userId)
         .single();
 
     if (userError || !userData || !userData.isAdmin) {

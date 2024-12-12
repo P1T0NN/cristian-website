@@ -233,7 +233,7 @@
         "finishConfirmTitle": "¿Estás seguro de que quieres finalizar este partido?",
         "finishConfirmDescription": "Esta acción moverá el partido al historial y lo eliminará de los partidos activos. Esto no se puede deshacer.",
         "joinTeamConfirmTitle": "Confirmar unión al equipo",
-        "joinTeamConfirmDescription": "Al unirte al equipo, aceptas que pagarás este partido en efectivo. ¿Estás seguro de que quieres unirte al equipo?",
+        "joinTeamConfirmDescription": "Al unirte al equipo, aceptas que pagarás por este partido en efectivo o con tu saldo de dinero si lo tienes. ¿Estás seguro de que quieres unirte al equipo?",
         "confirmJoin": "Sí, unirme al equipo",
         "substituteRequestTitle": "Solicitar Sustituto",
         "substituteRequestDescription": "Es demasiado tarde para abandonar el equipo. ¿Deseas solicitar un sustituto?",
@@ -301,6 +301,8 @@
         "confirmRemoveDescription": "¿Estás seguro de que quieres eliminar a este jugador? Esta acción no se puede deshacer.",
         "remove": "Eliminar",
         "replaceTemporaryPlayerConfirmationMessage": "¿Estás seguro de que quieres reemplazar a este jugador temporal?",
+        "organizador": "Organizador",
+        "organizadorTooltip": "Este jugador es un organizador del partido",
         "MatchFAQ": {
             "title": "Preguntas Frecuentes",
             "startTimeDuration": {

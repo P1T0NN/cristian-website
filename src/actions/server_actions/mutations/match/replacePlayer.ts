@@ -4,9 +4,11 @@
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
-import { jwtVerify } from 'jose';
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
+
+// ACTIONS
+import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
 
 // TYPES
 import type { RPCResponseData } from '@/types/responses/RPCResponseData';
@@ -14,19 +16,14 @@ import type { RPCResponseData } from '@/types/responses/RPCResponseData';
 export async function replacePlayer(authToken: string, matchId: string, userId: string, teamNumber: number) {
     const t = await getTranslations("GenericMessages");
 
-    if (!authToken) {
-        return { success: false, message: t('UNAUTHORIZED') }
+    const { isAuth, userId: authUserId } = await verifyAuth(authToken);
+                
+    if (!isAuth) {
+        return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    let authUserId: string;
-    try {
-        const { payload } = await jwtVerify(authToken, new TextEncoder().encode(process.env.JWT_SECRET));
-        if (!payload || typeof payload.sub !== 'string') {
-            return { success: false, message: t('JWT_DECODE_ERROR') };
-        }
-        authUserId = payload.sub;
-    } catch {
-        return { success: false, message: t('JWT_DECODE_ERROR') };
+    if (!matchId) {
+        return { success: false, message: t('MATCH_ID_INVALID') };
     }
 
     const { data, error } = await supabase.rpc('replace_player', {
