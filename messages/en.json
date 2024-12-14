@@ -513,9 +513,14 @@
     },
 
     "ActiveMatchesPage": {
-        "activeMatches": "Active Matches",
         "noActiveMatches": "You have no active matches",
-        "placesLeft": "places left"
+        "activeMatches": "Active Matches",
+        "placesLeft": "places left",
+        "matchCompleted": "Match completed",
+        "lastPlacesLeft": "Last places!",
+        "minutes": "minutes",
+        "matchLevel": "Level",
+        "organizer": "Organizer"
     },
 
     "VerifyEmailPage": {

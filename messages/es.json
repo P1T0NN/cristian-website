@@ -515,9 +515,14 @@
     },
 
     "ActiveMatchesPage": {
-        "activeMatches": "Estás apuntado en los próximos Partidos",
         "noActiveMatches": "No tienes partidos activos",
-        "placesLeft": "plazas disponibles"
+        "activeMatches": "Estás apuntado en los próximos Partidos",
+        "placesLeft": "plazas disponibles",
+        "matchCompleted": "Partido completo",
+        "lastPlacesLeft": "¡Últimas plazas!",
+        "minutes": "minutos",
+        "matchLevel": "Nivel",
+        "organizer": "Organizador"
     },
 
     "VerifyEmailPage": {

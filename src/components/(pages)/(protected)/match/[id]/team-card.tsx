@@ -109,7 +109,7 @@ export const TeamCard = async ({
                     </div>
                 )}
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-2">
                 {isDefaultTeam && sortedPlayers.map((player) => (
                      <PlayerItem
                         key={player.id}

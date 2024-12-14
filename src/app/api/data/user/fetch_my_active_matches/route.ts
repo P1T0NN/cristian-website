@@ -32,7 +32,6 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse<typesM
         return NextResponse.json({ success: false, message: genericMessages('USER_ID_REQUIRED') });
     }
 
-    // Step 1: Fetch match IDs for the user from match_players
     const { data: matchPlayers, error: matchPlayersError } = await supabase
         .from('match_players')
         .select('match_id')
@@ -44,7 +43,6 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse<typesM
 
     const matchIds = matchPlayers.map(mp => mp.match_id);
 
-    // Get current date in UTC
     const currentDate = new Date().toISOString().split('T')[0];
 
     // Step 2: Fetch match data for the retrieved match IDs with date filter

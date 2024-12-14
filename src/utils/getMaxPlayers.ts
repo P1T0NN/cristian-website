@@ -53,7 +53,7 @@ export const getTeamStatus = (
     const isPlayerList = !teamName;
     const defaultTeam = teamName ? isDefaultTeam(teamName) : false;
     const maxPlayers = getMaxPlayers(matchType, isPlayerList);
-    const currentPlayers = getCurrentPlayers(players);
+    let currentPlayers = getCurrentPlayers(players);
 
     let availablePlaces: number;
     let blockedSpots: number;
@@ -67,6 +67,7 @@ export const getTeamStatus = (
     } else {
         availablePlaces = maxPlayers;
         blockedSpots = 0;
+        currentPlayers = maxPlayers;
     }
 
     const full = isTeamFull(currentPlayers, availablePlaces);
