@@ -69,7 +69,7 @@ export function AddFriendButton({
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline">{buttonText}</Button>
+                <Button variant="outline" className='w-full'>{buttonText}</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>

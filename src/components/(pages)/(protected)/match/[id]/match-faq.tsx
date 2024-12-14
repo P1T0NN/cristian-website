@@ -157,12 +157,6 @@ export const MatchFAQ = async () => {
                 <div className="mt-8 space-y-4">
                     <h3 className="text-lg font-semibold">{t('contact.title')}</h3>
                     <p>{t('contact.message')}</p>
-                    <div className="space-y-2">
-                        <p className="flex items-center">
-                            <Mail className="mr-2 h-4 w-4" />
-                            <span className="font-medium">{t('contact.email')}:</span> nitageorge89@gmail.com
-                        </p>
-                    </div>
                     <div className="flex space-x-4">
                         <Button asChild variant="outline">
                             <a href="https://wa.me/+34661180764" target="_blank" rel="noopener noreferrer">

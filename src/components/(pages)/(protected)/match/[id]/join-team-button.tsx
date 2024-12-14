@@ -72,7 +72,6 @@ export const JoinTeamButton = ({
         <AlertDialog>
             <AlertDialogTrigger asChild>
                 <Button 
-                    className="w-full"
                     disabled={isPending}
                 >
                     {buttonText}

@@ -39,12 +39,10 @@ export async function sortTeams(authToken: string, matchId: string) {
     const result = data as RPCResponseData;
 
     if (error) {
-        console.error('Error in sort_teams RPC:', error);
         return { success: false, message: t('TEAMS_SORT_FAILED'), error: error.message };
     }
 
     if (!result.success) {
-        console.error('RPC function returned failure:', result);
         return { success: false, message: t(result.code, result.metadata) };
     }
 

@@ -84,7 +84,7 @@ export default async function MatchPage({
                         currentUserId={serverUserData.id}
                         userTeamNumber={userTeamNumber}
                         matchId={id}
-                        matchType={match.match_type}
+                        match={match}
                         isAdmin={serverUserData.isAdmin}
                         authToken={authToken}
                         isUserInMatch={isUserInMatch}
@@ -97,7 +97,7 @@ export default async function MatchPage({
                         currentUserId={serverUserData.id}
                         userTeamNumber={userTeamNumber}
                         matchId={id}
-                        matchType={match.match_type}
+                        match={match}
                         isAdmin={serverUserData.isAdmin}
                         authToken={authToken}
                         isUserInMatch={isUserInMatch}
@@ -111,7 +111,7 @@ export default async function MatchPage({
                     authToken={authToken}
                     isUserInMatch={isUserInMatch}
                     isAdmin={serverUserData.isAdmin}
-                    matchType={match.match_type}
+                    match={match}
                 />
             )}
 

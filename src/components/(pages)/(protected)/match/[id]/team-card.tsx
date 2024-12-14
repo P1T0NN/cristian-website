@@ -6,12 +6,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { PlayerItem } from "./player-item";
 import { JoinTeamButton } from "./join-team-button";
 import { AddFriendButton } from "./add-friend-button";
+import { BlockSpotsButton } from "./block-spots-button";
 
 // ACTIONS
 import { serverFetchCurrentUserMatchAdmin } from "@/actions/functions/data/server/server_fetchCurrentUserMatchAdmin";
 
+// UTILS
+import { getTeamStatus } from "@/utils/getMaxPlayers";
+
 // TYPES
 import type { typesUser } from "@/types/typesUser";
+import type { typesMatch } from "@/types/typesMatch";
 
 type TeamCardProps = {
     teamName: string;
@@ -20,7 +25,7 @@ type TeamCardProps = {
     currentUserId: string;
     userTeamNumber: number | null;
     matchId: string;
-    matchType: string;
+    match: typesMatch;
     isAdmin: boolean;
     authToken: string;
     isUserInMatch: boolean;
@@ -33,33 +38,20 @@ export const TeamCard = async ({
     currentUserId,
     userTeamNumber,
     matchId,
-    matchType,
+    match,
     isAdmin,
     authToken,
     isUserInMatch
 }: TeamCardProps) => {
     const t = await getTranslations("MatchPage");
 
+    console.log("Blocked Spots Team1: ", match.block_spots_team1);
+    console.log("Blocked Spots Team2: ", match.block_spots_team2)
+
     const serverCurrentUserMatchAdmin = await serverFetchCurrentUserMatchAdmin(matchId);
     const currentUserMatchAdmin = serverCurrentUserMatchAdmin.data as boolean;
 
-    const getMaxPlayers = (type: string) => {
-        switch (type) {
-            case 'F7':
-                return 7;
-            case 'F8':
-                return 8;
-            case 'F11':
-                return 11;
-            default:
-                return 11;
-        }
-    };
-
-    const isDefaultTeam = teamName === "Equipo 1" || teamName === "Equipo 2";
-    const maxPlayers = getMaxPlayers(matchType);
-    const currentPlayers = isDefaultTeam ? (players?.length ?? 0) : maxPlayers;
-    const isFull = isDefaultTeam ? currentPlayers >= maxPlayers : true;
+    const { isDefaultTeam, maxPlayers, currentPlayers, isFull } = getTeamStatus(players, match.match_type, match.block_spots_team1, match.block_spots_team2, teamName);
 
     // We have to add this, because if we dont and we make player has_paid to true or any payment action, player will be moved from his current index position in team to the bottom
     // because of react rerender when using .map in here: {isDefaultTeam && players?.map((player) => (
@@ -74,23 +66,50 @@ export const TeamCard = async ({
     return (
         <Card>
             <CardHeader>
-                <CardTitle>{teamName}</CardTitle>
-                <CardDescription className="flex flex-col">
-                    {t('players')} {currentPlayers}/{maxPlayers}
-                    {!isDefaultTeam && (
-                        <span className="block text-red-500 mt-1">{t('teamIsFull')}</span>
-                    )}
-                    {isDefaultTeam && canAddFriend && (
-                        <AddFriendButton
-                            matchId={matchId}
+                <div className="flex w-full justify-between items-center">
+                    <div className="flex flex-col space-y-1">
+                        <CardTitle>{teamName}</CardTitle>
+                        <CardDescription className="flex flex-col">
+                            {t('players')} {currentPlayers}/{maxPlayers}
+                            {isDefaultTeam && (
+                                <span className="text-muted-foreground">
+                                    ({t('blockedSpots', { count: teamNumber === 1 ? match.block_spots_team1 : match.block_spots_team2 })})
+                                </span>
+                            )}
+                            {!isDefaultTeam && (
+                                <span className="block text-red-500 mt-1">{t('teamIsFull')}</span>
+                            )}
+                        </CardDescription>
+                    </div>
+                    {isDefaultTeam && !isFull && !userTeamNumber && (
+                        <JoinTeamButton
                             teamNumber={teamNumber}
+                            matchId={matchId}
+                            currentUserId={currentUserId}
                             authToken={authToken}
-                            isAdmin={isAdmin}
                         />
                     )}
-                </CardDescription>
+                </div>
+                {isDefaultTeam && canAddFriend && (
+                    <AddFriendButton
+                        matchId={matchId}
+                        teamNumber={teamNumber}
+                        authToken={authToken}
+                        isAdmin={isAdmin}
+                    />
+                )}
+
+                {isAdmin && (
+                    <div>
+                        <BlockSpotsButton
+                            authToken={authToken}
+                            matchId={matchId}
+                            teamNumber={teamNumber}
+                        />
+                    </div>
+                )}
             </CardHeader>
-            <CardContent className="space-y-2">
+            <CardContent>
                 {isDefaultTeam && sortedPlayers.map((player) => (
                      <PlayerItem
                         key={player.id}
@@ -106,15 +125,6 @@ export const TeamCard = async ({
                         isDefaultTeam={isDefaultTeam}
                     />
                 ))}
-
-                {isDefaultTeam && !isFull && !userTeamNumber && (
-                    <JoinTeamButton
-                        teamNumber={teamNumber}
-                        matchId={matchId}
-                        currentUserId={currentUserId}
-                        authToken={authToken}
-                    />
-                )}
             </CardContent>
         </Card>
     )

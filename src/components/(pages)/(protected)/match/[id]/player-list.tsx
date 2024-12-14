@@ -6,12 +6,17 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { PlayerItem } from './player-item';
 import { JoinTeamButton } from "./join-team-button";
 import { AddFriendButton } from './add-friend-button';
+import { BlockSpotsButton } from './block-spots-button';
 
 // ACTIONS
 import { serverFetchCurrentUserMatchAdmin } from '@/actions/functions/data/server/server_fetchCurrentUserMatchAdmin';
 
+// UTILS
+import { getTeamStatus } from '@/utils/getMaxPlayers';
+
 // TYPES
 import type { typesUser } from "@/types/typesUser";
+import type { typesMatch } from '@/types/typesMatch';
 
 type PlayerListProps = {
     players: typesUser[];
@@ -20,7 +25,7 @@ type PlayerListProps = {
     authToken: string;
     isUserInMatch: boolean;
     isAdmin: boolean;
-    matchType: string;
+    match: typesMatch;
 };
 
 export const PlayerList = async ({ 
@@ -30,45 +35,52 @@ export const PlayerList = async ({
     authToken, 
     isUserInMatch,
     isAdmin,
-    matchType,
+    match,
 }: PlayerListProps) => {
     const t = await getTranslations('MatchPage');
 
+    console.log("Blocked Spots Team1: ", match.block_spots_team1);
+    console.log("Blocked Spots Team2: ", match.block_spots_team2)
+
     const serverCurrentUserMatchAdmin = await serverFetchCurrentUserMatchAdmin(matchId);
     const currentUserMatchAdmin = serverCurrentUserMatchAdmin.data as boolean;
+
+    const { maxPlayers, currentPlayers, isFull } = getTeamStatus(players, match.match_type, match.block_spots_team1, match.block_spots_team2);
 
     // We have to add this, because if we dont and we make player has_paid to true or any payment action, player will be moved from his current index position in team to the bottom
     // because of react rerender when using .map in here: {isDefaultTeam && players?.map((player) => (
     const sortedPlayers = players.sort((a, b) => (a.id).localeCompare(b.id));
 
-    const getMaxPlayers = (type: string) => {
-        switch (type) {
-            case 'F7':
-                return 14;
-            case 'F8':
-                return 16;
-            case 'F11':
-                return 22;
-            default:
-                return 22;
-        }
-    };
-
-    const maxPlayers = getMaxPlayers(matchType);
-    const currentPlayers = players.length;
-
     const currentUserPlayer = players.find(player => player.id === currentUserId);
     const canAddFriend = (isUserInMatch || isAdmin) && 
-                         currentPlayers < maxPlayers && 
+                         !isFull && 
                          (isAdmin || !currentUserPlayer || !currentUserPlayer.matchPlayer?.has_added_friend);
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>{t('players')}</CardTitle>
-                <CardDescription>
-                    {t('players')} {currentPlayers}/{maxPlayers}
-                </CardDescription>
+            <CardHeader className="flex flex-col">
+                <div className="flex w-full justify-between items-center">
+                    <div className="flex flex-col space-y-1">
+                        <CardTitle>{t('players')}</CardTitle>
+                        <CardDescription>
+                            {t('players')} {currentPlayers}/{maxPlayers}
+                            <span className="text-muted-foreground">
+                                ({t('blockedSpots', { count: match.block_spots_team1 })})
+                            </span>
+                        </CardDescription>
+                    </div>
+                    {!isUserInMatch && currentPlayers < maxPlayers && (
+                        <div className="mt-4">
+                            <JoinTeamButton
+                                teamNumber={0}
+                                matchId={matchId}
+                                currentUserId={currentUserId}
+                                authToken={authToken}
+                            />
+                        </div>
+                    )}
+                </div>
+
                 {canAddFriend && (
                     <div className="mt-4">
                         <AddFriendButton
@@ -76,6 +88,16 @@ export const PlayerList = async ({
                             teamNumber={0}
                             authToken={authToken}
                             isAdmin={isAdmin}
+                        />
+                    </div>
+                )}
+
+                {isAdmin && (
+                    <div>
+                        <BlockSpotsButton
+                            authToken={authToken}
+                            matchId={matchId}
+                            teamNumber={1}
                         />
                     </div>
                 )}
@@ -97,16 +119,6 @@ export const PlayerList = async ({
                         />
                     ))}
                 </div>
-                {!isUserInMatch && currentPlayers < maxPlayers && (
-                    <div className="mt-4">
-                        <JoinTeamButton
-                            teamNumber={0}
-                            matchId={matchId}
-                            currentUserId={currentUserId}
-                            authToken={authToken}
-                        />
-                    </div>
-                )}
             </CardContent>
         </Card>
     );

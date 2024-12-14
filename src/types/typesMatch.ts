@@ -19,5 +19,6 @@ export type typesMatch = {
     created_at: Date;
     match_level: string;
     has_teams: boolean;
-    block_spots: number;
+    block_spots_team1: number;
+    block_spots_team2: number;
 };
