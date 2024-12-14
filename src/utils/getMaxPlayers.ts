@@ -53,10 +53,10 @@ export const getTeamStatus = (
 
     let availablePlaces: number;
     if (isPlayerList) {
-        availablePlaces = maxPlayers - blockSpotsTeam1;
+        availablePlaces = Math.max(maxPlayers - (blockSpotsTeam1 || 0), 0);
     } else if (defaultTeam) {
-        const blockedSpots = teamName === "Equipo 1" ? blockSpotsTeam1 : blockSpotsTeam2;
-        availablePlaces = maxPlayers - blockedSpots;
+        const blockedSpots = teamName === "Equipo 1" ? (blockSpotsTeam1 || 0) : (blockSpotsTeam2 || 0);
+        availablePlaces = Math.max(maxPlayers - blockedSpots, 0);
     } else {
         availablePlaces = maxPlayers;
     }
