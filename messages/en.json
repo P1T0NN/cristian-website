@@ -320,7 +320,8 @@
         "spotsPlaceholder": "Enter number of spots",
         "emptyFieldError": "This field cannot be empty",
         "invalidSpotsNumber": "Invalid number of spots. Please enter a valid number.",
-        "blockedSpots": "{count} blocked",
+        "blockedSpotsAdmin": "({count} blocked)",
+        "blockedSpotsUser": "({count} occupied)",
         "MatchFAQ": {
             "title": "Frequently Asked Questions",
             "startTimeDuration": {
@@ -779,6 +780,7 @@
         "TEMPORARY_PLAYER_SUBSTITUTION_REQUEST_CANCELED": "Friend substitution request canceled successfully",
 
         "SPOTS_BLOCKED_SUCCESSFULLY": "Spots blocked successfully",
+        "SPOTS_BLOCK_FAILED": "Failed to block spots!",
 
         "REDIS_CONNECTION_ERROR": "Unable to connect to the database. Please try again later.",
         "REDIS_DISCONNECTION_ERROR": "Error occurred while disconnecting from the database.",

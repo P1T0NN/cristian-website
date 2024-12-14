@@ -39,13 +39,10 @@ export const PlayerList = async ({
 }: PlayerListProps) => {
     const t = await getTranslations('MatchPage');
 
-    console.log("Blocked Spots Team1: ", match.block_spots_team1);
-    console.log("Blocked Spots Team2: ", match.block_spots_team2)
-
     const serverCurrentUserMatchAdmin = await serverFetchCurrentUserMatchAdmin(matchId);
     const currentUserMatchAdmin = serverCurrentUserMatchAdmin.data as boolean;
 
-    const { maxPlayers, currentPlayers, isFull } = getTeamStatus(players, match.match_type, match.block_spots_team1, match.block_spots_team2);
+    const { maxPlayers, currentPlayers, isFull, blockedSpots } = getTeamStatus(players, match.match_type, match.block_spots_team1, match.block_spots_team2);
 
     // We have to add this, because if we dont and we make player has_paid to true or any payment action, player will be moved from his current index position in team to the bottom
     // because of react rerender when using .map in here: {isDefaultTeam && players?.map((player) => (
@@ -62,11 +59,16 @@ export const PlayerList = async ({
                 <div className="flex w-full justify-between items-center">
                     <div className="flex flex-col space-y-1">
                         <CardTitle>{t('players')}</CardTitle>
-                        <CardDescription>
+                        <CardDescription className='flex flex-col space-y-1'>
                             {t('players')} {currentPlayers}/{maxPlayers}
-                            <span className="text-muted-foreground">
-                                ({t('blockedSpots', { count: match.block_spots_team1 })})
-                            </span>
+                            {blockedSpots > 0 && (
+                                <span className="text-muted-foreground text-red-500">
+                                    {isAdmin 
+                                        ? t('blockedSpotsAdmin', { count: blockedSpots })
+                                        : t('blockedSpotsUser', { count: blockedSpots })
+                                    }
+                                </span>
+                            )}
                         </CardDescription>
                     </div>
                     {!isUserInMatch && currentPlayers < maxPlayers && (

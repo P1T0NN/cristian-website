@@ -39,6 +39,10 @@ export const isTeamFull = (currentPlayers: number, availablePlaces: number): boo
     return currentPlayers >= availablePlaces;
 };
 
+export const getBlockedSpots = (teamNumber: 1 | 2, blockSpotsTeam1: number, blockSpotsTeam2: number): number => {
+    return teamNumber === 1 ? blockSpotsTeam1 : blockSpotsTeam2;
+};
+
 export const getTeamStatus = (
     players: typesUser[] | undefined, 
     matchType: string, 
@@ -52,13 +56,17 @@ export const getTeamStatus = (
     const currentPlayers = getCurrentPlayers(players);
 
     let availablePlaces: number;
+    let blockedSpots: number;
+
     if (isPlayerList) {
-        availablePlaces = Math.max(maxPlayers - (blockSpotsTeam1 || 0), 0);
+        blockedSpots = blockSpotsTeam1 + blockSpotsTeam2;
+        availablePlaces = Math.max(maxPlayers - blockedSpots, 0);
     } else if (defaultTeam) {
-        const blockedSpots = teamName === "Equipo 1" ? (blockSpotsTeam1 || 0) : (blockSpotsTeam2 || 0);
+        blockedSpots = teamName === "Equipo 1" ? blockSpotsTeam1 : blockSpotsTeam2;
         availablePlaces = Math.max(maxPlayers - blockedSpots, 0);
     } else {
         availablePlaces = maxPlayers;
+        blockedSpots = 0;
     }
 
     const full = isTeamFull(currentPlayers, availablePlaces);
@@ -67,6 +75,7 @@ export const getTeamStatus = (
         isDefaultTeam: defaultTeam,
         maxPlayers: availablePlaces,
         currentPlayers,
-        isFull: full
+        isFull: full,
+        blockedSpots
     };
 };

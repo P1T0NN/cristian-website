@@ -45,13 +45,10 @@ export const TeamCard = async ({
 }: TeamCardProps) => {
     const t = await getTranslations("MatchPage");
 
-    console.log("Blocked Spots Team1: ", match.block_spots_team1);
-    console.log("Blocked Spots Team2: ", match.block_spots_team2)
-
     const serverCurrentUserMatchAdmin = await serverFetchCurrentUserMatchAdmin(matchId);
     const currentUserMatchAdmin = serverCurrentUserMatchAdmin.data as boolean;
 
-    const { isDefaultTeam, maxPlayers, currentPlayers, isFull } = getTeamStatus(players, match.match_type, match.block_spots_team1, match.block_spots_team2, teamName);
+    const { isDefaultTeam, maxPlayers, currentPlayers, isFull, blockedSpots } = getTeamStatus(players, match.match_type, match.block_spots_team1, match.block_spots_team2, teamName);
 
     // We have to add this, because if we dont and we make player has_paid to true or any payment action, player will be moved from his current index position in team to the bottom
     // because of react rerender when using .map in here: {isDefaultTeam && players?.map((player) => (
@@ -71,9 +68,12 @@ export const TeamCard = async ({
                         <CardTitle>{teamName}</CardTitle>
                         <CardDescription className="flex flex-col">
                             {t('players')} {currentPlayers}/{maxPlayers}
-                            {isDefaultTeam && (
-                                <span className="text-muted-foreground">
-                                    ({t('blockedSpots', { count: teamNumber === 1 ? match.block_spots_team1 : match.block_spots_team2 })})
+                            {isDefaultTeam && blockedSpots > 0 && (
+                                <span className="text-muted-foreground text-red-500">
+                                    {isAdmin 
+                                        ? t('blockedSpotsAdmin', { count: blockedSpots })
+                                        : t('blockedSpotsUser', { count: blockedSpots })
+                                    }
                                 </span>
                             )}
                             {!isDefaultTeam && (
