@@ -791,6 +791,7 @@
         "BALANCE_ADDED": "Balance successfully added",
         "BALANCE_FAILED_TO_INSERT": "Failed to create a history of added balance for player!",
         "INSUFFICIENT_BALANCE": "Not enough balance for this action!",
+        "BALANCE_REMOVAL_FAILED": "Failed to remove balance!",
         "BALANCE_REMOVED": "Balance removed successfully!",
         "REFUND_FAILED": "Failed to refund money to player who joined with balance!",
 

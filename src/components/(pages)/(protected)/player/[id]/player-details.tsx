@@ -111,6 +111,7 @@ export const PlayerDetails = async ({
                                 authToken={authToken}
                                 playerId={playerId}
                                 isAdmin={currentUserData.isAdmin}
+                                addedBy={currentUserData.fullName}
                             />
                         </>
                     )}

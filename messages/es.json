@@ -788,6 +788,7 @@
         "BALANCE_ADDED": "Saldo añadido con éxito",
         "REFUND_FAILED": "¡Error al reembolsar el dinero al jugador que se unió con saldo!",
         "INSUFFICIENT_BALANCE": "¡Saldo insuficiente para esta acción!",
+        "BALANCE_REMOVAL_FAILED": "¡Error al retirar el saldo!",
         "BALANCE_REMOVED": "¡Saldo retirado con éxito!",
         "BALANCE_FAILED_TO_INSERT": "¡Error al crear un historial del saldo añadido para el jugador!",
 

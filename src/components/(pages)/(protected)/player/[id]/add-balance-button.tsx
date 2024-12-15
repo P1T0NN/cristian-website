@@ -30,12 +30,14 @@ type AddBalanceButtonProps = {
     authToken: string;
     playerId: string;
     isAdmin: boolean;
+    addedBy: string;
 }
 
 export function AddBalanceButton({ 
     authToken,
     playerId,
-    isAdmin
+    isAdmin,
+    addedBy
 }: AddBalanceButtonProps) {
     const t = useTranslations('PlayerPage');
 
@@ -58,7 +60,7 @@ export function AddBalanceButton({
 
         startTransition(async () => {
             const numericAmount = parseFloat(amount);
-            const result = await addBalance(authToken, playerId, numericAmount, reason, isAdmin);
+            const result = await addBalance(authToken, playerId, numericAmount, reason, addedBy, isAdmin);
             
             if (result.success) {
                 toast.success(result.message);

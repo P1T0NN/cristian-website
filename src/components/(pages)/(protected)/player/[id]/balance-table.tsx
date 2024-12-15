@@ -7,7 +7,6 @@ import { getTranslations } from "next-intl/server";
 // COMPONENTS
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Plus, Minus } from 'lucide-react';
 import {
     AlertDialog,
     AlertDialogCancel,
@@ -18,11 +17,13 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { AddBalanceButton } from "./add-balance-button";
 import { RemoveBalanceButton } from "./remove-balance-button";
 
 // TYPES
 import type { typesBalance } from "@/types/typesBalance";
+
+// LUCIDE ICONS
+import { Trash2 } from 'lucide-react';
 
 type BalanceTableProps = {
     balances: typesBalance[];
@@ -33,7 +34,7 @@ type BalanceTableProps = {
 export const BalanceTable = async ({
     balances,
     isCurrentUserAdmin,
-    playerId
+    playerId,
 }: BalanceTableProps) => {
     const t = await getTranslations("PlayerPage");
 
@@ -64,62 +65,34 @@ export const BalanceTable = async ({
                             <TableCell className="whitespace-nowrap">{balance.added_by}</TableCell>
                             {isCurrentUserAdmin && (
                                 <TableCell>
-                                    <div className="flex space-x-2">
-                                        <AlertDialog>
-                                            <AlertDialogTrigger asChild>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    aria-label={t('addBalanceButtonLabel')}
-                                                >
-                                                    <Plus className="h-4 w-4" />
-                                                </Button>
-                                            </AlertDialogTrigger>
-                                            <AlertDialogContent>
-                                                <AlertDialogHeader>
-                                                    <AlertDialogTitle>{t('addBalanceConfirmTitle')}</AlertDialogTitle>
-                                                    <AlertDialogDescription>
-                                                        {t('addBalanceConfirmDescription')}
-                                                    </AlertDialogDescription>
-                                                </AlertDialogHeader>
-                                                <AlertDialogFooter>
-                                                    <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
-                                                    <AddBalanceButton 
-                                                        playerId={playerId} 
-                                                        authToken={authToken}
-                                                        isAdmin={isCurrentUserAdmin}
-                                                    />
-                                                </AlertDialogFooter>
-                                            </AlertDialogContent>
-                                        </AlertDialog>
-                                        <AlertDialog>
-                                            <AlertDialogTrigger asChild>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    aria-label={t('removeBalanceButtonLabel')}
-                                                >
-                                                    <Minus className="h-4 w-4" />
-                                                </Button>
-                                            </AlertDialogTrigger>
-                                            <AlertDialogContent>
-                                                <AlertDialogHeader>
-                                                    <AlertDialogTitle>{t('removeBalanceConfirmTitle')}</AlertDialogTitle>
-                                                    <AlertDialogDescription>
-                                                        {t('removeBalanceConfirmDescription')}
-                                                    </AlertDialogDescription>
-                                                </AlertDialogHeader>
-                                                <AlertDialogFooter>
-                                                    <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
-                                                    <RemoveBalanceButton 
-                                                        playerId={playerId} 
-                                                        authToken={authToken} 
-                                                        isAdmin={isCurrentUserAdmin}
-                                                    />
-                                                </AlertDialogFooter>
-                                            </AlertDialogContent>
-                                        </AlertDialog>
-                                    </div>
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                aria-label={t('removeBalanceButtonLabel')}
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>{t('removeBalanceConfirmTitle')}</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    {t('removeBalanceConfirmDescription')}
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+                                                <RemoveBalanceButton 
+                                                    playerId={playerId} 
+                                                    authToken={authToken} 
+                                                    isAdmin={isCurrentUserAdmin}
+                                                    balanceId={balance.id}
+                                                />
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
                                 </TableCell>
                             )}
                         </TableRow>

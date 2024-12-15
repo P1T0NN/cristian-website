@@ -10,58 +10,72 @@ import { getTranslations } from 'next-intl/server';
 // ACTIONS
 import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
 
-export async function addBalance(authToken: string, playerId: string, amount: number, reason: string, isAdmin: boolean) {
+// TYPES
+import type { typesUser } from "@/types/typesUser";
+
+export async function addBalance(authToken: string, playerId: string, amount: number, reason: string, addedBy: string, isAdmin: boolean) {
     const genericMessages = await getTranslations("GenericMessages");
+    const fetchMessages = await getTranslations("FetchMessages");
 
     if (!isAdmin) {
         return { success: false, message: genericMessages('UNAUTHORIZED') };
     }
 
-    const { isAuth, userId } = await verifyAuth(authToken);
+    const { isAuth } = await verifyAuth(authToken);
                         
     if (!isAuth) {
         return { success: false, message: genericMessages('UNAUTHORIZED') };
     }
 
-    // Fetch the current balance
-    const { data: userData, error: fetchError } = await supabase
+    // Fetch the user data
+    const { data: userData, error: userFetchError } = await supabase
         .from('users')
-        .select('balance, fullName')
+        .select('*')
         .eq('id', playerId)
         .single();
 
-    if (fetchError) {
-        return { success: false, message: genericMessages('USER_NOT_FOUND') };
+    if (userFetchError) {
+        return { success: false, message: fetchMessages('USER_FETCH_FAILED') };
     }
 
-    const currentBalance = userData.balance || 0;
-    const newBalance = currentBalance + amount;
+    const user = userData as typesUser;
 
-    // Update the balance
-    const { data, error: updateError } = await supabase
-        .from('users')
-        .update({ balance: newBalance })
-        .eq('id', playerId);
+    // Calculate new balance
+    const newBalance = (user.balance || 0) + amount;
 
-    if (updateError) {
-        return { success: false, message: genericMessages('BALANCE_UPDATE_FAILED') };
-    }
+    // Parallel execution of balance insertion and user update
+    const [balanceInsertResult, userUpdateResult] = await Promise.all([
+        supabase
+            .from('balances')
+            .insert([
+                {
+                    player_name: user.fullName,
+                    balance_added: amount,
+                    reason: reason,
+                    added_by: addedBy // Coming and passing from component currentUserData.fullName
+                }
+            ])
+            .select(),
+        supabase
+            .from('users')
+            .update({ balance: newBalance })
+            .eq('id', playerId)
+            .select()
+    ]);
 
-    // Insert new row into balances table
-    const { error: insertError } = await supabase
-        .from('balances')
-        .insert({
-            player_name: userData.fullName,
-            balance_added: amount,
-            reason: reason,
-            added_by: userId,
-        });
-
-    if (insertError) {
+    if (balanceInsertResult.error) {
         return { success: false, message: genericMessages('BALANCE_FAILED_TO_INSERT') };
+    }
+
+    if (userUpdateResult.error) {
+        return { success: false, message: genericMessages('BALANCE_UPDATE_FAILED') };
     }
 
     revalidatePath("/");
 
-    return { success: true, message: genericMessages('BALANCE_ADDED'), data };
+    return { 
+        success: true, 
+        message: genericMessages("BALANCE_ADDED"), 
+        data: { balance: balanceInsertResult.data, user: userUpdateResult.data } 
+    };
 }
