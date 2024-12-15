@@ -468,7 +468,20 @@
         "amount": "Amount",
         "adding": "Adding...",
         "invalidAmount": "Please enter a valid amount",
-        "enterAmount": "Enter Amount"
+        "enterAmount": "Enter Amount",
+        "removeBalance": "Remove Balance",
+        "removeBalanceDescription": "Enter the amount you want to remove from the player's balance.",
+        "removing": "Removing...",
+        "balanceHistory": "Balance History",
+        "tableHeaderBalanceAdded": "Balance Added",
+        "addBalanceButtonLabel": "Add balance",
+        "addBalanceConfirmTitle": "Confirm Add Balance",
+        "addBalanceConfirmDescription": "Are you sure you want to add balance to this player?",
+        "cancel": "Cancel",
+        "removeBalanceButtonLabel": "Remove balance",
+        "removeBalanceConfirmTitle": "Confirm Remove Balance",
+        "removeBalanceConfirmDescription": "Are you sure you want to remove balance from this player?",
+        "enterReason": "Enter reason"
     },
 
     "AddTeamPage": {
@@ -776,6 +789,9 @@
 
         "BALANCE_UPDATE_FAILED": "Failed to update balance",
         "BALANCE_ADDED": "Balance successfully added",
+        "BALANCE_FAILED_TO_INSERT": "Failed to create a history of added balance for player!",
+        "INSUFFICIENT_BALANCE": "Not enough balance for this action!",
+        "BALANCE_REMOVED": "Balance removed successfully!",
         "REFUND_FAILED": "Failed to refund money to player who joined with balance!",
 
         "CANCEL_SUBSTITUTION_FAILED": "Failed to cancel substitution request",

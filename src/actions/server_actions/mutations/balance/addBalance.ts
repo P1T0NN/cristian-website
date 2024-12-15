@@ -10,14 +10,14 @@ import { getTranslations } from 'next-intl/server';
 // ACTIONS
 import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
 
-export async function addBalance(authToken: string, playerId: string, amount: number, isAdmin: boolean) {
+export async function addBalance(authToken: string, playerId: string, amount: number, reason: string, isAdmin: boolean) {
     const genericMessages = await getTranslations("GenericMessages");
 
     if (!isAdmin) {
         return { success: false, message: genericMessages('UNAUTHORIZED') };
     }
 
-    const { isAuth } = await verifyAuth(authToken);
+    const { isAuth, userId } = await verifyAuth(authToken);
                         
     if (!isAuth) {
         return { success: false, message: genericMessages('UNAUTHORIZED') };
@@ -26,7 +26,7 @@ export async function addBalance(authToken: string, playerId: string, amount: nu
     // Fetch the current balance
     const { data: userData, error: fetchError } = await supabase
         .from('users')
-        .select('balance')
+        .select('balance, fullName')
         .eq('id', playerId)
         .single();
 
@@ -38,13 +38,27 @@ export async function addBalance(authToken: string, playerId: string, amount: nu
     const newBalance = currentBalance + amount;
 
     // Update the balance
-    const { data, error } = await supabase
+    const { data, error: updateError } = await supabase
         .from('users')
         .update({ balance: newBalance })
         .eq('id', playerId);
 
-    if (error) {
+    if (updateError) {
         return { success: false, message: genericMessages('BALANCE_UPDATE_FAILED') };
+    }
+
+    // Insert new row into balances table
+    const { error: insertError } = await supabase
+        .from('balances')
+        .insert({
+            player_name: userData.fullName,
+            balance_added: amount,
+            reason: reason,
+            added_by: userId,
+        });
+
+    if (insertError) {
+        return { success: false, message: genericMessages('BALANCE_FAILED_TO_INSERT') };
     }
 
     revalidatePath("/");

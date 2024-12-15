@@ -470,7 +470,20 @@
         "amount": "Cantidad",
         "adding": "Añadiendo...",
         "invalidAmount": "Por favor, ingrese una cantidad válida",
-        "enterAmount": "Ingrese el monto"
+        "enterAmount": "Ingrese el monto",
+        "removeBalance": "Retirar saldo",
+        "removeBalanceDescription": "Ingrese la cantidad que desea retirar del saldo del jugador.",
+        "removing": "Retirando...",
+        "balanceHistory": "Historial de saldo",
+        "tableHeaderBalanceAdded": "Saldo añadido",
+        "addBalanceButtonLabel": "Añadir saldo",
+        "addBalanceConfirmTitle": "Confirmar añadir saldo",
+        "addBalanceConfirmDescription": "¿Está seguro de que desea añadir saldo a este jugador?",
+        "cancel": "Cancelar",
+        "removeBalanceButtonLabel": "Retirar saldo",
+        "removeBalanceConfirmTitle": "Confirmar retirar saldo",
+        "removeBalanceConfirmDescription": "¿Está seguro de que desea retirar saldo de este jugador?",
+        "enterReason": "Ingrese el motivo"
     },
 
     "AddTeamPage": {
@@ -774,6 +787,9 @@
         "BALANCE_UPDATE_FAILED": "Error al actualizar el saldo",
         "BALANCE_ADDED": "Saldo añadido con éxito",
         "REFUND_FAILED": "¡Error al reembolsar el dinero al jugador que se unió con saldo!",
+        "INSUFFICIENT_BALANCE": "¡Saldo insuficiente para esta acción!",
+        "BALANCE_REMOVED": "¡Saldo retirado con éxito!",
+        "BALANCE_FAILED_TO_INSERT": "¡Error al crear un historial del saldo añadido para el jugador!",
 
         "CANCEL_SUBSTITUTION_FAILED": "No se pudo cancelar la solicitud de sustitución",
         "SUBSTITUTION_REQUEST_CANCELED": "Solicitud de sustitución cancelada con éxito",

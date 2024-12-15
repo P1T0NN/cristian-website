@@ -13,6 +13,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { DebtsTable } from "./debts-table";
+import { BalanceTable } from "./balance-table";
 import { EditPlayerDetails } from "./edit-player-details";
 import { AddBalanceButton } from "./add-balance-button";
 
@@ -128,6 +129,12 @@ export const PlayerDetails = async ({
                 <DebtsTable
                     debts={playerData.debts || []} 
                     isCurrentUserAdmin={currentUserData.isAdmin}
+                />
+
+                <BalanceTable 
+                    balances={playerData.balances || []}
+                    isCurrentUserAdmin={currentUserData.isAdmin}
+                    playerId={playerId}
                 />
             </CardContent>
         </Card>
