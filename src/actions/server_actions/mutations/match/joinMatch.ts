@@ -19,7 +19,7 @@ import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
 // TYPES
 import type { RPCResponseData } from '@/types/responses/RPCResponseData';
 
-export async function joinMatch(authToken: string, matchId: string, teamNumber: 0 | 1 | 2) {
+export async function joinMatch(authToken: string, matchId: string, teamNumber: 0 | 1 | 2, withBalance: boolean) {
     const t = await getTranslations("GenericMessages");
 
     const { isAuth, userId } = await verifyAuth(authToken);
@@ -36,7 +36,8 @@ export async function joinMatch(authToken: string, matchId: string, teamNumber: 
         p_auth_user_id: userId,
         p_match_id: matchId,
         p_user_id: userId,
-        p_team_number: teamNumber
+        p_team_number: teamNumber,
+        p_with_balance: withBalance
     });
 
     const result = data as RPCResponseData;
@@ -46,6 +47,9 @@ export async function joinMatch(authToken: string, matchId: string, teamNumber: 
     }
 
     if (!result.success) {
+        if (result.code === 'INSUFFICIENT_BALANCE') {
+            return { success: false, message: t("INSUFFICIENT_BALANCE_TRY_CASH") };
+        }
         return { success: false, message: t("PLAYER_JOIN_FAILED") };
     }
 
@@ -64,3 +68,88 @@ export async function joinMatch(authToken: string, matchId: string, teamNumber: 
 
     return { success: true, message: t("PLAYER_JOINED_SUCCESSFULLY") };
 }
+
+/* SUPABASE RPC FUNCTION
+
+CREATE OR REPLACE FUNCTION join_team(
+    p_auth_user_id UUID,
+    p_match_id UUID,
+    p_user_id UUID,
+    p_team_number INT,
+    p_with_balance BOOLEAN
+) RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+    v_match RECORD;
+    v_user RECORD;
+    v_updated_places_occupied INT;
+    v_updated_balance NUMERIC;
+    v_has_paid BOOLEAN;
+    v_has_entered_with_balance BOOLEAN;
+BEGIN
+    SELECT * INTO v_match FROM matches WHERE id = p_match_id;
+    IF NOT FOUND THEN
+        RETURN jsonb_build_object('success', false, 'code', 'MATCH_NOT_FOUND');
+    END IF;
+
+    SELECT * INTO v_user FROM users WHERE id = p_user_id;
+    IF NOT FOUND THEN
+        RETURN jsonb_build_object('success', false, 'code', 'USER_NOT_FOUND');
+    END IF;
+
+    v_updated_places_occupied := COALESCE(v_match.places_occupied, 0) + 1;
+
+    IF p_with_balance THEN
+        IF v_user.balance >= v_match.price::numeric THEN
+            UPDATE users
+            SET balance = balance - v_match.price::numeric
+            WHERE id = p_user_id
+            RETURNING balance INTO v_updated_balance;
+
+            v_has_paid := true;
+            v_has_entered_with_balance := true;
+        ELSE
+            RETURN jsonb_build_object('success', false, 'code', 'INSUFFICIENT_BALANCE');
+        END IF;
+    ELSE
+        v_has_paid := false;
+        v_has_entered_with_balance := false;
+        v_updated_balance := v_user.balance;
+    END IF;
+
+    INSERT INTO match_players (match_id, user_id, team_number, has_paid, has_entered_with_balance)
+    VALUES (p_match_id, p_user_id, p_team_number, v_has_paid, v_has_entered_with_balance);
+
+    UPDATE matches
+    SET places_occupied = v_updated_places_occupied
+    WHERE id = p_match_id;
+
+    RETURN jsonb_build_object(
+        'success', true, 
+        'code', 'PLAYER_JOINED_SUCCESSFULLY',
+        'metadata', jsonb_build_object(
+            'has_paid', v_has_paid,
+            'has_entered_with_balance', v_has_entered_with_balance,
+            'updated_balance', v_updated_balance
+        )
+    );
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RETURN jsonb_build_object(
+            'success', false, 
+            'code', 'UNEXPECTED_ERROR', 
+            'message', SQLERRM,
+            'sqlstate', SQLSTATE,
+            'detail', COALESCE(SQLERRM, 'Unknown error'),
+            'context', 'join_team function'
+        );
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION join_team(UUID, UUID, UUID, INT, BOOLEAN) TO anon, authenticated;
+
+*/

@@ -233,7 +233,7 @@
         "finishConfirmTitle": "Are you sure you want to finish this match?",
         "finishConfirmDescription": "This action will move the match to the history and remove it from active matches. This cannot be undone.",
         "joinTeamConfirmTitle": "Confirm Team Join",
-        "joinTeamConfirmDescription": "By joining the team, you accept that you will pay for this match in cash or with your money balance if you have. Are you sure you want to join the team?",
+        "joinTeamConfirmDescription": "Are you sure you want to join this team? Once you join, you'll be added to the list of players and will be expected to participate. You won't be able to leave the match <hours>8 hours</hours> before it starts, <substitute>but you can request a substitute!</substitute>",
         "confirmJoin": "Yes, Join Team",
         "substituteRequestTitle": "Request Substitute",
         "substituteRequestDescription": "It's too late to leave the team. Would you like to request a substitute?",
@@ -270,7 +270,7 @@
         "joinMatch": "Join Match",
         "joiningMatch": "Joining match...",
         "joinMatchConfirmTitle": "Join Match",
-        "joinMatchConfirmDescription": "Are you sure you want to join this match? Once you join, you'll be added to the list of players and will be expected to participate. You won't be able to leave the match 8 hours before it starts, but you can request a substitute!",
+        "joinMatchConfirmDescription": "Are you sure you want to join this match? Once you join, you'll be added to the list of players and will be expected to participate. You won't be able to leave the match <hours>8 hours</hours> before it starts, <substitute>but you can request a substitute!</substitute>",
         "makeTeams": "Sort teams",
         "sorting": "Sorting...",
         "sortTeams": "Sort Teams",
@@ -322,6 +322,8 @@
         "invalidSpotsNumber": "Invalid number of spots. Please enter a valid number.",
         "blockedSpotsAdmin": "({count} blocked)",
         "blockedSpotsUser": "({count} occupied)",
+        "joinAndPayWithCash": "Join and pay with cash",
+        "joinAndPayWithBalance": "Join and pay with balance",
         "MatchFAQ": {
             "title": "Frequently Asked Questions",
             "startTimeDuration": {
@@ -803,6 +805,8 @@
 
         "SPOTS_BLOCKED_SUCCESSFULLY": "Spots blocked successfully",
         "SPOTS_BLOCK_FAILED": "Failed to block spots!",
+
+        "INSUFFICIENT_BALANCE_TRY_CASH": "Insufficient balance. If you want, you can pay with cash.",
 
         "REDIS_CONNECTION_ERROR": "Unable to connect to the database. Please try again later.",
         "REDIS_DISCONNECTION_ERROR": "Error occurred while disconnecting from the database.",

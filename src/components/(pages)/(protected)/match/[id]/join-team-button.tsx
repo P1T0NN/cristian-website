@@ -1,23 +1,21 @@
 "use client"
 
 // REACTJS IMPORTS
-import { useTransition } from "react";
+import { useTransition, useState } from "react";
 
 // LIBRARIES
 import { useTranslations } from "next-intl";
 
 // COMPONENTS
 import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-  } from "@/components/ui/alert-dialog";
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -27,7 +25,6 @@ import { joinMatch } from "@/actions/server_actions/mutations/match/joinMatch";
 type JoinTeamButtonProps = {
     teamNumber: 0 | 1 | 2;
     matchId: string;
-    currentUserId: string;
     authToken: string;
 }
 
@@ -37,15 +34,16 @@ export const JoinTeamButton = ({
     authToken
 }: JoinTeamButtonProps) => {
     const t = useTranslations("MatchPage");
-
     const [isPending, startTransition] = useTransition();
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-    const handleJoinTeam = () => {
+    const handleJoinTeam = (withBalance: boolean) => {
         startTransition(async () => {
             const response = await joinMatch(
                 authToken,
                 matchId,
-                teamNumber
+                teamNumber,
+                withBalance
             )
 
             if (response.success) {
@@ -53,44 +51,58 @@ export const JoinTeamButton = ({
             } else {
                 toast.error(response.message)
             }
+            setIsDialogOpen(false);
         })
     };
 
-    const buttonText = isPending 
-        ? (teamNumber === 0 ? t('joiningMatch') : t('joiningTeam'))
-        : (teamNumber === 0 ? t('joinMatch') : t('joinTeam', { teamNumber }));
+    const buttonText = teamNumber === 0 ? t('joinMatch') : t('joinTeam', { teamNumber });
 
     const dialogTitle = teamNumber === 0 
         ? t('joinMatchConfirmTitle')
         : t('joinTeamConfirmTitle', { teamNumber });
 
     const dialogDescription = teamNumber === 0
-        ? t('joinMatchConfirmDescription')
-        : t('joinTeamConfirmDescription', { teamNumber });
+        ? t.rich('joinMatchConfirmDescription', {
+            hours: (chunks) => <span className="font-bold text-blue-500">{chunks}</span>,
+            substitute: (chunks) => <span className="font-semibold text-yellow-500">{chunks}</span>
+          })
+        : t.rich('joinTeamConfirmDescription', {
+            hours: (chunks) => <span className="font-bold text-blue-500">{chunks}</span>,
+            substitute: (chunks) => <span className="font-semibold text-yellow-500">{chunks}</span>,
+            teamNumber
+          });
 
     return (
-        <AlertDialog>
-            <AlertDialogTrigger asChild>
-                <Button 
-                    disabled={isPending}
-                >
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+                <Button disabled={isPending}>
                     {buttonText}
                 </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-                <AlertDialogHeader>
-                    <AlertDialogTitle>{dialogTitle}</AlertDialogTitle>
-                    <AlertDialogDescription>
-                        {dialogDescription}
-                    </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                    <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleJoinTeam} disabled={isPending}>
-                        {isPending ? t('joiningMatch') : t('confirmJoin')}
-                    </AlertDialogAction>
-                </AlertDialogFooter>
-            </AlertDialogContent>
-        </AlertDialog>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>{dialogTitle}</DialogTitle>
+                    <DialogDescription>{dialogDescription}</DialogDescription>
+                </DialogHeader>
+                <DialogFooter className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-2 w-full">
+                        <Button 
+                            onClick={() => handleJoinTeam(false)} 
+                            disabled={isPending}
+                            className="w-full"
+                        >
+                            {isPending ? t('joiningMatch') : t('joinAndPayWithCash')}
+                        </Button>
+                        <Button 
+                            onClick={() => handleJoinTeam(true)} 
+                            disabled={isPending}
+                            className="w-full"
+                        >
+                            {isPending ? t('joiningMatch') : t('joinAndPayWithBalance')}
+                        </Button>
+                    </div>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     )
 }
