@@ -76,7 +76,6 @@ export const PlayerList = async ({
                             <JoinTeamButton
                                 teamNumber={0}
                                 matchId={matchId}
-                                currentUserId={currentUserId}
                                 authToken={authToken}
                             />
                         </div>

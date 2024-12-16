@@ -85,7 +85,6 @@ export const TeamCard = async ({
                         <JoinTeamButton
                             teamNumber={teamNumber}
                             matchId={matchId}
-                            currentUserId={currentUserId}
                             authToken={authToken}
                         />
                     )}
