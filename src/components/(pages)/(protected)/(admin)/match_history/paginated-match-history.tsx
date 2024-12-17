@@ -27,7 +27,7 @@ import { formatTime } from "@/utils/dateUtils";
 import type { typesMatchHistory } from '@/types/typesMatchHistory';
 
 // LUCIDE ICONS
-import { MapPin, Users, CreditCard, Ticket, Gift } from 'lucide-react';
+import { MapPin, Users, CreditCard, Ticket, Gift, XCircle } from 'lucide-react';
 
 type PaginatedMatchHistoryProps = {
     authToken: string;
@@ -124,6 +124,13 @@ export const PaginatedMatchHistory = ({
                                         <span className="text-sm">
                                             {t('balance')}: {match.playerStats.playersEnteredWithBalance.length}
                                             {formatPlayerNames(match?.playerStats.playersEnteredWithBalance)}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <XCircle className="w-4 h-4 mr-2 flex-shrink-0 text-red-500" />
+                                        <span className="text-sm">
+                                            {t('notPaid')}: {match.playerStats.playersNotPaid?.length || 0}
+                                            {formatPlayerNames(match.playerStats.playersNotPaid || [])}
                                         </span>
                                     </div>
                                 </div>

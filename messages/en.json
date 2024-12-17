@@ -525,7 +525,8 @@
         "paid": "Paid",
         "discount": "Discount",
         "gratis": "Gratis",
-        "balance": "Balance"
+        "balance": "Balance",
+        "notPaid": "Not paid"
     },
 
     "ActiveMatchesPage": {

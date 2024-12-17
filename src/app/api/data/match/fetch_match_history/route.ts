@@ -103,7 +103,8 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
             playersPaid: matchPlayers.filter(p => p.matchHistoryPlayer?.has_paid).length,
             playersWithDiscount: matchPlayers.filter(p => p.matchHistoryPlayer?.has_discount),
             playersWithGratis: matchPlayers.filter(p => p.matchHistoryPlayer?.has_gratis),
-            playersEnteredWithBalance: matchPlayers.filter(p => p.matchHistoryPlayer?.has_entered_with_balance)
+            playersEnteredWithBalance: matchPlayers.filter(p => p.matchHistoryPlayer?.has_entered_with_balance),
+            playersNotPaid: matchPlayers.filter(p => !p.matchHistoryPlayer?.has_paid)
         };
 
         return {
