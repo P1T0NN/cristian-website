@@ -1,13 +1,8 @@
 'use client'
 
-// REACTJS IMPORTS
 import { useState } from 'react';
-
-// LIBRARIES
 import { format as dateFormat } from 'date-fns';
 import { useTranslations } from 'next-intl';
-
-// COMPONENTS
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { 
     Pagination, 
@@ -19,15 +14,9 @@ import {
 } from "@/components/ui/pagination";
 import { DeleteMatchFromHistoryDialog } from './delete-match-from-history-dialog';
 import { Badge } from '@/components/ui/badge';
-
-// UTILS
 import { formatTime } from "@/utils/dateUtils";
-
-// TYPES
 import type { typesMatchHistory } from '@/types/typesMatchHistory';
-
-// LUCIDE ICONS
-import { MapPin, Users, CreditCard, Ticket, Gift, XCircle } from 'lucide-react';
+import { MapPin, Users, CreditCard, Ticket, Gift, XCircle, EuroIcon } from 'lucide-react';
 
 type PaginatedMatchHistoryProps = {
     authToken: string;
@@ -41,7 +30,6 @@ export const PaginatedMatchHistory = ({
     matchHistory
 }: PaginatedMatchHistoryProps) => {
     const t = useTranslations('MatchHistoryPage');
-
     const [currentPage, setCurrentPage] = useState(1);
 
     const totalPages = Math.ceil(matchHistory.length / ITEMS_PER_PAGE);
@@ -63,6 +51,10 @@ export const PaginatedMatchHistory = ({
         return players.length > 0 ? ` (${players.map(p => p.fullName).join(', ')})` : '';
     };
 
+    const calculateTotalMoney = (price: number, playersPaid: number) => {
+        return (price * playersPaid).toFixed(2);
+    };
+
     return (
         <>
             <div className="space-y-4">
@@ -71,6 +63,7 @@ export const PaginatedMatchHistory = ({
                     const format = `${formatMatchType(match.match_type)} ${match.match_gender}`;
                     const formattedTime = formatTime(match.starts_at_hour);
                     const formattedDate = dateFormat(new Date(match.starts_at_day), 'dd/MM/yyyy');
+                    const totalMoney = calculateTotalMoney(match.price, match.playerStats.playersPaid);
 
                     return (
                         <Card key={match.id} className="w-full transition-shadow hover:shadow-md">
@@ -135,10 +128,14 @@ export const PaginatedMatchHistory = ({
                                     </div>
                                 </div>
                             </CardContent>
-                            <CardFooter className="bg-muted/50 py-2 px-4">
-                                <div className="w-full flex items-center justify-center text-sm font-medium">
+                            <CardFooter className="bg-muted/50 py-2 px-4 flex justify-between items-center">
+                                <div className="flex items-center text-sm font-medium">
                                     <MapPin className="w-4 h-4 mr-2" />
                                     {match.location}
+                                </div>
+                                <div className="flex items-center text-green-600 font-semibold">
+                                    <EuroIcon className="w-4 h-4 mr-1" />
+                                    <span>{totalMoney}€</span>
                                 </div>
                             </CardFooter>
                         </Card>
