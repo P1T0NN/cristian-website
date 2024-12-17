@@ -3,8 +3,15 @@ import { cookies } from "next/headers";
 
 // TYPES
 import type { APIResponse } from "@/types/responses/APIResponse";
+import type { typesMatch } from "@/types/typesMatch";
 
-export async function serverFetchMatches(gender: string, isAdmin: boolean, playerLevel: string, date?: string): Promise<APIResponse> {
+export async function serverFetchMatches(
+    gender: string, 
+    isAdmin: boolean, 
+    playerLevel: string, 
+    userId: string,
+    date?: string
+): Promise<APIResponse<typesMatch[]>> {
     const cookieStore = await cookies();
     const authToken = cookieStore.get('auth_token')?.value;
 
@@ -26,6 +33,9 @@ export async function serverFetchMatches(gender: string, isAdmin: boolean, playe
         url.searchParams.append('playerLevel', playerLevel);
     }
 
+    // Add userId to the query parameters
+    url.searchParams.append('userId', userId);
+
     const response = await fetch(url.toString(), {
         method: 'GET',
         headers: {
@@ -33,5 +43,14 @@ export async function serverFetchMatches(gender: string, isAdmin: boolean, playe
         }
     });
 
-    return response.json();
+    const data: APIResponse<typesMatch[]> = await response.json();
+
+    if (data.success && Array.isArray(data.data)) {
+        data.data = data.data.map(match => ({
+            ...match,
+            isUserInMatch: match.isUserInMatch || false
+        }));
+    }
+
+    return data;
 }

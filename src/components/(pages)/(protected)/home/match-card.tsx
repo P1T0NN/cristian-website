@@ -15,7 +15,7 @@ import { formatTime, formatDate } from "@/utils/dateUtils";
 import type { typesMatch } from "@/types/typesMatch";
 
 // LUCIDE ICONS
-import { MapPin, Users, Clock, User, Star } from 'lucide-react';
+import { MapPin, Users, Clock, User, Star, CheckCircle } from 'lucide-react';
 
 type MatchCardProps = {
     match: typesMatch;
@@ -120,6 +120,12 @@ export const MatchCard = async ({
                                     <span className="text-xs bg-yellow-100 px-2 py-1 rounded-full text-yellow-600 flex items-center">
                                         <Star className="w-3 h-3 mr-1" />
                                         {t('matchLevel')}: {match.match_level}
+                                    </span>
+                                )}
+                                {match.isUserInMatch && (
+                                    <span className="text-xs bg-green-100 px-2 py-1 rounded-full text-green-600 flex items-center">
+                                        <CheckCircle className="w-3 h-3 mr-1" />
+                                        {t('youAreInThisMatch')}
                                     </span>
                                 )}
                             </div>

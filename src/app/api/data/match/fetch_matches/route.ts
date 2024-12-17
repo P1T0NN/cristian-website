@@ -28,8 +28,10 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
         return NextResponse.json({ success: false, message: genericMessages('UNAUTHORIZED') }, { status: 401 });
     }
 
+    let userId: string;
     try {
-        await jwtVerify(token, new TextEncoder().encode(process.env.JWT_SECRET));
+        const { payload } = await jwtVerify(token, new TextEncoder().encode(process.env.JWT_SECRET));
+        userId = payload.sub as string;
     } catch {
         return NextResponse.json({ success: false, message: genericMessages('JWT_DECODE_ERROR') }, { status: 401 });
     }
@@ -60,7 +62,7 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
         matchesQuery = matchesQuery.or(`match_gender.eq.${gender},match_gender.eq.Mixed`);
     }
 
-    const { data: dbMatches, error: supabaseError } = await matchesQuery.returns<typesMatch[]>();
+    const { data: dbMatches, error: supabaseError } = await matchesQuery;
 
     if (supabaseError) {
         return NextResponse.json({ success: false, message: fetchMessages('MATCHES_FAILED_TO_FETCH') }, { status: 500 });
@@ -69,6 +71,14 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
     if (!dbMatches || dbMatches.length === 0) {
         return NextResponse.json({ success: true, message: fetchMessages('NO_MATCHES_FOUND'), data: [] });
     }
+
+    // Fetch user's matches
+    const { data: userMatches } = await supabase
+        .from('match_players')
+        .select('match_id')
+        .eq('user_id', userId);
+
+    const userMatchIds = new Set(userMatches?.map(um => um.match_id) || []);
 
     const filteredMatches = dbMatches.filter(match => {
         if (isAdmin) return true;
@@ -87,12 +97,18 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
         const cacheKey = `${CACHE_KEYS.MATCH_PREFIX}${match.id}`;
         const cachedMatch = await upstashRedisCacheService.get<typesMatch>(cacheKey);
         
+        let matchData: typesMatch;
         if (cachedMatch.success && cachedMatch.data) {
-            return cachedMatch.data;
+            matchData = cachedMatch.data;
+        } else {
+            matchData = match;
+            await upstashRedisCacheService.set(cacheKey, match, CACHE_TTL);
         }
-        
-        await upstashRedisCacheService.set(cacheKey, match, CACHE_TTL);
-        return match;
+
+        return {
+            ...matchData,
+            isUserInMatch: userMatchIds.has(match.id)
+        };
     }));
 
     return NextResponse.json({ success: true, message: fetchMessages('MATCHES_SUCCESSFULLY_FETCHED'), data: cachedMatches });

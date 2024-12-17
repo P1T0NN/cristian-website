@@ -21,4 +21,5 @@ export type typesMatch = {
     has_teams: boolean;
     block_spots_team1: number;
     block_spots_team2: number;
+    isUserInMatch?: boolean;
 };

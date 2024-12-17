@@ -13,7 +13,7 @@ import type { typesMatch } from '@/types/typesMatch';
 import type { typesUser } from '@/types/typesUser';
 
 // LUCIDE ICONS
-import { RefreshCcw } from "lucide-react";
+import { RefreshCcw } from 'lucide-react';
 
 type DisplayMatchesProps = {
     serverUserData: typesUser;
@@ -30,6 +30,7 @@ export const DisplayMatches = async ({
         serverUserData.gender, 
         serverUserData.isAdmin, 
         serverUserData.player_level, 
+        serverUserData.id,
         date
     );
 
