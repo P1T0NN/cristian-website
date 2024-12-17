@@ -326,6 +326,7 @@
         "blockedSpotsUser": "({count} ocupados)",
         "joinAndPayWithCash": "Unirse y pagar en efectivo",
         "joinAndPayWithBalance": "Unirse y pagar con saldo",
+        "youAreInThisMatch": "Estás en este partido",
         "MatchFAQ": {
             "title": "Preguntas Frecuentes",
             "startTimeDuration": {

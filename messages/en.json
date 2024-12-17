@@ -324,6 +324,7 @@
         "blockedSpotsUser": "({count} occupied)",
         "joinAndPayWithCash": "Join and pay with cash",
         "joinAndPayWithBalance": "Join and pay with balance",
+        "youAreInThisMatch": "You are in this match",
         "MatchFAQ": {
             "title": "Frequently Asked Questions",
             "startTimeDuration": {
