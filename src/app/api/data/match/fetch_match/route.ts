@@ -139,6 +139,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>>
         country: '',
         has_access: false,
         balance: 0,
+        verify_documents: false,
         temporaryPlayer: {
             id: p.id,
             matchId: p.match_id,
