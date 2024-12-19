@@ -84,6 +84,7 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
         country: '',
         has_access: false,
         balance: 0,
+        verify_documents: false,
         matchHistoryPlayer: {
             match_history_id: p.match_history_id,
             has_paid: p.has_paid,
