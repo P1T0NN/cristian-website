@@ -25,10 +25,12 @@ import { MapPin, Users, Clock } from 'lucide-react';
 
 type DisplayActiveMatchesProps = {
     currentUserId: string;
+    isAdmin: boolean;
 }
 
 export const DisplayActiveMatches = async ({
-    currentUserId
+    currentUserId,
+    isAdmin
 }: DisplayActiveMatchesProps) => {
     const t = await getTranslations('ActiveMatchesPage');
 
@@ -118,7 +120,7 @@ export const DisplayActiveMatches = async ({
                                         </div>
                                         <div className="text-sm text-muted-foreground">{formattedDate}</div>
                                     </div>
-                                    <h3 className="font-semibold text-lg mb-2 line-clamp-1">{title}</h3>
+                                    {isAdmin && <h3 className="font-semibold text-lg mb-2 line-clamp-1">{title}</h3>}
                                     <div className="flex flex-wrap items-center gap-2 mb-2">
                                         <span className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600">{format}</span>
                                         <div className="flex items-center gap-1">

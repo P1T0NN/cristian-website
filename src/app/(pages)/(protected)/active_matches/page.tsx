@@ -18,7 +18,10 @@ export default async function ActiveMatchesPage() {
     return (
         <div className="container mx-auto px-4 py-6 sm:py-8">
             <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">{t('activeMatches')}</h1>
-            <DisplayActiveMatches currentUserId={serverUserData.id} />
+            <DisplayActiveMatches 
+                currentUserId={serverUserData.id} 
+                isAdmin={serverUserData.isAdmin}
+            />
         </div>
     )
 }
