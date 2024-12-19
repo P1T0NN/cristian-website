@@ -567,7 +567,8 @@
         "denyingAccess": "Denying Access...",
         "confirmDenyAccessTitle": "Confirm Access Denial",
         "confirmDenyAccessDescription": "Are you sure you want to deny access and delete this user? This action cannot be undone.",
-        "confirmDeny": "Confirm Deny"
+        "confirmDeny": "Confirm Deny",
+        "playerLevel": "Player Level"
     },
 
     "FilterModalComponent": {

@@ -569,7 +569,8 @@
         "denyingAccess": "Denegando Acceso...",
         "confirmDenyAccessTitle": "Confirmar Denegación de Acceso",
         "confirmDenyAccessDescription": "¿Estás seguro de que quieres denegar el acceso y eliminar a este usuario? Esta acción no se puede deshacer.",
-        "confirmDeny": "Confirmar Denegación"
+        "confirmDeny": "Confirmar Denegación",
+        "playerLevel": "Jugador Nivel"
     },
 
     "FilterModalComponent": {

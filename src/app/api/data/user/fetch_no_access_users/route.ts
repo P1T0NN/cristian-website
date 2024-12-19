@@ -9,7 +9,6 @@ import { getTranslations } from 'next-intl/server';
 // TYPES
 import type { APIResponse } from '@/types/responses/APIResponse';
 
-
 export async function GET(req: NextRequest): Promise<NextResponse<APIResponse>> {
     const [genericMessages, fetchMessages] = await Promise.all([
         getTranslations("GenericMessages"),
@@ -30,7 +29,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<APIResponse>> 
 
     const { data: users, error } = await supabase
         .from('users')
-        .select('id, email, fullName, gender, phoneNumber')
+        .select('id, email, fullName, gender, phoneNumber, player_level')
         .eq('has_access', false);
 
     if (error) {

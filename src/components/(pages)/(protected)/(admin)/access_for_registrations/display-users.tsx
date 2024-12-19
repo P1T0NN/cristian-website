@@ -33,6 +33,7 @@ export const DisplayUsers = async ({
                         <TableHead className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('email')}</TableHead>
                         <TableHead className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('phone')}</TableHead>
                         <TableHead className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('gender')}</TableHead>
+                        <TableHead className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('playerLevel')}</TableHead>
                         <TableHead className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('action')}</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -43,6 +44,7 @@ export const DisplayUsers = async ({
                             <TableCell className="px-2 py-4 whitespace-normal break-words text-sm">{user.email}</TableCell>
                             <TableCell className="px-2 py-4 whitespace-normal break-words text-sm">{user.phoneNumber}</TableCell>
                             <TableCell className="px-2 py-4 whitespace-normal break-words text-sm">{user.gender}</TableCell>
+                            <TableCell className="px-2 py-4 whitespace-normal break-words text-sm">{user.player_level}</TableCell>
                             <TableCell className="px-2 py-4 whitespace-nowrap text-sm">
                                 <div className="flex flex-col sm:flex-row gap-2">
                                     <GrantUserAccessButton
@@ -62,3 +64,4 @@ export const DisplayUsers = async ({
         </div>
     )
 }
+
