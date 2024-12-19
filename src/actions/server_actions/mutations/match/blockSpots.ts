@@ -89,6 +89,7 @@ DECLARE
     v_is_admin BOOLEAN;
     v_current_blocked_spots INT;
     v_updated_places_occupied INT;
+    v_spots_difference INT;
 BEGIN
     -- Check if the user is an admin
     SELECT "isAdmin" INTO v_is_admin FROM users WHERE id = p_user_id;
@@ -104,25 +105,26 @@ BEGIN
 
     -- Get the current blocked spots
     IF p_team_number = 1 THEN
-        v_current_blocked_spots := v_match.block_spots_team1;
+        v_current_blocked_spots := COALESCE(v_match.block_spots_team1, 0);
     ELSE
-        v_current_blocked_spots := v_match.block_spots_team2;
+        v_current_blocked_spots := COALESCE(v_match.block_spots_team2, 0);
     END IF;
 
     -- Calculate the difference in blocked spots
-    v_updated_places_occupied := v_match.places_occupied + (p_spots_to_block - v_current_blocked_spots);
+    v_spots_difference := p_spots_to_block - v_current_blocked_spots;
+
+    -- Update places_occupied
+    v_updated_places_occupied := GREATEST(0, COALESCE(v_match.places_occupied, 0) + v_spots_difference);
 
     -- Update the blocked spots and places_occupied
     IF p_team_number = 1 THEN
         UPDATE matches 
         SET block_spots_team1 = p_spots_to_block, places_occupied = v_updated_places_occupied
-        WHERE id = p_match_id
-        RETURNING places_occupied INTO v_updated_places_occupied;
+        WHERE id = p_match_id;
     ELSE
         UPDATE matches 
         SET block_spots_team2 = p_spots_to_block, places_occupied = v_updated_places_occupied
-        WHERE id = p_match_id
-        RETURNING places_occupied INTO v_updated_places_occupied;
+        WHERE id = p_match_id;
     END IF;
 
     RETURN jsonb_build_object(

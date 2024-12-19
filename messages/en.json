@@ -325,6 +325,9 @@
         "joinAndPayWithCash": "Join and pay with cash",
         "joinAndPayWithBalance": "Join and pay with balance",
         "youAreInThisMatch": "You are in this match",
+        "temporaryPlayerActions": "Temporary Player Actions",
+        "temporaryPlayerActionsDescription": "Choose an action for temporary player {playerName}",
+        "temporaryPlayerRemoved": "Temporary player has been removed from the match",
         "MatchFAQ": {
             "title": "Frequently Asked Questions",
             "startTimeDuration": {
@@ -484,7 +487,13 @@
         "removeBalanceButtonLabel": "Remove balance",
         "removeBalanceConfirmTitle": "Confirm Remove Balance",
         "removeBalanceConfirmDescription": "Are you sure you want to remove balance from this player?",
-        "enterReason": "Enter reason"
+        "enterReason": "Enter reason",
+        "verifyDocuments": "Verify Documents",
+        "verifyDocumentsConfirmation": "Verify Documents Confirmation",
+        "verifyDocumentsDescription": "Are you sure you want to verify this player's documents?",
+        "confirmVerification": "Confirm Verification",
+        "verifying": "Verifying...",
+        "documentsVerified": "Documents verified successfully"
     },
 
     "AddTeamPage": {
@@ -568,7 +577,13 @@
         "confirmDenyAccessTitle": "Confirm Access Denial",
         "confirmDenyAccessDescription": "Are you sure you want to deny access and delete this user? This action cannot be undone.",
         "confirmDeny": "Confirm Deny",
-        "playerLevel": "Player Level"
+        "playerLevel": "Player Level",
+        "levelUnchanged": "The level has not been changed",
+        "editLevel": "Edit Level",
+        "updatePlayerLevel": "Update Player Level",
+        "enterPlayerLevel": "Enter new player level",
+        "updating": "Updating...",
+        "updateLevel": "Update Level"
     },
 
     "FilterModalComponent": {
@@ -810,6 +825,14 @@
         "SPOTS_BLOCK_FAILED": "Failed to block spots!",
 
         "INSUFFICIENT_BALANCE_TRY_CASH": "Insufficient balance. If you want, you can pay with cash.",
+
+        "UPDATE_PLAYER_LEVEL_FAILED": "Failed to update player level",
+        "PLAYER_LEVEL_UPDATED_SUCCESSFULLY": "Player level updated successfully",
+
+        "TEMPORARY_PLAYER_REMOVED_SUCCESSFULLY": "Temporary player removed successfully",
+
+        "VERIFY_DOCUMENTS_FAILED": "Failed to verify documents",
+        "DOCUMENTS_VERIFIED_SUCCESSFULLY": "Documents verified successfully",
 
         "REDIS_CONNECTION_ERROR": "Unable to connect to the database. Please try again later.",
         "REDIS_DISCONNECTION_ERROR": "Error occurred while disconnecting from the database.",

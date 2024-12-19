@@ -16,7 +16,7 @@ import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
 // CONFIG
 import { CACHE_KEYS } from '@/config';
 
-export async function adminRemovePlayerFromMatch(authToken: string, matchId: string, playerId: string) {
+export async function adminRemovePlayerFromMatch(authToken: string, matchId: string, playerId: string, isTemporaryPlayer: boolean = false) {
     const genericMessages = await getTranslations("GenericMessages");
 
     const { isAuth, userId } = await verifyAuth(authToken);
@@ -36,33 +36,63 @@ export async function adminRemovePlayerFromMatch(authToken: string, matchId: str
         return { success: false, message: genericMessages('UNAUTHORIZED') };
     }
 
-    // Fetch current match data and player data
-    const [{ data: match, error: matchError }, { data: player, error: playerError }] = await Promise.all([
-        supabase
-            .from('matches')
-            .select('*')
-            .eq('id', matchId)
-            .single(),
-        supabase
+    // Fetch current match data
+    const { data: match, error: matchError } = await supabase
+        .from('matches')
+        .select('*')
+        .eq('id', matchId)
+        .single();
+
+    if (matchError) {
+        return { success: false, message: genericMessages('OPERATION_FAILED') };
+    }
+
+    let removeError;
+    if (isTemporaryPlayer) {
+        // Remove temporary player from match
+        const { error } = await supabase
+            .from('temporary_players')
+            .delete()
+            .match({ 
+                match_id: matchId, 
+                id: playerId 
+            });
+        removeError = error;
+    } else {
+        // Fetch player data for regular players
+        const { data: player, error: playerError } = await supabase
             .from('match_players')
             .select('has_entered_with_balance')
             .eq('match_id', matchId)
             .eq('user_id', playerId)
-            .single()
-    ]);
+            .single();
 
-    if (matchError || playerError) {
-        return { success: false, message: genericMessages('OPERATION_FAILED') };
+        if (playerError) {
+            return { success: false, message: genericMessages('OPERATION_FAILED') };
+        }
+
+        // Remove regular player from match
+        const { error } = await supabase
+            .from('match_players')
+            .delete()
+            .match({ 
+                match_id: matchId, 
+                user_id: playerId 
+            });
+        removeError = error;
+
+        // Update player's balance if they had entered with balance
+        if (player && player.has_entered_with_balance) {
+            const { error: balanceUpdateError } = await supabase.rpc('refund_player', {
+                p_user_id: playerId,
+                p_match_id: matchId
+            });
+
+            if (balanceUpdateError) {
+                return { success: false, message: genericMessages('BALANCE_UPDATE_FAILED') };
+            }
+        }
     }
-
-    // Remove player from match
-    const { error: removeError } = await supabase
-        .from('match_players')
-        .delete()
-        .match({ 
-            match_id: matchId, 
-            user_id: playerId 
-        });
 
     if (removeError) {
         return { success: false, message: genericMessages('OPERATION_FAILED') };
@@ -79,18 +109,6 @@ export async function adminRemovePlayerFromMatch(authToken: string, matchId: str
         return { success: false, message: genericMessages('OPERATION_FAILED') };
     }
 
-    // Update player's balance if they had entered with balance
-    if (player && player.has_entered_with_balance) {
-        const { error: balanceUpdateError } = await supabase.rpc('refund_player', {
-            p_user_id: playerId,
-            p_match_id: matchId
-        });
-
-        if (balanceUpdateError) {
-            return { success: false, message: genericMessages('BALANCE_UPDATE_FAILED') };
-        }
-    }
-
     // Update the match cache
     const matchCacheKey = `${CACHE_KEYS.MATCH_PREFIX}${matchId}`;
     const cachedMatch = await upstashRedisCacheService.get<typeof match>(matchCacheKey);
@@ -102,32 +120,5 @@ export async function adminRemovePlayerFromMatch(authToken: string, matchId: str
 
     revalidatePath("/");
 
-    return { success: true, message: genericMessages('PLAYER_REMOVED_SUCCESSFULLY') }
+    return { success: true, message: isTemporaryPlayer ? genericMessages('TEMPORARY_PLAYER_REMOVED_SUCCESSFULLY') : genericMessages('PLAYER_REMOVED_SUCCESSFULLY') }
 }
-
-/* SUPABASE REFUND PLAYER RPC FUNCTION
-
-CREATE OR REPLACE FUNCTION refund_player(p_user_id UUID, p_match_id UUID)
-RETURNS void
-LANGUAGE plpgsql
-SECURITY DEFINER
-AS $$
-DECLARE
-    v_match_price NUMERIC;
-BEGIN
-    -- Get the match price
-    SELECT price::NUMERIC INTO v_match_price
-    FROM matches
-    WHERE id = p_match_id;
-
-    -- Update the user's balance
-    UPDATE users
-    SET balance = balance + v_match_price
-    WHERE id = p_user_id;
-END;
-$$;
-
--- Grant necessary permissions
-GRANT EXECUTE ON FUNCTION refund_player(UUID, UUID) TO authenticated;
-
-*/

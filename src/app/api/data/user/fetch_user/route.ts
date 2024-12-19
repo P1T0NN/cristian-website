@@ -15,11 +15,8 @@ export async function POST(req: Request): Promise<NextResponse<APIResponse>> {
     const body = await req.json();
     const { playerId } = body;
 
-    console.log('Fetching user data', { playerId });
-
     if (!playerId) {
-        console.error('Player ID not provided');
-        return NextResponse.json({ success: false, message: genericMessages('PLAYER_ID_REQUIRED') });
+        return NextResponse.json({ success: false, message: genericMessages('INTERNAL_SERVER_ERROR') });
     }
 
     // Fetch user data first
@@ -30,11 +27,8 @@ export async function POST(req: Request): Promise<NextResponse<APIResponse>> {
         .single();
 
     if (userError || !user) {
-        console.error('User not found', { playerId, error: userError });
         return NextResponse.json({ success: false, message: genericMessages('USER_NOT_FOUND') });
     }
-
-    console.log('User data fetched', { userId: user.id, fullName: user.fullName });
 
     // Fetch debts using the user's fullName
     const { data: debts, error: debtsError } = await supabase
@@ -43,9 +37,7 @@ export async function POST(req: Request): Promise<NextResponse<APIResponse>> {
         .eq('player_name', user.fullName);
 
     if (debtsError) {
-        console.error('Error fetching debts', { fullName: user.fullName, error: debtsError });
-    } else {
-        console.log('Debts fetched', { fullName: user.fullName, debtCount: debts?.length });
+        return NextResponse.json({ success: false, message: genericMessages('INTERNAL_SERVER_ERROR') }); // I put this because I am lazy to add new translation
     }
 
     // Fetch balances using the user's fullName
@@ -55,9 +47,7 @@ export async function POST(req: Request): Promise<NextResponse<APIResponse>> {
         .eq('player_name', user.fullName);
 
     if (balancesError) {
-        console.error('Error fetching balances', { fullName: user.fullName, error: balancesError });
-    } else {
-        console.log('Balances fetched', { fullName: user.fullName, balanceCount: balances?.length });
+        return NextResponse.json({ success: false, message: genericMessages('INTERNAL_SERVER_ERROR') }); // I put this because I am lazy to add new translation
     }
 
     // If there's an error fetching debts or balances, we'll just set them to empty arrays
@@ -70,13 +60,6 @@ export async function POST(req: Request): Promise<NextResponse<APIResponse>> {
         debts: userDebts,
         balances: userBalances
     };
-
-    console.log('User data compiled', { 
-        userId: user.id, 
-        fullName: user.fullName, 
-        debtCount: userDebts.length, 
-        balanceCount: userBalances.length 
-    });
 
     return NextResponse.json({ success: true, message: fetchMessages('USER_FETCHED'), data: userData });
 }

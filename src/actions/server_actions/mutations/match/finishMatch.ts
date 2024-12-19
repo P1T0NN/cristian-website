@@ -63,6 +63,7 @@ DECLARE
     v_price_numeric NUMERIC;
     v_current_debt NUMERIC;
     v_match_history_id UUID;
+    v_formatted_time TEXT;
 BEGIN
     SELECT * INTO v_match FROM matches WHERE id = p_match_id;
     IF NOT FOUND THEN
@@ -82,6 +83,9 @@ BEGIN
     ) RETURNING id INTO v_match_history_id;
     
     v_price_numeric := v_match.price::NUMERIC;
+    
+    -- Format the time
+    v_formatted_time := TO_CHAR(v_match.starts_at_hour::time, 'HH24:MI');
     
     FOR v_player IN SELECT * FROM match_players WHERE match_id = p_match_id
     LOOP
@@ -108,7 +112,8 @@ BEGIN
                 "fullName",
                 v_price_numeric,
                 0,
-                'Cuota no pagada para el partido del ' || v_match.starts_at_day,
+                'Cuota no pagada para el partido del ' || v_match.starts_at_day || 
+                ' a las ' || v_formatted_time || ' en ' || v_match.location,
                 'System'
             FROM users
             WHERE id = v_player.user_id;

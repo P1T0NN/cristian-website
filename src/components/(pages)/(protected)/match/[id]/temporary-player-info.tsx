@@ -8,6 +8,7 @@ import { HasPaidButton } from "./has-paid-button";
 import { HasDiscountButton } from "./has-discount-button";
 import { HasGratisButton } from "./has-gratis-button";
 import { SwitchTeamButton } from "./switch-team-button";
+import { RemoveTemporaryPlayerButton } from "./remove-temporary-player-button";
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
@@ -124,6 +125,13 @@ export const TemporaryPlayerInfo = async ({
                     />
                     {isAdmin && teamNumber !== 0 && isDefaultTeam && (
                         <SwitchTeamButton
+                            authToken={authToken}
+                            matchId={matchId}
+                            player={player}
+                        />
+                    )}
+                    {isAdmin && (
+                        <RemoveTemporaryPlayerButton
                             authToken={authToken}
                             matchId={matchId}
                             player={player}

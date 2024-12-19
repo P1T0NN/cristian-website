@@ -51,8 +51,14 @@ export const PaginatedMatchHistory = ({
         return players.length > 0 ? ` (${players.map(p => p.fullName).join(', ')})` : '';
     };
 
-    const calculateTotalMoney = (price: number, playersPaid: number) => {
-        return (price * playersPaid).toFixed(2);
+    const calculateTotalMoney = (price: number, playerStats: typesMatchHistory['playerStats']) => {
+        const fullPriceCount = playerStats.playersPaid - playerStats.playersWithDiscount.length - playerStats.playersWithGratis.length;
+        const discountedCount = playerStats.playersWithDiscount.length;
+        
+        const fullPriceTotal = fullPriceCount * price;
+        const discountedTotal = discountedCount * (price * 0.5); // 50% of the price for discounted players
+        
+        return (fullPriceTotal + discountedTotal).toFixed(2);
     };
 
     return (
@@ -63,7 +69,7 @@ export const PaginatedMatchHistory = ({
                     const format = `${formatMatchType(match.match_type)} ${match.match_gender}`;
                     const formattedTime = formatTime(match.starts_at_hour);
                     const formattedDate = dateFormat(new Date(match.starts_at_day), 'dd/MM/yyyy');
-                    const totalMoney = calculateTotalMoney(match.price, match.playerStats.playersPaid);
+                    const totalMoney = calculateTotalMoney(match.price, match.playerStats);
 
                     return (
                         <Card key={match.id} className="w-full transition-shadow hover:shadow-md">

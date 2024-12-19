@@ -6,13 +6,14 @@ import { getTranslations } from 'next-intl/server';
 
 // COMPONENTS
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { UpdatePlayerLevel } from './update-player-level';
 import { GrantUserAccessButton } from './grant-user-access-button';
 import { DenyUserAccessButton } from './deny-user-access-button';
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
 
-type DisplayUsersProps = {
+type DisplayUsersProps = { 
     users: typesUser[];
 }
 
@@ -44,7 +45,13 @@ export const DisplayUsers = async ({
                             <TableCell className="px-2 py-4 whitespace-normal break-words text-sm">{user.email}</TableCell>
                             <TableCell className="px-2 py-4 whitespace-normal break-words text-sm">{user.phoneNumber}</TableCell>
                             <TableCell className="px-2 py-4 whitespace-normal break-words text-sm">{user.gender}</TableCell>
-                            <TableCell className="px-2 py-4 whitespace-normal break-words text-sm">{user.player_level}</TableCell>
+                            <TableCell className="px-2 py-4 whitespace-normal break-words text-sm">
+                                <UpdatePlayerLevel
+                                    userId={user.id}
+                                    currentLevel={user.player_level}
+                                    authToken={authToken as string}
+                                />
+                            </TableCell>
                             <TableCell className="px-2 py-4 whitespace-nowrap text-sm">
                                 <div className="flex flex-col sm:flex-row gap-2">
                                     <GrantUserAccessButton
@@ -64,4 +71,3 @@ export const DisplayUsers = async ({
         </div>
     )
 }
-

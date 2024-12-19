@@ -87,7 +87,6 @@ DECLARE
     v_user RECORD;
     v_updated_places_occupied INT;
     v_updated_balance NUMERIC;
-    v_has_paid BOOLEAN;
     v_has_entered_with_balance BOOLEAN;
 BEGIN
     SELECT * INTO v_match FROM matches WHERE id = p_match_id;
@@ -109,19 +108,17 @@ BEGIN
             WHERE id = p_user_id
             RETURNING balance INTO v_updated_balance;
 
-            v_has_paid := true;
             v_has_entered_with_balance := true;
         ELSE
             RETURN jsonb_build_object('success', false, 'code', 'INSUFFICIENT_BALANCE');
         END IF;
     ELSE
-        v_has_paid := false;
         v_has_entered_with_balance := false;
         v_updated_balance := v_user.balance;
     END IF;
 
     INSERT INTO match_players (match_id, user_id, team_number, has_paid, has_entered_with_balance)
-    VALUES (p_match_id, p_user_id, p_team_number, v_has_paid, v_has_entered_with_balance);
+    VALUES (p_match_id, p_user_id, p_team_number, false, v_has_entered_with_balance);
 
     UPDATE matches
     SET places_occupied = v_updated_places_occupied
@@ -131,7 +128,7 @@ BEGIN
         'success', true, 
         'code', 'PLAYER_JOINED_SUCCESSFULLY',
         'metadata', jsonb_build_object(
-            'has_paid', v_has_paid,
+            'has_paid', false,
             'has_entered_with_balance', v_has_entered_with_balance,
             'updated_balance', v_updated_balance
         )

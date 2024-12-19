@@ -16,6 +16,7 @@ import { DebtsTable } from "./debts-table";
 import { BalanceTable } from "./balance-table";
 import { EditPlayerDetails } from "./edit-player-details";
 import { AddBalanceButton } from "./add-balance-button";
+import { VerifyDocumentsButton } from "./verify-documents-button";
 
 // ACTIONS
 import { serverFetchPlayer } from "@/actions/functions/data/server/server_fetchPlayer";
@@ -68,7 +69,7 @@ export const PlayerDetails = async ({
                     <div className="text-center sm:text-left">
                         <CardTitle className="text-2xl font-bold">{playerData.fullName}</CardTitle>
                         <div className="flex flex-wrap justify-center sm:justify-start items-center mt-1 gap-2">
-                            {playerData.is_verified && (
+                            {playerData.verify_documents && (
                                 <Badge variant="secondary" className="text-xs">
                                     <CheckCircle className="w-3 h-3 mr-1" />
                                     {t('verified')}
@@ -112,6 +113,11 @@ export const PlayerDetails = async ({
                                 playerId={playerId}
                                 isAdmin={currentUserData.isAdmin}
                                 addedBy={currentUserData.fullName}
+                            />
+                            <VerifyDocumentsButton
+                                authToken={authToken}
+                                userId={playerId}
+                                isVerified={playerData.verify_documents}
                             />
                         </>
                     )}

@@ -39,6 +39,7 @@ type PlayerActionModalProps = {
     };
     matchId: string;
     authToken: string;
+    isTemporaryPlayer?: boolean;
 }
 
 export const AdminActionsDialog = ({ 
@@ -46,7 +47,8 @@ export const AdminActionsDialog = ({
     onClose, 
     player, 
     matchId, 
-    authToken 
+    authToken,
+    isTemporaryPlayer = false
 }: PlayerActionModalProps) => {
     const t = useTranslations("MatchPage");
     const router = useRouter();
@@ -54,15 +56,17 @@ export const AdminActionsDialog = ({
     const [isPending, startTransition] = useTransition();
 
     const handleGoToProfile = () => {
-        router.push(`${PROTECTED_PAGE_ENDPOINTS.PLAYER_PAGE}/${player.id}`);
+        if (!isTemporaryPlayer) {
+            router.push(`${PROTECTED_PAGE_ENDPOINTS.PLAYER_PAGE}/${player.id}`);
+        }
     };
 
     const handleRemovePlayer = async () => {
         startTransition(async () => {
-            const result = await adminRemovePlayerFromMatch(authToken, matchId, player.id);
+            const result = await adminRemovePlayerFromMatch(authToken, matchId, player.id, isTemporaryPlayer);
 
             if (result.success) {
-                toast.success(t('playerRemoved'));
+                toast.success(isTemporaryPlayer ? t('temporaryPlayerRemoved') : t('playerRemoved'));
                 onClose();
             } else {
                 toast.error(result.message);
@@ -74,11 +78,17 @@ export const AdminActionsDialog = ({
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>{t('playerActions')}</DialogTitle>
-                    <DialogDescription>{t('playerActionsDescription', { playerName: player.fullName })}</DialogDescription>
+                    <DialogTitle>{isTemporaryPlayer ? t('temporaryPlayerActions') : t('playerActions')}</DialogTitle>
+                    <DialogDescription>
+                        {isTemporaryPlayer 
+                            ? t('temporaryPlayerActionsDescription', { playerName: player.fullName })
+                            : t('playerActionsDescription', { playerName: player.fullName })}
+                    </DialogDescription>
                 </DialogHeader>
                 <DialogFooter className="sm:justify-start">
-                    <Button onClick={handleGoToProfile}>{t('goToProfile')}</Button>
+                    {!isTemporaryPlayer && (
+                        <Button onClick={handleGoToProfile}>{t('goToProfile')}</Button>
+                    )}
                     <Button variant="destructive" onClick={handleRemovePlayer} disabled={isPending}>
                         {isPending ? (
                         <>
@@ -86,7 +96,7 @@ export const AdminActionsDialog = ({
                             {t('removing')}
                         </>
                         ) : (
-                            t('removePlayer')
+                            isTemporaryPlayer ? t('removeTemporaryPlayer') : t('removePlayer')
                         )}
                     </Button>
                 </DialogFooter>

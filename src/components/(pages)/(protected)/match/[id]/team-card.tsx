@@ -98,14 +98,12 @@ export const TeamCard = async ({
                     />
                 )}
 
-                {isAdmin && (
-                    <div>
-                        <BlockSpotsButton
-                            authToken={authToken}
-                            matchId={matchId}
-                            teamNumber={teamNumber}
-                        />
-                    </div>
+                {isAdmin && isDefaultTeam && (
+                    <BlockSpotsButton
+                        authToken={authToken}
+                        matchId={matchId}
+                        teamNumber={teamNumber}
+                    />
                 )}
             </CardHeader>
             <CardContent className="space-y-2">

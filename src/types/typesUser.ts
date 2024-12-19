@@ -22,6 +22,7 @@ export type typesUser = {
     country: string;
     has_access: boolean;
     balance: number;
+    verify_documents: boolean;
     debts?: typesDebt[];
     balances?: typesBalance[];
     matchPlayer?: typesMatchPlayer;

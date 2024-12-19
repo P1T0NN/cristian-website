@@ -327,6 +327,9 @@
         "joinAndPayWithCash": "Unirse y pagar en efectivo",
         "joinAndPayWithBalance": "Unirse y pagar con saldo",
         "youAreInThisMatch": "Estás en este partido",
+        "temporaryPlayerActions": "Acciones del Jugador Temporal",
+        "temporaryPlayerActionsDescription": "Elige una acción para el jugador temporal {playerName}",
+        "temporaryPlayerRemoved": "El jugador temporal ha sido eliminado del partido",
         "MatchFAQ": {
             "title": "Preguntas Frecuentes",
             "startTimeDuration": {
@@ -486,7 +489,13 @@
         "removeBalanceButtonLabel": "Retirar saldo",
         "removeBalanceConfirmTitle": "Confirmar retirar saldo",
         "removeBalanceConfirmDescription": "¿Está seguro de que desea retirar saldo de este jugador?",
-        "enterReason": "Ingrese el motivo"
+        "enterReason": "Ingrese el motivo",
+        "verifyDocuments": "Verificar Documentos",
+        "verifyDocumentsConfirmation": "Confirmación de Verificación de Documentos",
+        "verifyDocumentsDescription": "¿Estás seguro de que quieres verificar los documentos de este jugador?",
+        "confirmVerification": "Confirmar Verificación",
+        "verifying": "Verificando...",
+        "documentsVerified": "Documentos verificados con éxito"
     },
 
     "AddTeamPage": {
@@ -570,7 +579,13 @@
         "confirmDenyAccessTitle": "Confirmar Denegación de Acceso",
         "confirmDenyAccessDescription": "¿Estás seguro de que quieres denegar el acceso y eliminar a este usuario? Esta acción no se puede deshacer.",
         "confirmDeny": "Confirmar Denegación",
-        "playerLevel": "Jugador Nivel"
+        "playerLevel": "Nivel de Jugador",
+        "levelUnchanged": "El nivel no ha cambiado",
+        "editLevel": "Editar Nivel",
+        "updatePlayerLevel": "Actualizar Nivel del Jugador",
+        "enterPlayerLevel": "Ingrese el nuevo nivel del jugador",
+        "updating": "Actualizando...",
+        "updateLevel": "Actualizar Nivel"
     },
 
     "FilterModalComponent": {
@@ -807,6 +822,14 @@
         "SPOTS_BLOCK_FAILED": "¡No se pudieron bloquear las plazas!",
 
         "INSUFFICIENT_BALANCE_TRY_CASH": "Saldo insuficiente. Si lo desea, puede pagar en efectivo.",
+
+        "UPDATE_PLAYER_LEVEL_FAILED": "No se pudo actualizar el nivel del jugador",
+        "PLAYER_LEVEL_UPDATED_SUCCESSFULLY": "El nivel del jugador se actualizó con éxito",
+
+        "TEMPORARY_PLAYER_REMOVED_SUCCESSFULLY": "Jugador temporal eliminado con éxito",
+
+        "VERIFY_DOCUMENTS_FAILED": "No se pudieron verificar los documentos",
+        "DOCUMENTS_VERIFIED_SUCCESSFULLY": "Documentos verificados con éxito",
 
         "REDIS_CONNECTION_ERROR": "No se puede conectar a la base de datos. Inténtalo de nuevo más tarde.",
         "REDIS_DISCONNECTION_ERROR": "Error al desconectar de la base de datos.",
