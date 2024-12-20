@@ -1,18 +1,39 @@
-// NEXTJS IMPORTS
-import Link from 'next/link';
+"use client"
+
+// REACTJS IMPORTS
+import { useEffect } from 'react';
 
 // LIBRARIES
-import { getTranslations } from 'next-intl/server';
-
-// CONFIG
-import { PUBLIC_PAGE_ENDPOINTS } from '@/config';
+import { useTranslations } from 'next-intl';
+import { useQuery } from '@tanstack/react-query';
 
 // COMPONENTS
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { GoToLoginPageButton } from '@/components/(pages)/(unprotected)/unauthorized/go-to-login-page-button';
 
-export default async function UnauthorizedPage() {
-    const t = await getTranslations('UnauthorizedPage');
+async function deleteAuthCookies() {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/logout`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+    return response.json();
+}
+
+export default function UnauthorizedPage() {
+    const t = useTranslations('UnauthorizedPage');
+
+    const { refetch } = useQuery({
+        queryKey: ['deleteAuthCookies'],
+        queryFn: deleteAuthCookies,
+        enabled: false, // This prevents the query from running automatically
+    });
+
+    useEffect(() => {
+        refetch(); // This will run the query when the component mounts
+    }, [refetch]);
   
     return (
         <div className="flex items-center justify-center bg-background p-4 overflow-hidden">
@@ -31,9 +52,7 @@ export default async function UnauthorizedPage() {
                 </CardContent>
 
                 <CardFooter className="flex justify-center space-x-4">
-                    <Button asChild variant="outline">
-                        <Link href={PUBLIC_PAGE_ENDPOINTS.LOGIN_PAGE}>{t('goToHomepage')}</Link>
-                    </Button>
+                    <GoToLoginPageButton />
                 </CardFooter>
             </Card>
         </div>

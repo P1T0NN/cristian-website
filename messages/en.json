@@ -328,6 +328,7 @@
         "temporaryPlayerActions": "Temporary Player Actions",
         "temporaryPlayerActionsDescription": "Choose an action for temporary player {playerName}",
         "temporaryPlayerRemoved": "Temporary player has been removed from the match",
+        "lastPlacesLeft": "Last places left!",
         "MatchFAQ": {
             "title": "Frequently Asked Questions",
             "startTimeDuration": {
