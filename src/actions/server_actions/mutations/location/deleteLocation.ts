@@ -40,6 +40,7 @@ export async function deleteLocation(authToken: string, locationId: number) {
 
     // Invalidate the locations cache
     await upstashRedisCacheService.delete(CACHE_KEYS.ALL_LOCATIONS_PREFIX);
+    await upstashRedisCacheService.delete(CACHE_KEYS.DEFAULT_LOCATIONS_CACHE_KEY);
 
     revalidatePath("/");
 

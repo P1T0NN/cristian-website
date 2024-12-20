@@ -3,10 +3,11 @@ export const DEFAULT_JWT_EXPIRATION_TIME = 30 * 60; // 30 minutes default
 export const DEFAULT_REFRESH_TOKEN_EXPIRATION_TIME = 7 * 24 * 60 * 60; // 7 days
 
 export const CACHE_KEYS = {
-    MATCH_PREFIX:           "match:",
-    USER_PREFIX:            "user:",
-    ALL_LOCATIONS_PREFIX:   "all_locations",
-    ALL_TEAMS_PREFIX:       "all_teams"
+    MATCH_PREFIX:                   "match:",
+    USER_PREFIX:                    "user:",
+    ALL_LOCATIONS_PREFIX:           "all_locations",
+    ALL_TEAMS_PREFIX:               "all_teams",
+    DEFAULT_LOCATIONS_CACHE_KEY:    "default_locations"
 }
 
 export const PUBLIC_PAGE_ENDPOINTS = {

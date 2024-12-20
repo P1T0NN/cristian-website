@@ -21,6 +21,13 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Crys Sports",
   description: "Únete a emocionantes partidos de fútbol con Crys Sports. Reserva tu lugar en partidos 8v8 y otros formatos. Juega, conéctate y disfruta del fútbol con jugadores de todos los niveles.",
+  icons: {
+    icon: [
+      { url: '/crys-sports.webp', type: 'image/webp' },
+    ],
+    apple: '/crys-sports.webp',
+    shortcut: '/crys-sports.webp',
+  },
 };
 
 export default async function RootLayout({

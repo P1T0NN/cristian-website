@@ -101,7 +101,7 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
         const matchPlayers = allPlayers.filter(p => p.matchHistoryPlayer?.match_history_id === match.id);
         
         const playerStats = {
-            playersPaid: matchPlayers.filter(p => p.matchHistoryPlayer?.has_paid).length,
+            playersPaid: matchPlayers.filter(p => p.matchHistoryPlayer?.has_paid),
             playersWithDiscount: matchPlayers.filter(p => p.matchHistoryPlayer?.has_discount),
             playersWithGratis: matchPlayers.filter(p => p.matchHistoryPlayer?.has_gratis),
             playersEnteredWithBalance: matchPlayers.filter(p => p.matchHistoryPlayer?.has_entered_with_balance),

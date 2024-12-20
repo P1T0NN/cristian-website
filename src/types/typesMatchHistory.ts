@@ -25,7 +25,7 @@ export type typesMatchHistory = {
         };
     }[];
     playerStats: {
-        playersPaid: number;
+        playersPaid: { fullName: string }[];
         playersNotPaid: { fullName: string }[];
         playersWithDiscount: { fullName: string }[];
         playersWithGratis: { fullName: string }[];

@@ -9,11 +9,13 @@ import { jwtVerify } from 'jose';
 // SERVICES
 import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
 
+// CONFIG
+import { CACHE_KEYS } from '@/config';
+
 // TYPES
 import type { APIResponse } from '@/types/responses/APIResponse';
 import type { typesLocation } from '@/types/typesLocation';
 
-const DEFAULT_LOCATIONS_CACHE_KEY = 'default_locations';
 const CACHE_TTL = 60 * 60; // 1 hour in seconds
 
 export async function GET(req: NextRequest): Promise<NextResponse<APIResponse>> {
@@ -33,7 +35,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<APIResponse>> 
     }
 
     // Try to get default locations from Upstash Redis cache
-    const cacheResult = await upstashRedisCacheService.get<typesLocation[]>(DEFAULT_LOCATIONS_CACHE_KEY);
+    const cacheResult = await upstashRedisCacheService.get<typesLocation[]>(CACHE_KEYS.DEFAULT_LOCATIONS_CACHE_KEY);
 
     if (cacheResult.success && cacheResult.data) {
         return NextResponse.json({ success: true, message: fetchMessages('DEFAULT_LOCATIONS_FETCHED'), data: cacheResult.data });
@@ -51,7 +53,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<APIResponse>> 
     }
 
     // Store in Upstash Redis cache
-    await upstashRedisCacheService.set(DEFAULT_LOCATIONS_CACHE_KEY, defaultLocations, CACHE_TTL);
+    await upstashRedisCacheService.set(CACHE_KEYS.DEFAULT_LOCATIONS_CACHE_KEY, defaultLocations, CACHE_TTL);
 
     return NextResponse.json({ success: true, message: fetchMessages('DEFAULT_LOCATIONS_FETCHED'), data: defaultLocations });
 }
