@@ -23,6 +23,10 @@ export async function removeBalance(authToken: string, playerId: string, balance
         return { success: false, message: genericMessages('UNAUTHORIZED') };
     }
 
+    if (!playerId || !balanceId || !isAdmin) {
+        return { success: false, message: genericMessages('BAD_REQUEST') };
+    }
+
     // Fetch the balance entry
     const { data: balanceEntry, error: balanceError } = await supabase
         .from('balances')

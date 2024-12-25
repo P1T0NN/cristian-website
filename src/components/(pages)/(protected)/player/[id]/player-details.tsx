@@ -61,6 +61,9 @@ export const PlayerDetails = async ({
     return (
         <Card className="max-w-4xl mx-auto">
             <CardHeader className="pb-0">
+                <p className="text-red-500 font-semibold mb-4">
+                    {t('adminOnlyInfo')}
+                </p>
                 <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-4">
                     <Avatar className="h-20 w-20">
                         <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${playerData.fullName}`} />

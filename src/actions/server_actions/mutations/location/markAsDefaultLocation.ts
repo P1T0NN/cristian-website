@@ -25,6 +25,10 @@ export async function markAsDefaultLocation(authToken: string, locationId: numbe
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
+    if (!locationId) {
+        return { success: false, message: t('BAD_REQUEST') };
+    }
+
     // Update the specified location
     const { data, error } = await supabase
         .from('locations')

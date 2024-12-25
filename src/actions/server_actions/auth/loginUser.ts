@@ -33,6 +33,10 @@ const rateLimiter = new UpstashRateLimiter({
 export async function loginUser(email: string, password: string): Promise<APIResponse> {
     const t = await getTranslations('GenericMessages');
 
+    if (!email || !password) {
+        return { success: false, message: t('BAD_REQUEST') };
+    }
+
     const { data: user, error } = await supabase
         .from('users')
         .select('*')

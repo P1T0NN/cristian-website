@@ -24,6 +24,10 @@ export async function addDebt(authToken: string, addDebtData: typesAddDebtForm) 
         return { success: false, message: genericMessages('UNAUTHORIZED') };
     }
 
+    if (!addDebtData) {
+        return { success: false, message: genericMessages('BAD_REQUEST') };
+    }
+
     // Parallel execution of debt insertion and user fetch
     const [debtInsertResult, userFetchResult] = await Promise.all([
         supabase

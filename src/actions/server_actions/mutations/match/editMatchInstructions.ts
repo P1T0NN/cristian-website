@@ -29,8 +29,8 @@ export const editMatchInstructions = async (
         return { success: false, message: genericMessages('UNAUTHORIZED') };
     }
 
-    if (!matchId) {
-        return { success: false, message: genericMessages('MATCH_ID_INVALID') };
+    if (!matchId || !instructions) {
+        return { success: false, message: genericMessages('BAD_REQUEST') };
     }
 
     const { error } = await supabase

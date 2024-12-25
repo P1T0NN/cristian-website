@@ -29,7 +29,7 @@ export async function sortTeams(authToken: string, matchId: string) {
     }
 
     if (!matchId) {
-        return { success: false, message: t('MATCH_ID_INVALID') };
+        return { success: false, message: t('BAD_REQUEST') };
     }
 
     // Call the Supabase RPC function

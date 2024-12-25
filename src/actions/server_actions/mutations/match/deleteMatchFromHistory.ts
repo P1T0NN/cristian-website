@@ -20,7 +20,7 @@ export async function deleteMatchFromHistory(authToken: string, matchId: string)
     }
 
     if (!matchId) {
-        return { success: false, message: genericMessages('MATCH_ID_INVALID') };
+        return { success: false, message: genericMessages('BAD_REQUEST') };
     }
 
     const { error } = await supabase

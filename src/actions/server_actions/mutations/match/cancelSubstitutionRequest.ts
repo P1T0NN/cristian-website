@@ -29,7 +29,7 @@ export async function cancelSubstitutionRequest(authToken: string, matchId: stri
     }
 
     if (!matchId) {
-        return { success: false, message: t('MATCH_ID_INVALID') };
+        return { success: false, message: t('BAD_REQUEST') };
     }
 
     const { data, error } = await supabase.rpc('cancel_substitution_request', {

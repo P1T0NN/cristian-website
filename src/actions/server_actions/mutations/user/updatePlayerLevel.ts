@@ -22,12 +22,8 @@ export async function updatePlayerLevel(authToken: string, userId: string, newLe
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!userId) {
-        return { success: false, message: t('INVALID_SERVER_RESPONSE') };
-    }
-
-    if (!newLevel) {
-        return { success: false, message: t('INVALID_SERVER_RESPONSE') };
+    if (!userId || !newLevel) {
+        return { success: false, message: t('BAD_REQUEST') };
     }
 
     const { data, error } = await supabase

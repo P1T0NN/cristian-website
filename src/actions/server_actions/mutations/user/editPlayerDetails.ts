@@ -19,6 +19,10 @@ export async function editPlayerDetails(authToken: string, playerId: string, dni
         return { success: false, message: genericMessages('UNAUTHORIZED') };
     }
 
+    if (!playerId || !dni || !country || !phoneNumber || !playerLevel || !playerPosition) {
+        return { success: false, message: genericMessages('BAD_REQUEST') };
+    }
+
     const { data, error } = await supabase
         .from('users')
         .update({ 

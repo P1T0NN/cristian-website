@@ -22,8 +22,8 @@ export async function switchTeam(authToken: string, matchId: string, userId: str
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!matchId) {
-        return { success: false, message: t('MATCH_ID_INVALID') };
+    if (!matchId || !userId) {
+        return { success: false, message: t('BAD_REQUEST') };
     }
 
     const { data, error } = await supabase.rpc('switch_team', {

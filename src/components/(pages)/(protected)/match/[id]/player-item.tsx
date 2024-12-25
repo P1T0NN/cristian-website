@@ -17,7 +17,7 @@ type PlayerItemProps = {
     currentUserMatchAdmin: boolean;
     isUserInMatch: boolean;
     currentUserId: string;
-    isDefaultTeam?: boolean;
+    areDefaultTeams?: boolean;
 }
 
 export const PlayerItem = async ({ 
@@ -30,7 +30,7 @@ export const PlayerItem = async ({
     currentUserMatchAdmin,
     isUserInMatch,
     currentUserId,
-    isDefaultTeam
+    areDefaultTeams
 }: PlayerItemProps) => {
     return (
         <div 
@@ -44,7 +44,7 @@ export const PlayerItem = async ({
                     isAdmin={isAdmin}
                     currentUserMatchAdmin={currentUserMatchAdmin}
                     teamNumber={teamNumber}
-                    isDefaultTeam={isDefaultTeam as boolean}
+                    isDefaultTeam={areDefaultTeams as boolean}
                 />
             ) : (
                 <PlayerInfo 
@@ -54,7 +54,7 @@ export const PlayerItem = async ({
                     isAdmin={isAdmin}
                     currentUserMatchAdmin={currentUserMatchAdmin}
                     teamNumber={teamNumber}
-                    isDefaultTeam={isDefaultTeam as boolean}
+                    areDefaultTeams={areDefaultTeams as boolean}
                 />
             )}
 

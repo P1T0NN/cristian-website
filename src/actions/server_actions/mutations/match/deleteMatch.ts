@@ -40,7 +40,7 @@ export async function deleteMatch(authToken: string, matchId: string) {
     }
 
     if (!matchId) {
-        return { success: false, message: genericMessages('MATCH_ID_INVALID') };
+        return { success: false, message: genericMessages('BAD_REQUEST') };
     }
 
     // Fetch match details

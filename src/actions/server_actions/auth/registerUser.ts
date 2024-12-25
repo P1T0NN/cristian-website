@@ -26,6 +26,10 @@ type RegisterUserProps = {
 export async function registerUser(userData: RegisterUserProps): Promise<APIResponse> {
     const t = await getTranslations('GenericMessages');
 
+    if (!userData) {
+        return { success: false, message: t('BAD_REQUEST') };
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { email, password, confirmPassword: _, fullName, ...otherFields } = userData;
 

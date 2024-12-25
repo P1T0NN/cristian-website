@@ -23,7 +23,7 @@ export async function grantUserAccess(authToken: string, userId: string): Promis
     }
 
     if (!userId) {
-        return { success: false, message: t('INVALID_USER_ID') };
+        return { success: false, message: t('BAD_REQUEST') };
     }
 
     const { data, error } = await supabase

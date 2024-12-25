@@ -12,6 +12,10 @@ import { hashPassword } from '@/utils/argon2';
 export async function resetPassword(token: string, newPassword: string) {
     const t = await getTranslations('GenericMessages');
 
+    if(!newPassword) {
+        return { success: false, message: t('BAD_REQUEST') };
+    }
+
     const { data: resetToken, error: tokenError } = await supabase
         .from('reset_password_tokens')
         .select('*')

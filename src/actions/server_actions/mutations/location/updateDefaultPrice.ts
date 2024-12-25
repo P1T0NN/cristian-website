@@ -28,6 +28,10 @@ export async function updateDefaultPrice(authToken: string, locationId: number, 
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
+    if (!locationId) {
+        return { success: false, message: t('BAD_REQUEST') };
+    }
+
     const { error } = await supabase
         .from('locations')
         .update({ default_price: defaultPrice })

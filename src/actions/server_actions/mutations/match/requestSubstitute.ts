@@ -23,7 +23,7 @@ export async function requestSubstitute(authToken: string, matchId: string) {
     }
 
     if (!matchId) {
-        return { success: false, message: t('MATCH_ID_INVALID') };
+        return { success: false, message: t('BAD_REQUEST') };
     }
 
     const { data, error } = await supabase.rpc('request_substitute', {

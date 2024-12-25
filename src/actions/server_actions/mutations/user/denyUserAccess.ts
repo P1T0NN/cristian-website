@@ -23,7 +23,7 @@ export async function denyUserAccess(authToken: string, userId: string): Promise
     }
 
     if (!userId) {
-        return { success: false, message: t('INVALID_USER_ID') };
+        return { success: false, message: t('BAD_REQUEST') };
     }
 
     const { data, error } = await supabase.rpc('deny_user_access', {

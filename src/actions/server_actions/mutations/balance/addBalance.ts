@@ -27,6 +27,10 @@ export async function addBalance(authToken: string, playerId: string, amount: nu
         return { success: false, message: genericMessages('UNAUTHORIZED') };
     }
 
+    if (!playerId || !amount || !reason || !addedBy || !isAdmin) {
+        return { success: false, message: genericMessages('BAD_REQUEST') };
+    }
+
     // Fetch the user data
     const { data: userData, error: userFetchError } = await supabase
         .from('users')

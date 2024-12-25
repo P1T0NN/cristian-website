@@ -26,7 +26,7 @@ export async function deleteLocation(authToken: string, locationId: number) {
     }
 
     if (!locationId) {
-        return { success: false, message: t('LOCATION_ID_REQUIRED') };
+        return { success: false, message: t('BAD_REQUEST') };
     }
 
     const { error } = await supabase

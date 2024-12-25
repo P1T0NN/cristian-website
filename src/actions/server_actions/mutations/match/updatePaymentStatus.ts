@@ -29,7 +29,7 @@ export async function updatePaymentStatus(
     }
 
     if (!matchId || !playerId || typeof hasPaid !== 'boolean' || typeof hasDiscount !== 'boolean' || typeof hasGratis !== 'boolean') {
-        return { success: false, message: genericMessages('OPERATION_FAILED') };
+        return { success: false, message: genericMessages('BAD_REQUEST') };
     }
 
     // Check if the authenticated user is an admin

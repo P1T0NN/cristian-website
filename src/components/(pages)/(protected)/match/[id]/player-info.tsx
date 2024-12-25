@@ -28,7 +28,7 @@ type PlayerInfoProps = {
     isAdmin: boolean;
     currentUserMatchAdmin: boolean;
     teamNumber: 0 | 1 | 2;
-    isDefaultTeam: boolean;
+    areDefaultTeams: boolean;
 }
 
 export const PlayerInfo = async ({ 
@@ -38,7 +38,7 @@ export const PlayerInfo = async ({
     isAdmin,
     currentUserMatchAdmin,
     teamNumber,
-    isDefaultTeam
+    areDefaultTeams
 }: PlayerInfoProps) => {
     const t = await getTranslations("MatchPage");
 
@@ -148,15 +148,15 @@ export const PlayerInfo = async ({
                         currentUserMatchAdmin={currentUserMatchAdmin}
                         player={player}
                     />
+                    {(isAdmin || currentUserMatchAdmin) && teamNumber !== 0 && areDefaultTeams && (
+                        <SwitchTeamButton
+                            authToken={authToken}
+                            matchId={matchId}
+                            player={player}
+                        />
+                    )}
                     {isAdmin && (
                         <>
-                           {teamNumber !== 0 && isDefaultTeam && (
-                                <SwitchTeamButton
-                                    authToken={authToken}
-                                    matchId={matchId}
-                                    player={player}
-                                />
-                            )}
                             <ShowAdminModalButton
                                 authToken={authToken}
                                 matchId={matchId}

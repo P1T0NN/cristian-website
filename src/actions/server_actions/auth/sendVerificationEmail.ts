@@ -21,6 +21,10 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function sendVerificationEmail(email: string): Promise<APIResponse> {
     const t = await getTranslations('GenericMessages');
 
+    if (!email) {
+        return { success: false, message: t('BAD_REQUEST') };
+    }
+
     // Check if user exists and is not verified
     const { data: user, error: userError } = await supabase
         .from('users')

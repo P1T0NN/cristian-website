@@ -25,6 +25,10 @@ export async function adminRemovePlayerFromMatch(authToken: string, matchId: str
         return { success: false, message: genericMessages('UNAUTHORIZED') };
     }
 
+    if (!matchId || !playerId) {
+        return { success: false, message: genericMessages('BAD_REQUEST') };
+    }
+
     // Check if the user is an admin
     const { data: adminUser, error: adminError } = await supabase
         .from('users')

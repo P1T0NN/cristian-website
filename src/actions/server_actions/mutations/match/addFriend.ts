@@ -28,6 +28,10 @@ export async function addFriend(authToken: string, matchId: string, teamNumber: 
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
+    if (!matchId || !teamNumber || friendName || phoneNumber) {
+        return { success: false, message: t('BAD_REQUEST') };
+    }
+
     const { data, error } = await supabase.rpc('add_temporary_player', {
         p_user_id: userId,
         p_match_id: matchId,

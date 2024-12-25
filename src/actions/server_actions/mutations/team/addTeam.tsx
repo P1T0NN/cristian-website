@@ -28,6 +28,10 @@ export async function addTeam(authToken: string, addTeamData: typesAddTeamForm) 
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
+    if (!addTeamData) {
+        return { success: false, message: t('BAD_REQUEST') };
+    }
+
     const team_name = addTeamData.team_name;
     const team_level = addTeamData.team_level;
 

@@ -29,7 +29,7 @@ export async function editMatch(authToken: string, matchId: string, editMatchDat
     }
 
     if (!matchId) {
-        return { success: false, message: genericMessages('MATCH_ID_INVALID') };
+        return { success: false, message: genericMessages('BAD_REQUEST') };
     }
 
     const { data, error } = await supabase

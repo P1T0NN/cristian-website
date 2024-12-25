@@ -30,7 +30,7 @@ export async function adminToggleMatchAdmin(
     }
 
     if (!matchId || !playerId) {
-        return { success: false, message: genericMessages('OPERATION_FAILED') };
+        return { success: false, message: genericMessages('BAD_REQUEST') };
     }
 
     // Check if the authenticated user is an admin

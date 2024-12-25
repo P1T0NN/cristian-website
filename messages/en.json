@@ -54,6 +54,7 @@
 
     "RegisterPage": {
         "title": "Create an Account",
+        "adminOnlyInfo": "This information is ONLY VISIBLE to the administrator and the User themselves",
         "emailPlaceholder": "Email",
         "fullNamePlaceholder": "Full Name",
         "phoneNumberPlaceholder": "Phone Number",
@@ -431,6 +432,7 @@
 
     "PlayerPage": {
         "verified": "Verified",
+        "adminOnlyInfo": "This information is ONLY VISIBLE to the administrator and the User themselves",
         "admin": "Admin",
         "joined": "Joined",
         "playerOwes": "Player owes",
@@ -732,6 +734,7 @@
         "MATCH_ID_INVALID": "Invalid match!",
         "MATCH_INSTRUCTIONS_EDIT_FAILED": "Failed to update match instructions. Please try again.",
         "MATCH_INSTRUCTIONS_UPDATED": "Match instructions updated successfully.",
+        "MATCH_FULL": "Match is full. It's possible someone joined before you!",
 
         "MATCH_DELETION_FAILED": "Failed to delete match. Please try again!",
         "MATCH_DELETED": "Match deleted successfully!",
@@ -846,15 +849,13 @@
         "RATE_LIMIT_EXCEEDED": "Too many requests, please try again in a minute!",
 
         "INVALID_USER_ID": "User ID invalid!",
-        "IP_UNKNOWN": "Unable to determine IP",
-        "NETWORK_ERROR": "A network error occurred. Please check your connection and try again.",
         "UNKNOWN_ERROR": "An unexpected error occurred. Please try again later.",
         "INVALID_SERVER_RESPONSE": "Invalid response from server",
-        "DATABASE_ERROR": "Database error occurred",
         "UNAUTHORIZED": "You are forbidden to do this. Please try to refresh the page or relog.",
         "AUTHORIZED": "You are authorized for this action!",
         "OPERATION_FAILED": "Failed to do this action!",
-        "UNEXPECTED_ERROR": "Unexpected error. Please try again!"
+        "UNEXPECTED_ERROR": "Unexpected error. Please try again!",
+        "BAD_REQUEST": "Bad request!"
     },
 
     "FetchMessages": {

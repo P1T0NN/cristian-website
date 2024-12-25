@@ -28,6 +28,10 @@ export async function addLocation(authToken: string, addLocationData: typesAddLo
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
+    if (!addLocationData) {
+        return { success: false, message: t('BAD_REQUEST') };
+    }
+
     const location_name = addLocationData.location_name;
     const location_url = addLocationData.location_url;
 

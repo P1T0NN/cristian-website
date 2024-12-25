@@ -29,7 +29,7 @@ export async function cancelTemporaryPlayerSubstitutionRequest(authToken: string
     }
 
     if (!matchId || !temporaryPlayerId) {
-        return { success: false, message: t('INVALID_PARAMETERS') };
+        return { success: false, message: t('BAD_REQUEST') };
     }
 
     const { data, error } = await supabase.rpc('cancel_temporary_player_substitution_request', {

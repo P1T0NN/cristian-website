@@ -16,6 +16,10 @@ export async function requestPasswordReset(email: string) {
     const t = await getTranslations('GenericMessages');
     const startTime = Date.now();
 
+    if (!email) {
+        return { success: false, message: t('BAD_REQUEST') };
+    }
+
     const { data: user, error: userError } = await supabase
         .from('users')
         .select('*')

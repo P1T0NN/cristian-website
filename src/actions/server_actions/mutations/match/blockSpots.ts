@@ -34,7 +34,7 @@ export async function blockSpots(
     }
 
     if (!matchId || !teamNumber || typeof spotsToBlock !== 'number') {
-        return { success: false, message: genericMessages('OPERATION_FAILED') };
+        return { success: false, message: genericMessages('BAD_REQUEST') };
     }
 
     const { data, error } = await supabase.rpc('block_spots', {

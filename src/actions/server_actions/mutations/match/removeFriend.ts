@@ -28,8 +28,8 @@ export async function removeFriend(authToken: string, matchId: string, temporary
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!matchId) {
-        return { success: false, message: t('MATCH_ID_INVALID') };
+    if (!matchId || !temporaryPlayerId) {
+        return { success: false, message: t('BAD_REQUEST') };
     }
 
     const { data, error } = await supabase.rpc('remove_temporary_player', {

@@ -40,6 +40,7 @@ export const HeaderProtected = async ({
     authToken 
 }: HeaderProps) => {
     const t = await getTranslations('Header');
+    
     const initials = serverUserData ? getInitials(serverUserData.fullName) : '';
 
     return (
@@ -80,7 +81,7 @@ export const HeaderProtected = async ({
                             </div>
                         )}
 
-{serverUserData ? (
+                        {serverUserData ? (
                             <DropdownMenu>
                                 <DropdownMenuTrigger>
                                     <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-secondary">

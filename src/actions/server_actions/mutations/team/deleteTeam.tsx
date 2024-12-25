@@ -25,6 +25,10 @@ export async function deleteTeam(authToken: string, teamId: string) {
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
+    if (!teamId) {
+        return { success: false, message: t('BAD_REQUEST') };
+    }
+
     const { error } = await supabase
         .from('teams')
         .delete()

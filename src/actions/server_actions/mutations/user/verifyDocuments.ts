@@ -22,6 +22,10 @@ export async function verifyDocuments(authToken: string, userId: string): Promis
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
+    if (!userId) {
+        return { success: false, message: t('BAD_REQUEST') };
+    }
+
     // Check if the user is an admin
     const { data: adminUser } = await supabase
         .from('users')

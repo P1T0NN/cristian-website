@@ -29,8 +29,8 @@ export async function switchTeamColors(
         return { success: false, message: genericMessages('UNAUTHORIZED') };
     }
 
-    if (!matchId) {
-        return { success: false, message: genericMessages('MATCH_ID_INVALID') };
+    if (!matchId || !teamNumber) {
+        return { success: false, message: genericMessages('BAD_REQUEST') };
     }
 
     // Fetch current match data

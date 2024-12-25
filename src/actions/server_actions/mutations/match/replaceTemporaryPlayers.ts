@@ -22,8 +22,8 @@ export async function replaceTemporaryPlayer(authToken: string, matchId: string,
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!matchId) {
-        return { success: false, message: t('MATCH_ID_INVALID') };
+    if (!matchId || !temporaryPlayerId || !teamNumber) {
+        return { success: false, message: t('BAD_REQUEST') };
     }
 
     const { data, error } = await supabase.rpc('replace_temporary_player', {

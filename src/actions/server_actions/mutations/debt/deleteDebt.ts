@@ -21,7 +21,7 @@ export async function deleteDebt(authToken: string, debtId: string) {
     }
 
     if (!debtId) {
-        return { success: false, message: genericMessages('DEBT_ID_REQUIRED') };
+        return { success: false, message: genericMessages('BAD_REQUEST') };
     }
 
     // Fetch the debt to be deleted

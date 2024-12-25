@@ -54,6 +54,7 @@
 
     "RegisterPage": {
         "title": "Crear una cuenta",
+        "adminOnlyInfo": "Esta información solo es VISIBLE para el administrador y el propio Usuario",
         "emailPlaceholder": "Correo electrónico",
         "fullNamePlaceholder": "Nombre completo",
         "phoneNumberPlaceholder": "Número de teléfono",
@@ -432,6 +433,7 @@
 
     "PlayerPage": {
         "verified": "Verificado",
+        "adminOnlyInfo": "Esta información solo es VISIBLE para el administrador y el propio Usuario",
         "admin": "Administrador",
         "joined": "Se unió",
         "playerOwes": "El jugador debe",
@@ -730,6 +732,7 @@
         "MATCH_ID_INVALID": "¡Partido inválido!",
         "MATCH_INSTRUCTIONS_EDIT_FAILED": "Error al actualizar las instrucciones del partido. Por favor, inténtalo de nuevo.",
         "MATCH_INSTRUCTIONS_UPDATED": "Instrucciones del partido actualizadas con éxito.",
+        "MATCH_FULL": "El partido está lleno. ¡Es posible que alguien se haya unido antes que tú!",
 
         "MATCH_DELETION_FAILED": "Error al eliminar el partido. ¡Inténtalo de nuevo!",
         "MATCH_DELETED": "¡Partido eliminado exitosamente!",

@@ -65,6 +65,10 @@ export const RegisterContent = () => {
             <div className="flex flex-col pt-16 items-center space-y-7">
                 <h1 className="text-2xl font-bold">{t('title')}</h1>
 
+                <p className="text-red-500 font-semibold mb-4">
+                    {t('adminOnlyInfo')}
+                </p>
+
                 <div className="flex flex-col space-y-7">
                     <RegisterForm 
                         formData={formData}
