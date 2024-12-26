@@ -10,6 +10,7 @@ export default async function TeamPage({
 
     return (
         <div className="container mx-auto px-4 py-8">
+            {/* No need for individual Suspense here, loading.tsx is sufficient since we do only one getUser() call in TeamDetails */}
             <TeamDetails 
                 teamId={id} 
             />

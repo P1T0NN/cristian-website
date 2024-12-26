@@ -26,17 +26,16 @@ import { cancelTemporaryPlayerSubstitutionRequest } from "@/actions/server_actio
 import { Loader2 } from 'lucide-react';
 
 type CancelTemporaryPlayerSubstitutionButtonProps = {
-    authToken: string;
-    matchId: string;
+    matchIdFromParams: string;
     temporaryPlayerId: string;
 }
 
 export const CancelTemporaryPlayerSubstitutionButton = ({
-    authToken,
-    matchId,
+    matchIdFromParams,
     temporaryPlayerId
 }: CancelTemporaryPlayerSubstitutionButtonProps) => {
     const t = useTranslations("MatchPage");
+
     const [isPending, startTransition] = useTransition();
     
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -44,7 +43,10 @@ export const CancelTemporaryPlayerSubstitutionButton = ({
     const handleCancelSubstitution = () => {
         setIsDialogOpen(false);
         startTransition(async () => {
-            const result = await cancelTemporaryPlayerSubstitutionRequest(authToken, matchId, temporaryPlayerId);
+            const result = await cancelTemporaryPlayerSubstitutionRequest({
+                matchIdFromParams: matchIdFromParams, 
+                temporaryPlayerId: temporaryPlayerId
+            });
 
             if (result.success) {
                 toast.success(result.message);
@@ -64,11 +66,13 @@ export const CancelTemporaryPlayerSubstitutionButton = ({
                     {isPending ? t('canceling') : t('cancelTemporaryPlayerSubstitution')}
                 </Button>
             </DialogTrigger>
+            
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>{t('confirmCancelTemporaryPlayerSubstitutionTitle')}</DialogTitle>
                     <DialogDescription>{t('confirmCancelTemporaryPlayerSubstitutionDescription')}</DialogDescription>
                 </DialogHeader>
+
                 <DialogFooter>
                     <Button variant="outline" onClick={() => setIsDialogOpen(false)}>{t('cancel')}</Button>
                     <Button 

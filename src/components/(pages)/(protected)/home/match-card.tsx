@@ -7,26 +7,30 @@ import { getTranslations } from "next-intl/server";
 // COMPONENTS
 import { Card, CardContent } from "@/components/ui/card";
 
+// ACTIONS
+import { getUser } from "@/actions/auth/verifyAuth";
+
 // UTILS
 import { getGenderLabel } from "@/utils/next-intl/getGenderLabel";
 import { formatTime, formatDate } from "@/utils/dateUtils";
 
 // TYPES
 import type { typesMatch } from "@/types/typesMatch";
+import type { typesUser } from "@/types/typesUser";
 
 // LUCIDE ICONS
 import { MapPin, Users, Clock, User, Star, CheckCircle } from 'lucide-react';
 
 type MatchCardProps = {
     match: typesMatch;
-    isAdmin: boolean;
 };
 
 export const MatchCard = async ({ 
     match,
-    isAdmin
 }: MatchCardProps) => {
     const t = await getTranslations("MatchPage");
+
+    const serverUserData = await getUser() as typesUser;
 
     const title = `${match.team1_name} vs ${match.team2_name}`;
     
@@ -100,7 +104,7 @@ export const MatchCard = async ({
                             <div className="font-semibold text-lg">{match.price}€</div>
                         </div>
                         <div>
-                            {isAdmin && <h3 className="font-semibold text-lg truncate">{title}</h3>}
+                            {serverUserData.isAdmin && <h3 className="font-semibold text-lg truncate">{title}</h3>}
                             <div className="flex flex-wrap items-center gap-2 mt-2">
                                 <span className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600">{format}</span>
                                 <span className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600 flex items-center">
@@ -115,7 +119,7 @@ export const MatchCard = async ({
                                     <Users className="w-3 h-3 mr-1" />
                                     {getPlacesLeftText()}
                                 </span>
-                                {isAdmin && match.match_level && (
+                                {serverUserData.isAdmin && match.match_level && (
                                     <span className="text-xs bg-yellow-100 px-2 py-1 rounded-full text-yellow-600 flex items-center">
                                         <Star className="w-3 h-3 mr-1" />
                                         {t('matchLevel')}: {match.match_level}

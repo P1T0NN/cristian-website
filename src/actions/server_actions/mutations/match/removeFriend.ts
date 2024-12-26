@@ -1,6 +1,7 @@
 "use server"
 
 // NEXTJS IMPORTS
+import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
@@ -14,34 +15,52 @@ import { upstashRedisCacheService } from '@/services/server/redis-cache.service'
 import { CACHE_KEYS } from '@/config';
 
 // ACTIONS
-import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
+import { verifyAuth } from '@/actions/auth/verifyAuth';
 
 // TYPES
 import type { RPCResponseData } from '@/types/responses/RPCResponseData';
+import type { typesMatch } from '@/types/typesMatch';
 
-export async function removeFriend(authToken: string, matchId: string, temporaryPlayerId: string) {
+interface RemoveFriendResponse {
+    success: boolean;
+    message: string;
+    metadata?: Record<string, unknown>;
+}
+
+interface RemoveFriendParams {
+    matchIdFromParams: string;
+    temporaryPlayerId: string;
+}
+
+export async function removeFriend({
+    matchIdFromParams,
+    temporaryPlayerId
+}: RemoveFriendParams): Promise<RemoveFriendResponse> {
     const t = await getTranslations("GenericMessages");
 
-    const { isAuth, userId: authUserId } = await verifyAuth(authToken);
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+
+    const { isAuth, userId: authUserId } = await verifyAuth(authToken as string);
                 
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!matchId || !temporaryPlayerId) {
+    if (!matchIdFromParams || !temporaryPlayerId) {
         return { success: false, message: t('BAD_REQUEST') };
     }
 
     const { data, error } = await supabase.rpc('remove_temporary_player', {
         p_user_id: authUserId,
-        p_match_id: matchId,
+        p_match_id: matchIdFromParams,
         p_temporary_player_id: temporaryPlayerId
     });
 
     const result = data as RPCResponseData;
 
     if (error) {
-        return { success: false, message: t('OPERATION_FAILED') };
+        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
 
     if (!result.success) {
@@ -49,8 +68,8 @@ export async function removeFriend(authToken: string, matchId: string, temporary
     }
 
     // Update the match cache
-    const cacheKey = `${CACHE_KEYS.MATCH_PREFIX}${matchId}`;
-    const cachedMatch = await upstashRedisCacheService.get<{ places_occupied?: number }>(cacheKey);
+    const cacheKey = `${CACHE_KEYS.MATCH_PREFIX}${matchIdFromParams}`;
+    const cachedMatch = await upstashRedisCacheService.get<typesMatch>(cacheKey);
     
     if (cachedMatch.success && cachedMatch.data) {
         const updatedCachedMatch = { 

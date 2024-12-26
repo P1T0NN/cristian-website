@@ -1,6 +1,3 @@
-// NEXTJS IMPORTS
-import { cookies } from "next/headers";
-
 // LIBRARIES
 import { getTranslations } from "next-intl/server";
 
@@ -8,23 +5,21 @@ import { getTranslations } from "next-intl/server";
 import { PaginatedMatchHistory } from './paginated-match-history';
 
 // ACTIONS
-import { serverFetchAdminMatchHistory } from '@/actions/functions/data/server/server_fetchAdminMatchHistory';
+import { fetchAdminMatchHistory } from "@/actions/match/fetchAdminMatchHistory";
 
 // TYPES
 import { typesMatchHistory } from '@/types/typesMatchHistory';
 
 export const DisplayMatchHistory = async () => {
     const t = await getTranslations("MatchHistoryPage");
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get('auth_token')?.value as string;
 
-    const serverMatchHistoryData = await serverFetchAdminMatchHistory();
+    const serverMatchHistoryData = await fetchAdminMatchHistory();
     const matchHistoryData = serverMatchHistoryData.data as typesMatchHistory[];
 
     return (
         <div className="space-y-4">
             {matchHistoryData.length > 0 ? (
-                <PaginatedMatchHistory authToken={authToken} matchHistory={matchHistoryData} />
+                <PaginatedMatchHistory matchHistory={matchHistoryData} />
             ) : (
                 <div className="text-center py-4 bg-background rounded-lg shadow">
                     {t('noMatchHistoryFound')}

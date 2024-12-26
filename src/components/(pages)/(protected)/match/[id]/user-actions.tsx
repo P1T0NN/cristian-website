@@ -13,8 +13,7 @@ import { CancelSubstitutionButton } from "./cancel-substitution-button";
 import type { typesUser } from "@/types/typesUser";
 
 type UserActionsProps = {
-    authToken: string;
-    matchId: string;
+    matchIdFromParams: string;
     teamNumber: 0 | 1 | 2;
     player: typesUser;
     isCurrentUser: boolean;
@@ -23,8 +22,7 @@ type UserActionsProps = {
 }
 
 export const UserActions = ({
-    authToken,
-    matchId,
+    matchIdFromParams,
     teamNumber,
     player,
     isCurrentUser,
@@ -38,30 +36,26 @@ export const UserActions = ({
             {isCurrentUser && !isAdmin && (
                 player.matchPlayer?.substitute_requested ? (
                     <CancelSubstitutionButton 
-                        authToken={authToken}
-                        matchId={matchId}
+                        matchIdFromParams={matchIdFromParams}
                     />
                 ) : (
                     <PlayerLeaveTeamButton 
-                        authToken={authToken}
-                        matchId={matchId}
+                        matchIdFromParams={matchIdFromParams}
                         setShowSubstituteDialog={setShowSubstituteDialog}
                     />
                 )
             )}
             {!isCurrentUser && player.matchPlayer?.substitute_requested && !isUserInMatch && (
                 <PlayerReplaceButton
-                    authToken={authToken}
                     player={player}
-                    matchId={matchId}
+                    matchIdFromParams={matchIdFromParams}
                     teamNumber={teamNumber}
                 />
             )}
 
             {showSubstituteDialog && (
                 <SubstituteRequestDialog
-                    authToken={authToken}
-                    matchId={matchId}
+                    matchIdFromParams={matchIdFromParams}
                     setShowSubstituteDialog={setShowSubstituteDialog}
                 />
             )}

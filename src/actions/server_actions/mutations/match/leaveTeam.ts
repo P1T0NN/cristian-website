@@ -1,6 +1,7 @@
 "use server"
 
 // NEXTJS IMPORTS
+import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
@@ -14,33 +15,49 @@ import { upstashRedisCacheService } from '@/services/server/redis-cache.service'
 import { CACHE_KEYS } from '@/config';
 
 // ACTIONS
-import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
+import { verifyAuth } from '@/actions/auth/verifyAuth';
 
 // TYPES
 import type { RPCResponseData } from '@/types/responses/RPCResponseData';
+import type { typesMatch } from '@/types/typesMatch';
 
-export async function leaveMatch(authToken: string, matchId: string) {
+interface LeaveMatchResponse {
+    success: boolean;
+    message: string;
+    metadata?: Record<string, unknown>;
+}
+
+interface LeaveMatchParams {
+    matchIdFromParams: string;
+}
+
+export async function leaveMatch({
+    matchIdFromParams
+}: LeaveMatchParams): Promise<LeaveMatchResponse> {
     const t = await getTranslations("GenericMessages");
 
-    const { isAuth, userId: authUserId } = await verifyAuth(authToken);
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+
+    const { isAuth, userId: authUserId } = await verifyAuth(authToken as string);
                 
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!matchId) {
+    if (!matchIdFromParams) {
         return { success: false, message: t('BAD_REQUEST') };
     }
 
     const { data, error } = await supabase.rpc('leave_match', {
         p_auth_user_id: authUserId,
-        p_match_id: matchId
+        p_match_id: matchIdFromParams
     });
 
     const result = data as RPCResponseData;
 
     if (error) {
-        return { success: false, message: t('OPERATION_FAILED') };
+        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
 
     if (!result.success) {
@@ -48,12 +65,11 @@ export async function leaveMatch(authToken: string, matchId: string) {
     }
 
     // Update the match cache
-    const matchCacheKey = `${CACHE_KEYS.MATCH_PREFIX}${matchId}`;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const cachedMatch = await upstashRedisCacheService.get<any>(matchCacheKey);
+    const matchCacheKey = `${CACHE_KEYS.MATCH_PREFIX}${matchIdFromParams}`;
+    const cachedMatch = await upstashRedisCacheService.get<typesMatch>(matchCacheKey);
     
     if (cachedMatch.success && cachedMatch.data) {
-        const updatedPlacesOccupied = cachedMatch.data.places_occupied > 0 ? cachedMatch.data.places_occupied - 1 : 0;
+        const updatedPlacesOccupied = Math.max((cachedMatch.data.places_occupied || 0) - 1, 0);
         const updatedCachedMatch = { ...cachedMatch.data, places_occupied: updatedPlacesOccupied };
         await upstashRedisCacheService.set(matchCacheKey, updatedCachedMatch, 60 * 60 * 12); // 12 hours TTL
     }

@@ -4,32 +4,19 @@ import { NextResponse, NextRequest } from 'next/server';
 // LIBRARIES
 import { getTranslations } from 'next-intl/server';
 import { supabase } from '@/lib/supabase/supabase';
-import { jwtVerify } from 'jose';
 
-// TYPES
-import type { APIResponse } from '@/types/responses/APIResponse';
+// MIDDLEWARE
+import { withAuth } from '@/middleware/withAuth';
 
-export async function GET(req: NextRequest): Promise<NextResponse<APIResponse>> {
-    const genericMessages = await getTranslations("GenericMessages");
-    const fetchMessages = await getTranslations("FetchMessages");
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const GET = withAuth(async (request: NextRequest, _userId: string, _token: string): Promise<NextResponse> => {
+    const t = await getTranslations("GenericMessages");
 
-    const token = req.headers.get('authorization')?.split(' ')[1];
-
-    if (!token) {
-        return NextResponse.json({ success: false, message: genericMessages('UNAUTHORIZED') }, { status: 401 });
-    }
-
-    const { payload } = await jwtVerify(token, new TextEncoder().encode(process.env.JWT_SECRET)).catch(() => ({ payload: null }));
-
-    if (!payload) {
-        return NextResponse.json({ success: false, message: genericMessages('JWT_DECODE_ERROR') }, { status: 401 });
-    }
-
-    const url = new URL(req.url);
-    const teamId = url.searchParams.get('teamId');
+    const searchParams = request.nextUrl.searchParams;
+    const teamId = searchParams.get('teamId');
 
     if (!teamId) {
-        return NextResponse.json({ success: false, message: genericMessages('TEAM_ID_REQUIRED') }, { status: 400 });
+        return NextResponse.json({ success: false, message: t('BAD_REQUEST') }, { status: 400 });
     }
 
     // Fetch team from database
@@ -40,12 +27,12 @@ export async function GET(req: NextRequest): Promise<NextResponse<APIResponse>> 
         .single();
 
     if (error) {
-        return NextResponse.json({ success: false, message: fetchMessages('FAILED_TO_FETCH_TEAM') }, { status: 500 });
+        return NextResponse.json({ success: false, message: t('FAILED_TO_FETCH_TEAM') }, { status: 500 });
     }
 
     if (!team) {
-        return NextResponse.json({ success: false, message: fetchMessages('TEAM_NOT_FOUND') }, { status: 404 });
+        return NextResponse.json({ success: false, message: t('TEAM_NOT_FOUND') }, { status: 404 });
     }
 
-    return NextResponse.json({ success: true, message: fetchMessages('TEAM_FETCHED'), data: team });
-}
+    return NextResponse.json({ success: true, message: t('TEAM_FETCHED'), data: team });
+});

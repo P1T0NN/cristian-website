@@ -1,6 +1,7 @@
 "use server"
 
 // NEXTJS IMPORTS
+import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
@@ -8,21 +9,36 @@ import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
 // ACTIONS
-import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
+import { verifyAuth } from '@/actions/auth/verifyAuth';
 
 // TYPES
-import type { APIResponse } from '@/types/responses/APIResponse';
+import type { typesUser } from '@/types/typesUser';
 
-export async function verifyDocuments(authToken: string, userId: string): Promise<APIResponse> {
+interface VerifyDocumentsResponse {
+    success: boolean;
+    message: string;
+    data?: typesUser;
+}
+
+interface VerifyDocumentsParams {
+    playerIdFromParams: string;
+}
+
+export async function verifyDocuments({ 
+    playerIdFromParams
+}: VerifyDocumentsParams): Promise<VerifyDocumentsResponse> {
     const t = await getTranslations("GenericMessages");
 
-    const { isAuth, userId: adminId } = await verifyAuth(authToken);
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+
+    const { isAuth, userId: adminId } = await verifyAuth(authToken as string);
                         
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!userId) {
+    if (!playerIdFromParams) {
         return { success: false, message: t('BAD_REQUEST') };
     }
 
@@ -40,7 +56,7 @@ export async function verifyDocuments(authToken: string, userId: string): Promis
     const { data, error } = await supabase
         .from('users')
         .update({ verify_documents: true })
-        .eq('id', userId)
+        .eq('id', playerIdFromParams)
         .select()
         .single();
 
@@ -49,5 +65,5 @@ export async function verifyDocuments(authToken: string, userId: string): Promis
     }
 
     revalidatePath('/');
-    return { success: true, message: t('DOCUMENTS_VERIFIED_SUCCESSFULLY'), data };
+    return { success: true, message: t('DOCUMENTS_VERIFIED_SUCCESSFULLY'), data: data as typesUser };
 }

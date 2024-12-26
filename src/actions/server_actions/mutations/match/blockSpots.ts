@@ -1,6 +1,7 @@
 "use server"
 
 // NEXTJS IMPORTS
+import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
@@ -14,32 +15,47 @@ import { upstashRedisCacheService } from '@/services/server/redis-cache.service'
 import { CACHE_KEYS } from '@/config';
 
 // ACTIONS
-import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
+import { verifyAuth } from '@/actions/auth/verifyAuth';
 
 // TYPES
 import type { RPCResponseData } from '@/types/responses/RPCResponseData';
+import type { typesMatch } from '@/types/typesMatch';
 
-export async function blockSpots(
-    authToken: string,
-    matchId: string,
-    teamNumber: 1 | 2,
-    spotsToBlock: number
-) {
-    const genericMessages = await getTranslations("GenericMessages");
+interface BlockSpotsResponse {
+    success: boolean;
+    message: string;
+    metadata?: Record<string, unknown>;
+}
 
-    const { isAuth, userId } = await verifyAuth(authToken);
+interface BlockSpotsParams {
+    matchIdFromParams: string;
+    teamNumber: 1 | 2;
+    spotsToBlock: number;
+}
+
+export async function blockSpots({
+    matchIdFromParams,
+    teamNumber,
+    spotsToBlock
+}: BlockSpotsParams): Promise<BlockSpotsResponse> {
+    const t = await getTranslations("GenericMessages");
+
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+
+    const { isAuth, userId } = await verifyAuth(authToken as string);
                         
     if (!isAuth) {
-        return { success: false, message: genericMessages('UNAUTHORIZED') };
+        return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!matchId || !teamNumber || typeof spotsToBlock !== 'number') {
-        return { success: false, message: genericMessages('BAD_REQUEST') };
+    if (!matchIdFromParams || !teamNumber || typeof spotsToBlock !== 'number') {
+        return { success: false, message: t('BAD_REQUEST') };
     }
 
     const { data, error } = await supabase.rpc('block_spots', {
         p_user_id: userId,
-        p_match_id: matchId,
+        p_match_id: matchIdFromParams,
         p_team_number: teamNumber,
         p_spots_to_block: spotsToBlock
     });
@@ -47,16 +63,16 @@ export async function blockSpots(
     const result = data as RPCResponseData;
 
     if (error) {
-        return { success: false, message: genericMessages('OPERATION_FAILED') };
+        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
 
     if (!result.success) {
-        return { success: false, message: genericMessages('SPOTS_BLOCK_FAILED'), metadata: result.metadata };
+        return { success: false, message: t('SPOTS_BLOCK_FAILED'), metadata: result.metadata };
     }
 
     // Update the match cache
-    const cacheKey = `${CACHE_KEYS.MATCH_PREFIX}${matchId}`;
-    const cachedMatch = await upstashRedisCacheService.get<{ places_occupied?: number, block_spots_team1?: number, block_spots_team2?: number }>(cacheKey);
+    const cacheKey = `${CACHE_KEYS.MATCH_PREFIX}${matchIdFromParams}`;
+    const cachedMatch = await upstashRedisCacheService.get<typesMatch>(cacheKey);
     
     if (cachedMatch.success && cachedMatch.data) {
         const updatedCachedMatch = { 
@@ -69,7 +85,7 @@ export async function blockSpots(
 
     revalidatePath("/");
 
-    return { success: true, message: genericMessages('SPOTS_BLOCKED_SUCCESSFULLY'), metadata: result.metadata };
+    return { success: true, message: t('SPOTS_BLOCKED_SUCCESSFULLY'), metadata: result.metadata };
 }
 
 /* SUPABASE RPC FUNCTION

@@ -21,30 +21,31 @@ import { toast } from 'sonner';
 import { updateUserFullName } from '@/actions/server_actions/mutations/user/updateUserFullName';
 
 // TYPES
-import type { typesUser } from '@/types/typesUser';
 import type { Locale } from '@/i18n/config';
 
 type AccountSettingsProps = {
-    serverUserData: typesUser;
-    authToken: string;
     currentLocale: string;
+    currentUserFullName: string;
+    currentUserEmail: string;
 }
 
 export const AccountSettings = ({ 
-    serverUserData,
-    authToken,
-    currentLocale
+    currentLocale,
+    currentUserFullName,
+    currentUserEmail,
 }: AccountSettingsProps) => {
     const t = useTranslations('SettingsPage');
 
     const [isPending, startTransition] = useTransition();
 
-    const [fullName, setFullName] = useState(serverUserData.fullName);
+    const [fullName, setFullName] = useState(currentUserFullName);
 
     const handleSaveFullName = async () => {
         if (fullName) {
             startTransition(async () => {
-                const result = await updateUserFullName(authToken, fullName);
+                const result = await updateUserFullName({
+                    fullName: fullName
+                });
 
                 if (result.success) {
                     toast.success(result.message);
@@ -84,7 +85,7 @@ export const AccountSettings = ({
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="email">{t('email')}</Label>
-                    <Input id="email" value={serverUserData.email} disabled />
+                    <Input id="email" value={currentUserEmail} disabled />
                 </div>
                 <div className="space-y-2">
                     <Label>{t('language')}</Label>
@@ -112,7 +113,7 @@ export const AccountSettings = ({
                 <Button 
                     className="w-full" 
                     onClick={handleSaveFullName} 
-                    disabled={isPending || fullName === serverUserData.fullName}
+                    disabled={isPending || fullName === currentUserFullName}
                 >
                     {isPending ? t('saving') : t('saveChanges')}
                 </Button>

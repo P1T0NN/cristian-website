@@ -17,15 +17,13 @@ import { Trash2 } from 'lucide-react';
 import { removeBalance } from '@/actions/server_actions/mutations/balance/removeBalance';
 
 type RemoveBalanceButtonProps = {
-    authToken: string;
-    playerId: string;
+    playerIdFromParams: string;
     isAdmin: boolean;
     balanceId: string;
 }
 
 export function RemoveBalanceButton({ 
-    authToken,
-    playerId,
+    playerIdFromParams,
     isAdmin,
     balanceId
 }: RemoveBalanceButtonProps) {
@@ -35,7 +33,11 @@ export function RemoveBalanceButton({
 
     const handleRemoveBalance = async () => {
         startTransition(async () => {
-            const result = await removeBalance(authToken, playerId, balanceId, isAdmin);
+            const result = await removeBalance({
+                playerIdFromParams: playerIdFromParams, 
+                balanceId: balanceId, 
+                isAdmin: isAdmin
+            });
             
             if (result.success) {
                 toast.success(result.message);

@@ -18,14 +18,12 @@ import { verifyDocuments } from '@/actions/server_actions/mutations/user/verifyD
 import { CheckCircle } from 'lucide-react';
 
 type VerifyDocumentsButtonProps = {
-    authToken: string;
-    userId: string;
+    playerIdFromParams: string;
     isVerified: boolean;
 }
 
 export function VerifyDocumentsButton({ 
-    authToken, 
-    userId, 
+    playerIdFromParams, 
     isVerified 
 }: VerifyDocumentsButtonProps) {
     const t = useTranslations('PlayerPage');
@@ -36,7 +34,9 @@ export function VerifyDocumentsButton({
 
     const handleVerify = async () => {
         startTransition(async () => {
-            const result = await verifyDocuments(authToken, userId);
+            const result = await verifyDocuments({
+                playerIdFromParams: playerIdFromParams
+            });
             
             if (result.success) {
                 setIsOpen(false);

@@ -14,12 +14,10 @@ import { toast } from "sonner";
 import { deleteLocation } from "@/actions/server_actions/mutations/location/deleteLocation";
 
 type DeleteLocationButtonProps = {
-    authToken: string;
     locationId: number;
 }
 
 export const DeleteLocationButton = ({
-    authToken,
     locationId
 }: DeleteLocationButtonProps) => {
     const t = useTranslations("AddLocationPage");
@@ -28,7 +26,9 @@ export const DeleteLocationButton = ({
 
     const handleDeleteLocation = () => {
         startTransition(async () => {
-            const response = await deleteLocation(authToken, locationId);
+            const response = await deleteLocation({
+                locationId: locationId
+            });
 
             if (response.success) {
                 toast.success(response.message);

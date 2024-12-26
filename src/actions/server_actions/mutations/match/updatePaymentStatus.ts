@@ -1,6 +1,7 @@
 "use server"
 
 // NEXTJS IMPORTS
+import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
@@ -8,28 +9,45 @@ import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
 // ACTIONS
-import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
+import { verifyAuth } from '@/actions/auth/verifyAuth';
 
-export async function updatePaymentStatus(
-    authToken: string,
-    matchId: string,
-    playerId: string,
-    hasPaid: boolean,
-    hasDiscount: boolean,
-    hasGratis: boolean,
-    currentUserMatchAdmin: boolean,
-    isTemporaryPlayer: boolean
-) {
-    const genericMessages = await getTranslations("GenericMessages");
+interface UpdatePaymentStatusResponse {
+    success: boolean;
+    message: string;
+}
 
-    const { isAuth, userId } = await verifyAuth(authToken);
+interface UpdatePaymentStatusParams {
+    matchIdFromParams: string;
+    playerId: string;
+    hasPaid: boolean;
+    hasDiscount: boolean;
+    hasGratis: boolean;
+    currentUserMatchAdmin: boolean;
+    isTemporaryPlayer: boolean;
+}
+
+export async function updatePaymentStatus({
+    matchIdFromParams,
+    playerId,
+    hasPaid,
+    hasDiscount,
+    hasGratis,
+    currentUserMatchAdmin,
+    isTemporaryPlayer
+}: UpdatePaymentStatusParams): Promise<UpdatePaymentStatusResponse> {
+    const t = await getTranslations("GenericMessages");
+
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+
+    const { isAuth, userId } = await verifyAuth(authToken as string);
                         
     if (!isAuth) {
-        return { success: false, message: genericMessages('UNAUTHORIZED') };
+        return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!matchId || !playerId || typeof hasPaid !== 'boolean' || typeof hasDiscount !== 'boolean' || typeof hasGratis !== 'boolean') {
-        return { success: false, message: genericMessages('BAD_REQUEST') };
+    if (!matchIdFromParams || !playerId || typeof hasPaid !== 'boolean' || typeof hasDiscount !== 'boolean' || typeof hasGratis !== 'boolean') {
+        return { success: false, message: t('BAD_REQUEST') };
     }
 
     // Check if the authenticated user is an admin
@@ -44,7 +62,7 @@ export async function updatePaymentStatus(
         currentUserMatchAdmin; // Match admin (using passed prop instead of database query)
 
     if (userError || !isAuthorized) {
-        return { success: false, message: genericMessages('UNAUTHORIZED') };
+        return { success: false, message: t('UNAUTHORIZED') };
     }
 
     // Update the payment status
@@ -58,16 +76,16 @@ export async function updatePaymentStatus(
             has_discount: hasDiscount,
             has_gratis: hasGratis
         })
-        .match({ match_id: matchId, [idColumn]: playerId });
+        .match({ match_id: matchIdFromParams, [idColumn]: playerId });
 
     if (updateError) {
-        return { success: false, message: genericMessages('OPERATION_FAILED') };
+        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
 
     revalidatePath("/");
 
     return { 
         success: true, 
-        message: genericMessages('PAYMENT_STATUS_UPDATED_SUCCESSFULLY')
+        message: t('PAYMENT_STATUS_UPDATED_SUCCESSFULLY')
     };
 }

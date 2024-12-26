@@ -1,6 +1,3 @@
-// NEXTJS IMPORTS
-import { cookies } from 'next/headers';
-
 // LIBRARIES
 import { getTranslations } from 'next-intl/server';
 
@@ -21,9 +18,6 @@ export const DisplayUsers = async ({
     users
 }: DisplayUsersProps) => {
     const t = await getTranslations('AccessForRegistrationPage');
-
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
 
     return (
         <div className="overflow-x-auto">
@@ -49,17 +43,15 @@ export const DisplayUsers = async ({
                                 <UpdatePlayerLevel
                                     userId={user.id}
                                     currentLevel={user.player_level}
-                                    authToken={authToken as string}
                                 />
                             </TableCell>
                             <TableCell className="px-2 py-4 whitespace-nowrap text-sm">
                                 <div className="flex flex-col sm:flex-row gap-2">
                                     <GrantUserAccessButton
-                                        authToken={authToken as string}
                                         userId={user.id}
                                     />
+
                                     <DenyUserAccessButton
-                                        authToken={authToken as string}
                                         userId={user.id}
                                     />
                                 </div>

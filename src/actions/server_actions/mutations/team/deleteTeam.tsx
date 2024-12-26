@@ -1,6 +1,7 @@
 "use server"
 
 // NEXTJS IMPORTS
+import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 
 // LIBRARIES
@@ -11,15 +12,29 @@ import { getTranslations } from "next-intl/server";
 import { upstashRedisCacheService } from "@/services/server/redis-cache.service";
 
 // ACTIONS
-import { verifyAuth } from "@/actions/actions/auth/verifyAuth";
+import { verifyAuth } from "@/actions/auth/verifyAuth";
 
 // CONFIG
 import { CACHE_KEYS } from "@/config";
 
-export async function deleteTeam(authToken: string, teamId: string) {
+interface DeleteTeamResponse {
+    success: boolean;
+    message: string;
+}
+
+interface DeleteTeamParams {
+    teamId: string;
+}
+
+export async function deleteTeam({ 
+    teamId 
+}: DeleteTeamParams): Promise<DeleteTeamResponse> {
     const t = await getTranslations("GenericMessages");
 
-    const { isAuth } = await verifyAuth(authToken);
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+
+    const { isAuth } = await verifyAuth(authToken as string);
                         
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };

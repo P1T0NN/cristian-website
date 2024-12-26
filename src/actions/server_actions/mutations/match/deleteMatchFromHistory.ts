@@ -1,6 +1,7 @@
 "use server"
 
 // NEXTJS IMPORTS
+import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
@@ -8,19 +9,33 @@ import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
 // ACTIONS
-import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
+import { verifyAuth } from '@/actions/auth/verifyAuth';
 
-export async function deleteMatchFromHistory(authToken: string, matchId: string) {
-    const genericMessages = await getTranslations("GenericMessages");
+interface DeleteMatchFromHistoryResponse {
+    success: boolean;
+    message: string;
+}
 
-    const { isAuth } = await verifyAuth(authToken);
+interface DeleteMatchFromHistoryParams {
+    matchId: string;
+}
+
+export async function deleteMatchFromHistory({
+    matchId
+}: DeleteMatchFromHistoryParams): Promise<DeleteMatchFromHistoryResponse> {
+    const t = await getTranslations("GenericMessages");
+
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+
+    const { isAuth } = await verifyAuth(authToken as string);
         
     if (!isAuth) {
-        return { success: false, message: genericMessages('UNAUTHORIZED') };
+        return { success: false, message: t('UNAUTHORIZED') };
     }
 
     if (!matchId) {
-        return { success: false, message: genericMessages('BAD_REQUEST') };
+        return { success: false, message: t('BAD_REQUEST') };
     }
 
     const { error } = await supabase
@@ -29,10 +44,10 @@ export async function deleteMatchFromHistory(authToken: string, matchId: string)
         .match({ id: matchId });
 
     if (error) {
-        return { success: false, message: genericMessages('MATCH_HISTORY_DELETION_FAILED') };
+        return { success: false, message: t('MATCH_HISTORY_DELETION_FAILED') };
     }
 
     revalidatePath("/");
 
-    return { success: true, message: genericMessages("MATCH_HISTORY_DELETED") };
+    return { success: true, message: t("MATCH_HISTORY_DELETED") };
 }

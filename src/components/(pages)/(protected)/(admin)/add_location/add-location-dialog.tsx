@@ -27,16 +27,13 @@ import { useZodSchemas } from "@/hooks/useZodSchema";
 // SERVER ACTIONS
 import { addLocation } from "@/actions/server_actions/mutations/location/addLocation";
 
-type AddLocationDialogProps = {
-    authToken: string;
-}
-
-export const AddLocationDialog = ({
-    authToken
-}: AddLocationDialogProps) => {
+export const AddLocationDialog = () => {
     const t = useTranslations("AddLocationPage");
+
     const [isPending, startTransition] = useTransition();
+
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+
     const { addLocationSchema } = useZodSchemas();
 
     const { formData, errors, handleInputChange, handleSubmit } = useForm({
@@ -47,7 +44,9 @@ export const AddLocationDialog = ({
         validationSchema: addLocationSchema,
         onSubmit: async (values) => {
             startTransition(async () => {
-                const result = await addLocation(authToken, values);
+                const result = await addLocation({
+                    addLocationData: values
+                });
                 
                 if (result.success) {
                     toast.success(result.message);

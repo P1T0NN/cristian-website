@@ -1,6 +1,7 @@
 "use server"
 
 // NEXTJS IMPORTS
+import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
@@ -14,27 +15,41 @@ import { upstashRedisCacheService } from '@/services/server/redis-cache.service'
 import { CACHE_KEYS } from '@/config';
 
 // ACTIONS
-import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
+import { verifyAuth } from '@/actions/auth/verifyAuth';
 
 // TYPES
 // We need this type because of how supabase.rpc returns messages
 import { RPCResponseData } from '@/types/responses/RPCResponseData';
 
-export async function finishMatch(authToken: string, matchId: string) {
+interface FinishMatchResponse {
+    success: boolean;
+    message: string;
+}
+
+interface FinishMatchParams {
+    matchIdFromParams: string;
+}
+
+export async function finishMatch({
+    matchIdFromParams
+}: FinishMatchParams): Promise<FinishMatchResponse> {
     const t = await getTranslations("GenericMessages");
 
-    const { isAuth } = await verifyAuth(authToken);
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+    
+    const { isAuth } = await verifyAuth(authToken as string);
         
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!matchId) {
+    if (!matchIdFromParams) {
         return { success: false, message: t('BAD_REQUEST') };
     }
 
     const { data, error } = await supabase.rpc('finish_match', {
-        p_match_id: matchId
+        p_match_id: matchIdFromParams
     });
 
     const result = data as RPCResponseData;
@@ -47,7 +62,7 @@ export async function finishMatch(authToken: string, matchId: string) {
         return { success: false, message: t(result.code) };
     }
 
-    await upstashRedisCacheService.delete(`${CACHE_KEYS.MATCH_PREFIX}${matchId}`);
+    await upstashRedisCacheService.delete(`${CACHE_KEYS.MATCH_PREFIX}${matchIdFromParams}`);
     revalidatePath("/");
 
     return { success: true, message: t(result.code) };

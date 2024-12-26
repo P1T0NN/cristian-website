@@ -14,14 +14,12 @@ import type { typesUser } from "@/types/typesUser";
 import { User } from "lucide-react";
 
 type ShowAdminModalButtonProps = {
-    authToken: string;
-    matchId: string;
+    matchIdFromParams: string;
     player: typesUser;
 }
 
 export const ShowAdminModalButton = ({
-    authToken,
-    matchId,
+    matchIdFromParams,
     player
 }: ShowAdminModalButtonProps) => {
     const [showAdminModal, setShowAdminModal] = useState(false);
@@ -41,11 +39,10 @@ export const ShowAdminModalButton = ({
 
             {showAdminModal && (
                 <AdminActionsDialog
+                    matchIdFromParams={matchIdFromParams}
                     isOpen={showAdminModal}
                     onClose={() => setShowAdminModal(false)}
                     player={player}
-                    matchId={matchId}
-                    authToken={authToken}
                 />
             )}
         </>

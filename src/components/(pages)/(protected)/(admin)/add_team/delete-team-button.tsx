@@ -29,19 +29,20 @@ import { Trash2 } from "lucide-react";
 
 type DeleteTeamButtonProps = {
     teamId: string
-    authToken: string
 }
 
 export function DeleteTeamButton({ 
-    teamId, 
-    authToken, 
+    teamId
 }: DeleteTeamButtonProps) {
     const t = useTranslations("AddTeamPage");
+    
     const [isPending, startTransition] = useTransition();
 
     const handleDeleteTeam = async () => {
         startTransition(async () => {
-            const result = await deleteTeam(authToken, teamId)
+            const result = await deleteTeam({
+                teamId: teamId
+            })
             
             if (result.success) {
                 toast.success(result.message);

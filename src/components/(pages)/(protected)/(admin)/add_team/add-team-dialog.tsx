@@ -27,13 +27,7 @@ import { useZodSchemas } from "@/hooks/useZodSchema";
 // SERVER ACTIONS
 import { addTeam } from "@/actions/server_actions/mutations/team/addTeam";
 
-type AddTeamDialogProps = {
-    authToken: string
-}
-
-export const AddTeamDialog = ({
-    authToken
-}: AddTeamDialogProps) => {
+export const AddTeamDialog = () => {
     const t = useTranslations("AddTeamPage");
     const [isPending, startTransition] = useTransition();
     
@@ -49,7 +43,9 @@ export const AddTeamDialog = ({
         validationSchema: addTeamSchema,
         onSubmit: async (values) => {
             startTransition(async () => {
-                const result = await addTeam(authToken, values)
+                const result = await addTeam({
+                    addTeamData: values
+                })
                 
                 if (result.success) {
                     toast.success(result.message)

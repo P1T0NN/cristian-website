@@ -11,6 +11,7 @@ export default async function MatchHistoryPage() {
         <section className="container mx-auto p-4 space-y-6">
             <h1 className="text-2xl font-bold">{t('matchHistory')}</h1>
 
+            {/* NO need for individual Suspense here, since we fetch in one component two calls, loading.tsx is sufficient! */}
             <DisplayMatchHistory />
         </section>
     );

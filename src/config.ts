@@ -28,7 +28,6 @@ export const PROTECTED_PAGE_ENDPOINTS = {
 
 export const ADMIN_PAGE_ENDPOINTS = {
     ADD_MATCH_PAGE: "/add_match",
-    ADD_DEBT_PAGE: "/add_debt",
     ADD_LOCATION_PAGE: "/add_location",
     EDIT_MATCH_PAGE: "/edit_match",
     ADD_TEAM_PAGE: "/add_team",

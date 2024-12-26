@@ -12,6 +12,10 @@ import { SwitchTeamButton } from "./switch-team-button";
 import { AddPlayerMatchAdminButton } from "./add-player-match-admin-button";
 import { ShowAdminModalButton } from "./show-admin-modal-button";
 
+// ACTIONS
+import { fetchCurrentUserMatchAdmin } from "@/actions/user/fetchCurrentUserMatchAdmin";
+import { getUser } from "@/actions/auth/verifyAuth";
+
 // UTILS
 import { getPositionLabel } from "@/utils/next-intl/getPlayerPositionLabel";
 
@@ -22,40 +26,42 @@ import type { typesUser } from "@/types/typesUser";
 import { UserMinus, Percent, Wallet } from 'lucide-react';
 
 type PlayerInfoProps = {
-    authToken: string;
-    matchId: string;
+    matchIdFromParams: string;
     player: typesUser;
-    isAdmin: boolean;
-    currentUserMatchAdmin: boolean;
     teamNumber: 0 | 1 | 2;
     areDefaultTeams: boolean;
 }
 
 export const PlayerInfo = async ({ 
-    authToken,
-    matchId,
-    player, 
-    isAdmin,
-    currentUserMatchAdmin,
+    matchIdFromParams,
+    player,
     teamNumber,
     areDefaultTeams
 }: PlayerInfoProps) => {
     const t = await getTranslations("MatchPage");
 
+    const currentUserData = await getUser() as typesUser;
+
+    const serverCurrentUserMatchAdmin = await fetchCurrentUserMatchAdmin(matchIdFromParams);
+    const currentUserMatchAdmin = serverCurrentUserMatchAdmin.data?.isAdmin as boolean;
+
     const nameColor = player.matchPlayer?.has_paid ? "text-green-500" : "text-red-500";
 
-    const showPaymentControls = isAdmin || currentUserMatchAdmin;
+    const showPaymentControls = currentUserData.isAdmin || currentUserMatchAdmin;
 
     const getDisplayName = (fullName: string) => {
-        if (isAdmin) {
+        if (currentUserData.isAdmin) {
             return fullName;
         }
+
         const nameParts = fullName.split(' ');
+
         if (nameParts.length > 1) {
             const firstName = nameParts[0];
             const lastNameInitial = nameParts[nameParts.length - 1].charAt(0);
             return `${firstName} ${lastNameInitial}.`;
         }
+
         return fullName;
     };
 
@@ -85,7 +91,9 @@ export const PlayerInfo = async ({
                                 </Tooltip>
                             </TooltipProvider>
                         )}
+
                         {displayName}
+
                         {player.matchPlayer?.has_match_admin && (
                             <TooltipProvider>
                                 <Tooltip>
@@ -100,7 +108,7 @@ export const PlayerInfo = async ({
                                 </Tooltip>
                             </TooltipProvider>
                         )}
-                        {(isAdmin || currentUserMatchAdmin) && hasEnteredWithBalance && (
+                        {(currentUserData.isAdmin || currentUserMatchAdmin) && hasEnteredWithBalance && (
                             <TooltipProvider>
                                 <Tooltip>
                                     <TooltipTrigger>
@@ -131,40 +139,34 @@ export const PlayerInfo = async ({
             {showPaymentControls && (
                 <div className="flex flex-wrap mt-2 gap-2">
                     <HasPaidButton 
-                        authToken={authToken}
-                        matchId={matchId}
+                        matchIdFromParams={matchIdFromParams}
                         currentUserMatchAdmin={currentUserMatchAdmin}
                         player={player}
                     />
                     <HasDiscountButton
-                        authToken={authToken}
-                        matchId={matchId}
+                        matchIdFromParams={matchIdFromParams}
                         currentUserMatchAdmin={currentUserMatchAdmin}
                         player={player}
                     />
                     <HasGratisButton
-                        authToken={authToken}
-                        matchId={matchId}
+                        matchIdFromParams={matchIdFromParams}
                         currentUserMatchAdmin={currentUserMatchAdmin}
                         player={player}
                     />
-                    {(isAdmin || currentUserMatchAdmin) && teamNumber !== 0 && areDefaultTeams && (
+                    {(currentUserData.isAdmin || currentUserMatchAdmin) && teamNumber !== 0 && areDefaultTeams && (
                         <SwitchTeamButton
-                            authToken={authToken}
-                            matchId={matchId}
+                            matchIdFromParams={matchIdFromParams}
                             player={player}
                         />
                     )}
-                    {isAdmin && (
+                    {currentUserData.isAdmin && (
                         <>
                             <ShowAdminModalButton
-                                authToken={authToken}
-                                matchId={matchId}
+                                matchIdFromParams={matchIdFromParams}
                                 player={player}
                             />
                             <AddPlayerMatchAdminButton
-                                authToken={authToken}
-                                matchId={matchId}
+                                matchIdFromParams={matchIdFromParams}
                                 player={player}
                             />
                         </>

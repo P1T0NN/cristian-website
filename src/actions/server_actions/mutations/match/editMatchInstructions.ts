@@ -1,6 +1,7 @@
 "use server"
 
 // NEXTJS IMPORTS
+import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 
 // LIBRARIES
@@ -11,35 +12,47 @@ import { supabase } from "@/lib/supabase/supabase";
 import { upstashRedisCacheService } from "@/services/server/redis-cache.service";
 
 // ACTIONS
-import { verifyAuth } from "@/actions/actions/auth/verifyAuth";
+import { verifyAuth } from "@/actions/auth/verifyAuth";
 
 // CONFIG
 import { CACHE_KEYS } from "@/config";
 
-export const editMatchInstructions = async (
-    instructions: string, 
-    matchId: string,
-    authToken: string
-) => {
-    const genericMessages = await getTranslations("GenericMessages");
+interface EditMatchInstructionsResponse {
+    success: boolean;
+    message: string;
+}
 
-   const { isAuth } = await verifyAuth(authToken);
+interface EditMatchInstructionsParams {
+    matchId: string;
+    matchInstructions: string;
+}
+
+export async function editMatchInstructions({
+    matchId,
+    matchInstructions,
+}: EditMatchInstructionsParams): Promise<EditMatchInstructionsResponse> {
+    const t = await getTranslations("GenericMessages");
+
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+
+    const { isAuth } = await verifyAuth(authToken as string);
        
     if (!isAuth) {
-        return { success: false, message: genericMessages('UNAUTHORIZED') };
+        return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!matchId || !instructions) {
-        return { success: false, message: genericMessages('BAD_REQUEST') };
+    if (!matchId || !matchInstructions) {
+        return { success: false, message: t('BAD_REQUEST') };
     }
 
     const { error } = await supabase
         .from('matches')
-        .update({ match_instructions: instructions })
+        .update({ match_instructions: matchInstructions })
         .eq('id', matchId);
 
     if (error) {
-        return { success: false, message: genericMessages('MATCH_INSTRUCTIONS_EDIT_FAILED') };
+        return { success: false, message: t('MATCH_INSTRUCTIONS_EDIT_FAILED') };
     }
 
     // Invalidate the specific match cache
@@ -47,5 +60,5 @@ export const editMatchInstructions = async (
 
     revalidatePath("/");
 
-    return { success: true, message: genericMessages("MATCH_INSTRUCTIONS_UPDATED") };
+    return { success: true, message: t("MATCH_INSTRUCTIONS_UPDATED") };
 }

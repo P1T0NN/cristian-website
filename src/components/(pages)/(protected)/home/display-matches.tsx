@@ -6,7 +6,8 @@ import { MatchCard } from "@/components/(pages)/(protected)/home/match-card";
 import { Button } from "@/components/ui/button";
 
 // ACTIONS
-import { serverFetchMatches } from '@/actions/functions/data/server/server_fetchMatches';
+import { fetchMatches } from '@/actions/match/fetchMatches';
+import { getUser } from '@/actions/auth/verifyAuth';
 
 // TYPES
 import type { typesMatch } from '@/types/typesMatch';
@@ -16,23 +17,23 @@ import type { typesUser } from '@/types/typesUser';
 import { RefreshCcw } from 'lucide-react';
 
 type DisplayMatchesProps = {
-    serverUserData: typesUser;
     date?: string;
 }
 
 export const DisplayMatches = async ({ 
-    serverUserData,
     date
 }: DisplayMatchesProps) => {
     const t = await getTranslations("HomePage");
 
-    const serverMatchesData = await serverFetchMatches(
-        serverUserData.gender, 
-        serverUserData.isAdmin, 
-        serverUserData.player_level, 
-        serverUserData.id,
+    const serverUserData = await getUser() as typesUser;
+
+    const serverMatchesData = await fetchMatches({
+        gender: serverUserData.gender, 
+        isAdmin: serverUserData.isAdmin, 
+        playerLevel: serverUserData.player_level, 
+        userId: serverUserData.id,
         date
-    );
+    });
 
     let matchesData: typesMatch[] = [];
 
@@ -46,8 +47,6 @@ export const DisplayMatches = async ({
             return 0;
         });
     }
-
-    const isAdmin = serverUserData.isAdmin;
 
     return (
         <div className="space-y-4">
@@ -69,7 +68,6 @@ export const DisplayMatches = async ({
                         <MatchCard 
                             key={match.id} 
                             match={match} 
-                            isAdmin={isAdmin}
                         />
                     ))}
                 </div>

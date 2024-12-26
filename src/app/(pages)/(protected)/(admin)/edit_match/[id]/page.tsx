@@ -21,7 +21,7 @@ export default async function EditMatchPage({
                     <CardTitle className="text-2xl sm:text-3xl">{t('editMatch')}</CardTitle>
                 </CardHeader>
 
-                <EditMatchDetails matchId={id} />
+                <EditMatchDetails matchIdFromParams={id} />
             </Card>
         </div>
     );

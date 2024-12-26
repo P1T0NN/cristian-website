@@ -10,23 +10,45 @@ import { getTranslations } from 'next-intl/server';
 // SERVICES
 import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
 
-// ACTIONS
-import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
-
 // CONFIG
 import { CACHE_KEYS } from '@/config';
 
-export async function adminRemovePlayerFromMatch(authToken: string, matchId: string, playerId: string, isTemporaryPlayer: boolean = false) {
-    const genericMessages = await getTranslations("GenericMessages");
+// ACTIONS
+import { verifyAuth } from '@/actions/auth/verifyAuth';
 
-    const { isAuth, userId } = await verifyAuth(authToken);
+// TYPES
+import type { typesMatch } from '@/types/typesMatch';
+import { cookies } from 'next/headers';
+
+interface AdminRemovePlayerFromMatchResponse {
+    success: boolean;
+    message: string;
+}
+
+interface AdminRemovePlayerFromMatchParams {
+    matchIdFromParams: string;
+    playerId: string;
+    isTemporaryPlayer?: boolean;
+}
+
+export async function adminRemovePlayerFromMatch({
+    matchIdFromParams,
+    playerId,
+    isTemporaryPlayer = false
+}: AdminRemovePlayerFromMatchParams): Promise<AdminRemovePlayerFromMatchResponse> {
+    const t = await getTranslations("GenericMessages");
+
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+
+    const { isAuth, userId } = await verifyAuth(authToken as string);
     
     if (!isAuth) {
-        return { success: false, message: genericMessages('UNAUTHORIZED') };
+        return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!matchId || !playerId) {
-        return { success: false, message: genericMessages('BAD_REQUEST') };
+    if (!matchIdFromParams || !playerId) {
+        return { success: false, message: t('BAD_REQUEST') };
     }
 
     // Check if the user is an admin
@@ -37,18 +59,18 @@ export async function adminRemovePlayerFromMatch(authToken: string, matchId: str
         .single();
 
     if (adminError || !adminUser || !adminUser.isAdmin) {
-        return { success: false, message: genericMessages('UNAUTHORIZED') };
+        return { success: false, message: t('UNAUTHORIZED') };
     }
 
     // Fetch current match data
     const { data: match, error: matchError } = await supabase
         .from('matches')
         .select('*')
-        .eq('id', matchId)
+        .eq('id', matchIdFromParams)
         .single();
 
     if (matchError) {
-        return { success: false, message: genericMessages('OPERATION_FAILED') };
+        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
 
     let removeError;
@@ -58,7 +80,7 @@ export async function adminRemovePlayerFromMatch(authToken: string, matchId: str
             .from('temporary_players')
             .delete()
             .match({ 
-                match_id: matchId, 
+                match_id: matchIdFromParams, 
                 id: playerId 
             });
         removeError = error;
@@ -67,12 +89,12 @@ export async function adminRemovePlayerFromMatch(authToken: string, matchId: str
         const { data: player, error: playerError } = await supabase
             .from('match_players')
             .select('has_entered_with_balance')
-            .eq('match_id', matchId)
+            .eq('match_id', matchIdFromParams)
             .eq('user_id', playerId)
             .single();
 
         if (playerError) {
-            return { success: false, message: genericMessages('OPERATION_FAILED') };
+            return { success: false, message: t('INTERNAL_SERVER_ERROR') };
         }
 
         // Remove regular player from match
@@ -80,7 +102,7 @@ export async function adminRemovePlayerFromMatch(authToken: string, matchId: str
             .from('match_players')
             .delete()
             .match({ 
-                match_id: matchId, 
+                match_id: matchIdFromParams, 
                 user_id: playerId 
             });
         removeError = error;
@@ -89,17 +111,17 @@ export async function adminRemovePlayerFromMatch(authToken: string, matchId: str
         if (player && player.has_entered_with_balance) {
             const { error: balanceUpdateError } = await supabase.rpc('refund_player', {
                 p_user_id: playerId,
-                p_match_id: matchId
+                p_match_id: matchIdFromParams
             });
 
             if (balanceUpdateError) {
-                return { success: false, message: genericMessages('BALANCE_UPDATE_FAILED') };
+                return { success: false, message: t('BALANCE_UPDATE_FAILED') };
             }
         }
     }
 
     if (removeError) {
-        return { success: false, message: genericMessages('OPERATION_FAILED') };
+        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
 
     // Update places_occupied in the database
@@ -107,15 +129,15 @@ export async function adminRemovePlayerFromMatch(authToken: string, matchId: str
     const { error: updateError } = await supabase
         .from('matches')
         .update({ places_occupied: updatedPlacesOccupied })
-        .eq('id', matchId);
+        .eq('id', matchIdFromParams);
 
     if (updateError) {
-        return { success: false, message: genericMessages('OPERATION_FAILED') };
+        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
 
     // Update the match cache
-    const matchCacheKey = `${CACHE_KEYS.MATCH_PREFIX}${matchId}`;
-    const cachedMatch = await upstashRedisCacheService.get<typeof match>(matchCacheKey);
+    const matchCacheKey = `${CACHE_KEYS.MATCH_PREFIX}${matchIdFromParams}`;
+    const cachedMatch = await upstashRedisCacheService.get<typesMatch>(matchCacheKey);
     
     if (cachedMatch.success && cachedMatch.data) {
         const updatedCachedMatch = { ...cachedMatch.data, places_occupied: updatedPlacesOccupied };
@@ -124,5 +146,5 @@ export async function adminRemovePlayerFromMatch(authToken: string, matchId: str
 
     revalidatePath("/");
 
-    return { success: true, message: isTemporaryPlayer ? genericMessages('TEMPORARY_PLAYER_REMOVED_SUCCESSFULLY') : genericMessages('PLAYER_REMOVED_SUCCESSFULLY') }
+    return { success: true, message: isTemporaryPlayer ? t('TEMPORARY_PLAYER_REMOVED_SUCCESSFULLY') : t('PLAYER_REMOVED_SUCCESSFULLY') };
 }

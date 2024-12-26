@@ -35,10 +35,11 @@
     },
     
     "HomePage": {
-        "upcoming": "My Matches",
         "availableEvents": "Available Events",
         "refresh": "Refresh",
-        "noEventsAvailable": "No events available at this time."
+        "noEventsAvailable": "No events available at this time.",
+        "allMatches": "All Matches",
+        "myMatches": "My Matches"
     },
 
     "LoginPage": {
@@ -133,7 +134,8 @@
         "matchLevelPlaceholder": "Enter match level",
         "hasTeams": "Has Teams",
         "yes": "Yes",
-        "no": "No"
+        "no": "No",
+        "noItemsFound": "No items found"
     },
 
     "AddDebtPage": {
@@ -329,7 +331,10 @@
         "temporaryPlayerActions": "Temporary Player Actions",
         "temporaryPlayerActionsDescription": "Choose an action for temporary player {playerName}",
         "temporaryPlayerRemoved": "Temporary player has been removed from the match",
-        "lastPlacesLeft": "Last places left!",
+        "noActiveMatches": "You have no active matches",
+        "activeMatches": "Active Matches",
+        "matchCompleted": "Match completed",
+        "lastPlacesLeft": "Last places!",
         "MatchFAQ": {
             "title": "Frequently Asked Questions",
             "startTimeDuration": {
@@ -629,7 +634,7 @@
         "email_VerificationError": "Error sending verification email. Please try again later.",
         "email_VerificationSent": "Verification email sent successfully",
         "LOGIN_SUCCESSFUL": "Logged in successfully!",
-
+        "FULLNAME_ALREADY_EXISTS": "This full name is already taken, please contact administrator for more informations!",
         "NO_ACTIVE_SESSION": "No active session found",
         "LOGOUT_ERROR": "Error during logout process",
         "LOGOUT_SUCCESSFUL": "Logged out successfully",
@@ -637,25 +642,19 @@
         "INVALID_REFRESH_TOKEN": "Invalid refresh token",
 
         "REGISTRATION_ERROR": "Error during registration process",
-        "USER_ALREADY_EXISTS": "If user with that email doesn't exist already, we have sent you an email verification link!",
-        "USER_CREATION_ERROR": "Error creating user",
-        "USER_CREATION_FAILED": "User creation failed",
         "REGISTRATION_SUCCESS_WITH_EMAIL": "If user with that email doesn't exist already, we have sent you an email verification link!",
         "REGISTRATION_SUCCESS_WITHOUT_EMAIL": "If user with that email doesn't exist already, we have sent you an email verification link!",
-        "FULLNAME_ALREADY_EXISTS": "This full name is already taken, please contact administrator for more informations!",
 
         "PASSWORD_RESET_REQUEST_SENT": "If a user with that email exists, a password reset link has been sent.",
 
         "INVALID_RESET_TOKEN": "Invalid or expired reset token",
         "PASSWORD_UPDATE_ERROR": "Error updating password",
         "PASSWORD_RESET_SUCCESS": "Password has been reset successfully",
-
         "PASSWORD_RESET_EMAIL_SENT": "If a user with that email exists, a password reset link has been sent.",
         "RESET_TOKEN_ERROR": "Error creating reset token",
         "PASSWORD_RESET_EMAIL_SUCCESS": "Password reset email sent successfully",
         "PASSWORD_RESET_EMAIL_SUBJECT": "Reset Your Password",
 
-        "USER_ALREADY_VERIFIED": "User is already verified",
         "VERIFICATION_TOKEN_ERROR": "Error creating verification token",
         "VERIFICATION_EMAIL_SUBJECT": "Verify your email",
         "VERIFICATION_EMAIL_SENT": "Verification email sent successfully",
@@ -669,21 +668,19 @@
         "ERROR_DELETING_EXPIRED_VERIFICATION": "Error deleting expired verification!",
         "VERIFICATION_LINK_EXPIRED": "Verification link has expired. Please request a new one.",
         "ERROR_DELETING_NONEXISTENT_USER_VERIFICATION": "Error deleting verification for non-existent user!",
-        "USER_NOT_FOUND": "User not found!",
         "ERROR_DELETING_VERIFIED_USER_VERIFICATION": "Error deleting verification for already verified user!",
         "EMAIL_ALREADY_VERIFIED": "Email already verified. You can now log in.",
         "ERROR_UPDATING_VERIFICATION_STATUS": "Error updating user verification status",
         "EMAIL_VERIFIED_CLEANUP_ISSUE": "Email verified successfully, but there was an issue cleaning up. You can now log in.",
         "EMAIL_VERIFIED_SUCCESS": "Email verified successfully. You can now log in.",
 
-        "USER_VERIFIED": "User is successfully verified. Now you can login!",
-        "USER_DOESNT_EXIST": "If user with this email exists, we have sent a verification email!",
         "PLAYER_ID_REQUIRED": "Player ID is required",
         "EMAIL_REQUIRED": "Email is required!",
         "DEBT_ID_REQUIRED": "Debt ID is required",
         "FULL_NAME_REQUIRED": "Full name is required!",
         "EMAIL_AND_USERID_REQUIRED": "Email and ID are required!",
         "TEAM_ID_REQUIRED":  "Team ID is required!",
+        "NO_SEARCH_TERM": "No search term provided",
         "VERIFICATION_EMAIL_COOLDOWN": "Please wait {time} seconds before requesting another verification email.",
         "ACCOUNT_NOT_VERIFIED_RESENT": "Email not verified. A new verification email has been sent.",
         "ACCOUNT_NOT_VERIFIED_RATE_LIMIT": "Email not verified. Please wait 5 minutes before requesting another verification email.",
@@ -728,16 +725,35 @@
 
         "MATCH_CREATION_FAILED": "Failed to create a match. Please try again!",
         "MATCH_CREATED": "Match has been created successfully!",
-
         "MATCH_EDIT_FAILED": "Failed to edit match. Please try again!",
         "MATCH_UPDATED": "Match updated successfully!",
         "MATCH_ID_INVALID": "Invalid match!",
         "MATCH_INSTRUCTIONS_EDIT_FAILED": "Failed to update match instructions. Please try again.",
         "MATCH_INSTRUCTIONS_UPDATED": "Match instructions updated successfully.",
         "MATCH_FULL": "Match is full. It's possible someone joined before you!",
-
+        "ACTIVE_MATCHES_FAILED_TO_FETCH": "Failed to fetch active matches!",
+        "ACTIVE_MATCHES_COUNT_FAILED_TO_FETCH": "Failed to fetch count of active matches!",
         "MATCH_DELETION_FAILED": "Failed to delete match. Please try again!",
         "MATCH_DELETED": "Match deleted successfully!",
+        "MATCH_ADMIN_FAILED_TO_FETCH": "Failed to fetch match admin!",
+        "MATCH_HISTORY_INSERT_FAILED": "Failed to add match into history",
+        "MATCH_FINISHED_SUCCESSFULLY": "Match has been finished and moved to history",
+        "MATCH_HISTORY_DELETION_FAILED": "Failed to delete match from match history!",
+        "MATCH_HISTORY_DELETED": "Match successfully deleted from match history!",
+        "NO_MATCHES_FOUND": "There are no matches active",
+        "MATCHES_FAILED_TO_FETCH": "Failed to get matches",
+        "MATCHES_SUCCESSFULLY_FETCHED": "Matches fetched successfully",
+        "MATCH_FAILED_TO_FETCH": "Failed to get match",
+        "MATCH_NOT_FOUND": "Match has not been found",
+        "MATCH_SUCCESSFULLY_FETCHED": "Match fetched successfully",
+        "MATCH_FETCH_INVALID_REQUEST": "Invalid match request!",
+        "MATCH_HISTORY_FAILED_TO_FETCH": "Failed to fetch match history!",
+        "NO_MATCH_HISTORY_FOUND": "There is no match history.",
+        "MATCH_HISTORY_SUCCESSFULLY_FETCHED": "Match history fetched successfully!",
+        "ACTIVE_MATCHES_COUNT_FETCH_FAILED": "Failed to fetch active matches for user!",
+        "ACTIVE_MATCHES_COUNT_FETCHED": "Active matches fetched successfully!",
+        "ACTIVE_MATCHES_FETCH_FAILED": "Failed to fetch active matches for user!",
+        "ACTIVE_MATCHES_FETCHED": "Active matches fetched successfully!",
 
         "PLAYER_JOINED_SUCCESSFULLY": "Player joined successfully!",
         "PLAYER_LEFT_SUCCESSFULLY": "Player left successfully!",
@@ -745,9 +761,9 @@
 
         "DEBT_CREATION_FAILED": "Failed to add a debt. Please try again!",
         "DEBT_CREATED_AND_USER_UPDATED": "Debt has been added successfully!",
-        "USER_DEBT_UPDATE_FAILED": "Failed to update user debt. Please try again!",
         "DEBT_DELETION_FAILED": "Failed to delete debt. Please try again!",
         "DEBT_DELETED": "Debt deleted successfully!",
+        "DEBT_FETCH_FAILED": "Failed to fetch debt",
 
         "LOCATION_ID_REQUIRED": "Location ID is required!",
         "LOCATION_NAME_REQUIRED": "Location name is required",
@@ -757,26 +773,31 @@
         "LOCATION_CREATED": "Location added successfully!",
         "LOCATION_DELETION_FAILED": "Failed to delete location. Please try again!",
         "LOCATION_DELETED": "Location deleted successfully!",
+        "DEFAULT_LOCATIONS_FAILED_TO_FETCH": "Failed to fetch default locations!",
+        "LOCATIONS_FAILED_TO_FETCH": "Failed to fetch locations!",
+        "LOCATIONS_SEARCH_FAILED": "Failed to search locations!",
+        "FAILED_TO_FETCH_LOCATIONS": "Failed to search locations",
+        "LOCATIONS_FETCHED": "Locations fetched successfully",
+        "DEFAULT_LOCATIONS_FETCHED": "Default locations fetched successfully",
+        "FAILED_TO_FETCH_DEFAULT_LOCATIONS": "Failed to fetch default locations",
 
         "TEAM_ADDED_SUCCESSFULLY": "Team has been added successfully!",
         "TEAM_ALREADY_EXISTS": "Team already exists!",
         "TEAM_DELETED_SUCCESSFULLY": "Team deleted successfully!",
         "TEAM_NOT_FOUND": "Team not found!",
         "TEAM_DEBT_ADDED_SUCCESSFULLY": "Team debt added successfully!",
+        "TEAM_FAILED_TO_FETCH": "Failed to fetch team!",
+        "TEAMS_FAILED_TO_FETCH": "Failed to fetch teams!",
+        "TEAMS_SORT_FAILED": "Failed to sort teams",
+        "TEAMS_SORTED_SUCCESSFULLY": "Teams sorted successfully",
+        "TEAMS_FETCHED": "Teams fetched successfully",
+        "FAILED_TO_FETCH_TEAMS": "Failed to fetch teams",
+        "FAILED_TO_FETCH_TEAM": "Failed to fetch team",
+        "TEAM_FETCHED": "Team fetched successfully!",
+        "TEAM_SEARCH_FAILED": "Failed to search for team",
 
         "COLOR_TOGGLE_FAILED": "Failed to switch team colors. Please try again!",
         "COLOR_TOGGLED": "Switched team colors!",
-
-        "USER_UPDATE_FAILED": "Failed to update user settings. Please try again!",
-        "USER_FULL_NAME_UPDATED": "Full name updated successfully!",
-
-        "USER_SEARCH_FAILED": "Failed to search for user",
-        "TEAM_SEARCH_FAILED": "Failed to search for team",
-
-        "MATCH_HISTORY_INSERT_FAILED": "Failed to add match into history",
-        "MATCH_FINISHED_SUCCESSFULLY": "Match has been finished and moved to history",
-        "MATCH_HISTORY_DELETION_FAILED": "Failed to delete match from match history!",
-        "MATCH_HISTORY_DELETED": "Match successfully deleted from match history!",
 
         "TOO_LATE_TO_LEAVE": "It's too late to leave the team. You can request a substitute instead.",
         "SUBSTITUTE_REQUESTED_SUCCESSFULLY": "Requested substitute successfully!",
@@ -786,16 +807,33 @@
         "MATCH_ADMIN_STATUS_UPDATED": "Match admin status has been updated successfully",
         "PLAYER_SWITCHED_TEAM_SUCCESSFULLY": "Player switched team successfully",
         "PLAYER_REPLACE_FAILED": "Player replacement failed",
-
         "PLAYER_DETAILS_UPDATED": "Player details updated successfully",
 
+        "USER_SEARCH_FAILED": "Failed to search for user",
+        "USER_VERIFIED": "User is successfully verified. Now you can login!",
+        "USER_DOESNT_EXIST": "If user with this email exists, we have sent a verification email!",
+        "USER_DEBT_UPDATE_FAILED": "Failed to update user debt. Please try again!",
+        "USER_UPDATE_FAILED": "Failed to update user settings. Please try again!",
+        "USER_FULL_NAME_UPDATED": "Full name updated successfully!",
         "USER_GRANT_ACCESS_FAILED": "Failed to grant access to user",
         "USER_ACCESS_GRANTED_SUCCESSFULLY": "User access granted successfully",
         "USER_DENY_ACCESS_FAILED": "Failed to deny user access",
         "USER_ACCESS_DENIED_SUCCESSFULLY": "User access denied and account deleted successfully",
-
-        "TEAMS_SORT_FAILED": "Failed to sort teams",
-        "TEAMS_SORTED_SUCCESSFULLY": "Teams sorted successfully",
+        "NO_ACCESS_USERS_FAILED_TO_FETCH": "Failed to fetch users with no access!",
+        "USER_NOT_FOUND": "User not found!",
+        "USER_ALREADY_EXISTS": "If user with that email doesn't exist already, we have sent you an email verification link!",
+        "USER_CREATION_ERROR": "Error creating user",
+        "USER_CREATION_FAILED": "User creation failed",
+        "USER_ALREADY_VERIFIED": "User is already verified",
+        "USER_FAILED_TO_FETCH": "Failed to fetch user!",
+        "USERS_FETCHED": "Users fetched successfully",
+        "USER_FETCHED": "User fetched successfully",
+        "USER_FETCH_FAILED": "Failed to fetch user",
+        "USER_DATA_FAILED_TO_FETCH": "Failed to fetch user data!",
+        "USER_DATA_SUCCESSFULLY_FETCHED": "Fetched user data successfully!",
+        "USER_ID_FETCHED":" Fetched user ID successfully!",
+        "FAILED_TO_SEARCH_USERS": "Failed to search users",
+        "USERS_WITH_NO_ACCESS_FETCHED": "Users without access successfully fetched",
 
         "FRIEND_ADDITION_FAILED": "Failed to add friend",
         "FRIEND_ADDED_SUCCESSFULLY": "Friend added successfully",
@@ -856,54 +894,6 @@
         "OPERATION_FAILED": "Failed to do this action!",
         "UNEXPECTED_ERROR": "Unexpected error. Please try again!",
         "BAD_REQUEST": "Bad request!"
-    },
-
-    "FetchMessages": {
-        "USER_DATA_FAILED_TO_FETCH": "Failed to fetch user data!",
-        "USER_DATA_SUCCESSFULLY_FETCHED": "Fetched user data successfully!",
-        "USER_ID_FETCHED":" Fetched user ID successfully!",
-
-        "NO_SEARCH_TERM": "No search term provided",
-
-        "FAILED_TO_SEARCH_USERS": "Failed to search users",
-        "USERS_FETCHED": "Users fetched successfully",
-        "USER_FETCHED": "User fetched successfully",
-        "USER_FETCH_FAILED": "Failed to fetch user",
-
-        "DEBT_FETCH_FAILED": "Failed to fetch debt",
-
-        "FAILED_TO_FETCH_LOCATIONS": "Failed to search locations",
-        "LOCATIONS_FETCHED": "Locations fetched successfully",
-
-        "NO_MATCHES_FOUND": "There are no matches active",
-        "MATCHES_FAILED_TO_FETCH": "Failed to get matches",
-        "MATCHES_SUCCESSFULLY_FETCHED": "Matches fetched successfully",
-
-        "MATCH_FAILED_TO_FETCH": "Failed to get match",
-        "MATCH_NOT_FOUND": "Match has not been found",
-        "MATCH_SUCCESSFULLY_FETCHED": "Match fetched successfully",
-        "MATCH_FETCH_INVALID_REQUEST": "Invalid match request!",
-
-        "TEAMS_FETCHED": "Teams fetched successfully",
-        "FAILED_TO_FETCH_TEAMS": "Failed to fetch teams",
-
-        "FAILED_TO_FETCH_TEAM": "Failed to fetch team",
-        "TEAM_NOT_FOUND": "Team not found!",
-        "TEAM_FETCHED": "Team fetched successfully!",
-
-        "MATCH_HISTORY_FAILED_TO_FETCH": "Failed to fetch match history!",
-        "NO_MATCH_HISTORY_FOUND": "There is no match history.",
-        "MATCH_HISTORY_SUCCESSFULLY_FETCHED": "Match history fetched successfully!",
-
-        "ACTIVE_MATCHES_COUNT_FETCH_FAILED": "Failed to fetch active matches for user!",
-        "ACTIVE_MATCHES_COUNT_FETCHED": "Active matches fetched successfully!",
-        "ACTIVE_MATCHES_FETCH_FAILED": "Failed to fetch active matches for user!",
-        "ACTIVE_MATCHES_FETCHED": "Active matches fetched successfully!",
-
-        "USERS_WITH_NO_ACCESS_FETCHED": "Users without access successfully fetched",
-
-        "DEFAULT_LOCATIONS_FETCHED": "Default locations fetched successfully",
-        "FAILED_TO_FETCH_DEFAULT_LOCATIONS": "Failed to fetch default locations"
     },
 
     "ZodErrors": {

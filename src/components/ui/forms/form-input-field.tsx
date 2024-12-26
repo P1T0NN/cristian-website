@@ -21,6 +21,7 @@ type FormInputFieldProps = {
     error?: string;
     autoComplete?: string;
     icon?: React.ReactNode;
+    disabled?: boolean;
 };
 
 export const FormInputField = ({
@@ -31,7 +32,8 @@ export const FormInputField = ({
     placeholder,
     error,
     autoComplete = "on",
-    icon
+    icon,
+    disabled
 }: FormInputFieldProps) => {
     const [showPassword, setShowPassword] = useState(false);
 
@@ -57,6 +59,7 @@ export const FormInputField = ({
                     onChange={onChange}
                     placeholder={placeholder}
                     autoComplete={autoComplete}
+                    disabled={disabled}
                     className={`transition-all duration-200 ease-in-out focus:ring-2 focus:ring-primary focus:border-transparent ${icon ? 'pl-10' : ''} ${error ? 'border-red-500' : ''} ${type === 'password' ? 'pr-10' : ''}`}
                 />
                 {type === 'password' && (

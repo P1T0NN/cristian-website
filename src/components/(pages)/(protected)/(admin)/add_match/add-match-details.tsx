@@ -30,14 +30,14 @@ import type { typesUser } from "@/types/typesUser";
 import type { typesLocation } from "@/types/typesLocation";
 
 type AddMatchDetailsProps = {
-    authToken: string;
     serverUserData: typesUser;
+    locationsData: typesLocation[];
     defaultLocationsData: typesLocation[];
 }
 
 export const AddMatchDetails = ({ 
-    authToken, 
     serverUserData,
+    locationsData,
     defaultLocationsData
 }: AddMatchDetailsProps) => {
     const t = useTranslations("AddMatchPage");
@@ -67,7 +67,9 @@ export const AddMatchDetails = ({
         useToastForErrors: true,
         onSubmit: async (values) => {
             startTransition(async () => {
-                const result = await addMatch(authToken, values);
+                const result = await addMatch({
+                    addMatchData: values
+                });
                 
                 if (result.success) {
                     router.push(PROTECTED_PAGE_ENDPOINTS.HOME_PAGE);
@@ -89,11 +91,11 @@ export const AddMatchDetails = ({
         <>
             <CardContent className="p-6">
                 <AddMatchForm
-                    authToken={authToken}
                     formData={formData}
                     errors={errors}
                     handleInputChange={handleInputChange}
                     setFieldValue={setFieldValue}
+                    locationsData={locationsData}
                     defaultLocationsData={defaultLocationsData}
                 />
             </CardContent>

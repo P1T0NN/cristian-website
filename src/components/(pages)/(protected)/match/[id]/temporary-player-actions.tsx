@@ -13,8 +13,7 @@ import { ReplaceTemporaryPlayerButton } from "./replace-temporary-player-button"
 import type { typesUser } from "@/types/typesUser";
 
 type TemporaryPlayerActionsProps = {
-    authToken: string;
-    matchId: string;
+    matchIdFromParams: string;
     teamNumber: 0 | 1 | 2;
     player: typesUser;
     currentUserId: string;
@@ -23,8 +22,7 @@ type TemporaryPlayerActionsProps = {
 }
 
 export const TemporaryPlayerActions = ({
-    authToken,
-    matchId,
+    matchIdFromParams,
     teamNumber,
     player,
     currentUserId,
@@ -40,31 +38,27 @@ export const TemporaryPlayerActions = ({
             {canRemoveTemporaryPlayer && !isAdmin ? (
                 player.temporaryPlayer?.substitute_requested ? (
                     <CancelTemporaryPlayerSubstitutionButton
-                        authToken={authToken}
-                        matchId={matchId}
+                        matchIdFromParams={matchIdFromParams}
                         temporaryPlayerId={player.temporaryPlayer.id}
                     />
                 ) : (
                     <RemoveFriendButton
-                        authToken={authToken}
-                        matchId={matchId}
+                        matchIdFromParams={matchIdFromParams}
                         temporaryPlayerId={player.temporaryPlayer?.id as string}
                         setShowSubstituteDialog={setShowSubstituteDialog}
                     />
                 )
             ) : (player.temporaryPlayer?.substitute_requested && !isUserInMatch) && (
                 <ReplaceTemporaryPlayerButton
-                    authToken={authToken}
                     player={player}
-                    matchId={matchId}
+                    matchIdFromParams={matchIdFromParams}
                     teamNumber={teamNumber}
                 />
             )}
 
             {showSubstituteDialog && (
                 <TemporaryPlayerSubstituteRequestDialog
-                    authToken={authToken}
-                    matchId={matchId}
+                    matchIdFromParams={matchIdFromParams}
                     temporaryPlayerId={player.temporaryPlayer?.id as string}
                     setShowSubstituteDialog={setShowSubstituteDialog}
                 />

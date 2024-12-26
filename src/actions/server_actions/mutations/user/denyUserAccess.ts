@@ -1,6 +1,7 @@
 "use server"
 
 // NEXTJS IMPORTS
+import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
@@ -8,15 +9,26 @@ import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
 // ACTIONS
-import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
+import { verifyAuth } from '@/actions/auth/verifyAuth';
 
-// TYPES
-import type { APIResponse } from '@/types/responses/APIResponse';
+interface DenyUserAccessResponse {
+    success: boolean;
+    message: string;
+}
 
-export async function denyUserAccess(authToken: string, userId: string): Promise<APIResponse> {
+interface DenyUserAccessParams {
+    userId: string;
+}
+
+export async function denyUserAccess({ 
+    userId
+}: DenyUserAccessParams): Promise<DenyUserAccessResponse> {
     const t = await getTranslations("GenericMessages");
 
-    const { isAuth } = await verifyAuth(authToken);
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+
+    const { isAuth } = await verifyAuth(authToken as string);
                         
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
@@ -30,11 +42,7 @@ export async function denyUserAccess(authToken: string, userId: string): Promise
         in_user_id: userId
     });
 
-    if (error) {
-        return { success: false, message: t('USER_DENY_ACCESS_FAILED') };
-    }
-
-    if (!data.success) {
+    if (error || !data.success) {
         return { success: false, message: t('USER_DENY_ACCESS_FAILED') };
     }
 

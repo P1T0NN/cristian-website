@@ -26,14 +26,12 @@ import { leaveMatch } from "@/actions/server_actions/mutations/match/leaveTeam";
 import { Loader2 } from "lucide-react";
 
 type PlayerLeaveTeamButtonProps = {
-    authToken: string;
-    matchId: string;
+    matchIdFromParams: string;
     setShowSubstituteDialog: (isVisible: boolean) => void;
 }
 
 export const PlayerLeaveTeamButton = ({
-    authToken,
-    matchId,
+    matchIdFromParams,
     setShowSubstituteDialog
 }: PlayerLeaveTeamButtonProps) => {
     const t = useTranslations("MatchPage");
@@ -43,7 +41,9 @@ export const PlayerLeaveTeamButton = ({
 
     const handleLeaveTeam = () => {
         startTransition(async () => {
-            const response = await leaveMatch(authToken, matchId);
+            const response = await leaveMatch({
+                matchIdFromParams: matchIdFromParams
+            });
     
             if (response.success) {
                 toast.success(response.message);

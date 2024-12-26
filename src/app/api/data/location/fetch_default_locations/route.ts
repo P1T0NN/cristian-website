@@ -4,41 +4,30 @@ import { NextResponse, NextRequest } from 'next/server';
 // LIBRARIES
 import { getTranslations } from 'next-intl/server';
 import { supabase } from '@/lib/supabase/supabase';
-import { jwtVerify } from 'jose';
 
 // SERVICES
 import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
+
+// MIDDLEWARE
+import { withAuth } from '@/middleware/withAuth';
 
 // CONFIG
 import { CACHE_KEYS } from '@/config';
 
 // TYPES
-import type { APIResponse } from '@/types/responses/APIResponse';
 import type { typesLocation } from '@/types/typesLocation';
 
 const CACHE_TTL = 60 * 60; // 1 hour in seconds
 
-export async function GET(req: NextRequest): Promise<NextResponse<APIResponse>> {
-    const genericMessages = await getTranslations("GenericMessages");
-    const fetchMessages = await getTranslations("FetchMessages");
-
-    const token = req.headers.get('authorization')?.split(' ')[1];
-
-    if (!token) {
-        return NextResponse.json({ success: false, message: genericMessages('UNAUTHORIZED') }, { status: 401 });
-    }
-
-    const { payload } = await jwtVerify(token, new TextEncoder().encode(process.env.JWT_SECRET));
-
-    if (!payload) {
-        return NextResponse.json({ success: false, message: genericMessages('JWT_DECODE_ERROR') }, { status: 401 });
-    }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const GET = withAuth(async (_request: NextRequest, _userId: string, _token: string): Promise<NextResponse> => {
+    const t = await getTranslations("GenericMessages");
 
     // Try to get default locations from Upstash Redis cache
     const cacheResult = await upstashRedisCacheService.get<typesLocation[]>(CACHE_KEYS.DEFAULT_LOCATIONS_CACHE_KEY);
 
     if (cacheResult.success && cacheResult.data) {
-        return NextResponse.json({ success: true, message: fetchMessages('DEFAULT_LOCATIONS_FETCHED'), data: cacheResult.data });
+        return NextResponse.json({ success: true, message: t('DEFAULT_LOCATIONS_FETCHED'), data: cacheResult.data });
     }
 
     // If not in cache, fetch from database
@@ -49,12 +38,11 @@ export async function GET(req: NextRequest): Promise<NextResponse<APIResponse>> 
         .order('location_name', { ascending: true });
 
     if (error) {
-        return NextResponse.json({ success: false, message: fetchMessages('FAILED_TO_FETCH_DEFAULT_LOCATIONS') }, { status: 500 });
+        return NextResponse.json({ success: false, message: t('FAILED_TO_FETCH_DEFAULT_LOCATIONS') }, { status: 500 });
     }
 
     // Store in Upstash Redis cache
     await upstashRedisCacheService.set(CACHE_KEYS.DEFAULT_LOCATIONS_CACHE_KEY, defaultLocations, CACHE_TTL);
 
-    return NextResponse.json({ success: true, message: fetchMessages('DEFAULT_LOCATIONS_FETCHED'), data: defaultLocations });
-}
-
+    return NextResponse.json({ success: true, message: t('DEFAULT_LOCATIONS_FETCHED'), data: defaultLocations });
+});

@@ -15,19 +15,20 @@ import { Trash2 } from "lucide-react";
 
 type DeleteDebtButtonProps = {
     debtId: string;
-    authToken: string;
 }
 
 export const DeleteDebtButton = ({
-    debtId,
-    authToken
+    debtId
 }: DeleteDebtButtonProps) => {
     const [isPending, startTransition] = useTransition();
 
     const handleDeleteDebt = async (debtId: string) => {
         if (debtId) {
             startTransition(async () => {
-                const result = await deleteDebt(authToken, debtId)
+                const result = await deleteDebt({
+                    debtId
+                });
+                
                 if (result.success) {
                     toast.success(result.message)
                 } else {

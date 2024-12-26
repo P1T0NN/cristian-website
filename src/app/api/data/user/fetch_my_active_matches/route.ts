@@ -1,64 +1,52 @@
 // NEXTJS IMPORTS
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 
 // LIBRARIES
 import { getTranslations } from 'next-intl/server';
 import { supabase } from '@/lib/supabase/supabase';
-import { jwtVerify } from 'jose';
+
+// MIDDLEWARE
+import { withAuth } from '@/middleware/withAuth';
 
 // TYPES
-import type { APIResponse } from '@/types/responses/APIResponse';
 import type { typesMatch } from '@/types/typesMatch';
 
-export async function GET(req: Request): Promise<NextResponse<APIResponse<typesMatch[]>>> {
-    const genericMessages = await getTranslations("GenericMessages");
-    const fetchMessages = await getTranslations("FetchMessages");
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const GET = withAuth(async (request: NextRequest, _userId: string, _token: string): Promise<NextResponse> => {
+    const t = await getTranslations("GenericMessages");
 
-    const token = req.headers.get('authorization')?.split(' ')[1];
+    const searchParams = request.nextUrl.searchParams;
+    const requestUserId = searchParams.get('userId');
 
-    if (!token) {
-        return NextResponse.json({ success: false, message: genericMessages('UNAUTHORIZED') }, { status: 401 });
-    }
-
-    const isValidToken = await jwtVerify(token, new TextEncoder().encode(process.env.JWT_SECRET));
-    if (!isValidToken) {
-        return NextResponse.json({ success: false, message: genericMessages('UNAUTHORIZED') }, { status: 401 });
-    }
-
-    const url = new URL(req.url);
-    const userId = url.searchParams.get('userId');
-
-    if (!userId) {
-        return NextResponse.json({ success: false, message: genericMessages('USER_ID_REQUIRED') });
+    if (!requestUserId) {
+        return NextResponse.json({ success: false, message: t('BAD_REQUEST') });
     }
 
     const { data: matchPlayers, error: matchPlayersError } = await supabase
         .from('match_players')
         .select('match_id')
-        .eq('user_id', userId);
+        .eq('user_id', requestUserId);
 
     if (matchPlayersError) {
-        return NextResponse.json({ success: false, message: fetchMessages('ACTIVE_MATCHES_FETCH_FAILED') });
+        return NextResponse.json({ success: false, message: t('ACTIVE_MATCHES_FETCH_FAILED') });
     }
 
     const matchIds = matchPlayers.map(mp => mp.match_id);
 
     const currentDate = new Date().toISOString().split('T')[0];
 
-    // Step 2: Fetch match data for the retrieved match IDs with date filter
     const { data: matches, error: matchesError } = await supabase
         .from('matches')
         .select('*')
         .in('id', matchIds)
-        .gte('starts_at_day', currentDate) // Only fetch matches with date greater than or equal to current date
-        .order('starts_at_day', { ascending: true }); // Optional: Order by date ascending
+        .gte('starts_at_day', currentDate)
+        .order('starts_at_day', { ascending: true });
 
     if (matchesError) {
-        return NextResponse.json({ success: false, message: fetchMessages('ACTIVE_MATCHES_FETCH_FAILED') });
+        return NextResponse.json({ success: false, message: t('ACTIVE_MATCHES_FETCH_FAILED') });
     }
 
-    // Type assertion here. Make sure the fields in your database match typesMatch
     const typedMatches = matches as typesMatch[];
 
-    return NextResponse.json({ success: true, message: fetchMessages('ACTIVE_MATCHES_FETCHED'), data: typedMatches });
-}
+    return NextResponse.json({ success: true, message: t('ACTIVE_MATCHES_FETCHED'), data: typedMatches });
+});

@@ -1,46 +1,33 @@
 // NEXTJS IMPORTS
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 
 // LIBRARIES
-import { jwtVerify } from 'jose';
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
 // SERVICES
 import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
 
+// MIDDLEWARE
+import { withAuth } from '@/middleware/withAuth';
+
 // CONFIG
 import { CACHE_KEYS } from '@/config';
 
 // TYPES
-import type { APIResponse } from '@/types/responses/APIResponse';
 import type { typesMatch } from '@/types/typesMatch';
 
 const CACHE_TTL = 60 * 60 * 12; // 12 hours in seconds
 
-export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
-    const genericMessages = await getTranslations("GenericMessages");
-    const fetchMessages = await getTranslations("FetchMessages");
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const GET = withAuth(async (request: NextRequest, userId: string, _token: string): Promise<NextResponse> => {
+    const t = await getTranslations("GenericMessages");
 
-    const token = req.headers.get('authorization')?.split(' ')[1];
-
-    if (!token) {
-        return NextResponse.json({ success: false, message: genericMessages('UNAUTHORIZED') }, { status: 401 });
-    }
-
-    let userId: string;
-    try {
-        const { payload } = await jwtVerify(token, new TextEncoder().encode(process.env.JWT_SECRET));
-        userId = payload.sub as string;
-    } catch {
-        return NextResponse.json({ success: false, message: genericMessages('JWT_DECODE_ERROR') }, { status: 401 });
-    }
-
-    const url = new URL(req.url);
-    const date = url.searchParams.get('date');
-    const gender = url.searchParams.get('gender');
-    const isAdmin = url.searchParams.get('isAdmin') === 'true';
-    const playerLevel = url.searchParams.get('playerLevel');
+    const searchParams = request.nextUrl.searchParams;
+    const date = searchParams.get('date');
+    const gender = searchParams.get('gender');
+    const isAdmin = searchParams.get('isAdmin') === 'true';
+    const playerLevel = searchParams.get('playerLevel');
 
     const currentDate = new Date();
     const currentDateString = currentDate.toISOString().split('T')[0]; // YYYY-MM-DD
@@ -65,11 +52,11 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
     const { data: dbMatches, error: supabaseError } = await matchesQuery;
 
     if (supabaseError) {
-        return NextResponse.json({ success: false, message: fetchMessages('MATCHES_FAILED_TO_FETCH') }, { status: 500 });
+        return NextResponse.json({ success: false, message: t('MATCHES_FAILED_TO_FETCH') }, { status: 500 });
     }
 
     if (!dbMatches || dbMatches.length === 0) {
-        return NextResponse.json({ success: true, message: fetchMessages('NO_MATCHES_FOUND'), data: [] });
+        return NextResponse.json({ success: true, message: t('NO_MATCHES_FOUND'), data: [] });
     }
 
     // Fetch user's matches
@@ -111,5 +98,5 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
         };
     }));
 
-    return NextResponse.json({ success: true, message: fetchMessages('MATCHES_SUCCESSFULLY_FETCHED'), data: cachedMatches });
-}
+    return NextResponse.json({ success: true, message: t('MATCHES_SUCCESSFULLY_FETCHED'), data: cachedMatches });
+});

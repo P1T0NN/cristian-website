@@ -1,6 +1,7 @@
 "use server"
 
 // NEXTJS IMPORTS
+import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
@@ -14,15 +15,32 @@ import { upstashRedisCacheService } from '@/services/server/redis-cache.service'
 import { CACHE_KEYS } from '@/config';
 
 // ACTIONS
-import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
+import { verifyAuth } from '@/actions/auth/verifyAuth';
 
 // TYPES
-import type { APIResponse } from '@/types/responses/APIResponse';
+import type { typesLocation } from '@/types/typesLocation';
 
-export async function updateDefaultPrice(authToken: string, locationId: number, defaultPrice: string): Promise<APIResponse> {
+interface UpdateDefaultPriceResponse {
+    success: boolean;
+    message: string;
+    data?: typesLocation;
+}
+
+interface UpdateDefaultPriceParams {
+    locationId: number;
+    defaultPrice: string;
+}
+
+export async function updateDefaultPrice({ 
+    locationId, 
+    defaultPrice 
+}: UpdateDefaultPriceParams): Promise<UpdateDefaultPriceResponse> {
     const t = await getTranslations('GenericMessages');
 
-    const { isAuth } = await verifyAuth(authToken);
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+
+    const { isAuth } = await verifyAuth(authToken as string);
                         
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
@@ -32,10 +50,12 @@ export async function updateDefaultPrice(authToken: string, locationId: number, 
         return { success: false, message: t('BAD_REQUEST') };
     }
 
-    const { error } = await supabase
+    const { data, error } = await supabase
         .from('locations')
         .update({ default_price: defaultPrice })
-        .eq('id', locationId);
+        .eq('id', locationId)
+        .select()
+        .single();
 
     if (error) {
         return { success: false, message: t('DEFAULT_PRICE_UPDATE_ERROR') };
@@ -47,5 +67,9 @@ export async function updateDefaultPrice(authToken: string, locationId: number, 
 
     revalidatePath("/");
 
-    return { success: true, message: t('DEFAULT_PRICE_UPDATED') };
+    return { 
+        success: true, 
+        message: t('DEFAULT_PRICE_UPDATED'),
+        data: data as typesLocation
+    };
 }

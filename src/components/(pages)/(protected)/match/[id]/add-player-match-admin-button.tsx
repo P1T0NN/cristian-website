@@ -21,14 +21,12 @@ import type { typesUser } from "@/types/typesUser";
 import { Shield } from "lucide-react";
 
 type AddPlayerMatchAdminButtonProps = {
-    authToken: string;
-    matchId: string;
+    matchIdFromParams: string;
     player: typesUser;
 }
 
 export const AddPlayerMatchAdminButton = ({
-    authToken,
-    matchId,
+    matchIdFromParams,
     player
 }: AddPlayerMatchAdminButtonProps) => {
     const t = useTranslations("MatchPage");
@@ -37,7 +35,10 @@ export const AddPlayerMatchAdminButton = ({
 
     const handleToggleMatchAdmin = () => {
         startTransition(async () => {
-            const response = await adminToggleMatchAdmin(authToken, matchId, player.id);
+            const response = await adminToggleMatchAdmin({
+                matchIdFromParams: matchIdFromParams, 
+                playerId: player.id
+            });
 
             if (response.success) {
                 toast.success(response.message);

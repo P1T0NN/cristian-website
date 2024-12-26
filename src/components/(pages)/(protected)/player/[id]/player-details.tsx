@@ -1,12 +1,5 @@
-// NEXTJS IMPORTS
-import { cookies } from "next/headers";
-import Link from "next/link";
-
 // LIBRARIES
 import { getTranslations } from "next-intl/server";
-
-// CONFIG
-import { ADMIN_PAGE_ENDPOINTS } from "@/config";
 
 // COMPONENTS
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -15,11 +8,13 @@ import { Badge } from "@/components/ui/badge";
 import { DebtsTable } from "./debts-table";
 import { BalanceTable } from "./balance-table";
 import { EditPlayerDetails } from "./edit-player-details";
+import { AddDebtDialog } from "./add-debt-dialog";
 import { AddBalanceButton } from "./add-balance-button";
 import { VerifyDocumentsButton } from "./verify-documents-button";
 
 // ACTIONS
-import { serverFetchPlayer } from "@/actions/functions/data/server/server_fetchPlayer";
+import { fetchPlayer } from "@/actions/user/fetchPlayer";
+import { getUser } from "@/actions/auth/verifyAuth";
 
 // UTILS
 import { getPositionLabel } from "@/utils/next-intl/getPlayerPositionLabel";
@@ -31,8 +26,7 @@ import type { typesUser } from "@/types/typesUser";
 import { CheckCircle, Wallet, Shield, Mail, Calendar, Phone, Euro, BadgeIcon as IdCard, Users, Star, MapPin } from 'lucide-react';
 
 type PlayerDetailsProps = {
-    playerId: string;
-    currentUserData: typesUser;
+    playerIdFromParams: string;
 }
 
 const InfoItem = ({ icon, text, value }: { icon: React.ReactNode, text: string, value?: React.ReactNode }) => (
@@ -44,16 +38,13 @@ const InfoItem = ({ icon, text, value }: { icon: React.ReactNode, text: string, 
 )
 
 export const PlayerDetails = async ({
-    playerId,
-    currentUserData
+    playerIdFromParams,
 }: PlayerDetailsProps) => {
     const t = await getTranslations("PlayerPage");
 
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get('auth_token')?.value as string;
+    const currentUserData = await getUser() as typesUser;
 
-    const serverPlayerData = await serverFetchPlayer(playerId);
-
+    const serverPlayerData = await fetchPlayer(playerIdFromParams);
     const playerData = serverPlayerData.data as typesUser;
 
     const positionLabel = await getPositionLabel(playerData.player_position);
@@ -69,6 +60,7 @@ export const PlayerDetails = async ({
                         <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${playerData.fullName}`} />
                         <AvatarFallback>{playerData.fullName.split(' ').map(n => n[0]).join('').toUpperCase()}</AvatarFallback>
                     </Avatar>
+
                     <div className="text-center sm:text-left">
                         <CardTitle className="text-2xl font-bold">{playerData.fullName}</CardTitle>
                         <div className="flex flex-wrap justify-center sm:justify-start items-center mt-1 gap-2">
@@ -105,28 +97,27 @@ export const PlayerDetails = async ({
                 <div className="flex flex-wrap items-center mt-6 mb-6 gap-4">
                     {currentUserData.isAdmin && (
                         <>
-                            <Link 
-                                className="flex items-center h-[35px] bg-primary text-secondary px-4 rounded hover:bg-primary/80 transition-all"
-                                href={`${ADMIN_PAGE_ENDPOINTS.ADD_DEBT_PAGE}?playerName=${encodeURIComponent(playerData.fullName)}`}
-                            >
-                                {t('addDebt')}
-                            </Link>
+                            <AddDebtDialog 
+                                initialPlayerName={playerData.fullName}
+                                addedBy={currentUserData.fullName}
+                            />
+
+                            {/* Client component thats why we pass more props */}
                             <AddBalanceButton
-                                authToken={authToken}
-                                playerId={playerId}
+                                playerIdFromParams={playerIdFromParams}
                                 isAdmin={currentUserData.isAdmin}
                                 addedBy={currentUserData.fullName}
                             />
+
+                            {/* Client component thats why we pass more props */}
                             <VerifyDocumentsButton
-                                authToken={authToken}
-                                userId={playerId}
+                                playerIdFromParams={playerIdFromParams}
                                 isVerified={playerData.verify_documents}
                             />
                         </>
                     )}
                     <EditPlayerDetails
-                        authToken={authToken}
-                        playerId={playerId}
+                        playerIdFromParams={playerIdFromParams}
                         initialPhoneNumber={playerData.phoneNumber}
                         initialCountry={playerData.country}
                         initialDNI={playerData.dni}
@@ -137,14 +128,12 @@ export const PlayerDetails = async ({
                 </div>
                 
                 <DebtsTable
-                    debts={playerData.debts || []} 
-                    isCurrentUserAdmin={currentUserData.isAdmin}
+                    debts={playerData.debts || []}
                 />
 
                 <BalanceTable 
+                    playerIdFromParams={playerIdFromParams}
                     balances={playerData.balances || []}
-                    isCurrentUserAdmin={currentUserData.isAdmin}
-                    playerId={playerId}
                 />
             </CardContent>
         </Card>

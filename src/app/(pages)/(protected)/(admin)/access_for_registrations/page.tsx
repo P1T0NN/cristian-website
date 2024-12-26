@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DisplayUsers } from "@/components/(pages)/(protected)/(admin)/access_for_registrations/display-users";
 
 // ACTIONS
-import { serverFetchNoAccessUsers } from "@/actions/functions/data/server/server_fetchNoAccessUsers";
+import { fetchNoAccessUsers } from '@/actions/user/fetchNoAccessUsers';
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
@@ -14,7 +14,7 @@ import type { typesUser } from "@/types/typesUser";
 export default async function AccessForRegistrationPage() {
     const t = await getTranslations('AccessForRegistrationPage');
     
-    const serverNoAccessUsersData = await serverFetchNoAccessUsers();
+    const serverNoAccessUsersData = await fetchNoAccessUsers();
     const noAccessUsersData = serverNoAccessUsersData.data as typesUser[];
 
     return (
@@ -27,6 +27,7 @@ export default async function AccessForRegistrationPage() {
                     </CardHeader>
                     
                     <CardContent>
+                        {/* No need for individual Suspense here, loading.tsx is sufficient since we do only one getUser() call in DisplayUsers */}
                         <DisplayUsers users={noAccessUsersData} />
                     </CardContent>
                 </Card>

@@ -18,12 +18,10 @@ import type { typesLocation } from "@/types/typesLocation";
 
 type MarkAsDefaultLocationButtonProps = {
     location: typesLocation;
-    authToken: string;
 }
 
 export const MarkAsDefaultLocationButton = ({
     location,
-    authToken
 }: MarkAsDefaultLocationButtonProps) => {
     const t = useTranslations("AddLocationPage");
 
@@ -31,7 +29,10 @@ export const MarkAsDefaultLocationButton = ({
 
     const handleToggleDefault = () => {
         startTransition(async () => {
-            const result = await markAsDefaultLocation(authToken, location.id, !location.is_default);
+            const result = await markAsDefaultLocation({
+                locationId: location.id, 
+                isDefault: !location.is_default
+            });
 
             if (result.success) {
                 toast.success(result.message);

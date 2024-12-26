@@ -1,12 +1,6 @@
 // COMPONENTS
 import { PlayerDetails } from '@/components/(pages)/(protected)/player/[id]/player-details';
 
-// SERVER ACTIONS
-import { getUser } from '@/actions/actions/auth/verifyAuth';
-
-// TYPES
-import type { typesUser } from '@/types/typesUser';
-
 export default async function PlayerPage({ 
     params 
 }: { 
@@ -14,11 +8,10 @@ export default async function PlayerPage({
 }) {
     const { id } = await params;
 
-    const serverUserData = await getUser() as typesUser;
-
     return (
         <div className="container mx-auto px-4 py-8">
-            <PlayerDetails playerId={id} currentUserData={serverUserData} />
+            {/* No need for individual suspense, since all data we get, we get from one call and one component, so loading.tsx is sufficient */}
+            <PlayerDetails playerIdFromParams={id} />
         </div>
     );
 };

@@ -1,6 +1,7 @@
 "use server"
 
 // NEXTJS IMPORTS
+import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
@@ -14,12 +15,32 @@ import { upstashRedisCacheService } from '@/services/server/redis-cache.service'
 import { CACHE_KEYS } from '@/config';
 
 // ACTIONS
-import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
+import { verifyAuth } from '@/actions/auth/verifyAuth';
 
-export async function markAsDefaultLocation(authToken: string, locationId: number, isDefault: boolean) {
+// TYPES
+import type { typesLocation } from '@/types/typesLocation';
+
+interface MarkAsDefaultLocationResponse {
+    success: boolean;
+    message: string;
+    data?: typesLocation;
+}
+
+interface MarkAsDefaultLocationParams {
+    locationId: number;
+    isDefault: boolean;
+}
+
+export async function markAsDefaultLocation({ 
+    locationId, 
+    isDefault 
+}: MarkAsDefaultLocationParams): Promise<MarkAsDefaultLocationResponse> {
     const t = await getTranslations("GenericMessages");
 
-    const { isAuth } = await verifyAuth(authToken);
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+    
+    const { isAuth } = await verifyAuth(authToken as string);
                         
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
@@ -33,7 +54,9 @@ export async function markAsDefaultLocation(authToken: string, locationId: numbe
     const { data, error } = await supabase
         .from('locations')
         .update({ is_default: isDefault })
-        .eq('id', locationId);
+        .eq('id', locationId)
+        .select()
+        .single();
 
     if (error) {
         return { success: false, message: isDefault ? t('DEFAULT_LOCATION_SET_FAILED') : t('DEFAULT_LOCATION_UNSET_FAILED') };
@@ -45,5 +68,9 @@ export async function markAsDefaultLocation(authToken: string, locationId: numbe
 
     revalidatePath("/");
 
-    return { success: true, message: isDefault ? t('DEFAULT_LOCATION_SET') : t('DEFAULT_LOCATION_UNSET'), data };
+    return { 
+        success: true, 
+        message: isDefault ? t('DEFAULT_LOCATION_SET') : t('DEFAULT_LOCATION_UNSET'), 
+        data: data as typesLocation 
+    };
 }

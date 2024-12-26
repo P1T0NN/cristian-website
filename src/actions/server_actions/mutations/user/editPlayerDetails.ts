@@ -1,6 +1,7 @@
 "use server"
 
 // NEXTJS IMPORTS
+import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
@@ -8,37 +9,67 @@ import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
 // ACTIONS
-import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
+import { verifyAuth } from '@/actions/auth/verifyAuth';
 
-export async function editPlayerDetails(authToken: string, playerId: string, dni: string, country: string, phoneNumber: string, playerLevel: string, playerPosition: string) {
-    const genericMessages = await getTranslations("GenericMessages");
+// TYPES
+import type { typesUser } from '@/types/typesUser';
 
-    const { isAuth } = await verifyAuth(authToken);
+interface EditPlayerDetailsResponse {
+    success: boolean;
+    message: string;
+    data?: typesUser;
+}
+
+interface EditPlayerDetailsParams {
+    playerIdFromParams: string;
+    dni: string;
+    country: string;
+    phoneNumber: string;
+    playerLevel: string;
+    playerPosition: string;
+}
+
+export async function editPlayerDetails({
+    playerIdFromParams,
+    dni,
+    country,
+    phoneNumber,
+    playerLevel,
+    playerPosition
+}: EditPlayerDetailsParams): Promise<EditPlayerDetailsResponse> {
+    const t = await getTranslations("GenericMessages");
+
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+
+    const { isAuth } = await verifyAuth(authToken as string);
                         
     if (!isAuth) {
-        return { success: false, message: genericMessages('UNAUTHORIZED') };
+        return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!playerId || !dni || !country || !phoneNumber || !playerLevel || !playerPosition) {
-        return { success: false, message: genericMessages('BAD_REQUEST') };
+    if (!playerIdFromParams || !dni || !country || !phoneNumber || !playerLevel || !playerPosition) {
+        return { success: false, message: t('BAD_REQUEST') };
     }
 
     const { data, error } = await supabase
         .from('users')
         .update({ 
-            dni: dni, 
-            player_level: playerLevel, 
-            player_position: playerPosition ,
-            country: country,
-            phoneNumber: phoneNumber
+            dni,
+            player_level: playerLevel,
+            player_position: playerPosition,
+            country,
+            phoneNumber
         })
-        .eq('id', playerId)
+        .eq('id', playerIdFromParams)
+        .select()
+        .single();
 
     if (error) {
-        return { success: false, message: genericMessages('UNKNOWN_ERROR') };
+        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
 
     revalidatePath("/");
 
-    return { success: true, message: genericMessages('PLAYER_DETAILS_UPDATED'), data };
+    return { success: true, message: t('PLAYER_DETAILS_UPDATED'), data: data as typesUser };
 }

@@ -1,6 +1,7 @@
 "use server"
 
 // NEXTJS IMPORTS
+import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
@@ -14,15 +15,31 @@ import { upstashRedisCacheService } from '@/services/server/redis-cache.service'
 import { CACHE_KEYS } from '@/config';
 
 // ACTIONS
-import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
+import { verifyAuth } from '@/actions/auth/verifyAuth';
 
 // TYPES
 import { typesAddLocationForm } from '@/types/forms/AddLocationForm';
+import { typesLocation } from '@/types/typesLocation';
 
-export async function addLocation(authToken: string, addLocationData: typesAddLocationForm) {
+interface AddLocationResponse {
+    success: boolean;
+    message: string;
+    data?: typesLocation;
+}
+
+interface AddLocationParams {
+    addLocationData: typesAddLocationForm;
+}
+
+export async function addLocation({ 
+    addLocationData 
+}: AddLocationParams): Promise<AddLocationResponse> {
     const t = await getTranslations("GenericMessages");
 
-    const { isAuth } = await verifyAuth(authToken);
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+
+    const { isAuth } = await verifyAuth(authToken as string);
                         
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
@@ -32,8 +49,7 @@ export async function addLocation(authToken: string, addLocationData: typesAddLo
         return { success: false, message: t('BAD_REQUEST') };
     }
 
-    const location_name = addLocationData.location_name;
-    const location_url = addLocationData.location_url;
+    const { location_name, location_url } = addLocationData;
 
     if (!location_name) {
         return  { success: false, message: t('LOCATION_NAME_REQUIRED') };
@@ -56,7 +72,9 @@ export async function addLocation(authToken: string, addLocationData: typesAddLo
     // Insert new location if no duplicate found
     const { data, error } = await supabase
         .from('locations')
-        .insert([{ location_name, location_url }]);
+        .insert([{ location_name, location_url }])
+        .select()
+        .single();
 
     if (error) {
         return { success: false, message: t('LOCATION_CREATION_FAILED') };
@@ -67,5 +85,5 @@ export async function addLocation(authToken: string, addLocationData: typesAddLo
 
     revalidatePath("/");
 
-    return { success: true, message: t('LOCATION_CREATED'), data };
+    return { success: true, message: t('LOCATION_CREATED'), data: data as typesLocation };
 }

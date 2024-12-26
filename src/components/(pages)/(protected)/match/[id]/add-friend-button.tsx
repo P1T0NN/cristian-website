@@ -17,20 +17,20 @@ import { toast } from 'sonner';
 import { addFriend } from '@/actions/server_actions/mutations/match/addFriend';
 
 type AddFriendButtonProps = {
-    matchId: string;
+    matchIdFromParams: string;
     teamNumber: 0 | 1 | 2;
-    authToken: string;
     isAdmin: boolean;
 }
 
 export function AddFriendButton({ 
-    matchId, 
+    matchIdFromParams, 
     teamNumber, 
-    authToken,
     isAdmin
 }: AddFriendButtonProps) {
     const t = useTranslations('MatchPage');
+
     const [isPending, startTransition] = useTransition();
+
     const [isOpen, setIsOpen] = useState(false);
     const [friendName, setFriendName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -48,12 +48,18 @@ export function AddFriendButton({
         }
 
         startTransition(async () => {
-            const result = await addFriend(authToken, matchId, teamNumber, friendName, phoneNumber.trim());
+            const result = await addFriend({
+                matchIdFromParams: matchIdFromParams, 
+                teamNumber: teamNumber, 
+                friendName: friendName, 
+                phoneNumber: phoneNumber.trim()
+            });
             
             if (result.success) {
                 setIsOpen(false);
                 setFriendName('');
                 setPhoneNumber('');
+                
                 toast.success(result.message);
             } else {
                 toast.error(result.message);

@@ -40,7 +40,7 @@ export function SearchBar({
 
     useEffect(() => {
         if (debouncedQuery) {
-            searchBar(authToken, debouncedQuery).then(result => {
+            searchBar({ query: debouncedQuery }).then(result => {
                 if (result.success && result.data) {
                     setResults(result.data)
                     setIsOpen(true)

@@ -26,13 +26,11 @@ import { sortTeams } from "@/actions/server_actions/mutations/match/sortTeams";
 import { Users } from 'lucide-react';
 
 type SortTeamsButtonProps = {
-    authToken: string;
-    matchId: string;
+    matchIdFromParams: string;
 }
 
 export const SortTeamsButton = ({
-    authToken,
-    matchId
+    matchIdFromParams
 }: SortTeamsButtonProps) => {
     const t = useTranslations("MatchPage");
     
@@ -40,7 +38,9 @@ export const SortTeamsButton = ({
     
     const handleSortTeams = () => {
         startTransition(async () => {
-            const response = await sortTeams(authToken, matchId)
+            const response = await sortTeams({
+                matchIdFromParams: matchIdFromParams
+            })
 
             if (response.success) {
                 toast.success(response.message)

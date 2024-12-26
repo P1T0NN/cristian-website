@@ -25,21 +25,20 @@ import { editMatchInstructions } from "@/actions/server_actions/mutations/match/
 import { Pencil } from "lucide-react";
 
 type EditInstructionsDialogProps = {
-    instructions: string
-    matchId: string
-    authToken: string
+    matchIdFromParams: string
+    matchInstructions: string
 }
 
 export const EditMatchInstructionsDialog = ({
-    instructions,
-    matchId,
-    authToken
+    matchIdFromParams,
+    matchInstructions,
 }: EditInstructionsDialogProps) => {
     const t = useTranslations("MatchPage");
     
-    const [open, setOpen] = useState(false);
     const [isPending, startTransition] = useTransition();
-    const [editedInstructions, setEditedInstructions] = useState(instructions);
+
+    const [open, setOpen] = useState(false);
+    const [editedInstructions, setEditedInstructions] = useState(matchInstructions);
 
     const handleInstructionsChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setEditedInstructions(e.target.value);
@@ -47,7 +46,7 @@ export const EditMatchInstructionsDialog = ({
 
     const handleEditMatchInstructions = () => {
         startTransition(async () => {
-            const response = await editMatchInstructions(editedInstructions, matchId, authToken);
+            const response = await editMatchInstructions({ matchId: matchIdFromParams, matchInstructions: editedInstructions });
 
             if (response.success) {
                 setOpen(false);
@@ -61,7 +60,7 @@ export const EditMatchInstructionsDialog = ({
     const handleOpenChange = (open: boolean) => {
         setOpen(open);
         if (!open) {
-            setEditedInstructions(instructions);
+            setEditedInstructions(matchInstructions);
         }
     };
 

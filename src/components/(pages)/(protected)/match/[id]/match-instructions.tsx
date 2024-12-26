@@ -5,26 +5,27 @@ import { getTranslations } from "next-intl/server";
 import { Card, CardContent } from "@/components/ui/card";
 import { EditMatchInstructionsDialog } from "./edit-match-instructions-dialog";
 
-// SERVER ACTIONS
-import { getUser } from "@/actions/actions/auth/verifyAuth";
-
 // ACTIONS
-import { typesUser } from "@/types/typesUser";
+import { getUser } from "@/actions/auth/verifyAuth";
+import { fetchMatch } from "@/actions/match/fetchMatch";
+
+// TYPES
+import type { typesMatch } from "@/types/typesMatch";
+import type { typesUser } from "@/types/typesUser";
 
 type MatchInstructionsProps = {
-    instructions: string
-    matchId: string
-    authToken: string
+    matchIdFromParams: string;
 }
 
 export const MatchInstructions = async ({
-    instructions,
-    matchId,
-    authToken,
+    matchIdFromParams
 }: MatchInstructionsProps) => {
     const t = await getTranslations("MatchPage");
 
     const serverUserData = await getUser() as typesUser; 
+
+    const serverMatchData = await fetchMatch(matchIdFromParams);
+    const match = serverMatchData.data?.match as typesMatch;
 
     return (
         <Card className="mb-6">
@@ -32,14 +33,14 @@ export const MatchInstructions = async ({
                 <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                         <div className="whitespace-pre-wrap break-words">
-                            {instructions || t('noInstructions')}
+                            {match.match_instructions || t('noInstructions')}
                         </div>
                     </div>
+
                     {serverUserData.isAdmin && (
                         <EditMatchInstructionsDialog
-                            instructions={instructions}
-                            matchId={matchId}
-                            authToken={authToken}
+                            matchIdFromParams={matchIdFromParams}
+                            matchInstructions={match.match_instructions}
                         />
                     )}
                 </div>

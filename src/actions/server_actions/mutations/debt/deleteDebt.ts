@@ -1,6 +1,7 @@
 "use server"
 
 // NEXTJS IMPORTS
+import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
@@ -8,20 +9,41 @@ import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
 // ACTIONS
-import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
+import { verifyAuth } from '@/actions/auth/verifyAuth';
 
-export async function deleteDebt(authToken: string, debtId: string) {
-    const genericMessages = await getTranslations("GenericMessages");
-    const fetchMessages = await getTranslations("FetchMessages");
+// TYPES
+import type { typesDebt } from "@/types/typesDebt";
+import type { typesUser } from "@/types/typesUser";
 
-    const { isAuth } = await verifyAuth(authToken);
+interface DeleteDebtResponse {
+    success: boolean;
+    message: string;
+    data?: {
+        deletedDebt: typesDebt;
+        updatedUser: typesUser;
+    };
+}
+
+interface DeleteDebtParams {
+    debtId: string;
+}
+
+export async function deleteDebt({ 
+    debtId 
+}: DeleteDebtParams): Promise<DeleteDebtResponse> {
+    const t = await getTranslations("GenericMessages");
+
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+
+    const { isAuth } = await verifyAuth(authToken as string);
                         
     if (!isAuth) {
-        return { success: false, message: genericMessages('UNAUTHORIZED') };
+        return { success: false, message: t('UNAUTHORIZED') };
     }
 
     if (!debtId) {
-        return { success: false, message: genericMessages('BAD_REQUEST') };
+        return { success: false, message: t('BAD_REQUEST') };
     }
 
     // Fetch the debt to be deleted
@@ -32,7 +54,7 @@ export async function deleteDebt(authToken: string, debtId: string) {
         .single();
 
     if (fetchError) {
-        return { success: false, message: fetchMessages('DEBT_FETCH_FAILED') };
+        return { success: false, message: t('DEBT_FETCH_FAILED') };
     }
 
     // Delete the debt
@@ -42,23 +64,23 @@ export async function deleteDebt(authToken: string, debtId: string) {
         .eq('id', debtId);
 
     if (deleteError) {
-        return { success: false, message: genericMessages('DEBT_DELETION_FAILED') };
+        return { success: false, message: t('DEBT_DELETION_FAILED') };
     }
 
     // Fetch the current user data
     const { data: userData, error: userFetchError } = await supabase
         .from('users')
-        .select('player_debt, cristian_debt')
+        .select('*')
         .eq('fullName', debt.player_name)
         .single();
 
     if (userFetchError) {
-        return { success: false, message: fetchMessages('USER_FETCH_FAILED') };
+        return { success: false, message: t('USER_FETCH_FAILED') };
     }
 
     // Calculate new debt values
-    const newPlayerDebt = userData.player_debt - debt.player_debt;
-    const newCristianDebt = userData.cristian_debt - debt.cristian_debt;
+    const newPlayerDebt = (userData.player_debt || 0) - (debt.player_debt || 0);
+    const newCristianDebt = (userData.cristian_debt || 0) - (debt.cristian_debt || 0);
 
     // Update the user's debt
     const { data: updatedUser, error: updateError } = await supabase
@@ -71,10 +93,17 @@ export async function deleteDebt(authToken: string, debtId: string) {
         .select();
 
     if (updateError) {
-        return { success: false, message: genericMessages('USER_DEBT_UPDATE_FAILED') };
+        return { success: false, message: t('USER_DEBT_UPDATE_FAILED') };
     }
 
     revalidatePath("/");
 
-    return { success: true, message: genericMessages("DEBT_DELETED"), data: { deletedDebt: debt, updatedUser: updatedUser[0] } };
+    return { 
+        success: true, 
+        message: t("DEBT_DELETED"), 
+        data: { 
+            deletedDebt: debt as typesDebt, 
+            updatedUser: updatedUser[0] as typesUser 
+        } 
+    };
 }

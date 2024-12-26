@@ -19,17 +19,16 @@ import { updatePlayerLevel } from '@/actions/server_actions/mutations/user/updat
 type UpdatePlayerLevelProps = {
     userId: string;
     currentLevel: string;
-    authToken: string;
 }
 
 export function UpdatePlayerLevel({ 
     userId, 
     currentLevel, 
-    authToken
 }: UpdatePlayerLevelProps) {
     const t = useTranslations('AccessForRegistrationPage');
     
     const [isPending, startTransition] = useTransition();
+    
     const [isOpen, setIsOpen] = useState(false);
     const [newLevel, setNewLevel] = useState(currentLevel);
 
@@ -40,7 +39,10 @@ export function UpdatePlayerLevel({
         }
 
         startTransition(async () => {
-            const result = await updatePlayerLevel(authToken, userId, newLevel);
+            const result = await updatePlayerLevel({
+                userId: userId, 
+                newLevel: newLevel
+            });
             
             if (result.success) {
                 setIsOpen(false);

@@ -27,26 +27,28 @@ import { removeFriend } from "@/actions/server_actions/mutations/match/removeFri
 import { X, Loader2 } from "lucide-react";
 
 type RemoveFriendButtonProps = {
-    authToken: string;
-    matchId: string;
+    matchIdFromParams: string;
     temporaryPlayerId: string;
     setShowSubstituteDialog: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const RemoveFriendButton = ({
-    authToken,
-    matchId,
+    matchIdFromParams,
     temporaryPlayerId,
     setShowSubstituteDialog
 }: RemoveFriendButtonProps) => {
     const t = useTranslations("MatchPage");
+    
     const [isPending, startTransition] = useTransition();
     
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const handleRemoveTemporaryPlayer = () => {
         startTransition(async () => {
-            const response = await removeFriend(authToken, matchId, temporaryPlayerId);
+            const response = await removeFriend({
+                matchIdFromParams: matchIdFromParams, 
+                temporaryPlayerId: temporaryPlayerId
+            });
 
             if (response.success) {
                 toast.success(response.message);
@@ -55,6 +57,7 @@ export const RemoveFriendButton = ({
             } else {
                 toast.error(response.message);
             }
+
             setIsDialogOpen(false);
         });
     };

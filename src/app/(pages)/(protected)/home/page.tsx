@@ -1,25 +1,22 @@
 // REACTJS IMPORTS
 import { Suspense } from "react";
 
+// LIBRARIES
+import { getTranslations } from "next-intl/server";
+
 // COMPONENTS
 import { DisplayCalendar } from "@/components/(pages)/(protected)/home/display-calendar";
 import { DisplayMatches } from "@/components/(pages)/(protected)/home/display-matches";
-import { MyActiveMatches } from "@/components/(pages)/(protected)/home/my-active-matches";
+import { ActiveMatches } from "@/components/(pages)/(protected)/home/active-matches";
 import { DisplayMatchesLoading } from "@/components/(pages)/(protected)/home/loading/display-matches-loading";
-import { DisplayCalendarLoading } from "@/components/(pages)/(protected)/home/loading/display-calendar-loading";
-
-// SERVER ACTIONS
-import { getUser } from "@/actions/actions/auth/verifyAuth";
-
-// TYPES
-import type { typesUser } from "@/types/typesUser";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default async function HomePage({ 
     searchParams 
 }: { 
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-    const serverUserData = await getUser() as typesUser;
+    const t = await getTranslations("HomePage");
 
     const awaitedSearchParams = await searchParams;
 
@@ -28,20 +25,30 @@ export default async function HomePage({
     return (
         <div className="min-h-screen bg-background">
             <main className="container mx-auto p-4 space-y-6">
-                <Suspense fallback={<DisplayCalendarLoading />}>
-                    <div className="flex flex-col gap-6">
-                        <div className="w-full">
-                            <DisplayCalendar />
-                        </div>
-                        <div className="w-full">
-                            <MyActiveMatches currentUserId={serverUserData.id} />
-                        </div>
+                <div className="flex flex-col gap-6">
+                    <div className="w-full">
+                        <DisplayCalendar />
                     </div>
-                </Suspense>
+                </div>
         
-                <Suspense fallback={<DisplayMatchesLoading />}>
-                    <DisplayMatches date={date as string} serverUserData={serverUserData} />
-                </Suspense>
+                <Tabs defaultValue="all-matches">
+                    <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="all-matches">{t('allMatches')}</TabsTrigger>
+                        <TabsTrigger value="my-matches">{t('myMatches')}</TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="all-matches">
+                        <Suspense fallback={<DisplayMatchesLoading />}>
+                            <DisplayMatches date={date as string} />
+                        </Suspense>
+                    </TabsContent>
+
+                    <TabsContent value="my-matches">
+                        <Suspense fallback={<DisplayMatchesLoading />}>
+                            <ActiveMatches />
+                        </Suspense>
+                    </TabsContent>
+                </Tabs>
             </main>
         </div>
     );

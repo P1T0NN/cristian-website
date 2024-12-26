@@ -1,6 +1,7 @@
 "use server"
 
 // NEXTJS IMPORTS
+import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
@@ -14,22 +15,40 @@ import { upstashRedisCacheService } from '@/services/server/redis-cache.service'
 import { CACHE_KEYS } from '@/config';
 
 // ACTIONS
-import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
+import { verifyAuth } from '@/actions/auth/verifyAuth';
 
 // TYPES
 import type { typesAddMatchForm } from '@/types/forms/AddMatchForm';
+import type { typesMatch } from '@/types/typesMatch';
 
-export async function editMatch(authToken: string, matchId: string, editMatchData: typesAddMatchForm) {
-    const genericMessages = await getTranslations("GenericMessages");
+interface EditMatchResponse {
+    success: boolean;
+    message: string;
+    data?: typesMatch;
+}
 
-    const { isAuth } = await verifyAuth(authToken);
+interface EditMatchParams {
+    matchIdFromParams: string;
+    editMatchData: typesAddMatchForm;
+}
+
+export async function editMatch({
+    matchIdFromParams,
+    editMatchData
+}: EditMatchParams): Promise<EditMatchResponse> {
+    const t = await getTranslations("GenericMessages");
+
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+
+    const { isAuth } = await verifyAuth(authToken as string);
         
     if (!isAuth) {
-        return { success: false, message: genericMessages('UNAUTHORIZED') };
+        return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!matchId) {
-        return { success: false, message: genericMessages('BAD_REQUEST') };
+    if (!matchIdFromParams) {
+        return { success: false, message: t('BAD_REQUEST') };
     }
 
     const { data, error } = await supabase
@@ -48,16 +67,18 @@ export async function editMatch(authToken: string, matchId: string, editMatchDat
             added_by: editMatchData.added_by,
             match_level: editMatchData.match_level
         })
-        .eq('id', matchId);
+        .eq('id', matchIdFromParams)
+        .select()
+        .single();
 
     if (error) {
-        return { success: false, message: genericMessages('MATCH_EDIT_FAILED') };
+        return { success: false, message: t('MATCH_EDIT_FAILED') };
     }
 
     // Invalidate the specific match cache
-    await upstashRedisCacheService.delete(`${CACHE_KEYS.MATCH_PREFIX}${matchId}`);
+    await upstashRedisCacheService.delete(`${CACHE_KEYS.MATCH_PREFIX}${matchIdFromParams}`);
 
     revalidatePath("/");
 
-    return { success: true, message: genericMessages("MATCH_UPDATED"), data };
+    return { success: true, message: t("MATCH_UPDATED"), data: data as typesMatch };
 }

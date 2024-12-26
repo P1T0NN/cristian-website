@@ -26,13 +26,11 @@ import { cancelSubstitutionRequest } from "@/actions/server_actions/mutations/ma
 import { Loader2 } from 'lucide-react';
 
 type CancelSubstitutionButtonProps = {
-    authToken: string;
-    matchId: string;
+    matchIdFromParams: string;
 }
 
 export const CancelSubstitutionButton = ({
-    authToken,
-    matchId
+    matchIdFromParams
 }: CancelSubstitutionButtonProps) => {
     const t = useTranslations("MatchPage");
     const [isPending, startTransition] = useTransition();
@@ -41,8 +39,11 @@ export const CancelSubstitutionButton = ({
 
     const handleCancelSubstitution = () => {
         setIsDialogOpen(false);
+
         startTransition(async () => {
-            const result = await cancelSubstitutionRequest(authToken, matchId);
+            const result = await cancelSubstitutionRequest({
+                matchIdFromParams: matchIdFromParams
+            });
 
             if (result.success) {
                 toast.success(result.message);

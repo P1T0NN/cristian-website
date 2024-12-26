@@ -1,24 +1,46 @@
 "use server"
 
+// NEXTJS IMPORTS
+import { cookies } from 'next/headers';
+
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
 // ACTIONS
-import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
+import { verifyAuth } from '@/actions/auth/verifyAuth';
 
-// TYPES
-type SearchResult = {
-    teams: { id: string; team_name: string }[];
+interface TeamSearchResult {
+    id: string;
+    team_name: string;
 }
 
-export async function searchTeams(authToken: string, query: string): Promise<{ success: boolean; message?: string; data?: SearchResult }> {
-    const genericMessages = await getTranslations("GenericMessages")
+interface SearchResult {
+    teams: TeamSearchResult[];
+}
 
-    const { isAuth } = await verifyAuth(authToken);
+interface SearchTeamsResponse {
+    success: boolean;
+    message?: string;
+    data?: SearchResult;
+}
+
+interface SearchTeamsParams {
+    query: string;
+}
+
+export async function searchTeams({
+    query
+}: SearchTeamsParams): Promise<SearchTeamsResponse> {
+    const t = await getTranslations("GenericMessages");
+
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+
+    const { isAuth } = await verifyAuth(authToken as string);
                 
     if (!isAuth) {
-        return { success: false, message: genericMessages('UNAUTHORIZED') };
+        return { success: false, message: t('UNAUTHORIZED') };
     }
 
     // Search for teams
@@ -26,16 +48,16 @@ export async function searchTeams(authToken: string, query: string): Promise<{ s
         .from('teams')
         .select('id, team_name')
         .ilike('team_name', `${query}%`)
-        .limit(5)
+        .limit(5);
 
     if (teamsError) {
-        return { success: false, message: genericMessages('TEAM_SEARCH_FAILED') }
+        return { success: false, message: t('TEAM_SEARCH_FAILED') };
     }
 
     return { 
         success: true, 
         data: { 
-            teams: teams || []
+            teams: (teams as TeamSearchResult[]) || []
         } 
-    }
+    };
 }

@@ -19,13 +19,11 @@ import { Trash2 } from "lucide-react";
 import { DeleteLocationButton } from "./delete-location-button";
 
 type DeleteLocationDialogProps = {
-    authToken: string;
     locationId: number;
     locationName: string;
 }
 
 export const DeleteLocationDialog = async ({
-    authToken,
     locationId,
     locationName,
 }: DeleteLocationDialogProps) => {
@@ -54,7 +52,8 @@ export const DeleteLocationDialog = async ({
 
                 <AlertDialogFooter>
                     <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-                    <DeleteLocationButton authToken={authToken} locationId={locationId} />
+                    
+                    <DeleteLocationButton locationId={locationId} />
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

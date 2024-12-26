@@ -1,5 +1,6 @@
 // NEXTJS IMPORTS
 import Link from "next/link";
+import { cookies } from "next/headers";
 
 // LIBRARIES
 import { getTranslations } from "next-intl/server";
@@ -21,6 +22,9 @@ import {
 import { SearchBar } from "./header_protected/search-bar";
 import { LogoutButton } from "./header_protected/logout-button";
 
+// ACTIONS
+import { getUser } from "@/actions/auth/verifyAuth";
+
 // UTILS
 import { getInitials } from "@/utils/getNameInitials";
 
@@ -30,16 +34,13 @@ import type { typesUser } from "@/types/typesUser";
 // LUCIDE ICONS
 import { Settings, History, UserPlus, User, ClipboardList, Wallet } from 'lucide-react';
 
-type HeaderProps = {
-    serverUserData: typesUser | undefined;
-    authToken: string | undefined;
-}
-
-export const HeaderProtected = async ({ 
-    serverUserData, 
-    authToken 
-}: HeaderProps) => {
+export const HeaderProtected = async () => {
     const t = await getTranslations('Header');
+
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+
+    const serverUserData = await getUser() as typesUser;
     
     const initials = serverUserData ? getInitials(serverUserData.fullName) : '';
 

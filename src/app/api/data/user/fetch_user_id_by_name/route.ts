@@ -1,38 +1,25 @@
 // NEXTJS IMPORTS
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 
 // LIBRARIES
 import { getTranslations } from 'next-intl/server';
 import { supabase } from '@/lib/supabase/supabase';
-import { jwtVerify } from 'jose';
+
+// MIDDLEWARE
+import { withAuth } from '@/middleware/withAuth';
 
 // UTILS
 import { decrypt } from '@/utils/encryption';
 
-// TYPES
-import type { APIResponse } from '@/types/responses/APIResponse';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const GET = withAuth(async (request: NextRequest, _userId: string, _token: string): Promise<NextResponse> => {
+    const t = await getTranslations("GenericMessages");
 
-export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
-    const genericMessages = await getTranslations("GenericMessages");
-    const fetchMessages = await getTranslations("FetchMessages");
-
-    const token = req.headers.get('authorization')?.split(' ')[1];
-
-    if (!token) {
-        return NextResponse.json({ success: false, message: genericMessages('UNAUTHORIZED') }, { status: 401 });
-    }
-
-    const { payload } = await jwtVerify(token, new TextEncoder().encode(process.env.JWT_SECRET));
-
-    if (!payload) {
-        return NextResponse.json({ success: false, message: genericMessages('JWT_DECODE_ERROR') }, { status: 401 });
-    }
-
-    const { searchParams } = new URL(req.url);
+    const searchParams = request.nextUrl.searchParams;
     const encryptedPlayerName = searchParams.get('playerName');
 
     if (!encryptedPlayerName) {
-        return NextResponse.json({ success: false, message: genericMessages('PLAYER_NAME_REQUIRED') });
+        return NextResponse.json({ success: false, message: t('BAD_REQUEST') });
     }
 
     const playerName = decrypt(encryptedPlayerName);
@@ -44,13 +31,9 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
         .eq('fullName', playerName)
         .single();
 
-    if (userError) {
-        return NextResponse.json({ success: false, message: genericMessages('USER_NOT_FOUND') });
+    if (userError || !user) {
+        return NextResponse.json({ success: false, message: t('USER_NOT_FOUND') });
     }
 
-    if (!user) {
-        return NextResponse.json({ success: false, message: genericMessages('USER_NOT_FOUND') });
-    }
-
-    return NextResponse.json({ success: true, message: fetchMessages('USER_ID_FETCHED'), data: { id: user.id } });
-}
+    return NextResponse.json({ success: true, message: t('USER_ID_FETCHED'), data: { id: user.id } });
+});

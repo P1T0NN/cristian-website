@@ -34,13 +34,11 @@ import { deleteMatch } from "@/actions/server_actions/mutations/match/deleteMatc
 import { Trash } from "lucide-react";
 
 type DeleteMatchButtonProps = {
-    authToken: string;
-    matchId: string;
+    matchIdFromParams: string;
 }
 
 export const DeleteMatchButton = ({
-    authToken,
-    matchId
+    matchIdFromParams
 }: DeleteMatchButtonProps) => {
     const t = useTranslations("MatchPage");
     const router = useRouter();
@@ -49,7 +47,9 @@ export const DeleteMatchButton = ({
 
     const handleDeleteMatch = () => {
         startTransition(async () => {
-            const response = await deleteMatch(authToken, matchId)
+            const response = await deleteMatch({
+                matchIdFromParams: matchIdFromParams
+            })
 
             if (response.success) {
                 toast.success(response.message)

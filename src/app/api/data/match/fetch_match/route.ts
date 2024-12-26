@@ -2,46 +2,34 @@
 import { NextResponse, NextRequest } from 'next/server';
 
 // LIBRARIES
-import { jwtVerify } from 'jose';
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
 // SERVICES
 import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
 
+// MIDDLEWARE
+import { withAuth } from '@/middleware/withAuth';
+
 // CONFIG
 import { CACHE_KEYS } from '@/config';
 
 // TYPES
-import type { APIResponse } from '@/types/responses/APIResponse';
 import type { typesMatch } from '@/types/typesMatch';
 import type { typesMatchWithPlayers } from '@/types/typesMatchWithPlayers';
 import type { typesUser } from '@/types/typesUser';
 
 const CACHE_TTL = 60 * 60 * 12; // 12 hours in seconds
 
-export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>> {
-    const [genericMessages, fetchMessages] = await Promise.all([
-        getTranslations("GenericMessages"),
-        getTranslations("FetchMessages")
-    ]);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const GET = withAuth(async (request: NextRequest, _userId: string, _token: string): Promise<NextResponse> => {
+    const t = await getTranslations("GenericMessages");
 
-    const token = req.headers.get('authorization')?.split(' ')[1];
-
-    if (!token) {
-        return NextResponse.json({ success: false, message: genericMessages('UNAUTHORIZED') }, { status: 401 });
-    }
-
-    try {
-        await jwtVerify(token, new TextEncoder().encode(process.env.JWT_SECRET));
-    } catch {
-        return NextResponse.json({ success: false, message: genericMessages('JWT_DECODE_ERROR') }, { status: 401 });
-    }
-
-    const { matchId } = await req.json();
+    const searchParams = request.nextUrl.searchParams;
+    const matchId = searchParams.get('matchId');
 
     if (!matchId) {
-        return NextResponse.json({ success: false, message: fetchMessages('MATCH_FETCH_INVALID_REQUEST') }, { status: 400 });
+        return NextResponse.json({ success: false, message: t('BAD_REQUEST') }, { status: 400 });
     }
 
     const [cacheResult, playersResult, temporaryPlayersResult] = await Promise.all([
@@ -80,11 +68,11 @@ export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>>
             .single();
 
         if (matchError) {
-            return NextResponse.json({ success: false, message: fetchMessages('MATCH_FAILED_TO_FETCH') }, { status: 500 });
+            return NextResponse.json({ success: false, message: t('MATCH_FAILED_TO_FETCH') }, { status: 500 });
         }
 
         if (!dbMatch) {
-            return NextResponse.json({ success: false, message: fetchMessages('MATCH_NOT_FOUND') }, { status: 404 });
+            return NextResponse.json({ success: false, message: t('MATCH_NOT_FOUND') }, { status: 404 });
         }
 
         match = dbMatch;
@@ -92,11 +80,11 @@ export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>>
     }
 
     if (!match) {
-        return NextResponse.json({ success: false, message: fetchMessages('MATCH_NOT_FOUND') }, { status: 404 });
+        return NextResponse.json({ success: false, message: t('MATCH_NOT_FOUND') }, { status: 404 });
     }
 
     if (playersResult.error || temporaryPlayersResult.error) {
-        return NextResponse.json({ success: false, message: fetchMessages('MATCH_FAILED_TO_FETCH') }, { status: 500 });
+        return NextResponse.json({ success: false, message: t('MATCH_FAILED_TO_FETCH') }, { status: 500 });
     }
 
     const players = playersResult.data || [];
@@ -172,5 +160,5 @@ export async function POST(req: NextRequest): Promise<NextResponse<APIResponse>>
         unassignedPlayers
     };
 
-    return NextResponse.json({ success: true, message: fetchMessages('MATCH_SUCCESSFULLY_FETCHED'), data: matchWithPlayers });
-}
+    return NextResponse.json({ success: true, message: t('MATCH_SUCCESSFULLY_FETCHED'), data: matchWithPlayers });
+});

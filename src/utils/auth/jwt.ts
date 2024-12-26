@@ -1,6 +1,3 @@
-// NEXTJS IMPORTS
-import { headers } from 'next/headers';
-
 // LIBRARIES
 import { SignJWT, jwtVerify } from 'jose';
 
@@ -13,13 +10,10 @@ import { DEFAULT_JWT_EXPIRATION_TIME } from '@/config';
 // TYPES
 import type { typesTokenPayload } from '@/types/auth/typesAuth';
 
+// TODO: Encrypt fingerprint
 async function generateFingerprint(userId: string): Promise<string> {
-    const headersList = await headers();
-    const userAgent = headersList.get('user-agent') || '';
-    const forwardedFor = headersList.get('x-forwarded-for');
-    const ipAddress = forwardedFor ? forwardedFor.split(',')[0] : 'Unknown';
-
-    const data = `${userId}-${userAgent}-${ipAddress}`;
+    // Removed user-agent dependency entirely since it's not consistent between client/server
+    const data = `${userId}-${process.env.JWT_SECRET}`;
     const encoder = new TextEncoder();
     const dataBuffer = encoder.encode(data);
     const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer);

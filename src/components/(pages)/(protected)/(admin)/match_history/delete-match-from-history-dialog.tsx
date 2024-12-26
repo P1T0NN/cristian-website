@@ -31,12 +31,10 @@ import type { typesMatchHistory } from "@/types/typesMatchHistory";
 import { Trash2 } from "lucide-react";
 
 type DeleteMatchFromHistoryDialogProps = {
-    authToken: string;
     match: typesMatchHistory;
 }
 
 export const DeleteMatchFromHistoryDialog = ({
-    authToken,
     match,
 }: DeleteMatchFromHistoryDialogProps) => {
     const t = useTranslations('MatchHistoryPage');
@@ -44,7 +42,9 @@ export const DeleteMatchFromHistoryDialog = ({
 
     const handleDeleteMatch = () => {
         startTransition(async () => {
-            const response = await deleteMatchFromHistory(authToken, match.id)
+            const response = await deleteMatchFromHistory({
+                matchId: match.id
+            })
 
             if (response.success) {
                 toast.success(response.message)

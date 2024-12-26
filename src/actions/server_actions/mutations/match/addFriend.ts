@@ -1,6 +1,7 @@
 "use server"
 
 // NEXTJS IMPORTS
+import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
@@ -14,27 +15,48 @@ import { upstashRedisCacheService } from '@/services/server/redis-cache.service'
 import { CACHE_KEYS } from '@/config';
 
 // ACTIONS
-import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
+import { verifyAuth } from '@/actions/auth/verifyAuth';
 
 // TYPES
 import type { RPCResponseData } from '@/types/responses/RPCResponseData';
 
-export async function addFriend(authToken: string, matchId: string, teamNumber: 0 | 1 | 2, friendName: string, phoneNumber: string) {
+interface AddFriendResponse {
+    success: boolean;
+    message: string;
+    metadata?: Record<string, unknown>;
+}
+
+interface AddFriendParams {
+    matchIdFromParams: string;
+    teamNumber: 0 | 1 | 2;
+    friendName: string;
+    phoneNumber: string;
+}
+
+export async function addFriend({
+    matchIdFromParams,
+    teamNumber,
+    friendName,
+    phoneNumber
+}: AddFriendParams): Promise<AddFriendResponse> {
     const t = await getTranslations("GenericMessages");
 
-    const { isAuth, userId } = await verifyAuth(authToken);
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+
+    const { isAuth, userId } = await verifyAuth(authToken as string);
 
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!matchId || !teamNumber || friendName || phoneNumber) {
+    if (!matchIdFromParams || teamNumber === undefined || !friendName || !phoneNumber) {
         return { success: false, message: t('BAD_REQUEST') };
     }
 
     const { data, error } = await supabase.rpc('add_temporary_player', {
         p_user_id: userId,
-        p_match_id: matchId,
+        p_match_id: matchIdFromParams,
         p_team_number: teamNumber,
         p_friend_name: friendName,
         p_phone_number: phoneNumber
@@ -43,7 +65,7 @@ export async function addFriend(authToken: string, matchId: string, teamNumber: 
     const result = data as RPCResponseData;
 
     if (error) {
-        return { success: false, message: t('OPERATION_FAILED') };
+        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
 
     if (!result.success) {
@@ -55,7 +77,7 @@ export async function addFriend(authToken: string, matchId: string, teamNumber: 
     }
 
     // Update the cache
-    const cacheKey = `${CACHE_KEYS.MATCH_PREFIX}${matchId}`;
+    const cacheKey = `${CACHE_KEYS.MATCH_PREFIX}${matchIdFromParams}`;
     const cachedMatch = await upstashRedisCacheService.get<{ places_occupied?: number }>(cacheKey);
     
     if (cachedMatch.success && cachedMatch.data) {

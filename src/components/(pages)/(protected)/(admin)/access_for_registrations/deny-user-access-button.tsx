@@ -23,22 +23,23 @@ import {
 import { denyUserAccess } from "@/actions/server_actions/mutations/user/denyUserAccess";
 
 type DenyUserAccessButtonProps = {
-    authToken: string;
     userId: string;
 }
 
 export const DenyUserAccessButton = ({
-    authToken,
     userId
 }: DenyUserAccessButtonProps) => {
     const t = useTranslations("AccessForRegistrationPage");
 
     const [isPending, startTransition] = useTransition();
+
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const handleDenyUserAccess = () => {
         startTransition(async () => {
-            const response = await denyUserAccess(authToken, userId)
+            const response = await denyUserAccess({
+                userId: userId
+            })
 
             if (response.success) {
                 toast.success(response.message);

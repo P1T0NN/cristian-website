@@ -1,34 +1,21 @@
 // NEXTJS IMPORTS
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 
 // LIBRARIES
-import { jwtVerify } from 'jose';
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 import { subMonths } from 'date-fns';
 
+// MIDDLEWARE
+import { withAuth } from '@/middleware/withAuth';
+
 // TYPES
-import type { APIResponse } from '@/types/responses/APIResponse';
 import type { typesMatchHistory } from '@/types/typesMatchHistory';
 import type { typesUser } from '@/types/typesUser';
 
-export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
-    const [genericMessages, fetchMessages] = await Promise.all([
-        getTranslations("GenericMessages"),
-        getTranslations("FetchMessages")
-    ]);
-
-    const token = req.headers.get('authorization')?.split(' ')[1];
-
-    if (!token) {
-        return NextResponse.json({ success: false, message: genericMessages('UNAUTHORIZED') }, { status: 401 });
-    }
-
-    try {
-        await jwtVerify(token, new TextEncoder().encode(process.env.JWT_SECRET));
-    } catch {
-        return NextResponse.json({ success: false, message: genericMessages('JWT_DECODE_ERROR') }, { status: 401 });
-    }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const GET = withAuth(async (_request: NextRequest, _userId: string, _token: string): Promise<NextResponse> => {
+    const t = await getTranslations("GenericMessages");
 
     // Calculate the date 1 month ago
     const oneMonthAgo = subMonths(new Date(), 1).toISOString();
@@ -57,12 +44,12 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
     ]);
 
     if (matchHistoryError || playersError) {
-        return NextResponse.json({ success: false, message: fetchMessages('MATCH_HISTORY_FAILED_TO_FETCH') }, { status: 500 });
+        return NextResponse.json({ success: false, message: t('MATCH_HISTORY_FAILED_TO_FETCH') }, { status: 500 });
     }
 
     // If no match history found
     if (!matchHistory || matchHistory.length === 0) {
-        return NextResponse.json({ success: true, message: fetchMessages('NO_MATCH_HISTORY_FOUND'), data: [] });
+        return NextResponse.json({ success: true, message: t('NO_MATCH_HISTORY_FOUND'), data: [] });
     }
 
     // Map players data
@@ -116,7 +103,7 @@ export async function GET(req: Request): Promise<NextResponse<APIResponse>> {
 
     return NextResponse.json({ 
         success: true, 
-        message: fetchMessages('MATCH_HISTORY_SUCCESSFULLY_FETCHED'), 
+        message: t('MATCH_HISTORY_SUCCESSFULLY_FETCHED'), 
         data: processedMatchHistory 
     });
-}
+});

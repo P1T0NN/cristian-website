@@ -34,13 +34,11 @@ import { finishMatch } from "@/actions/server_actions/mutations/match/finishMatc
 import { Check } from "lucide-react";
 
 type FinishMatchButtonProps = {
-    authToken: string;
-    matchId: string;
+    matchIdFromParams: string;
 }
 
 export const FinishMatchButton = ({
-    authToken,
-    matchId
+    matchIdFromParams
 }: FinishMatchButtonProps) => {
     const t = useTranslations("MatchPage");
     const router = useRouter();
@@ -49,7 +47,9 @@ export const FinishMatchButton = ({
     
     const handleFinishMatch = () => {
         startTransition(async () => {
-            const response = await finishMatch(authToken, matchId)
+            const response = await finishMatch({
+                matchIdFromParams
+            })
 
             if (response.success) {
                 toast.success(response.message)

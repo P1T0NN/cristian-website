@@ -18,8 +18,8 @@ type AddMatchFormProps = {
     formData: typesAddMatchForm;
     errors: Record<string, string>;
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    authToken: string;
     setFieldValue: (name: string, value: unknown) => void;
+    locationsData: typesLocation[];
     defaultLocationsData: typesLocation[];
 }
 
@@ -27,8 +27,8 @@ export const AddMatchForm = ({
     formData,
     errors,
     handleInputChange,
-    authToken,
     setFieldValue,
+    locationsData,
     defaultLocationsData
 }: AddMatchFormProps) => {
     const t = useTranslations("AddMatchPage");
@@ -43,7 +43,7 @@ export const AddMatchForm = ({
         isTeam1Open,
         isTeam2Open,
         handleTeamSelect
-    } = useTeamSearch(authToken, handleInputChange);
+    } = useTeamSearch(handleInputChange);
 
     const handleSelectChange = (name: string) => (value: string) => {
         handleInputChange({
@@ -68,9 +68,8 @@ export const AddMatchForm = ({
                 handleSelectChange={handleSelectChange}
                 handleLocationChange={handleLocationChange}
                 setFieldValue={setFieldValue}
-                authToken={authToken}
+                locationsData={locationsData}
                 defaultLocationsData={defaultLocationsData}
-                t={t}
             />
 
             <Separator />

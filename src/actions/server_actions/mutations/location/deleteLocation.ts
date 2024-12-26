@@ -1,6 +1,7 @@
 "use server"
 
 // NEXTJS IMPORTS
+import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
@@ -14,12 +15,26 @@ import { CACHE_KEYS } from '@/config';
 import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
 
 // ACTIONS
-import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
+import { verifyAuth } from '@/actions/auth/verifyAuth';
 
-export async function deleteLocation(authToken: string, locationId: number) {
+interface DeleteLocationResponse {
+    success: boolean;
+    message: string;
+}
+
+interface DeleteLocationParams {
+    locationId: number;
+}
+
+export async function deleteLocation({ 
+    locationId 
+}: DeleteLocationParams): Promise<DeleteLocationResponse> {
     const t = await getTranslations("GenericMessages");
 
-    const { isAuth } = await verifyAuth(authToken);
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+
+    const { isAuth } = await verifyAuth(authToken as string);
                         
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };

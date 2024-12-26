@@ -34,15 +34,15 @@ import type { typesLocation } from "@/types/typesLocation";
 
 type EditMatchFormProps = {
     matchData: typesAddMatchForm;
-    authToken: string;
-    matchId: string;
+    matchIdFromParams: string;
+    locationsData: typesLocation[];
     defaultLocationsData: typesLocation[];
 }
 
 export const EditMatchForm = ({
     matchData,
-    authToken,
-    matchId,
+    matchIdFromParams,
+    locationsData,
     defaultLocationsData
 }: EditMatchFormProps) => {
     const t = useTranslations("AddMatchPage");
@@ -72,7 +72,10 @@ export const EditMatchForm = ({
         validationSchema: addMatchSchema,
         onSubmit: async (values) => {
             startTransition(async () => {
-                const result = await editMatch(authToken, matchId, values);
+                const result = await editMatch({
+                    matchIdFromParams: matchIdFromParams, 
+                    editMatchData: values
+                });
                 
                 if (result.success) {
                     router.push(PROTECTED_PAGE_ENDPOINTS.HOME_PAGE);
@@ -131,7 +134,7 @@ export const EditMatchForm = ({
                 onLocationChange={handleLocationChange}
                 error={errors.location}
                 urlError={errors.location_url}
-                authToken={authToken}
+                locationsData={locationsData}
                 defaultLocationsData={defaultLocationsData}
             />
 

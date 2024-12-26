@@ -20,19 +20,18 @@ import type { typesUser } from "@/types/typesUser";
 import { Percent} from "lucide-react";
 
 type HasDiscountButtonProps = {
-    authToken: string;
-    matchId: string;
+    matchIdFromParams: string;
     currentUserMatchAdmin: boolean;
     player: typesUser;
 }
 
 export const HasDiscountButton = ({
-    authToken,
-    matchId,
+    matchIdFromParams,
     currentUserMatchAdmin,
     player
 }: HasDiscountButtonProps) => {
     const t = useTranslations("MatchPage");
+
     const [isPending, startTransition] = useTransition();
 
     const handleUpdatePaymentStatus = () => {
@@ -52,16 +51,15 @@ export const HasDiscountButton = ({
                 newGratisStatus = false;
             }
 
-            const result = await updatePaymentStatus(
-                authToken,
-                matchId,
-                isTemporaryPlayer ? player.temporaryPlayer!.id : player.id,
-                newPaidStatus,
-                newDiscountStatus,
-                newGratisStatus,
-                currentUserMatchAdmin,
-                isTemporaryPlayer
-            );
+            const result = await updatePaymentStatus({
+                matchIdFromParams: matchIdFromParams,
+                playerId: isTemporaryPlayer ? player.temporaryPlayer!.id : player.id,
+                hasPaid: newPaidStatus,
+                hasDiscount: newDiscountStatus,
+                hasGratis: newGratisStatus,
+                currentUserMatchAdmin: currentUserMatchAdmin,
+                isTemporaryPlayer: isTemporaryPlayer
+            });
 
             if (result.success) {
                 toast.success(t('paymentStatusUpdated'));

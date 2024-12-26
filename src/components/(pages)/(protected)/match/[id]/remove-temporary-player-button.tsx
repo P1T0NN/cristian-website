@@ -14,14 +14,12 @@ import type { typesUser } from "@/types/typesUser";
 import { UserMinus } from 'lucide-react';
 
 type RemoveTemporaryPlayerButtonProps = {
-    authToken: string;
-    matchId: string;
+    matchIdFromParams: string;
     player: typesUser;
 }
 
 export const RemoveTemporaryPlayerButton = ({
-    authToken,
-    matchId,
+    matchIdFromParams,
     player
 }: RemoveTemporaryPlayerButtonProps) => {
     const [showAdminModal, setShowAdminModal] = useState(false);
@@ -42,12 +40,11 @@ export const RemoveTemporaryPlayerButton = ({
 
             {showAdminModal && (
                 <AdminActionsDialog
+                    matchIdFromParams={matchIdFromParams}
+                    isTemporaryPlayer={true}
                     isOpen={showAdminModal}
                     onClose={() => setShowAdminModal(false)}
                     player={player}
-                    matchId={matchId}
-                    authToken={authToken}
-                    isTemporaryPlayer={true}
                 />
             )}
         </>

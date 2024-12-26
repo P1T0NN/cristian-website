@@ -1,6 +1,7 @@
 "use server"
 
 // NEXTJS IMPORTS
+import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
@@ -8,18 +9,34 @@ import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
 // ACTIONS
-import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
+import { verifyAuth } from '@/actions/auth/verifyAuth';
 
 // TYPES
 import type { typesAddMatchForm } from '@/types/forms/AddMatchForm';
+import type { typesMatch } from '@/types/typesMatch';
 
-export async function addMatch(authToken: string, addMatchData: typesAddMatchForm) {
-    const genericMessages = await getTranslations("GenericMessages");
+interface AddMatchResponse {
+    success: boolean;
+    message: string;
+    data?: typesMatch;
+}
 
-    const { isAuth } = await verifyAuth(authToken);
+interface AddMatchParams {
+    addMatchData: typesAddMatchForm;
+}
+
+export async function addMatch({ 
+    addMatchData 
+}: AddMatchParams): Promise<AddMatchResponse> {
+    const t = await getTranslations("GenericMessages");
+
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+
+    const { isAuth } = await verifyAuth(authToken as string);
     
     if (!isAuth) {
-        return { success: false, message: genericMessages('UNAUTHORIZED') };
+        return { success: false, message: t('UNAUTHORIZED') };
     }
 
     // Convert match_level to uppercase
@@ -43,13 +60,15 @@ export async function addMatch(authToken: string, addMatchData: typesAddMatchFor
                 match_level: uppercaseMatchLevel,
                 has_teams: addMatchData.has_teams
             }
-        ]);
+        ])
+        .select()
+        .single();
 
     if (error) {
-        return { success: false, message: genericMessages('MATCH_CREATION_FAILED') };
+        return { success: false, message: t('MATCH_CREATION_FAILED') };
     }
 
     revalidatePath("/");
 
-    return { success: true, message: genericMessages("MATCH_CREATED"), data };
+    return { success: true, message: t("MATCH_CREATED"), data: data as typesMatch };
 }

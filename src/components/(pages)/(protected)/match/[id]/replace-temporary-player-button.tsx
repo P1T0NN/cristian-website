@@ -29,37 +29,36 @@ import type { typesUser } from "@/types/typesUser";
 import { Loader2 } from 'lucide-react';
 
 type ReplaceTemporaryPlayerButtonProps = {
-    authToken: string;
     player: typesUser;
-    matchId: string;
+    matchIdFromParams: string;
     teamNumber: 0 | 1 | 2;
 }
 
 export const ReplaceTemporaryPlayerButton = ({
-    authToken,
     player,
-    matchId,
+    matchIdFromParams,
     teamNumber
 }: ReplaceTemporaryPlayerButtonProps) => {
     const t = useTranslations("MatchPage");
 
     const [isPending, startTransition] = useTransition();
+    
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const handleReplacePlayer = () => {
         startTransition(async () => {
-            const response = await replaceTemporaryPlayer(
-                authToken,
-                matchId,
-                player.temporaryPlayer?.id as string,
-                teamNumber
-            );
+            const response = await replaceTemporaryPlayer({
+                matchIdFromParams: matchIdFromParams,
+                temporaryPlayerId: player.temporaryPlayer?.id as string,
+                teamNumber: teamNumber
+            });
 
             if (response.success) {
                 toast.success(response.message);
             } else {
                 toast.error(response.message);
             }
+
             setIsDialogOpen(false);
         });
     };

@@ -1,25 +1,53 @@
 "use server"
 
+// NEXTJS IMPORTS
+import { cookies } from 'next/headers';
+
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
 // ACTIONS
-import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
+import { verifyAuth } from '@/actions/auth/verifyAuth';
 
-// TYPES
-type SearchResult = {
-    users: { id: string; fullName: string }[];
-    teams: { id: string; team_name: string }[];
+// I made custom User and Team interfaces because I was lazy to add them in respected typesUser and typesTeam as a reminder to why it is here
+interface User {
+    id: string;
+    fullName: string;
 }
 
-export async function searchBar(authToken: string, query: string): Promise<{ success: boolean; message?: string; data?: SearchResult }> {
-    const genericMessages = await getTranslations("GenericMessages")
+interface Team {
+    id: string;
+    team_name: string;
+}
 
-   const { isAuth } = await verifyAuth(authToken);
+interface SearchResult {
+    users: User[];
+    teams: Team[];
+}
+
+interface SearchBarResponse {
+    success: boolean;
+    message?: string;
+    data?: SearchResult;
+}
+
+interface SearchBarParams {
+    query: string;
+}
+
+export async function searchBar({
+    query
+}: SearchBarParams): Promise<SearchBarResponse> {
+    const t = await getTranslations("GenericMessages");
+
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+
+    const { isAuth } = await verifyAuth(authToken as string);
                        
     if (!isAuth) {
-        return { success: false, message: genericMessages('UNAUTHORIZED') };
+        return { success: false, message: t('UNAUTHORIZED') };
     }
 
     // Search for users
@@ -27,10 +55,10 @@ export async function searchBar(authToken: string, query: string): Promise<{ suc
         .from('users')
         .select('id, fullName')
         .ilike('fullName', `${query}%`)
-        .limit(5)
+        .limit(5);
 
     if (usersError) {
-        return { success: false, message: genericMessages('USER_SEARCH_FAILED') };
+        return { success: false, message: t('USER_SEARCH_FAILED') };
     }
 
     // Search for teams
@@ -38,10 +66,10 @@ export async function searchBar(authToken: string, query: string): Promise<{ suc
         .from('teams')
         .select('id, team_name')
         .ilike('team_name', `${query}%`)
-        .limit(5)
+        .limit(5);
 
     if (teamsError) {
-        return { success: false, message: genericMessages('TEAM_SEARCH_FAILED') }
+        return { success: false, message: t('TEAM_SEARCH_FAILED') };
     }
 
     return { 
@@ -50,5 +78,5 @@ export async function searchBar(authToken: string, query: string): Promise<{ suc
             users: users || [], 
             teams: teams || []
         } 
-    }
+    };
 }

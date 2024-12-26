@@ -4,79 +4,70 @@ import { TemporaryPlayerInfo } from "./temporary-player-info";
 import { TemporaryPlayerActions } from "./temporary-player-actions";
 import { UserActions } from "./user-actions";
 
+// ACTIONS
+import { getUser } from "@/actions/auth/verifyAuth";
+
 // TYPES
 import type { typesUser } from "@/types/typesUser";
 
 type PlayerItemProps = {
     player: typesUser;
-    isCurrentUser: boolean;
+    matchIdFromParams: string;
     teamNumber: 0 | 1 | 2;
-    matchId: string;
-    isAdmin: boolean;
-    authToken: string;
-    currentUserMatchAdmin: boolean;
     isUserInMatch: boolean;
-    currentUserId: string;
     areDefaultTeams?: boolean;
 }
 
 export const PlayerItem = async ({ 
     player, 
-    isCurrentUser,
+    matchIdFromParams,
     teamNumber,
-    matchId,
-    isAdmin,
-    authToken,
-    currentUserMatchAdmin,
     isUserInMatch,
-    currentUserId,
     areDefaultTeams
 }: PlayerItemProps) => {
+    const currentUserData = await getUser() as typesUser;
+
+    const isCurrentUser = player.id === currentUserData.id;
+
     return (
         <div 
             className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-2 bg-muted rounded-lg transition-opacity duration-200 ease-in-out"
         >
             {player.temporaryPlayer ? (
                 <TemporaryPlayerInfo 
-                    authToken={authToken}
-                    matchId={matchId}
                     player={player}
-                    isAdmin={isAdmin}
-                    currentUserMatchAdmin={currentUserMatchAdmin}
+                    matchIdFromParams={matchIdFromParams}
                     teamNumber={teamNumber}
                     isDefaultTeam={areDefaultTeams as boolean}
                 />
             ) : (
                 <PlayerInfo 
-                    authToken={authToken}
-                    matchId={matchId}
                     player={player}
-                    isAdmin={isAdmin}
-                    currentUserMatchAdmin={currentUserMatchAdmin}
+                    matchIdFromParams={matchIdFromParams}
                     teamNumber={teamNumber}
                     areDefaultTeams={areDefaultTeams as boolean}
                 />
             )}
 
             {player.temporaryPlayer ? (
+                // Client component, we have to pass more props since we cant fetch them in client components
                 <TemporaryPlayerActions
-                    authToken={authToken}
-                    matchId={matchId}
+                    matchIdFromParams={matchIdFromParams}
                     teamNumber={teamNumber}
                     player={player}
-                    currentUserId={currentUserId}
+                    currentUserId={currentUserData.id}
                     isUserInMatch={isUserInMatch}
-                    isAdmin={isAdmin}
+                    isAdmin={currentUserData.isAdmin}
                 />
             ) : (
+                // Client component, we have to pass more props since we cant fetch them in client components
                 <UserActions
-                    authToken={authToken}
-                    matchId={matchId}
+                    matchIdFromParams={matchIdFromParams}
                     teamNumber={teamNumber}
                     player={player}
                     isCurrentUser={isCurrentUser}
                     isUserInMatch={isUserInMatch}
-                    isAdmin={isAdmin}
+                    isAdmin={currentUserData.isAdmin}
                 /> 
             )}
         </div>

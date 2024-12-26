@@ -1,6 +1,7 @@
 "use server"
 
 // NEXTJS IMPORTS
+import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 
 // LIBRARIES
@@ -14,15 +15,31 @@ import { upstashRedisCacheService } from "@/services/server/redis-cache.service"
 import { CACHE_KEYS } from "@/config";
 
 // ACTIONS
-import { verifyAuth } from "@/actions/actions/auth/verifyAuth";
+import { verifyAuth } from "@/actions/auth/verifyAuth";
 
 // TYPES
 import type { typesAddTeamForm } from "@/types/forms/AddTeamForm";
+import type { typesTeam } from "@/types/typesTeam";
 
-export async function addTeam(authToken: string, addTeamData: typesAddTeamForm) {
+interface AddTeamResponse {
+    success: boolean;
+    message: string;
+    data?: typesTeam;
+}
+
+interface AddTeamParams {
+    addTeamData: typesAddTeamForm;
+}
+
+export async function addTeam({ 
+    addTeamData 
+}: AddTeamParams): Promise<AddTeamResponse> {
     const t = await getTranslations("GenericMessages")
 
-    const { isAuth } = await verifyAuth(authToken);
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+
+    const { isAuth } = await verifyAuth(authToken as string);
                         
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
@@ -32,8 +49,7 @@ export async function addTeam(authToken: string, addTeamData: typesAddTeamForm) 
         return { success: false, message: t('BAD_REQUEST') };
     }
 
-    const team_name = addTeamData.team_name;
-    const team_level = addTeamData.team_level;
+    const { team_name, team_level } = addTeamData;
 
     const { data: existingTeam } = await supabase
         .from('teams')
@@ -44,10 +60,12 @@ export async function addTeam(authToken: string, addTeamData: typesAddTeamForm) 
         return { success: false, message: t('TEAM_ALREADY_EXISTS') };
     }
 
-    // Insert new location if no duplicate found
+    // Insert new team if no duplicate found
     const { data, error } = await supabase
         .from('teams')
-        .insert([{ team_name, team_level }]);
+        .insert([{ team_name, team_level }])
+        .select()
+        .single();
 
     if (error) {
         return { success: false, message: t('OPERATION_FAILED') }
@@ -58,5 +76,5 @@ export async function addTeam(authToken: string, addTeamData: typesAddTeamForm) 
 
     revalidatePath("/");
 
-    return { success: true, message: t('TEAM_ADDED_SUCCESSFULLY'), data }
+    return { success: true, message: t('TEAM_ADDED_SUCCESSFULLY'), data: data as typesTeam }
 }

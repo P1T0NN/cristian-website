@@ -1,25 +1,21 @@
-// NEXTJS IMPORTS
-import { cookies } from 'next/headers';
+// REACTJS IMPORTS
+import { Suspense } from 'react';
 
 // COMPONENTS
 import { MatchDetails } from '@/components/(pages)/(protected)/match/[id]/match-details';
 import { MatchInstructions } from '@/components/(pages)/(protected)/match/[id]/match-instructions';
 import { DisplayTeamDetails } from '@/components/(pages)/(protected)/match/[id]/display-team-details';
 import { SwitchTeamColors } from '@/components/(pages)/(protected)/match/[id]/switch-team-colors';
-import { TeamCard } from '@/components/(pages)/(protected)/match/[id]/team-card';
-import { PlayerList } from '@/components/(pages)/(protected)/match/[id]/player-list';
+import { TeamDetails } from '@/components/(pages)/(protected)/match/[id]/team-details';
 import { AdminFunctions } from '@/components/(pages)/(protected)/match/[id]/admin-functions';
 import { MatchFAQ } from '@/components/(pages)/(protected)/match/[id]/match-faq';
 import { FAQWarning } from '@/components/(pages)/(protected)/match/[id]/faq-warning';
-
-// SERVER ACTIONS
-import { getUser } from '@/actions/actions/auth/verifyAuth';
-
-// ACTIONS
-import { serverFetchMatch } from '@/actions/functions/data/server/server_fetchMatch';
-
-// TYPES
-import type { typesUser } from "@/types/typesUser";
+import { MatchDetailsLoading } from '@/components/(pages)/(protected)/match/[id]/loading/match-details-loading';
+import { MatchInstructionsLoading } from '@/components/(pages)/(protected)/match/[id]/loading/match-instructions-loading';
+import { DisplayTeamDetailsLoading } from '@/components/(pages)/(protected)/match/[id]/loading/display-team-details-loading';
+import { SwitchTeamColorsLoading } from '@/components/(pages)/(protected)/match/[id]/loading/switch-team-colors-loading';
+import { TeamDetailsLoading } from '@/components/(pages)/(protected)/match/[id]/loading/team-details-loading';
+import { AdminFunctionsLoading } from '@/components/(pages)/(protected)/match/[id]/loading/admin-functions-loading';
 
 export default async function MatchPage({ 
     params
@@ -28,100 +24,39 @@ export default async function MatchPage({
 }) {
     const { id } = await params;
 
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get('auth_token')?.value as string;
-
-    const serverUserData = await getUser() as typesUser;
-    const { match, team1Players, team2Players, unassignedPlayers } = await serverFetchMatch(id);
-
-    const allPlayers = [
-        ...(team1Players || []),
-        ...(team2Players || []),
-        ...(unassignedPlayers || [])
-    ];
-    const isUserInMatch = allPlayers.some(player => player.id === serverUserData.id);
-
-    const isUserInTeam = (players: typesUser[] | undefined) => {
-        return players?.some(player => player.id === serverUserData.id) ?? false
-    }
-
-    const userTeamNumber = isUserInTeam(team1Players) 
-        ? 1 
-        : isUserInTeam(team2Players) 
-            ? 2 
-            : null
-
    return (
         <section className="space-y-6 p-4 max-w-4xl mx-auto">
             <FAQWarning />
             
-            <MatchDetails serverMatchData={match} />
+            <Suspense fallback={<MatchDetailsLoading />}>
+                <MatchDetails matchIdFromParams={id} />
+            </Suspense>
 
-            <MatchInstructions 
-                instructions={match.match_instructions} 
-                matchId={id} 
-                authToken={authToken} 
-            />
+            <Suspense fallback={<MatchInstructionsLoading />}>
+                <MatchInstructions matchIdFromParams={id} />
+            </Suspense>
 
-            <DisplayTeamDetails match={match} />
+            <Suspense fallback={<DisplayTeamDetailsLoading />}>
+                <DisplayTeamDetails matchIdFromParams={id} />
+            </Suspense>
 
-            <div className="flex items-center justify-center">
-                {serverUserData.isAdmin && (
-                    <SwitchTeamColors
-                        matchId={id}
-                        authToken={authToken}
-                        isAdmin={serverUserData.isAdmin}
-                    />
-                )}
-            </div>
-
-            {match.has_teams ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <TeamCard
-                        teamName={match.team1_name}
-                        players={team1Players}
-                        teamNumber={1}
-                        currentUserId={serverUserData.id}
-                        userTeamNumber={userTeamNumber}
-                        matchId={id}
-                        match={match}
-                        isAdmin={serverUserData.isAdmin}
-                        authToken={authToken}
-                        isUserInMatch={isUserInMatch}
-                    />
-                    
-                    <TeamCard
-                        teamName={match.team2_name}
-                        players={team2Players}
-                        teamNumber={2}
-                        currentUserId={serverUserData.id}
-                        userTeamNumber={userTeamNumber}
-                        matchId={id}
-                        match={match}
-                        isAdmin={serverUserData.isAdmin}
-                        authToken={authToken}
-                        isUserInMatch={isUserInMatch}
-                    />
-                </div>
-            ) : (
-                <PlayerList
-                    players={allPlayers}
-                    currentUserId={serverUserData.id}
-                    matchId={id}
-                    authToken={authToken}
-                    isUserInMatch={isUserInMatch}
-                    isAdmin={serverUserData.isAdmin}
-                    match={match}
+            <Suspense fallback={<SwitchTeamColorsLoading />}>
+                <SwitchTeamColors
+                    matchIdFromParams={id}
                 />
-            )}
+            </Suspense>
 
-            {serverUserData.isAdmin && (
+            <Suspense fallback={<TeamDetailsLoading />}>
+                <TeamDetails
+                    matchIdFromParams={id}
+                />
+            </Suspense>
+
+            <Suspense fallback={<AdminFunctionsLoading />}>
                 <AdminFunctions 
-                    matchId={id} 
-                    authToken={authToken} 
-                    hasTeams={match.has_teams}
+                    matchIdFromParams={id}
                 />
-            )}
+            </Suspense>
 
             <div id="match-faq">
                 <MatchFAQ />

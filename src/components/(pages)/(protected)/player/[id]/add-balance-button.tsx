@@ -27,15 +27,13 @@ import { Euro, FileText } from 'lucide-react';
 import { addBalance } from '@/actions/server_actions/mutations/balance/addBalance';
 
 type AddBalanceButtonProps = {
-    authToken: string;
-    playerId: string;
+    playerIdFromParams: string;
     isAdmin: boolean;
     addedBy: string;
 }
 
 export function AddBalanceButton({ 
-    authToken,
-    playerId,
+    playerIdFromParams,
     isAdmin,
     addedBy
 }: AddBalanceButtonProps) {
@@ -60,7 +58,13 @@ export function AddBalanceButton({
 
         startTransition(async () => {
             const numericAmount = parseFloat(amount);
-            const result = await addBalance(authToken, playerId, numericAmount, reason, addedBy, isAdmin);
+            const result = await addBalance({
+                playerIdFromParams: playerIdFromParams, 
+                amount: numericAmount, 
+                reason: reason, 
+                addedBy: addedBy, 
+                isAdmin: isAdmin
+            });
             
             if (result.success) {
                 toast.success(result.message);
@@ -78,6 +82,7 @@ export function AddBalanceButton({
             <DialogTrigger asChild>
                 <Button variant="outline">{t('addBalance')}</Button>
             </DialogTrigger>
+
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>{t('addBalance')}</DialogTitle>
@@ -95,6 +100,7 @@ export function AddBalanceButton({
                         placeholder={t('enterAmount')}
                         icon={<Euro className="h-4 w-4" />}
                     />
+
                     <FormInputField
                         name="reason"
                         type="text"
@@ -104,6 +110,7 @@ export function AddBalanceButton({
                         icon={<FileText className="h-4 w-4" />}
                     />
                 </div>
+                
                 <DialogFooter>
                     <Button type="button" onClick={handleAddBalance} disabled={isPending}>
                         {isPending ? t('adding') : t('addBalance')}

@@ -31,26 +31,25 @@ import { adminRemovePlayerFromMatch } from '@/actions/server_actions/mutations/m
 import { Loader2 } from 'lucide-react';
 
 type PlayerActionModalProps = {
+    matchIdFromParams: string;
     isOpen: boolean;
     onClose: () => void;
     player: {
         id: string;
         fullName: string;
     };
-    matchId: string;
-    authToken: string;
     isTemporaryPlayer?: boolean;
 }
 
 export const AdminActionsDialog = ({ 
+    matchIdFromParams, 
     isOpen, 
     onClose, 
-    player, 
-    matchId, 
-    authToken,
+    player,
     isTemporaryPlayer = false
 }: PlayerActionModalProps) => {
     const t = useTranslations("MatchPage");
+
     const router = useRouter();
 
     const [isPending, startTransition] = useTransition();
@@ -63,10 +62,15 @@ export const AdminActionsDialog = ({
 
     const handleRemovePlayer = async () => {
         startTransition(async () => {
-            const result = await adminRemovePlayerFromMatch(authToken, matchId, player.id, isTemporaryPlayer);
+            const result = await adminRemovePlayerFromMatch({
+                matchIdFromParams: matchIdFromParams, 
+                playerId: player.id, 
+                isTemporaryPlayer: isTemporaryPlayer
+            });
 
             if (result.success) {
                 toast.success(isTemporaryPlayer ? t('temporaryPlayerRemoved') : t('playerRemoved'));
+                
                 onClose();
             } else {
                 toast.error(result.message);

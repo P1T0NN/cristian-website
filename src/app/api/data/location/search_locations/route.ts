@@ -1,15 +1,16 @@
 // NEXTJS IMPORTS
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 
 // LIBRARIES
 import { getTranslations } from 'next-intl/server';
 import { supabase } from '@/lib/supabase/supabase';
 
-// TYPES
-import type { APIResponse } from '@/types/responses/APIResponse';
+// MIDDLEWARE
+import { withAuth } from '@/middleware/withAuth';
 
-export async function GET(request: Request): Promise<NextResponse<APIResponse>> {
-    const t = await getTranslations("FetchMessages");
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const GET = withAuth(async (request: NextRequest, _userId: string, _token: string): Promise<NextResponse> => {
+    const t = await getTranslations("GenericMessages");
     
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search');
@@ -29,4 +30,4 @@ export async function GET(request: Request): Promise<NextResponse<APIResponse>> 
     }
 
     return NextResponse.json({ success: true, message: t('LOCATIONS_FETCHED'), data: data });
-}
+});

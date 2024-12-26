@@ -7,7 +7,7 @@ import { useDebounce } from "use-debounce";
 // ACTIONS
 import { searchTeams } from "@/actions/server_actions/mutations/match/searchTeams";
 
-export const useTeamSearch = (authToken: string, handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void) => {
+export const useTeamSearch = (handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void) => {
     const [team1QueryState, setTeam1QueryState] = useState('Equipo 1');
     const [team2QueryState, setTeam2QueryState] = useState('Equipo 2');
     const [team1Results, setTeam1Results] = useState<{ id: string; team_name: string }[]>([]);
@@ -20,7 +20,7 @@ export const useTeamSearch = (authToken: string, handleInputChange: (e: React.Ch
 
     useEffect(() => {
         if (debouncedTeam1Query) {
-            searchTeams(authToken, debouncedTeam1Query).then(result => {
+            searchTeams({ query: debouncedTeam1Query }).then(result => {
                 if (result.success && result.data) {
                     setTeam1Results(result.data.teams)
                     setIsTeam1Open(true)
@@ -34,11 +34,11 @@ export const useTeamSearch = (authToken: string, handleInputChange: (e: React.Ch
             setTeam1Results([])
             setIsTeam1Open(false)
         }
-    }, [debouncedTeam1Query, authToken])
+    }, [debouncedTeam1Query])
 
     useEffect(() => {
         if (debouncedTeam2Query) {
-            searchTeams(authToken, debouncedTeam2Query).then(result => {
+            searchTeams({ query: debouncedTeam2Query }).then(result => {
                 if (result.success && result.data) {
                     setTeam2Results(result.data.teams)
                     setIsTeam2Open(true)
@@ -52,7 +52,7 @@ export const useTeamSearch = (authToken: string, handleInputChange: (e: React.Ch
             setTeam2Results([])
             setIsTeam2Open(false)
         }
-    }, [debouncedTeam2Query, authToken])
+    }, [debouncedTeam2Query])
 
     const setTeam1Query = (query: string) => {
         setTeam1QueryState(query);

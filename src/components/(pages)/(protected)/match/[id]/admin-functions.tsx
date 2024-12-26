@@ -8,36 +8,49 @@ import { DeleteMatchButton } from './delete-match-button';
 import { FinishMatchButton } from './finish-match-button';
 import { EditMatchButton } from './edit-match-button';
 
+// ACTIONS
+import { getUser } from "@/actions/auth/verifyAuth";
+import { fetchMatch } from "@/actions/match/fetchMatch";
+
+// TYPES
+import type { typesUser } from "@/types/typesUser";
+import type { typesMatch } from "@/types/typesMatch";
+
 type AdminFunctionsProps = {
-    matchId: string;
-    authToken: string;
-    hasTeams: boolean;
+    matchIdFromParams: string;
 }
 
 export const AdminFunctions = async ({ 
-    matchId, 
-    authToken,
-    hasTeams
+    matchIdFromParams,
 }: AdminFunctionsProps) => {
     const t = await getTranslations("MatchPage");
 
+    const currentUserData = await getUser() as typesUser;
+
+    const serverMatchData = await fetchMatch(matchIdFromParams);
+    const match = serverMatchData.data?.match as typesMatch;
+
     return (
-        <Card className="w-full">
-            <CardHeader>
-                <CardTitle>{t('adminFunctions')}</CardTitle>
-            </CardHeader>
-            
-            <CardContent className="flex flex-wrap justify-center gap-4">
-                {!hasTeams && (
-                    <SortTeamsButton authToken={authToken} matchId={matchId} />
-                )}
+        <>
+            {currentUserData.isAdmin && (
+                <Card className="w-full">
+                    <CardHeader>
+                        <CardTitle>{t('adminFunctions')}</CardTitle>
+                    </CardHeader>
+                    
+                    <CardContent className="flex flex-wrap justify-center gap-4">
+                        {!match.has_teams && (
+                            <SortTeamsButton matchIdFromParams={matchIdFromParams} />
+                        )}
 
-                <FinishMatchButton authToken={authToken} matchId={matchId} />
+                        <FinishMatchButton matchIdFromParams={matchIdFromParams} />
 
-                <EditMatchButton matchId={matchId}/>
+                        <EditMatchButton matchId={matchIdFromParams}/>
 
-                <DeleteMatchButton authToken={authToken} matchId={matchId} />
-            </CardContent>
-        </Card>
+                        <DeleteMatchButton matchIdFromParams={matchIdFromParams} />
+                    </CardContent>
+                </Card>
+            )}
+        </>
     )
 }

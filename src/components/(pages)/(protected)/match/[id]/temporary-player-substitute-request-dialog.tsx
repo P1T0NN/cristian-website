@@ -26,15 +26,13 @@ import { requestTemporaryPlayerSubstitute } from "@/actions/server_actions/mutat
 import { Loader2 } from "lucide-react";
 
 type TemporaryPlayerSubstituteRequestDialogProps = {
-    matchId: string;
-    authToken: string;
+    matchIdFromParams: string;
     temporaryPlayerId: string;
     setShowSubstituteDialog: (isVisible: boolean) => void;
 }
 
 export const TemporaryPlayerSubstituteRequestDialog = ({
-    matchId,
-    authToken,
+    matchIdFromParams,
     temporaryPlayerId,
     setShowSubstituteDialog
 }: TemporaryPlayerSubstituteRequestDialogProps) => {
@@ -44,11 +42,10 @@ export const TemporaryPlayerSubstituteRequestDialog = ({
 
     const handleRequestSubstitute = () => {
         startTransition(async () => {
-            const response = await requestTemporaryPlayerSubstitute(
-                authToken,
-                matchId,
-                temporaryPlayerId
-            );
+            const response = await requestTemporaryPlayerSubstitute({
+                matchIdFromParams: matchIdFromParams,
+                temporaryPlayerId: temporaryPlayerId
+            });
 
             if (response.success) {
                 toast.success(response.message);

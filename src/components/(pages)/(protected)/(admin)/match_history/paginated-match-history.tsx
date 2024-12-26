@@ -1,8 +1,13 @@
 'use client'
 
+// REACTJS IMPORTS
 import { useState } from 'react';
+
+// LIBRARIES
 import { format as dateFormat } from 'date-fns';
 import { useTranslations } from 'next-intl';
+
+// COMPONENTS
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { 
     Pagination, 
@@ -14,22 +19,27 @@ import {
 } from "@/components/ui/pagination";
 import { DeleteMatchFromHistoryDialog } from './delete-match-from-history-dialog';
 import { Badge } from '@/components/ui/badge';
+
+// UTILS
 import { formatTime } from "@/utils/dateUtils";
+
+// TYPES
 import type { typesMatchHistory } from '@/types/typesMatchHistory';
+
+// LUCIDE ICONS
 import { MapPin, Users, CreditCard, Ticket, Gift, XCircle, EuroIcon } from 'lucide-react';
 
 type PaginatedMatchHistoryProps = {
-    authToken: string;
     matchHistory: typesMatchHistory[];
 }
 
 const ITEMS_PER_PAGE = 10;
 
 export const PaginatedMatchHistory = ({
-    authToken,
     matchHistory
 }: PaginatedMatchHistoryProps) => {
     const t = useTranslations('MatchHistoryPage');
+
     const [currentPage, setCurrentPage] = useState(1);
 
     const totalPages = Math.ceil(matchHistory.length / ITEMS_PER_PAGE);
@@ -105,7 +115,7 @@ export const PaginatedMatchHistory = ({
                                     </div>
                                     <div className="text-right mt-2 sm:mt-0">
                                         <div className="font-semibold text-base sm:text-lg">{match.price}€</div>
-                                        <DeleteMatchFromHistoryDialog authToken={authToken} match={match} />
+                                        <DeleteMatchFromHistoryDialog match={match} />
                                     </div>
                                 </div>
                                 <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">

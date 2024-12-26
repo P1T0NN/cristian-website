@@ -23,19 +23,18 @@ import { DollarSign } from 'lucide-react';
 
 type AddDefaultPriceDialogProps = {
     location: typesLocation;
-    authToken: string;
 }
 
 export const AddDefaultPriceDialog = ({ 
     location, 
-    authToken 
 }: AddDefaultPriceDialogProps) => {
     const t = useTranslations("AddLocationPage");
+
+    const [isPending, startTransition] = useTransition();
 
     const [open, setOpen] = useState(false);
     const [price, setPrice] = useState(location.default_price || "");
     const [error, setError] = useState("");
-    const [isPending, startTransition] = useTransition();
 
     const handleChangeDefaultPrice = () => {
         if (!price.trim()) {
@@ -44,7 +43,10 @@ export const AddDefaultPriceDialog = ({
         }
 
         startTransition(async () => {
-            const result = await updateDefaultPrice(authToken, location.id, price);
+            const result = await updateDefaultPrice({
+                locationId: location.id, 
+                defaultPrice: price
+            });
             
             if (result.success) {
                 toast.success(result.message);

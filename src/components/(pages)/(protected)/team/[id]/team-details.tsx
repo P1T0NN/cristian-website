@@ -6,11 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
-// SERVER ACTIONS
-import { getUser } from "@/actions/actions/auth/verifyAuth";
-
 // ACTIONS
-import { serverFetchTeam } from '@/actions/functions/data/server/server_fetchTeam';
+import { fetchTeam } from "@/actions/team/fetchTeam";
+import { getUser } from "@/actions/auth/verifyAuth";
 
 // TYPES
 import type { typesTeam } from '@/types/typesTeam';
@@ -30,7 +28,7 @@ export const TeamDetails = async ({
 
     const serverUserData = await getUser() as typesUser;
 
-    const serverTeamData = await serverFetchTeam(teamId);
+    const serverTeamData = await fetchTeam(teamId);
     const teamData = serverTeamData.data as typesTeam;
 
     return (
@@ -52,6 +50,7 @@ export const TeamDetails = async ({
                         </Button>
                     )}
                 </CardHeader>
+
                 <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-4">

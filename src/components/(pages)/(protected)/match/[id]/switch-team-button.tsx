@@ -21,14 +21,12 @@ import type { typesUser } from "@/types/typesUser";
 import { ArrowLeftRight } from "lucide-react";
 
 type SwitchTeamButtonProps = {
-    authToken: string;
-    matchId: string;
+    matchIdFromParams: string;
     player: typesUser;
 }
 
 export const SwitchTeamButton = ({
-    authToken,
-    matchId,
+    matchIdFromParams,
     player
 }: SwitchTeamButtonProps) => {
     const t = useTranslations("MatchPage");
@@ -39,12 +37,11 @@ export const SwitchTeamButton = ({
             const isTemporaryPlayer = !!player.temporaryPlayer;
             const playerId = isTemporaryPlayer ? player.temporaryPlayer?.id as string : player.id;
 
-            const response = await switchTeam(
-                authToken,
-                matchId,
-                playerId,
-                isTemporaryPlayer
-            );
+            const response = await switchTeam({
+                matchIdFromParams: matchIdFromParams,
+                userId: playerId,
+                isTemporaryPlayer: isTemporaryPlayer
+            });
 
             if (response.success) {
                 toast.success(response.message);

@@ -1,6 +1,7 @@
 "use server"
 
 // NEXTJS IMPORTS
+import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
@@ -14,7 +15,7 @@ import { CACHE_KEYS } from '@/config';
 import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
 
 // ACTIONS
-import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
+import { verifyAuth } from '@/actions/auth/verifyAuth';
 
 // In match_players table when we delete match we run this SQL:
 //  ALTER TABLE match_players
@@ -30,39 +31,53 @@ FOREIGN KEY (match_id) REFERENCES matches(id)
 ON DELETE CASCADE;
 */
 
-export async function deleteMatch(authToken: string, matchId: string) {
-    const genericMessages = await getTranslations("GenericMessages");
+interface DeleteMatchResponse {
+    success: boolean;
+    message: string;
+}
 
-    const { isAuth } = await verifyAuth(authToken);
+interface DeleteMatchParams {
+    matchIdFromParams: string;
+}
+
+export async function deleteMatch({
+    matchIdFromParams
+}: DeleteMatchParams): Promise<DeleteMatchResponse> {
+    const t = await getTranslations("GenericMessages");
+
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+    
+    const { isAuth } = await verifyAuth(authToken as string);
     
     if (!isAuth) {
-        return { success: false, message: genericMessages('UNAUTHORIZED') };
+        return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!matchId) {
-        return { success: false, message: genericMessages('BAD_REQUEST') };
+    if (!matchIdFromParams) {
+        return { success: false, message: t('BAD_REQUEST') };
     }
 
     // Fetch match details
     const { data: match, error: matchError } = await supabase
         .from('matches')
         .select('price')
-        .eq('id', matchId)
+        .eq('id', matchIdFromParams)
         .single();
 
     if (matchError || !match) {
-        return { success: false, message: genericMessages('MATCH_FETCH_FAILED') };
+        return { success: false, message: t('MATCH_FETCH_FAILED') };
     }
 
     // Fetch players who joined with balance
     const { data: players, error: playersError } = await supabase
         .from('match_players')
         .select('user_id')
-        .eq('match_id', matchId)
+        .eq('match_id', matchIdFromParams)
         .eq('has_entered_with_balance', true);
 
     if (playersError) {
-        return { success: false, message: genericMessages('PLAYERS_FETCH_FAILED') };
+        return { success: false, message: t('PLAYERS_FETCH_FAILED') };
     }
 
     // Refund players
@@ -70,7 +85,7 @@ export async function deleteMatch(authToken: string, matchId: string) {
         const refundPromises = players.map(player => 
             supabase.rpc('refund_player', {
                 p_user_id: player.user_id,
-                p_match_id: matchId
+                p_match_id: matchIdFromParams
             })
         );
 
@@ -78,7 +93,7 @@ export async function deleteMatch(authToken: string, matchId: string) {
         const refundErrors = refundResults.filter(result => result.error);
 
         if (refundErrors.length > 0) {
-            return { success: false, message: genericMessages('REFUND_FAILED') };
+            return { success: false, message: t('REFUND_FAILED') };
         }
     }
 
@@ -86,17 +101,16 @@ export async function deleteMatch(authToken: string, matchId: string) {
     const { error: deleteError } = await supabase
         .from('matches')
         .delete()
-        .eq('id', matchId);
+        .eq('id', matchIdFromParams);
 
     if (deleteError) {
-        return { success: false, message: genericMessages('MATCH_DELETION_FAILED') };
+        return { success: false, message: t('MATCH_DELETION_FAILED') };
     }
 
     // Delete the specific match cache
-    await upstashRedisCacheService.delete(`${CACHE_KEYS.MATCH_PREFIX}${matchId}`);
-
+    await upstashRedisCacheService.delete(`${CACHE_KEYS.MATCH_PREFIX}${matchIdFromParams}`);
 
     revalidatePath("/");
 
-    return { success: true, message: genericMessages("MATCH_DELETED") };
+    return { success: true, message: t("MATCH_DELETED") };
 }

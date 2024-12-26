@@ -23,34 +23,34 @@ import { toast } from "sonner";
 import { joinMatch } from "@/actions/server_actions/mutations/match/joinMatch";
 
 type JoinTeamButtonProps = {
+    matchIdFromParams: string;
     teamNumber: 0 | 1 | 2;
-    matchId: string;
-    authToken: string;
 }
 
 export const JoinTeamButton = ({
+    matchIdFromParams,
     teamNumber,
-    matchId,
-    authToken
 }: JoinTeamButtonProps) => {
     const t = useTranslations("MatchPage");
+
     const [isPending, startTransition] = useTransition();
+
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const handleJoinTeam = (withBalance: boolean) => {
         startTransition(async () => {
-            const response = await joinMatch(
-                authToken,
-                matchId,
-                teamNumber,
-                withBalance
-            )
+            const response = await joinMatch({
+                matchIdFromParams: matchIdFromParams,
+                teamNumber: teamNumber,
+                withBalance: withBalance
+            })
 
             if (response.success) {
                 toast.success(response.message)
             } else {
                 toast.error(response.message)
             }
+            
             setIsDialogOpen(false);
         })
     };

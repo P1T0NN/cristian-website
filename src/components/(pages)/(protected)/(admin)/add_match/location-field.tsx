@@ -18,9 +18,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SearchDropdown } from "@/components/ui/search-dropdown/search-dropdown";
 
-// ACTIONS
-import { client_searchLocations } from "@/actions/functions/data/client/location/client_searchLocations";
-
 // TYPES
 import type { typesLocation } from "@/types/typesLocation";
 
@@ -33,7 +30,7 @@ type LocationFieldProps = {
     onLocationChange: (locationName: string, locationUrl: string, defaultPrice: string | null) => void
     error?: string;
     urlError?: string;
-    authToken: string;
+    locationsData: typesLocation[];
     defaultLocationsData: typesLocation[];
 };
 
@@ -43,13 +40,15 @@ export const LocationField = ({
     onLocationChange, 
     error, 
     urlError,
-    authToken, 
+    locationsData,
     defaultLocationsData
 }: LocationFieldProps) => {
     const t = useTranslations("AddMatchPage");
     const router = useRouter();
+
     const [showDropdown, setShowDropdown] = useState(false);
     const [isLocationSelected, setIsLocationSelected] = useState(false);
+
     const searchTimeoutRef = useRef<NodeJS.Timeout>();
 
     const handleRedirectToAddLocation = () => {
@@ -129,15 +128,14 @@ export const LocationField = ({
                     autoComplete="off"
                     className="w-full"
                 />
+
                 <SearchDropdown<typesLocation>
-                    authToken={authToken}
                     searchTerm={locationName}
                     isDropdownOpen={showDropdown}
                     setIsDropdownOpen={setShowDropdown}
                     onSelect={handleLocationSelect}
-                    fetchData={client_searchLocations}
+                    items={locationsData}
                     getDisplayValue={(location) => location.location_name}
-                    queryKey="locations"
                 />
             </div>
             {error && <p className="text-sm text-red-500 mt-1">{error}</p>}

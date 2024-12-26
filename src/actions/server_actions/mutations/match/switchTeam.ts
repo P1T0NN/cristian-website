@@ -8,27 +8,47 @@ import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
 // ACTIONS
-import { verifyAuth } from '@/actions/actions/auth/verifyAuth';
+import { verifyAuth } from '@/actions/auth/verifyAuth';
 
 // TYPES
 import type { RPCResponseData } from '@/types/responses/RPCResponseData';
+import { cookies } from 'next/headers';
 
-export async function switchTeam(authToken: string, matchId: string, userId: string, isTemporaryPlayer: boolean = false) {
+interface SwitchTeamResponse {
+    success: boolean;
+    message: string;
+    metadata?: Record<string, unknown>;
+}
+
+interface SwitchTeamParams {
+    matchIdFromParams: string;
+    userId: string;
+    isTemporaryPlayer?: boolean;
+}
+
+export async function switchTeam({
+    matchIdFromParams,
+    userId,
+    isTemporaryPlayer = false
+}: SwitchTeamParams): Promise<SwitchTeamResponse> {
     const t = await getTranslations("GenericMessages");
 
-    const { isAuth, userId: authUserId } = await verifyAuth(authToken);
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+
+    const { isAuth, userId: authUserId } = await verifyAuth(authToken as string);
                     
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!matchId || !userId) {
+    if (!matchIdFromParams || !userId) {
         return { success: false, message: t('BAD_REQUEST') };
     }
 
     const { data, error } = await supabase.rpc('switch_team', {
         p_auth_user_id: authUserId,
-        p_match_id: matchId,
+        p_match_id: matchIdFromParams,
         p_user_id: userId,
         p_is_temporary_player: isTemporaryPlayer
     });
@@ -36,7 +56,7 @@ export async function switchTeam(authToken: string, matchId: string, userId: str
     const result = data as RPCResponseData;
 
     if (error) {
-        return { success: false, message: t('OPERATION_FAILED') };
+        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
 
     if (!result.success) {

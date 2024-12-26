@@ -1,6 +1,3 @@
-// NEXTJS IMPORTS
-import { cookies } from "next/headers";
-
 // LIBRARIES
 import { getTranslations } from "next-intl/server";
 
@@ -12,10 +9,10 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { AccountSettings } from "./account-settings";
 import { AppearanceSettings } from "./appearance-settings";
 import { NotificationSettings } from "./notification-settings";
-import { SecuritySettings } from "./security-settings";
+//import { SecuritySettings } from "./security-settings";
 
 // ACTIONS
-import { getUser } from "@/actions/actions/auth/verifyAuth";
+import { getUser } from "@/actions/auth/verifyAuth";
 
 // TYPES
 import type { typesUser } from "@/types/typesUser";
@@ -23,9 +20,6 @@ import type { typesUser } from "@/types/typesUser";
 export const SettingsDetails = async () => {
     const t = await getTranslations("SettingsPage");
     const locale = await getUserLocale();
-
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get('auth_token')?.value as string;
 
     const serverUserData = await getUser() as typesUser;
 
@@ -39,18 +33,21 @@ export const SettingsDetails = async () => {
             </TabsList>
 
             <TabsContent value="account">
+                {/* Client component */}
                 <AccountSettings 
-                    serverUserData={serverUserData} 
-                    authToken={authToken} 
                     currentLocale={locale} 
+                    currentUserFullName={serverUserData.fullName}
+                    currentUserEmail={serverUserData.email}
                 />
             </TabsContent>
 
             <TabsContent value="appearance">
+                {/* Client component */}
                 <AppearanceSettings />
             </TabsContent>
 
             <TabsContent value="notifications">
+                {/* Client component */}
                 <NotificationSettings />
             </TabsContent>
 

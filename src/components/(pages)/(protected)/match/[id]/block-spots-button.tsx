@@ -22,17 +22,16 @@ import { toast } from "sonner";
 import { blockSpots } from "@/actions/server_actions/mutations/match/blockSpots";
 
 type BlockSpotsButtonProps = {
-    matchId: string;
+    matchIdFromParams: string;
     teamNumber: 1 | 2;
-    authToken: string;
 }
 
 export const BlockSpotsButton = ({ 
-    matchId, 
+    matchIdFromParams, 
     teamNumber, 
-    authToken 
 }: BlockSpotsButtonProps) => {
     const t = useTranslations("MatchPage");
+
     const [isPending, startTransition] = useTransition();
 
     const [isOpen, setIsOpen] = useState(false);
@@ -58,11 +57,16 @@ export const BlockSpotsButton = ({
         }
 
         startTransition(async () => {
-            const result = await blockSpots(authToken, matchId, teamNumber, spotsToBlock);
+            const result = await blockSpots({
+                matchIdFromParams: matchIdFromParams, 
+                teamNumber: teamNumber, 
+                spotsToBlock: spotsToBlock
+            });
             
             if (result.success) {
                 setIsOpen(false);
                 setSpots("");
+
                 toast.success(result.message);
             } else {
                 toast.error(result.message);
@@ -75,10 +79,12 @@ export const BlockSpotsButton = ({
             <DialogTrigger asChild>
                 <Button variant="destructive" className="w-full">{t("blockSpotsButtonText")}</Button>
             </DialogTrigger>
+
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>{t("blockSportsDialogTitle")}</DialogTitle>
                 </DialogHeader>
+
                 <div className="grid gap-4 py-4">
                     <FormInputField
                         name="spots"
@@ -91,6 +97,7 @@ export const BlockSpotsButton = ({
                         autoComplete="off"
                     />
                 </div>
+                
                 <Button onClick={handleBlockSpots} className="w-full" disabled={isPending}>
                     {isPending ? t("saving") : t("confirm")}
                 </Button>

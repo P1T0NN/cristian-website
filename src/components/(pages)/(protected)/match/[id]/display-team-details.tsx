@@ -1,17 +1,23 @@
 // LIBRARIES
 import { getTranslations } from "next-intl/server";
 
+// ACTIONS
+import { fetchMatch } from "@/actions/match/fetchMatch";
+
 // TYPES
 import type { typesMatch } from "@/types/typesMatch"
 
 type DisplayTeamDetailsProps = {
-    match: typesMatch;
+    matchIdFromParams: string;
 }
 
 export const DisplayTeamDetails = async ({
-    match
+    matchIdFromParams
 }: DisplayTeamDetailsProps) => {
     const t = await getTranslations("MatchPage");
+
+    const serverMatchData = await fetchMatch(matchIdFromParams);
+    const match = serverMatchData.data?.match as typesMatch;
 
     return (
         <div className="flex flex-col justify-center items-center space-x-4 mb-4">

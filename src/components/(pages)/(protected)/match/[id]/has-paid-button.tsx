@@ -20,15 +20,13 @@ import type { typesUser } from "@/types/typesUser";
 import { DollarSign } from "lucide-react";
 
 type HasPaidButtonProps = {
-    authToken: string;
-    matchId: string;
+    matchIdFromParams: string;
     currentUserMatchAdmin: boolean;
     player: typesUser;
 }
 
 export const HasPaidButton = ({
-    authToken,
-    matchId,
+    matchIdFromParams,
     currentUserMatchAdmin,
     player
 }: HasPaidButtonProps) => {
@@ -43,16 +41,15 @@ export const HasPaidButton = ({
                 ? !player.temporaryPlayer?.has_paid
                 : !player.matchPlayer?.has_paid;
             
-            const result = await updatePaymentStatus(
-                authToken,
-                matchId,
-                isTemporaryPlayer ? player.temporaryPlayer!.id : player.id,
-                newPaidStatus,
-                isTemporaryPlayer ? player.temporaryPlayer?.has_discount || false : player.matchPlayer?.has_discount || false,
-                isTemporaryPlayer ? player.temporaryPlayer?.has_gratis || false : player.matchPlayer?.has_gratis || false,
-                currentUserMatchAdmin,
-                isTemporaryPlayer
-            );
+            const result = await updatePaymentStatus({
+                matchIdFromParams: matchIdFromParams,
+                playerId: isTemporaryPlayer ? player.temporaryPlayer!.id : player.id,
+                hasPaid: newPaidStatus,
+                hasDiscount: isTemporaryPlayer ? player.temporaryPlayer?.has_discount || false : player.matchPlayer?.has_discount || false,
+                hasGratis: isTemporaryPlayer ? player.temporaryPlayer?.has_gratis || false : player.matchPlayer?.has_gratis || false,
+                currentUserMatchAdmin: currentUserMatchAdmin,
+                isTemporaryPlayer: isTemporaryPlayer
+            });
 
             if (result.success) {
                 toast.success(result.message);

@@ -12,6 +12,7 @@ import type { typesLocation } from "@/types/typesLocation";
 
 // LUCIDE ICONS
 import { Check, X } from 'lucide-react';
+import { useTranslations } from "next-intl";
 
 type MatchDetailsSectionProps = {
     formData: typesAddMatchForm;
@@ -20,9 +21,8 @@ type MatchDetailsSectionProps = {
     handleSelectChange: (name: string) => (value: string) => void;
     handleLocationChange: (locationName: string, locationUrl: string, defaultPrice: string | null) => void;
     setFieldValue: (name: string, value: unknown) => void;
-    authToken: string;
+    locationsData: typesLocation[];
     defaultLocationsData: typesLocation[];
-    t: (key: string) => string;
 }
 
 export const MatchDetailsSection = ({
@@ -32,10 +32,11 @@ export const MatchDetailsSection = ({
     handleSelectChange,
     handleLocationChange,
     setFieldValue,
-    authToken,
+    locationsData,
     defaultLocationsData,
-    t
 }: MatchDetailsSectionProps) => {
+    const t = useTranslations("AddMatchPage");
+
     const matchTypeOptions = [
         { value: 'F7', label: 'F7'},
         { value: 'F8', label: 'F8'},
@@ -74,9 +75,10 @@ export const MatchDetailsSection = ({
                 onLocationChange={handleLocationChangeWithPrice}
                 error={errors.location}
                 urlError={errors.location_url}
-                authToken={authToken}
+                locationsData={locationsData}
                 defaultLocationsData={defaultLocationsData}
             />
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormInputField
                     label={t("price")}

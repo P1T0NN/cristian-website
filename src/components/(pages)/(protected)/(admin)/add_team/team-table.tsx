@@ -6,21 +6,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { DeleteTeamButton } from "./delete-team-button";
 
 // ACTIONS
-import { serverFetchTeams } from "@/actions/functions/data/server/server_fetchTeams";
+import { fetchTeams } from "@/actions/team/fetchTeams";
 
 // TYPES
 import type { typesTeam } from "@/types/typesTeam";
 
-type TeamTableProps = {
-    authToken: string
-}
-
-export const TeamTable = async ({ 
-    authToken 
-}: TeamTableProps) => {
+export const TeamTable = async () => {
     const t = await getTranslations("AddTeamPage")
 
-    const response = await serverFetchTeams();
+    const response = await fetchTeams();
     const teams = response.success ? (response.data as typesTeam[]) : []
 
     return (
@@ -41,7 +35,6 @@ export const TeamTable = async ({
                         <TableCell>{new Date(team.created_at).toLocaleDateString()}</TableCell>
                         <TableCell>
                             <DeleteTeamButton 
-                                authToken={authToken} 
                                 teamId={team.id}
                             />
                         </TableCell>

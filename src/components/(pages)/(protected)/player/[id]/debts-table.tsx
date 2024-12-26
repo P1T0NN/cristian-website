@@ -1,6 +1,3 @@
-// NEXTJS IMPORTS
-import { cookies } from "next/headers";
-
 // LIBRARIES
 import { getTranslations } from "next-intl/server";
 
@@ -20,22 +17,23 @@ import {
 } from "@/components/ui/alert-dialog";
 import { DeleteDebtButton } from "./delete-debt-button";
 
+// ACTIONS
+import { getUser } from "@/actions/auth/verifyAuth";
+
 // TYPES
 import type { typesDebt } from "@/types/typesDebt";
+import type { typesUser } from "@/types/typesUser";
 
 type DebtsTableProps = {
     debts: typesDebt[];
-    isCurrentUserAdmin: boolean;
 };
 
 export const DebtsTable = async ({
-    debts,
-    isCurrentUserAdmin
+    debts
 }: DebtsTableProps) => {
     const t = await getTranslations("PlayerPage");
 
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get('auth_token')?.value as string;
+    const currentUserData = await getUser() as typesUser;
     
     return (
         <div className="overflow-x-auto">
@@ -48,7 +46,7 @@ export const DebtsTable = async ({
                         <TableHead className="w-[100px]">{t('tableHeaderIOwe')}</TableHead>
                         <TableHead>{t('tableHeaderReason')}</TableHead>
                         <TableHead className="w-[120px]">{t('tableHeaderAddedBy')}</TableHead>
-                        {isCurrentUserAdmin && <TableHead className="w-[80px]">{t('tableHeaderActions')}</TableHead>}
+                        {currentUserData.isAdmin && <TableHead className="w-[80px]">{t('tableHeaderActions')}</TableHead>}
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -59,7 +57,7 @@ export const DebtsTable = async ({
                             <TableCell className="text-green-500 whitespace-nowrap">{debt.cristian_debt.toFixed(2)}€</TableCell>
                             <TableCell>{debt.reason}</TableCell>
                             <TableCell className="whitespace-nowrap">{debt.added_by}</TableCell>
-                            {isCurrentUserAdmin && (
+                            {currentUserData.isAdmin && (
                                 <TableCell>
                                     <AlertDialog>
                                         <AlertDialogTrigger asChild>
@@ -80,7 +78,10 @@ export const DebtsTable = async ({
                                             </AlertDialogHeader>
                                             <AlertDialogFooter>
                                                 <AlertDialogCancel>{t('deleteDebtCancel')}</AlertDialogCancel>
-                                                <DeleteDebtButton debtId={debt.id} authToken={authToken} />
+
+                                                <DeleteDebtButton 
+                                                    debtId={debt.id}
+                                                />
                                             </AlertDialogFooter>
                                         </AlertDialogContent>
                                     </AlertDialog>

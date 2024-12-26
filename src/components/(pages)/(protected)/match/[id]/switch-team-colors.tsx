@@ -1,60 +1,29 @@
-"use client"
-
-// REACTJS IMPORTS
-import { useTransition } from "react";
-
-// NEXTJS IMPORTS
-import { useTranslations } from "next-intl";
-
 // COMPONENTS
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import { SwapColorsButton } from "./swap-colors-button";
 
-// SERVER ACTIONS
-import { switchTeamColors } from "@/actions/server_actions/mutations/match/switchTeamColors";
+// ACTIONS
+import { getUser } from "@/actions/auth/verifyAuth";
 
-// LUCIDE ICONS
-import { ArrowLeftRight } from "lucide-react";
+// TYPES
+import type { typesUser } from "@/types/typesUser";
 
 type SwitchTeamColorsProps = {
-    matchId: string
-    authToken: string
-    isAdmin: boolean
+    matchIdFromParams: string
 }
 
-export const SwitchTeamColors = ({ 
-    matchId, 
-    authToken, 
-    isAdmin,
+export const SwitchTeamColors = async ({ 
+    matchIdFromParams,
 }: SwitchTeamColorsProps) => {
-    const t = useTranslations("MatchPage");
-
-    const [isPending, startTransition] = useTransition();
-
-    const handleToggleColor = () => {
-        startTransition(async () => {
-            const response = await switchTeamColors(authToken, matchId, 1);
-            
-            if (response.success) {
-                toast.success(response.message);
-            } else {
-                toast.error(response.message);
-            }
-        });
-    }
-
-    if (!isAdmin) return null
+    const currentUserData = await getUser() as typesUser;
 
     return (
-        <Button
-            variant="outline"
-            size="sm"
-            onClick={handleToggleColor}
-            disabled={isPending}
-            className="mx-auto w-fit mb-4"
-        >
-            <ArrowLeftRight className="h-4 w-4 mr-2" />
-            {t('swapColors')}
-        </Button>
+        <div className="flex items-center justify-center">
+            {currentUserData.isAdmin && (
+                // Client component
+                <SwapColorsButton
+                    matchIdFromParams={matchIdFromParams}
+                />
+            )}
+        </div>
     )
 }

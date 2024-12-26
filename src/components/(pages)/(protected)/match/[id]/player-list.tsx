@@ -9,7 +9,7 @@ import { AddFriendButton } from './add-friend-button';
 import { BlockSpotsButton } from './block-spots-button';
 
 // ACTIONS
-import { serverFetchCurrentUserMatchAdmin } from '@/actions/functions/data/server/server_fetchCurrentUserMatchAdmin';
+import { getUser } from '@/actions/auth/verifyAuth';
 
 // UTILS
 import { getTeamStatus } from '@/utils/getMaxPlayers';
@@ -20,27 +20,20 @@ import type { typesMatch } from '@/types/typesMatch';
 
 type PlayerListProps = {
     players: typesUser[];
-    currentUserId: string;
-    matchId: string;
-    authToken: string;
+    matchIdFromParams: string;
     isUserInMatch: boolean;
-    isAdmin: boolean;
     match: typesMatch;
 };
 
 export const PlayerList = async ({ 
     players, 
-    currentUserId, 
-    matchId, 
-    authToken, 
+    matchIdFromParams, 
     isUserInMatch,
-    isAdmin,
     match,
 }: PlayerListProps) => {
     const t = await getTranslations('MatchPage');
 
-    const serverCurrentUserMatchAdmin = await serverFetchCurrentUserMatchAdmin(matchId);
-    const currentUserMatchAdmin = serverCurrentUserMatchAdmin.data as boolean;
+    const currentUserData = await getUser() as typesUser;
 
     const { maxPlayers, currentPlayers, isFull, blockedSpots } = getTeamStatus(players, match.match_type, match.block_spots_team1, match.block_spots_team2);
 
@@ -48,10 +41,10 @@ export const PlayerList = async ({
     // because of react rerender when using .map in here: {isDefaultTeam && players?.map((player) => (
     const sortedPlayers = players.sort((a, b) => (a.id).localeCompare(b.id));
 
-    const currentUserPlayer = players.find(player => player.id === currentUserId);
-    const canAddFriend = (isUserInMatch || isAdmin) && 
+    const currentUserPlayer = players.find(player => player.id === currentUserData.id);
+    const canAddFriend = (isUserInMatch || currentUserData.isAdmin) && 
                          !isFull && 
-                         (isAdmin || !currentUserPlayer || !currentUserPlayer.matchPlayer?.has_added_friend);
+                         (currentUserData.isAdmin || !currentUserPlayer || !currentUserPlayer.matchPlayer?.has_added_friend);
 
     return (
         <Card>
@@ -63,7 +56,7 @@ export const PlayerList = async ({
                             {t('players')} {currentPlayers}/{maxPlayers}
                             {blockedSpots > 0 && (
                                 <span className="text-muted-foreground text-red-500">
-                                    {isAdmin 
+                                    {currentUserData.isAdmin 
                                         ? t('blockedSpotsAdmin', { count: blockedSpots })
                                         : t('blockedSpotsUser', { count: blockedSpots })
                                     }
@@ -75,8 +68,7 @@ export const PlayerList = async ({
                         <div className="mt-4">
                             <JoinTeamButton
                                 teamNumber={0}
-                                matchId={matchId}
-                                authToken={authToken}
+                                matchIdFromParams={matchIdFromParams}
                             />
                         </div>
                     )}
@@ -84,39 +76,34 @@ export const PlayerList = async ({
 
                 {canAddFriend && (
                     <div className="mt-4">
+                        {/* Client component, so we have to pass additional prop isAdmin */}
                         <AddFriendButton
-                            matchId={matchId}
+                            matchIdFromParams={matchIdFromParams}
                             teamNumber={0}
-                            authToken={authToken}
-                            isAdmin={isAdmin}
+                            isAdmin={currentUserData.isAdmin}
                         />
                     </div>
                 )}
 
-                {isAdmin && (
+                {currentUserData.isAdmin && (
                     <div>
                         <BlockSpotsButton
-                            authToken={authToken}
-                            matchId={matchId}
+                            matchIdFromParams={matchIdFromParams}
                             teamNumber={1}
                         />
                     </div>
                 )}
             </CardHeader>
+
             <CardContent>
                 <div className="space-y-2">
                     {sortedPlayers.map((player) => (
                         <PlayerItem
                             key={player.id}
                             player={player}
-                            isCurrentUser={player.id === currentUserId}
                             teamNumber={0}
-                            matchId={matchId}
-                            isAdmin={isAdmin}
-                            authToken={authToken}
-                            currentUserMatchAdmin={currentUserMatchAdmin}
+                            matchIdFromParams={matchIdFromParams}
                             isUserInMatch={isUserInMatch}
-                            currentUserId={currentUserId}
                         />
                     ))}
                 </div>

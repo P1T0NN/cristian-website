@@ -23,12 +23,10 @@ import {
 import { grantUserAccess } from "@/actions/server_actions/mutations/user/grantUserAccess";
 
 type GrantUserAccessButtonProps = {
-    authToken: string;
     userId: string;
 }
 
 export const GrantUserAccessButton = ({
-    authToken,
     userId
 }: GrantUserAccessButtonProps) => {
     const t = useTranslations("AccessForRegistrationPage");
@@ -38,7 +36,9 @@ export const GrantUserAccessButton = ({
 
     const handleGiveUserRegistrationAccess = () => {
         startTransition(async () => {
-            const response = await grantUserAccess(authToken, userId)
+            const response = await grantUserAccess({
+                userId: userId
+            })
 
             if (response.success) {
                 toast.success(response.message);

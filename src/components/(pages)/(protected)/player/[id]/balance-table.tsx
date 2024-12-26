@@ -1,6 +1,3 @@
-// NEXTJS IMPORTS
-import { cookies } from "next/headers";
-
 // LIBRARIES
 import { getTranslations } from "next-intl/server";
 
@@ -19,27 +16,28 @@ import {
 } from "@/components/ui/alert-dialog";
 import { RemoveBalanceButton } from "./remove-balance-button";
 
+// ACTIONS
+import { getUser } from "@/actions/auth/verifyAuth";
+
 // TYPES
 import type { typesBalance } from "@/types/typesBalance";
+import type { typesUser } from "@/types/typesUser";
 
 // LUCIDE ICONS
 import { Trash2 } from 'lucide-react';
 
 type BalanceTableProps = {
+    playerIdFromParams: string,
     balances: typesBalance[];
-    isCurrentUserAdmin: boolean;
-    playerId: string;
 };
 
 export const BalanceTable = async ({
+    playerIdFromParams,
     balances,
-    isCurrentUserAdmin,
-    playerId,
 }: BalanceTableProps) => {
     const t = await getTranslations("PlayerPage");
 
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get('auth_token')?.value as string;
+    const currentUserData = await getUser() as typesUser;
     
     return (
         <div className="overflow-x-auto mt-6">
@@ -51,7 +49,7 @@ export const BalanceTable = async ({
                         <TableHead className="w-[100px]">{t('tableHeaderBalanceAdded')}</TableHead>
                         <TableHead>{t('tableHeaderReason')}</TableHead>
                         <TableHead className="w-[120px]">{t('tableHeaderAddedBy')}</TableHead>
-                        {isCurrentUserAdmin && <TableHead className="w-[160px]">{t('tableHeaderActions')}</TableHead>}
+                        {currentUserData.isAdmin && <TableHead className="w-[160px]">{t('tableHeaderActions')}</TableHead>}
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -63,7 +61,7 @@ export const BalanceTable = async ({
                             </TableCell>
                             <TableCell>{balance.reason}</TableCell>
                             <TableCell className="whitespace-nowrap">{balance.added_by}</TableCell>
-                            {isCurrentUserAdmin && (
+                            {currentUserData.isAdmin && (
                                 <TableCell>
                                     <AlertDialog>
                                         <AlertDialogTrigger asChild>
@@ -84,10 +82,11 @@ export const BalanceTable = async ({
                                             </AlertDialogHeader>
                                             <AlertDialogFooter>
                                                 <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+
+                                                {/* Client component thats why we have to pass additional props */}
                                                 <RemoveBalanceButton 
-                                                    playerId={playerId} 
-                                                    authToken={authToken} 
-                                                    isAdmin={isCurrentUserAdmin}
+                                                    playerIdFromParams={playerIdFromParams} 
+                                                    isAdmin={currentUserData.isAdmin}
                                                     balanceId={balance.id}
                                                 />
                                             </AlertDialogFooter>

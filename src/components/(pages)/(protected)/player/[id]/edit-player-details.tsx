@@ -17,8 +17,7 @@ import { toast } from "sonner";
 import { editPlayerDetails } from "@/actions/server_actions/mutations/user/editPlayerDetails";
 
 type EditPlayerDetailsProps = {
-    authToken: string;
-    playerId: string;
+    playerIdFromParams: string;
     initialPhoneNumber: string;
     initialCountry: string;
     initialDNI: string;
@@ -28,8 +27,7 @@ type EditPlayerDetailsProps = {
 }
 
 export function EditPlayerDetails({ 
-    authToken,
-    playerId, 
+    playerIdFromParams, 
     initialPhoneNumber,
     initialCountry,
     initialDNI, 
@@ -51,16 +49,20 @@ export function EditPlayerDetails({
 
     const handleEditPlayerDetails = () => {
         startTransition(async () => {
-            try {
-                const result = await editPlayerDetails(authToken, playerId, dni, country, phoneNumber, playerLevel, playerPosition);
-        
-                if (result.success) {
-                    toast.success(result.message);
-                } else {
-                    toast.error(result.message);
-                }
-            } finally {
+            const result = await editPlayerDetails({
+                playerIdFromParams: playerIdFromParams, 
+                dni: dni, 
+                country: country, 
+                phoneNumber: phoneNumber, 
+                playerLevel: playerLevel, 
+                playerPosition: playerPosition
+            });
+    
+            if (result.success) {
+                toast.success(result.message);
                 setIsOpen(false);
+            } else {
+                toast.error(result.message);
             }
         });
     }
@@ -77,12 +79,13 @@ export function EditPlayerDetails({
             <DialogTrigger asChild>
                 <Button variant="outline">{t('editPlayerInformation')}</Button>
             </DialogTrigger>
+
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>{t('editPlayerInformation')}</DialogTitle>
                 </DialogHeader>
 
-                <form onSubmit={(e) => { e.preventDefault(); handleEditPlayerDetails(); }} className="space-y-4">
+                <div className="space-y-4">
                     <FormInputField
                         label={t('phoneNumber')}
                         name="phoneNumber"
@@ -91,6 +94,7 @@ export function EditPlayerDetails({
                         onChange={(e) => setPhoneNumber(e.target.value)}
                         placeholder={t('enterPhoneNumber')}
                     />
+
                     <FormInputField
                         label={t('country')}
                         name="country"
@@ -99,6 +103,7 @@ export function EditPlayerDetails({
                         onChange={(e) => setCountry(e.target.value)}
                         placeholder={t('enterCountry')}
                     />
+
                     {isAdmin && (
                         <>
                             <FormInputField
@@ -110,6 +115,7 @@ export function EditPlayerDetails({
                                 placeholder={t('enterDNI')}
                             
                             />
+
                             <FormInputField
                                 label={t('playerLevel')}
                                 name="level"
@@ -118,6 +124,7 @@ export function EditPlayerDetails({
                                 onChange={(e) => setPlayerLevel(e.target.value)}
                                 placeholder={t('enterPlayerLevel')}
                             />
+
                             <FormSelectField
                                 label={t('playerPosition')}
                                 name="position"
@@ -128,10 +135,11 @@ export function EditPlayerDetails({
                             />
                         </>
                     )}
-                    <Button type="submit" disabled={isPending}>
+
+                    <Button type="button" onClick={handleEditPlayerDetails} disabled={isPending}>
                         {isPending ? t('updating') : t('updateDetails')}
                     </Button>
-                </form>
+                </div>
             </DialogContent>
         </Dialog>
     )

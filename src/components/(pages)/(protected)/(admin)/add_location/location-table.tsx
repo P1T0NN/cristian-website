@@ -17,22 +17,16 @@ import { AddDefaultPriceDialog } from './add-default-price-dialog';
 import { DeleteLocationDialog } from './delete-location-dialog';
 
 // ACTIONS
-import { serverFetchLocations } from '@/actions/functions/data/server/server_fetchLocations';
+import { fetchLocations } from '@/actions/location/fetchLocations';
 
 // TYPES
 import type { typesLocation } from "@/types/typesLocation";
 import { MarkAsDefaultLocationButton } from './mark-as-default-location-button';
 
-type LocationTableProps = {
-    authToken: string;
-}
-
-export const LocationTable = async ({
-    authToken
-}: LocationTableProps) => {
+export const LocationTable = async () => {
     const t = await getTranslations("AddLocationPage");
 
-    const serverLocationsData = await serverFetchLocations();
+    const serverLocationsData = await fetchLocations();
     const locationsData = serverLocationsData.data as typesLocation[];
 
     return (
@@ -67,14 +61,13 @@ export const LocationTable = async ({
                                     <div className="flex flex-wrap gap-2">
                                         <MarkAsDefaultLocationButton
                                             location={location}
-                                            authToken={authToken}
                                         />
+
                                         <AddDefaultPriceDialog
                                             location={location}
-                                            authToken={authToken}
                                         />
+
                                         <DeleteLocationDialog
-                                            authToken={authToken}
                                             locationId={location.id} 
                                             locationName={location.location_name}
                                         />
@@ -108,14 +101,13 @@ export const LocationTable = async ({
                         <div className="flex flex-wrap gap-2">
                             <MarkAsDefaultLocationButton
                                 location={location}
-                                authToken={authToken}
                             />
+                            
                             <AddDefaultPriceDialog
                                 location={location}
-                                authToken={authToken}
                             />
+
                             <DeleteLocationDialog
-                                authToken={authToken}
                                 locationId={location.id} 
                                 locationName={location.location_name}
                             />
