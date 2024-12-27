@@ -118,6 +118,7 @@ export const PlayerDetails = async ({
                     )}
                     <EditPlayerDetails
                         playerIdFromParams={playerIdFromParams}
+                        initialFullName={playerData.fullName}
                         initialPhoneNumber={playerData.phoneNumber}
                         initialCountry={playerData.country}
                         initialDNI={playerData.dni}

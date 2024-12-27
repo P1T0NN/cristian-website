@@ -139,23 +139,6 @@
         "noItemsFound": "No se encontraron elementos"
     },
 
-    "AddDebtPage": {
-        "hello": "Hola,",
-        "description": "Para añadir una nueva deuda, completa la información a continuación",
-        "playerName": "Nombre del jugador",
-        "playerNamePlaceholder": "Escribe el nombre del jugador",
-        "selectDebtType": "Selecciona el tipo de deuda",
-        "debt": "Deuda",
-        "playerDebtPlaceholder": "Selecciona cuánto te debe el jugador",
-        "cristianDebtPlaceholder": "Selecciona cuánto debes al jugador",
-        "reason": "Razón",
-        "reasonPlaceholder": "Escribe la razón para añadir esta deuda",
-        "playerOwes": "El jugador debe",
-        "iOwe": "Yo debo",
-        "adding": "Añadiendo...",
-        "addDebt": "Añadir deuda"
-    },
-
     "AddLocationPage": {
         "locations": "Ubicaciones",
         "addNewLocation": "Añadir nueva ubicación",
@@ -502,7 +485,20 @@
         "verifyDocumentsDescription": "¿Estás seguro de que quieres verificar los documentos de este jugador?",
         "confirmVerification": "Confirmar Verificación",
         "verifying": "Verificando...",
-        "documentsVerified": "Documentos verificados con éxito"
+        "documentsVerified": "Documentos verificados con éxito",
+        "addDebtDescription": "Agregar un nuevo registro de deuda",
+        "add": "Agregar",
+        "hello": "Hola,",
+        "description": "Para añadir una nueva deuda, completa la información a continuación",
+        "playerName": "Nombre del jugador",
+        "playerNamePlaceholder": "Escribe el nombre del jugador",
+        "selectDebtType": "Selecciona el tipo de deuda",
+        "debt": "Deuda",
+        "playerDebtPlaceholder": "Selecciona cuánto te debe el jugador",
+        "cristianDebtPlaceholder": "Selecciona cuánto debes al jugador",
+        "reasonPlaceholder": "Escribe la razón para añadir esta deuda",
+        "fullName": "Nombre del Jugador",
+        "enterFullName": "Ingrese el nombre del jugador"
     },
 
     "AddTeamPage": {

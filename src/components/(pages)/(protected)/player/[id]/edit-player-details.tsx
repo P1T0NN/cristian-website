@@ -18,6 +18,7 @@ import { editPlayerDetails } from "@/actions/server_actions/mutations/user/editP
 
 type EditPlayerDetailsProps = {
     playerIdFromParams: string;
+    initialFullName: string;
     initialPhoneNumber: string;
     initialCountry: string;
     initialDNI: string;
@@ -28,6 +29,7 @@ type EditPlayerDetailsProps = {
 
 export function EditPlayerDetails({ 
     playerIdFromParams, 
+    initialFullName,
     initialPhoneNumber,
     initialCountry,
     initialDNI, 
@@ -41,6 +43,7 @@ export function EditPlayerDetails({
 
     const [isOpen, setIsOpen] = useState(false);
 
+    const [fullName, setFullName] = useState(initialFullName ?? '');
     const [phoneNumber, setPhoneNumber] = useState(initialPhoneNumber ?? '');
     const [country, setCountry] = useState(initialCountry ?? '');
     const [dni, setDNI] = useState(initialDNI ?? '');
@@ -50,7 +53,8 @@ export function EditPlayerDetails({
     const handleEditPlayerDetails = () => {
         startTransition(async () => {
             const result = await editPlayerDetails({
-                playerIdFromParams: playerIdFromParams, 
+                playerIdFromParams: playerIdFromParams,
+                fullName: fullName,
                 dni: dni, 
                 country: country, 
                 phoneNumber: phoneNumber, 
@@ -86,6 +90,15 @@ export function EditPlayerDetails({
                 </DialogHeader>
 
                 <div className="space-y-4">
+                    <FormInputField
+                        label={t('fullName')}
+                        name="fullName"
+                        type="text"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        placeholder={t('enterFullName')}
+                    />
+
                     <FormInputField
                         label={t('phoneNumber')}
                         name="phoneNumber"

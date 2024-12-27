@@ -36,7 +36,7 @@ export const AddDebtDialog = ({
    initialPlayerName,
    addedBy
 }: AddDebtDialogProps) => {
-   const t = useTranslations("AddDebtPage");
+   const t = useTranslations("PlayerPage");
 
    const [isPending, startTransition] = useTransition();
 

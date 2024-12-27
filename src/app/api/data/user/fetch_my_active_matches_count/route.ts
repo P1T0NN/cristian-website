@@ -1,11 +1,6 @@
-// NEXTJS IMPORTS
 import { NextResponse, NextRequest } from 'next/server';
-
-// LIBRARIES
 import { getTranslations } from 'next-intl/server';
 import { supabase } from '@/lib/supabase/supabase';
-
-// MIDDLEWARE
 import { withAuth } from '@/middleware/withAuth';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -42,5 +37,5 @@ export const GET = withAuth(async (request: NextRequest, _userId: string, _token
         return NextResponse.json({ success: false, message: t('ACTIVE_MATCHES_COUNT_FETCH_FAILED') });
     }
 
-    return NextResponse.json({ success: true, message: t('ACTIVE_MATCHES_COUNT_FETCHED'), data: count });
+    return NextResponse.json({ success: true, message: t('ACTIVE_MATCHES_COUNT_FETCHED'), data: { count } });
 });

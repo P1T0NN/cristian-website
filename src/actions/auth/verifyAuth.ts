@@ -5,13 +5,10 @@ import { cache } from 'react';
 
 // NEXTJS IMPORTS
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
-
-// SERVER ACTIONS
-import { refreshAuthToken } from '@/actions/server_actions/auth/refreshAuthToken';
+import { getTranslations } from 'next-intl/server';
 
 // UTILS
 import { verifyToken } from '@/utils/auth/jwt';
@@ -25,7 +22,8 @@ export const verifyAuth = async (token: string) => {
     }
 }
 
-export const verifyAuthWithRefresh = cache(async () => {
+// It is making errors with client/server side exception in production on VPS, this has to be a route when self-hosting. For now its totally ignored
+/*export const verifyAuthWithRefresh = cache(async () => {
     const cookieStore = await cookies();
     const authToken = cookieStore.get('auth_token')?.value;
     const refreshToken = cookieStore.get('refresh_token')?.value;
@@ -57,7 +55,7 @@ export const verifyAuthWithRefresh = cache(async () => {
     }
 
     redirect('/login');
-})
+})*/
 
 export const checkUserAccess = async (): Promise<boolean> => {
     const cookieStore = await cookies();
@@ -83,13 +81,21 @@ export const checkUserAccess = async (): Promise<boolean> => {
 }
 
 export const getUser = cache(async () => {
-    const session = await verifyAuthWithRefresh();
-    if (!session) return null;
+    const t = await getTranslations("GenericMessages");
+
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get('auth_token')?.value;
+
+    const { isAuth, userId } = await verifyAuth(authToken as string);
+    
+    if (!isAuth) {
+        return { success: false, message: t('UNAUTHORIZED') };
+    }
   
     const { data: user, error } = await supabase
         .from('users')
         .select('*')
-        .eq('id', session.userId)
+        .eq('id', userId)
         .single()
   
     if (error) {

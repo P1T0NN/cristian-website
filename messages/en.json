@@ -138,23 +138,6 @@
         "noItemsFound": "No items found"
     },
 
-    "AddDebtPage": {
-        "hello": "Hello,",
-        "description": "To add a new debt, fill in the informations below",
-        "playerName": "Player name",
-        "playerNamePlaceholder": "Write player name",
-        "selectDebtType": "Select debt type",
-        "debt": "Debt",
-        "playerDebtPlaceholder": "Select how much does a player owe you",
-        "cristianDebtPlaceholder": "Select how much you owe a player",
-        "reason": "Reason",
-        "reasonPlaceholder": "Write the reason to why you are adding debt",
-        "playerOwes": "Player Owes",
-        "iOwe": "I Owe",
-        "adding": "Adding...",
-        "addDebt": "Add debt"
-    },
-
     "AddLocationPage": {
         "locations": "Locations",
         "addNewLocation": "Add New Location",
@@ -501,7 +484,20 @@
         "verifyDocumentsDescription": "Are you sure you want to verify this player's documents?",
         "confirmVerification": "Confirm Verification",
         "verifying": "Verifying...",
-        "documentsVerified": "Documents verified successfully"
+        "documentsVerified": "Documents verified successfully",
+        "addDebtDescription": "Add a new debt record",
+        "add": "Add",
+        "hello": "Hello,",
+        "description": "To add a new debt, fill in the informations below",
+        "playerName": "Player name",
+        "playerNamePlaceholder": "Write player name",
+        "selectDebtType": "Select debt type",
+        "debt": "Debt",
+        "playerDebtPlaceholder": "Select how much does a player owe you",
+        "cristianDebtPlaceholder": "Select how much you owe a player",
+        "reasonPlaceholder": "Write the reason to why you are adding debt",
+        "fullName": "Player Name",
+        "enterFullName": "Enter player name"
     },
 
     "AddTeamPage": {

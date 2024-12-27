@@ -10,6 +10,7 @@ import { DisplayMatches } from "@/components/(pages)/(protected)/home/display-ma
 import { ActiveMatches } from "@/components/(pages)/(protected)/home/active-matches";
 import { DisplayMatchesLoading } from "@/components/(pages)/(protected)/home/loading/display-matches-loading";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MyMatchesCount } from "@/components/(pages)/(protected)/home/my-matches-count";
 
 export default async function HomePage({ 
     searchParams 
@@ -34,7 +35,9 @@ export default async function HomePage({
                 <Tabs defaultValue="all-matches">
                     <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="all-matches">{t('allMatches')}</TabsTrigger>
-                        <TabsTrigger value="my-matches">{t('myMatches')}</TabsTrigger>
+                        <Suspense fallback={<p>...</p>}>
+                            <MyMatchesCount />
+                        </Suspense>
                     </TabsList>
 
                     <TabsContent value="all-matches">

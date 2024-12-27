@@ -29,7 +29,7 @@ export const AddDebtForm = ({
     handleInputChange,
     initialPlayerName,
 }: AddDebtFormProps) => {
-    const t = useTranslations("AddDebtPage");
+    const t = useTranslations("PlayerPage");
 
     return (
         <div className="flex flex-col space-y-6">

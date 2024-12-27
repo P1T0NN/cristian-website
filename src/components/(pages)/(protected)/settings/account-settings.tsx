@@ -81,6 +81,7 @@ export const AccountSettings = ({
                         id="name" 
                         value={fullName} 
                         onChange={(e) => setFullName(e.target.value)}
+                        disabled
                     />
                 </div>
                 <div className="space-y-2">

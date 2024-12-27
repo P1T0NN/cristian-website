@@ -22,6 +22,7 @@ interface EditPlayerDetailsResponse {
 
 interface EditPlayerDetailsParams {
     playerIdFromParams: string;
+    fullName: string;
     dni: string;
     country: string;
     phoneNumber: string;
@@ -31,6 +32,7 @@ interface EditPlayerDetailsParams {
 
 export async function editPlayerDetails({
     playerIdFromParams,
+    fullName,
     dni,
     country,
     phoneNumber,
@@ -48,13 +50,14 @@ export async function editPlayerDetails({
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!playerIdFromParams || !dni || !country || !phoneNumber || !playerLevel || !playerPosition) {
+    if (!playerIdFromParams || !fullName || !dni || !country || !phoneNumber || !playerLevel || !playerPosition) {
         return { success: false, message: t('BAD_REQUEST') };
     }
 
     const { data, error } = await supabase
         .from('users')
         .update({ 
+            fullName,
             dni,
             player_level: playerLevel,
             player_position: playerPosition,
