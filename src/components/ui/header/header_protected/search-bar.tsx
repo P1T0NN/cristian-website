@@ -27,9 +27,7 @@ type SearchResult = {
     teams: { id: string; team_name: string }[];
 }
 
-export function SearchBar({ 
-    authToken 
-}: { authToken: string }) {
+export function SearchBar() {
     const searchRef = useRef<HTMLDivElement>(null);
 
     const [query, setQuery] = useState('');
@@ -54,7 +52,7 @@ export function SearchBar({
             setResults({ users: [], teams: [] })
             setIsOpen(false)
         }
-    }, [debouncedQuery, authToken])
+    }, [debouncedQuery])
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {

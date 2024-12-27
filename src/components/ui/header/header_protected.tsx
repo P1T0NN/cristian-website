@@ -1,6 +1,5 @@
 // NEXTJS IMPORTS
 import Link from "next/link";
-import { cookies } from "next/headers";
 
 // LIBRARIES
 import { getTranslations } from "next-intl/server";
@@ -37,9 +36,6 @@ import { Settings, History, UserPlus, User, ClipboardList, Wallet } from 'lucide
 export const HeaderProtected = async () => {
     const t = await getTranslations('Header');
 
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
-
     const serverUserData = await getUser() as typesUser;
     
     const initials = serverUserData && serverUserData.fullName ? getInitials(serverUserData.fullName) : '';
@@ -54,9 +50,9 @@ export const HeaderProtected = async () => {
                         </Link>
                     </div>
 
-                    {serverUserData?.isAdmin && authToken && (
+                    {serverUserData?.isAdmin && (
                         <div className="hidden md:block flex-grow mx-4 max-w-xl">
-                            <SearchBar authToken={authToken} />
+                            <SearchBar />
                         </div>
                     )}
 
@@ -78,7 +74,7 @@ export const HeaderProtected = async () => {
                         {serverUserData && (
                             <div className="flex items-center bg-secondary rounded-full px-2 py-1 sm:px-3 sm:py-1">
                                 <Wallet className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                                <span className="text-xs sm:text-sm font-medium">{serverUserData.balance.toFixed(2)}</span>
+                                <span className="text-xs sm:text-sm font-medium">{serverUserData.balance}</span>
                             </div>
                         )}
 
@@ -132,9 +128,9 @@ export const HeaderProtected = async () => {
                 </div>
             </div>
 
-            {serverUserData?.isAdmin && authToken && (
+            {serverUserData?.isAdmin && (
                 <div className="md:hidden px-4 py-2">
-                    <SearchBar authToken={authToken} />
+                    <SearchBar />
                 </div>
             )}
 
