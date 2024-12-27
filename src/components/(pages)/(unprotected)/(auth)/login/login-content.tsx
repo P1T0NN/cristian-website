@@ -46,6 +46,7 @@ export const LoginContent = () => {
 
                 if (result.success) {
                     toast.success(result.message);
+                    
                     router.replace(PROTECTED_PAGE_ENDPOINTS.HOME_PAGE);
                 } else {
                     toast.error(result.message);

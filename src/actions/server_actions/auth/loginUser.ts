@@ -19,9 +19,6 @@ import { verifyPassword } from '@/utils/argon2';
 import { generateToken } from '@/utils/auth/jwt';
 import { generateRefreshToken } from '@/utils/auth/auth-utils';
 
-// TYPES
-import type { APIResponse } from '@/types/responses/APIResponse';
-
 const rateLimiter = new UpstashRateLimiter({
     url: process.env.UPSTASH_REDIS_URL!,
     token: process.env.UPSTASH_REDIS_TOKEN!,
@@ -30,7 +27,31 @@ const rateLimiter = new UpstashRateLimiter({
     blockDuration: 15 * 60 * 1000,  // Block for 15 minutes after exceeding limit
 });
 
-export async function loginUser(email: string, password: string): Promise<APIResponse> {
+async function resendVerificationEmail(email: string) {
+    const t = await getTranslations('GenericMessages');
+
+    const rateLimitResult = await rateLimiter.limit(`resend_verification_email:${email}`);
+
+    if (!rateLimitResult.success) {
+        return {
+            success: false,
+            message: t('LOGIN_RATE_LIMIT', { seconds: Math.ceil((rateLimitResult.reset - Date.now()) / 1000) }),
+            data: {
+                retryAfter: Math.ceil((rateLimitResult.reset - Date.now()) / 1000)
+            }
+        };
+    }
+
+    const result = await sendVerificationEmail(email);
+    
+    if (!result.success) {
+        return { success: false, message: t('email_VerificationError') };
+    }
+
+    return { success: true, message: t('email_VerificationSent') };
+}
+
+export async function loginUser(email: string, password: string) {
     const t = await getTranslations('GenericMessages');
 
     if (!email || !password) {
@@ -63,7 +84,6 @@ export async function loginUser(email: string, password: string): Promise<APIRes
     const token = await generateToken(user.id, user.isAdmin, user.has_access);
     const refreshToken = generateRefreshToken();
 
-    // Check for existing refresh token
     const { data: existingToken, error: existingTokenError } = await supabase
         .from('refresh_tokens')
         .select('id')
@@ -71,11 +91,9 @@ export async function loginUser(email: string, password: string): Promise<APIRes
         .single();
 
     if (existingTokenError && existingTokenError.code !== 'PGRST116') {
-        // PGRST116 is the error code for "no rows returned", which is fine in this case
         return { success: false, message: t('UNKNOWN_ERROR') };
     }
 
-    // If an existing token was found, delete it
     if (existingToken) {
         const { error: deleteError } = await supabase
             .from('refresh_tokens')
@@ -87,7 +105,6 @@ export async function loginUser(email: string, password: string): Promise<APIRes
         }
     }
 
-    // Insert the new refresh token
     const { error: refreshTokenError } = await supabase
         .from('refresh_tokens')
         .insert({ user_id: user.id, token: refreshToken, expires_at: new Date(Date.now() + DEFAULT_REFRESH_TOKEN_EXPIRATION_TIME) });
@@ -120,29 +137,4 @@ export async function loginUser(email: string, password: string): Promise<APIRes
             token
         }
     };
-}
-
-async function resendVerificationEmail(email: string): Promise<APIResponse> {
-    const t = await getTranslations('GenericMessages');
-
-    const rateLimitResult = await rateLimiter.limit(`resend_verification_email:${email}`);
-
-    if (!rateLimitResult.success) {
-        return {
-            success: false,
-            message: t('LOGIN_RATE_LIMIT', { seconds: Math.ceil((rateLimitResult.reset - Date.now()) / 1000) }),
-            data: {
-                retryAfter: Math.ceil((rateLimitResult.reset - Date.now()) / 1000)
-            }
-        };
-    }
-
-    // Send verification email
-    const result = await sendVerificationEmail(email);
-    
-    if (!result.success) {
-        return { success: false, message: t('email_VerificationError') };
-    }
-
-    return { success: true, message: t('email_VerificationSent') };
 }

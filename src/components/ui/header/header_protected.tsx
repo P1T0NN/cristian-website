@@ -42,7 +42,7 @@ export const HeaderProtected = async () => {
 
     const serverUserData = await getUser() as typesUser;
     
-    const initials = serverUserData ? getInitials(serverUserData.fullName) : '';
+    const initials = serverUserData && serverUserData.fullName ? getInitials(serverUserData.fullName) : '';
 
     return (
         <header className="w-full bg-transparent border-b border-bg-primary">
