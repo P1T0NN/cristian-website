@@ -119,39 +119,49 @@ export const PaginatedMatchHistory = ({
                                     </div>
                                 </div>
                                 <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">
-                                    <div className="flex items-center">
-                                        <Users className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
-                                        <span>
-                                            {t('paid')}: {match.playerStats.playersPaid.length}
-                                            <span className="hidden sm:inline">{formatPlayerNames(match.playerStats.playersPaid)}</span>
+                                    <div className="flex items-start">
+                                        <Users className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0 mt-1" />
+                                        <span className="flex flex-col">
+                                            <span>{t('paid')}: {match.playerStats.playersPaid.length}</span>
+                                            <span className="text-[11px] text-muted-foreground whitespace-normal max-h-10 overflow-y-auto">
+                                                {formatPlayerNames(match.playerStats.playersPaid)}
+                                            </span>
                                         </span>
                                     </div>
-                                    <div className="flex items-center">
-                                        <Ticket className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
-                                        <span>
-                                            {t('discount')}: {match.playerStats.playersWithDiscount.length}
-                                            <span className="hidden sm:inline">{formatPlayerNames(match.playerStats.playersWithDiscount)}</span>
+                                    <div className="flex items-start">
+                                        <Ticket className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0 mt-1" />
+                                        <span className="flex flex-col">
+                                            <span>{t('discount')}: {match.playerStats.playersWithDiscount.length}</span>
+                                            <span className="text-[11px] text-muted-foreground whitespace-normal max-h-10 overflow-y-auto">
+                                                {formatPlayerNames(match.playerStats.playersWithDiscount)}
+                                            </span>
                                         </span>
                                     </div>
-                                    <div className="flex items-center">
-                                        <Gift className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
-                                        <span>
-                                            {t('gratis')}: {match.playerStats.playersWithGratis.length}
-                                            <span className="hidden sm:inline">{formatPlayerNames(match.playerStats.playersWithGratis)}</span>
+                                    <div className="flex items-start">
+                                        <Gift className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0 mt-1" />
+                                        <span className="flex flex-col">
+                                            <span>{t('gratis')}: {match.playerStats.playersWithGratis.length}</span>
+                                            <span className="text-[11px] text-muted-foreground whitespace-normal max-h-10 overflow-y-auto">
+                                                {formatPlayerNames(match.playerStats.playersWithGratis)}
+                                            </span>
                                         </span>
                                     </div>
-                                    <div className="flex items-center">
-                                        <CreditCard className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
-                                        <span>
-                                            {t('balance')}: {match.playerStats.playersEnteredWithBalance.length}
-                                            <span className="hidden sm:inline">{formatPlayerNames(match.playerStats.playersEnteredWithBalance)}</span>
+                                    <div className="flex items-start">
+                                        <CreditCard className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0 mt-1" />
+                                        <span className="flex flex-col">
+                                            <span>{t('balance')}: {match.playerStats.playersEnteredWithBalance.length}</span>
+                                            <span className="text-[11px] text-muted-foreground whitespace-normal max-h-10 overflow-y-auto">
+                                                {formatPlayerNames(match.playerStats.playersEnteredWithBalance)}
+                                            </span>
                                         </span>
                                     </div>
-                                    <div className="flex items-center">
-                                        <XCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0 text-red-500" />
-                                        <span>
-                                            {t('notPaid')}: {match.playerStats.playersNotPaid.length}
-                                            <span className="hidden sm:inline">{formatPlayerNames(match.playerStats.playersNotPaid)}</span>
+                                    <div className="flex items-start">
+                                        <XCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0 mt-1 text-red-500" />
+                                        <span className="flex flex-col">
+                                            <span>{t('notPaid')}: {match.playerStats.playersNotPaid.length}</span>
+                                            <span className="text-[11px] text-muted-foreground whitespace-normal max-h-10 overflow-y-auto">
+                                                {formatPlayerNames(match.playerStats.playersNotPaid)}
+                                            </span>
                                         </span>
                                     </div>
                                 </div>
