@@ -40,7 +40,16 @@
         "refresh": "Actualizar",
         "noEventsAvailable": "No hay eventos disponibles en este momento.",
         "allMatches": "Todos los Partidos",
-        "myMatches": "Mis Partidos"
+        "myMatches": "Mis Partidos",
+        "noActiveMatches": "No tienes partidos activos",
+        "activeMatches": "Estás apuntado en los próximos Partidos",
+        "placesLeft": "plazas disponibles",
+        "matchCompleted": "Partido completo",
+        "lastPlacesLeft": "¡Últimas plazas!",
+        "minutes": "minutos",
+        "matchLevel": "Nivel",
+        "organizer": "Organizador",
+        "available": "Disponible"
     },
 
     "LoginPage": {
@@ -319,6 +328,7 @@
         "temporaryPlayerRemoved": "El jugador temporal ha sido removido del partido",
         "noActiveMatches": "No tienes partidos activos",
         "activeMatches": "Partidos Activos",
+        "available": "Disponible",
         "MatchFAQ": {
             "title": "Preguntas Frecuentes",
             "startTimeDuration": {
@@ -541,17 +551,6 @@
         "gratis": "Gratis",
         "balance": "Saldo",
         "notPaid": "No pagado"
-    },
-
-    "ActiveMatchesPage": {
-        "noActiveMatches": "No tienes partidos activos",
-        "activeMatches": "Estás apuntado en los próximos Partidos",
-        "placesLeft": "plazas disponibles",
-        "matchCompleted": "Partido completo",
-        "lastPlacesLeft": "¡Últimas plazas!",
-        "minutes": "minutos",
-        "matchLevel": "Nivel",
-        "organizer": "Organizador"
     },
 
     "VerifyEmailPage": {

@@ -91,15 +91,6 @@ export function EditPlayerDetails({
 
                 <div className="space-y-4">
                     <FormInputField
-                        label={t('fullName')}
-                        name="fullName"
-                        type="text"
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                        placeholder={t('enterFullName')}
-                    />
-
-                    <FormInputField
                         label={t('phoneNumber')}
                         name="phoneNumber"
                         type="text"
@@ -119,6 +110,15 @@ export function EditPlayerDetails({
 
                     {isAdmin && (
                         <>
+                            <FormInputField
+                                label={t('fullName')}
+                                name="fullName"
+                                type="text"
+                                value={fullName}
+                                onChange={(e) => setFullName(e.target.value)}
+                                placeholder={t('enterFullName')}
+                            />
+                            
                             <FormInputField
                                 label={t('dni')}
                                 name="dni"

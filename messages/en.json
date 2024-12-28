@@ -39,7 +39,16 @@
         "refresh": "Refresh",
         "noEventsAvailable": "No events available at this time.",
         "allMatches": "All Matches",
-        "myMatches": "My Matches"
+        "myMatches": "My Matches",
+        "noActiveMatches": "You have no active matches",
+        "activeMatches": "Active Matches",
+        "placesLeft": "places left",
+        "matchCompleted": "Match completed",
+        "lastPlacesLeft": "Last places!",
+        "minutes": "minutes",
+        "matchLevel": "Level",
+        "organizer": "Organizer",
+        "available": "Available"
     },
 
     "LoginPage": {
@@ -318,6 +327,7 @@
         "activeMatches": "Active Matches",
         "matchCompleted": "Match completed",
         "lastPlacesLeft": "Last places!",
+        "available": "Available",
         "MatchFAQ": {
             "title": "Frequently Asked Questions",
             "startTimeDuration": {
@@ -540,17 +550,6 @@
         "gratis": "Gratis",
         "balance": "Balance",
         "notPaid": "Not paid"
-    },
-
-    "ActiveMatchesPage": {
-        "noActiveMatches": "You have no active matches",
-        "activeMatches": "Active Matches",
-        "placesLeft": "places left",
-        "matchCompleted": "Match completed",
-        "lastPlacesLeft": "Last places!",
-        "minutes": "minutes",
-        "matchLevel": "Level",
-        "organizer": "Organizer"
     },
 
     "VerifyEmailPage": {

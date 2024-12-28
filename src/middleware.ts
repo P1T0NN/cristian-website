@@ -4,8 +4,7 @@ import type { NextRequest } from 'next/server';
 
 // LIBRARIES
 import { format } from 'date-fns';
-import { jwtVerify, SignJWT } from 'jose';
-import { supabase } from './lib/supabase/supabase';
+import { jwtVerify } from 'jose';
 
 // CONFIG
 import { getAllProtectedRoutes, PUBLIC_PAGE_ENDPOINTS, ADMIN_PAGE_ENDPOINTS, DEFAULT_JWT_EXPIRATION_TIME, PROTECTED_PAGE_ENDPOINTS } from './config';
@@ -15,65 +14,22 @@ async function redirectToHome(req: NextRequest) {
     return NextResponse.redirect(new URL(`${PROTECTED_PAGE_ENDPOINTS.HOME_PAGE}?date=${currentDate}`, req.url));
 }
 
-async function generateFingerprint(userId: string, request: NextRequest): Promise<string> {
-    const userAgent = request.headers.get('user-agent') || '';
-    const forwardedFor = request.headers.get('x-forwarded-for');
-    const ipAddress = forwardedFor ? forwardedFor.split(',')[0] : 'Unknown';
+async function refreshAuthToken(refreshToken: string) {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/refresh_token`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ refreshToken }),
+    });
 
-    const data = `${userId}-${userAgent}-${ipAddress}`;
-    const encoder = new TextEncoder();
-    const dataBuffer = encoder.encode(data);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
-}
+    const result = await response.json();
 
-async function generateToken(userId: string, isAdmin: boolean, hasAccess: boolean, request: NextRequest): Promise<string> {
-    const secretKey = new TextEncoder().encode(process.env.JWT_SECRET);
-    const fingerprint = await generateFingerprint(userId, request);
-    
-    const now = Math.floor(Date.now() / 1000);
-    
-    return new SignJWT({ 
-        sub: userId,
-        isAdmin,
-        has_access: hasAccess
-    })
-        .setProtectedHeader({ alg: 'HS256', fingerprint })
-        .setIssuedAt(now)
-        .setExpirationTime(now + DEFAULT_JWT_EXPIRATION_TIME)
-        .sign(secretKey);
-}
-
-async function refreshAuthToken(refreshToken: string, request: NextRequest) {
-    const { data: tokenData, error: tokenError } = await supabase
-        .from('refresh_tokens')
-        .select('user_id')
-        .eq('token', refreshToken)
-        .single();
-
-    if (tokenError || !tokenData) {
+    if (!response.ok) {
         return { success: false };
     }
 
-    const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('isAdmin, has_access')
-        .eq('id', tokenData.user_id)
-        .single();
-
-    if (userError || !userData) {
-        return { success: false };
-    }
-
-    const newAuthToken = await generateToken(tokenData.user_id, userData.isAdmin, userData.has_access, request);
-
-    return { 
-        success: true, 
-        isAuth: true, 
-        userId: tokenData.user_id,
-        newAuthToken
-    };
+    return result;
 }
 
 export async function middleware(request: NextRequest) {
@@ -102,17 +58,17 @@ export async function middleware(request: NextRequest) {
 
     if (isProtectedRoute) {
         if (!authToken && refreshToken) {
-            const result = await refreshAuthToken(refreshToken, request);
-
+            const result = await refreshAuthToken(refreshToken);
+    
             if (!result.success) {
                 const response = NextResponse.redirect(new URL('/login', request.url));
                 response.cookies.delete('refresh_token');
                 return response;
             }
-
-            if (result.newAuthToken) {
+    
+            if (result.data && result.data.newAuthToken) {
                 const response = NextResponse.next();
-                response.cookies.set('auth_token', result.newAuthToken, {
+                response.cookies.set('auth_token', result.data.newAuthToken, {
                     httpOnly: true,
                     secure: process.env.NODE_ENV === 'production',
                     sameSite: 'strict',

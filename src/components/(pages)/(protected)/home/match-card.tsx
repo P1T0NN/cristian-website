@@ -13,6 +13,12 @@ import { getUser } from "@/actions/auth/verifyAuth";
 // UTILS
 import { getGenderLabel } from "@/utils/next-intl/getGenderLabel";
 import { formatTime, formatDate } from "@/utils/dateUtils";
+import { 
+    formatMatchType, 
+    calculateMatchPlaces, 
+    getPlacesLeftText, 
+    getPlacesLeftColor 
+} from '@/utils/matchCalculations';
 
 // TYPES
 import type { typesMatch } from "@/types/typesMatch";
@@ -34,62 +40,14 @@ export const MatchCard = async ({
 
     const title = `${match.team1_name} vs ${match.team2_name}`;
     
-    const formatMatchType = (type: string) => {
-        switch (type) {
-            case "F8": return "8v8"
-            case "F7": return "7v7"
-            case "F11": return "11v11"
-            default: return type
-        }
-    };
-    
     const translatedGender = await getGenderLabel(match.match_gender);
     const format = `${formatMatchType(match.match_type)} ${translatedGender}`;
     const formattedTime = formatTime(match.starts_at_hour);
     const formattedDate = await formatDate(match.starts_at_day);
 
-    // Calculate total places and places left
-    const getTotalPlaces = (matchType: string) => {
-        switch (matchType) {
-            case "F8": return 16;
-            case "F7": return 14;
-            case "F11": return 22;
-            default: return 0;
-        }
-    };
-
-    const totalPlaces = getTotalPlaces(match.match_type);
-    const placesPerTeam = totalPlaces / 2;
-
-    const getOccupiedPlaces = () => {
-        let occupiedPlaces = match.places_occupied || 0;
-
-        if (match.team1_name !== "Equipo 1") {
-            occupiedPlaces += placesPerTeam;
-        }
-        if (match.team2_name !== "Equipo 2") {
-            occupiedPlaces += placesPerTeam;
-        }
-
-        return Math.min(totalPlaces, occupiedPlaces);
-    };
-
-    const occupiedPlaces = getOccupiedPlaces();
-    const placesLeft = Math.max(0, totalPlaces - occupiedPlaces);
-
-    const getPlacesLeftText = () => {
-        if (placesLeft === 0) {
-            return t('matchCompleted');
-        } else if (placesLeft <= 3) {
-            return t('lastPlacesLeft');
-        } else {
-            return `${placesLeft} ${t('placesLeft')}`;
-        }
-    };
-
-    const getPlacesLeftColor = () => {
-        return placesLeft <= 3 ? 'bg-red-500 text-white' : 'bg-blue-100 text-blue-600';
-    };
+    const { placesLeft } = calculateMatchPlaces(match);
+    const placesLeftText = getPlacesLeftText(placesLeft, serverUserData.isAdmin, t);
+    const placesLeftColor = getPlacesLeftColor(placesLeft);
 
     return (
         <Link href={`/match/${match.id}`} className="block w-full">
@@ -115,9 +73,9 @@ export const MatchCard = async ({
                                     <span className={`w-2.5 h-2.5 rounded-full ${match.team1_color ? 'bg-black' : 'bg-white border border-gray-300'}`} />
                                     <span className={`w-2.5 h-2.5 rounded-full ${match.team2_color ? 'bg-black' : 'bg-white border border-gray-300'}`} />
                                 </div>
-                                <span className={`text-xs px-2 py-1 rounded-full flex items-center ${getPlacesLeftColor()}`}>
+                                <span className={`text-xs px-2 py-1 rounded-full flex items-center ${placesLeftColor}`}>
                                     <Users className="w-3 h-3 mr-1" />
-                                    {getPlacesLeftText()}
+                                    {placesLeftText}
                                 </span>
                                 {serverUserData.isAdmin && match.match_level && (
                                     <span className="text-xs bg-yellow-100 px-2 py-1 rounded-full text-yellow-600 flex items-center">

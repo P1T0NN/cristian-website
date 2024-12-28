@@ -17,6 +17,12 @@ import { getUser } from '@/actions/auth/verifyAuth';
 // UTILS
 import { getGenderLabel } from "@/utils/next-intl/getGenderLabel";
 import { formatTime, formatDate } from "@/utils/dateUtils";
+import { 
+    formatMatchType, 
+    calculateMatchPlaces, 
+    getPlacesLeftText, 
+    getPlacesLeftColor 
+} from '@/utils/matchCalculations';
 
 // TYPES
 import type { typesMatch } from "@/types/typesMatch";
@@ -26,7 +32,7 @@ import type { typesUser } from '@/types/typesUser';
 import { MapPin, Users, Clock } from 'lucide-react';
 
 export const ActiveMatches = async () => {
-    const t = await getTranslations('ActiveMatchesPage');
+    const t = await getTranslations('HomePage');
 
     const serverUserData = await getUser() as typesUser;
     const serverActiveMatchesData = await fetchMyActiveMatches(serverUserData.id);
@@ -42,15 +48,6 @@ export const ActiveMatches = async () => {
         )
     }
 
-    const formatMatchType = (type: string) => {
-        switch (type) {
-            case "F8": return "8v8"
-            case "F7": return "7v7"
-            case "F11": return "11v11"
-            default: return type
-        }
-    };
-
     return (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {activeMatchesData.map(async (match) => {
@@ -60,48 +57,9 @@ export const ActiveMatches = async () => {
                 const formattedTime = formatTime(match.starts_at_hour);
                 const formattedDate = await formatDate(match.starts_at_day);
                 
-                const getTotalPlaces = (matchType: string) => {
-                    switch (matchType) {
-                        case "F8": return 16;
-                        case "F7": return 14;
-                        case "F11": return 22;
-                        default: return 0;
-                    }
-                };
-            
-                const getOccupiedPlaces = (matchType: string, team1Name: string, team2Name: string, placesOccupied: number) => {
-                    const totalPlaces = getTotalPlaces(matchType);
-                    let occupiedPlaces = 0;
-            
-                    if (team1Name !== "Equipo 1" && team2Name !== "Equipo 2") {
-                        return totalPlaces; // All places are occupied if both teams are custom
-                    }
-            
-                    if (team1Name !== "Equipo 1" || team2Name !== "Equipo 2") {
-                        occupiedPlaces = totalPlaces / 2; // Half of the places are occupied if one team is custom
-                    }
-            
-                    // Add the places_occupied to the calculation
-                    return Math.min(totalPlaces, occupiedPlaces + placesOccupied);
-                };
-            
-                const totalPlaces = getTotalPlaces(match.match_type);
-                const occupiedPlaces = getOccupiedPlaces(match.match_type, match.team1_name, match.team2_name, match.places_occupied || 0);
-                const placesLeft = Math.max(0, totalPlaces - occupiedPlaces);
-            
-                const getPlacesLeftText = (placesLeft: number) => {
-                    if (placesLeft === 0) {
-                        return t('matchCompleted');
-                    } else if (placesLeft <= 3) {
-                        return t('lastPlacesLeft');
-                    } else {
-                        return `${placesLeft} ${t('placesLeft')}`;
-                    }
-                };
-            
-                const getPlacesLeftColor = (placesLeft: number) => {
-                    return placesLeft <= 3 ? 'bg-red-500 text-white' : 'bg-blue-100 text-blue-600';
-                };
+                const { placesLeft } = calculateMatchPlaces(match);
+                const placesLeftText = getPlacesLeftText(placesLeft, serverUserData.isAdmin, t);
+                const placesLeftColor = getPlacesLeftColor(placesLeft);
 
                 return (
                     <Link key={match.id} href={`${PROTECTED_PAGE_ENDPOINTS.MATCH_PAGE}/${match.id}`}>
@@ -125,9 +83,9 @@ export const ActiveMatches = async () => {
                                             <span className={`w-2.5 h-2.5 rounded-full ${match.team1_color ? 'bg-black' : 'bg-white border border-gray-300'}`} />
                                             <span className={`w-2.5 h-2.5 rounded-full ${match.team2_color ? 'bg-black' : 'bg-white border border-gray-300'}`} />
                                         </div>
-                                        <span className={`text-xs px-2 py-1 rounded-full flex items-center ${getPlacesLeftColor(placesLeft)}`}>
+                                        <span className={`text-xs px-2 py-1 rounded-full flex items-center ${placesLeftColor}`}>
                                             <Users className="w-3 h-3 mr-1" />
-                                            {getPlacesLeftText(placesLeft)}
+                                            {placesLeftText}
                                         </span>
                                     </div>
 
