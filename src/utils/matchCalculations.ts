@@ -63,5 +63,5 @@ export const getPlacesLeftText = (
 };
 
 export const getPlacesLeftColor = (placesLeft: number) => {
-    return placesLeft <= 3 ? 'bg-red-500 text-white' : 'bg-blue-100 text-blue-600';
+    return placesLeft <= 3 ? 'bg-red-500' : 'bg-blue-100';
 };

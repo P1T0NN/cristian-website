@@ -83,7 +83,7 @@ export const ActiveMatches = async () => {
                                             <span className={`w-2.5 h-2.5 rounded-full ${match.team1_color ? 'bg-black' : 'bg-white border border-gray-300'}`} />
                                             <span className={`w-2.5 h-2.5 rounded-full ${match.team2_color ? 'bg-black' : 'bg-white border border-gray-300'}`} />
                                         </div>
-                                        <span className={`text-xs px-2 py-1 rounded-full flex items-center ${placesLeftColor}`}>
+                                        <span className={`flex text-xs px-2 py-1 rounded-full items-center ${placesLeft < 3 ? 'text-white' : 'text-blue-600'} ${placesLeftColor}`}>
                                             <Users className="w-3 h-3 mr-1" />
                                             {placesLeftText}
                                         </span>
