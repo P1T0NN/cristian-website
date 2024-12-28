@@ -28,11 +28,12 @@ export const TeamOneCard = async ({
     matchIdFromParams,
     teamNumber,
 }: TeamOneCardProps) => {
-    const t = await getTranslations("MatchPage");
-
-    const currentUserData = await getUser() as typesUser;
-
-    const serverMatchData = await fetchMatch(matchIdFromParams);
+    const [t, currentUserData, serverMatchData] = await Promise.all([
+        getTranslations("MatchPage"),
+        getUser() as Promise<typesUser>,
+        fetchMatch(matchIdFromParams)
+    ]);
+    
     const match = serverMatchData.data?.match as typesMatch;
 
     const { isDefaultTeam, maxPlayers, currentPlayers, isFull, blockedSpots } = getTeamStatus(serverMatchData.data?.team1Players, match.match_type, match.block_spots_team1, match.block_spots_team2, match.team1_name);

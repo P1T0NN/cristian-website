@@ -74,7 +74,7 @@ export const HeaderProtected = async () => {
                         {serverUserData && (
                             <div className="flex items-center bg-secondary rounded-full px-2 py-1 sm:px-3 sm:py-1">
                                 <Wallet className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                                <span className="text-xs sm:text-sm font-medium">{serverUserData.balance}</span>
+                                <span className="text-xs sm:text-sm font-medium">{serverUserData.balance.toFixed(2)}</span>
                             </div>
                         )}
 

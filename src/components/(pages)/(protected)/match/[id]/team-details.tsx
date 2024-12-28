@@ -18,9 +18,11 @@ interface TeamDetailsProps {
 export const TeamDetails = async ({
     matchIdFromParams
 }: TeamDetailsProps) => {
-    const currentUserData = await getUser() as typesUser;
-
-    const serverMatchData = await fetchMatch(matchIdFromParams);
+    const [currentUserData, serverMatchData] = await Promise.all([
+        getUser() as Promise<typesUser>,
+        fetchMatch(matchIdFromParams)
+    ]);
+    
     const match = serverMatchData.data?.match as typesMatch;
 
     const allPlayers = [

@@ -66,7 +66,8 @@ export const fetchMatches = cache(async ({
         headers: {
             'Authorization': `Bearer ${authToken}`,
             'Content-Type': 'application/json',
-        }
+        },
+        // No need to cache this, it's dynamic
     });
 
     if (!response.ok) {

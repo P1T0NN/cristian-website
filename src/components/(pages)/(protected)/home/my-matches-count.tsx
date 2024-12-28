@@ -12,12 +12,12 @@ import { fetchMyActiveMatchesCount } from "@/actions/match/fetchMyActiveMatchesC
 import type { typesUser } from "@/types/typesUser";
 
 export const MyMatchesCount = async () => {
-    const t = await getTranslations("HomePage");
-
-    const currentUserData = await getUser() as typesUser;
+    const [t, currentUserData] = await Promise.all([
+        getTranslations("HomePage"),
+        getUser() as Promise<typesUser>
+    ]);
 
     const myMatchesCountData = await fetchMyActiveMatchesCount(currentUserData.id);
-
     const count = myMatchesCountData.success && myMatchesCountData.data ? myMatchesCountData.data.count : 0;
 
     return (

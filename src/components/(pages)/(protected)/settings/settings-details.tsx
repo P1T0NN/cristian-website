@@ -18,10 +18,11 @@ import { getUser } from "@/actions/auth/verifyAuth";
 import type { typesUser } from "@/types/typesUser";
 
 export const SettingsDetails = async () => {
-    const t = await getTranslations("SettingsPage");
-    const locale = await getUserLocale();
-
-    const serverUserData = await getUser() as typesUser;
+    const [t, locale, serverUserData] = await Promise.all([
+        getTranslations("SettingsPage"),
+        getUserLocale(),
+        getUser() as Promise<typesUser>
+    ]);
 
     return (
         <Tabs defaultValue="account" className="space-y-4">

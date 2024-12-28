@@ -45,6 +45,7 @@ export const fetchMatchForEdit = cache(async (matchId: string): Promise<MatchFor
             'Authorization': `Bearer ${authToken}`,
             'Content-Type': 'application/json',
         },
+        // No need to cache this
     });
 
     if (!response.ok) {

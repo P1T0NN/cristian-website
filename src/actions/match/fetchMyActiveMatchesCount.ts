@@ -7,6 +7,9 @@ import { cookies } from "next/headers";
 // LIBRARIES
 import { getTranslations } from "next-intl/server";
 
+// CONFIG
+import { TAGS_FOR_CACHE_REVALIDATIONS } from "@/config";
+
 // ACTIONS
 import { verifyAuth } from "../auth/verifyAuth";
 
@@ -47,6 +50,10 @@ export const fetchMyActiveMatchesCount = cache(async (userId: string): Promise<A
             'Authorization': `Bearer ${authToken}`,
             'Content-Type': 'application/json',
         },
+        cache: "force-cache",
+        next: {
+            tags: [TAGS_FOR_CACHE_REVALIDATIONS.ACTIVE_MATCHES_COUNT]
+        }
     });
 
     if (!response.ok) {

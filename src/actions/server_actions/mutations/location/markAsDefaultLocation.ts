@@ -2,7 +2,7 @@
 
 // NEXTJS IMPORTS
 import { cookies } from 'next/headers';
-import { revalidatePath } from 'next/cache';
+import { revalidateTag } from 'next/cache';
 
 // LIBRARIES
 import { getTranslations } from 'next-intl/server';
@@ -12,7 +12,7 @@ import { supabase } from '@/lib/supabase/supabase';
 import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
 
 // CONFIG
-import { CACHE_KEYS } from '@/config';
+import { CACHE_KEYS, TAGS_FOR_CACHE_REVALIDATIONS } from '@/config';
 
 // ACTIONS
 import { verifyAuth } from '@/actions/auth/verifyAuth';
@@ -66,7 +66,7 @@ export async function markAsDefaultLocation({
     await upstashRedisCacheService.delete(CACHE_KEYS.ALL_LOCATIONS_PREFIX);
     await upstashRedisCacheService.delete(CACHE_KEYS.DEFAULT_LOCATIONS_CACHE_KEY);
 
-    revalidatePath("/");
+    revalidateTag(TAGS_FOR_CACHE_REVALIDATIONS.LOCATIONS);
 
     return { 
         success: true, 

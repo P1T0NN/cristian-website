@@ -14,9 +14,11 @@ type DisplayTeamDetailsProps = {
 export const DisplayTeamDetails = async ({
     matchIdFromParams
 }: DisplayTeamDetailsProps) => {
-    const t = await getTranslations("MatchPage");
-
-    const serverMatchData = await fetchMatch(matchIdFromParams);
+    const [t, serverMatchData] = await Promise.all([
+        getTranslations("MatchPage"),
+        fetchMatch(matchIdFromParams)
+    ]);
+    
     const match = serverMatchData.data?.match as typesMatch;
 
     return (

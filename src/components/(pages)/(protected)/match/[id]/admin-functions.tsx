@@ -23,11 +23,12 @@ type AdminFunctionsProps = {
 export const AdminFunctions = async ({ 
     matchIdFromParams,
 }: AdminFunctionsProps) => {
-    const t = await getTranslations("MatchPage");
-
-    const currentUserData = await getUser() as typesUser;
-
-    const serverMatchData = await fetchMatch(matchIdFromParams);
+    const [t, currentUserData, serverMatchData] = await Promise.all([
+        getTranslations("MatchPage"),
+        getUser() as Promise<typesUser>,
+        fetchMatch(matchIdFromParams)
+    ]);
+    
     const match = serverMatchData.data?.match as typesMatch;
 
     return (

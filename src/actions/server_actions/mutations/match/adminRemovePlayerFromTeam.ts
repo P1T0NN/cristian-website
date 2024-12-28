@@ -1,7 +1,7 @@
 "use server"
 
 // NEXTJS IMPORTS
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
@@ -11,7 +11,7 @@ import { getTranslations } from 'next-intl/server';
 import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
 
 // CONFIG
-import { CACHE_KEYS } from '@/config';
+import { CACHE_KEYS, TAGS_FOR_CACHE_REVALIDATIONS } from '@/config';
 
 // ACTIONS
 import { verifyAuth } from '@/actions/auth/verifyAuth';
@@ -145,6 +145,7 @@ export async function adminRemovePlayerFromMatch({
     }
 
     revalidatePath("/");
+    revalidateTag(TAGS_FOR_CACHE_REVALIDATIONS.ACTIVE_MATCHES_COUNT);
 
     return { success: true, message: isTemporaryPlayer ? t('TEMPORARY_PLAYER_REMOVED_SUCCESSFULLY') : t('PLAYER_REMOVED_SUCCESSFULLY') };
 }

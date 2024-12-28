@@ -33,11 +33,12 @@ export const TemporaryPlayerInfo = async ({
     teamNumber,
     isDefaultTeam
 }: TemporaryPlayerInfoProps) => {
-    const t = await getTranslations("MatchPage");
-
-    const currentUserData = await getUser() as typesUser;
-
-    const serverCurrentUserMatchAdmin = await fetchCurrentUserMatchAdmin(matchIdFromParams);
+    const [t, currentUserData, serverCurrentUserMatchAdmin] = await Promise.all([
+        getTranslations("MatchPage"),
+        getUser() as Promise<typesUser>,
+        fetchCurrentUserMatchAdmin(matchIdFromParams)
+    ]);
+    
     const currentUserMatchAdmin = serverCurrentUserMatchAdmin.data?.isAdmin as boolean;
 
     const nameColor = player.temporaryPlayer?.has_paid ? "text-green-500" : "text-red-500";

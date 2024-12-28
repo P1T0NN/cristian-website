@@ -2,14 +2,14 @@
 
 // NEXTJS IMPORTS
 import { cookies } from 'next/headers';
-import { revalidatePath } from 'next/cache';
+import { revalidateTag } from 'next/cache';
 
 // LIBRARIES
 import { getTranslations } from 'next-intl/server';
 import { supabase } from '@/lib/supabase/supabase';
 
 // CONFIG
-import { CACHE_KEYS } from '@/config';
+import { CACHE_KEYS, TAGS_FOR_CACHE_REVALIDATIONS } from '@/config';
 
 // SERVICES
 import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
@@ -68,7 +68,7 @@ export async function updateUserFullName({
     // Set the new cache with the updated data
     await upstashRedisCacheService.set(cacheKey, data, CACHE_TTL);
 
-    revalidatePath("/");
+    revalidateTag(TAGS_FOR_CACHE_REVALIDATIONS.PLAYERS);
 
     return { success: true, message: t('USER_FULL_NAME_UPDATED'), data: data as typesUser };
 }

@@ -20,11 +20,12 @@ type MatchInstructionsProps = {
 export const MatchInstructions = async ({
     matchIdFromParams
 }: MatchInstructionsProps) => {
-    const t = await getTranslations("MatchPage");
-
-    const serverUserData = await getUser() as typesUser; 
-
-    const serverMatchData = await fetchMatch(matchIdFromParams);
+    const [t, serverUserData, serverMatchData] = await Promise.all([
+        getTranslations("MatchPage"),
+        getUser() as Promise<typesUser>,
+        fetchMatch(matchIdFromParams)
+    ]);
+    
     const match = serverMatchData.data?.match as typesMatch;
 
     return (

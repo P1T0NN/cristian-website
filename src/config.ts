@@ -43,3 +43,12 @@ export const getAllProtectedRoutes = () => {
         ...Object.values(ADMIN_PAGE_ENDPOINTS)
     ];
 };
+
+export const TAGS_FOR_CACHE_REVALIDATIONS = {
+    LOCATIONS: "locations",
+    MATCHES: "matches",
+    ACTIVE_MATCHES_COUNT: "active-matches-count",
+    MATCH_HISTORY: "match-history",
+    TEAMS: "teams",
+    PLAYERS: "players"
+}

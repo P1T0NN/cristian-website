@@ -2,11 +2,14 @@
 
 // NEXTJS IMPORTS
 import { cookies } from 'next/headers';
-import { revalidatePath } from 'next/cache';
+import { revalidateTag } from 'next/cache';
 
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
+
+// CONFIG
+import { TAGS_FOR_CACHE_REVALIDATIONS } from "@/config";
 
 // ACTIONS
 import { verifyAuth } from '@/actions/auth/verifyAuth';
@@ -47,7 +50,7 @@ export async function deleteMatchFromHistory({
         return { success: false, message: t('MATCH_HISTORY_DELETION_FAILED') };
     }
 
-    revalidatePath("/");
+    revalidateTag(TAGS_FOR_CACHE_REVALIDATIONS.MATCH_HISTORY);
 
     return { success: true, message: t("MATCH_HISTORY_DELETED") };
 }

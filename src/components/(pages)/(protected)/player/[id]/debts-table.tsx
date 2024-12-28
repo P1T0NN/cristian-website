@@ -31,9 +31,10 @@ type DebtsTableProps = {
 export const DebtsTable = async ({
     debts
 }: DebtsTableProps) => {
-    const t = await getTranslations("PlayerPage");
-
-    const currentUserData = await getUser() as typesUser;
+    const [t, currentUserData] = await Promise.all([
+        getTranslations("PlayerPage"),
+        getUser() as Promise<typesUser>
+    ]);
     
     return (
         <div className="overflow-x-auto">

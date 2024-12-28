@@ -2,14 +2,14 @@
 
 // NEXTJS IMPORTS
 import { cookies } from 'next/headers';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
 // CONFIG
-import { CACHE_KEYS } from '@/config';
+import { CACHE_KEYS, TAGS_FOR_CACHE_REVALIDATIONS } from '@/config';
 
 // SERVICES
 import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
@@ -111,6 +111,7 @@ export async function deleteMatch({
     await upstashRedisCacheService.delete(`${CACHE_KEYS.MATCH_PREFIX}${matchIdFromParams}`);
 
     revalidatePath("/");
+    revalidateTag(TAGS_FOR_CACHE_REVALIDATIONS.ACTIVE_MATCHES_COUNT);
 
     return { success: true, message: t("MATCH_DELETED") };
 }

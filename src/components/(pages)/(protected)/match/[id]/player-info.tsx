@@ -38,11 +38,12 @@ export const PlayerInfo = async ({
     teamNumber,
     areDefaultTeams
 }: PlayerInfoProps) => {
-    const t = await getTranslations("MatchPage");
-
-    const currentUserData = await getUser() as typesUser;
-
-    const serverCurrentUserMatchAdmin = await fetchCurrentUserMatchAdmin(matchIdFromParams);
+    const [t, currentUserData, serverCurrentUserMatchAdmin] = await Promise.all([
+        getTranslations("MatchPage"),
+        getUser() as Promise<typesUser>,
+        fetchCurrentUserMatchAdmin(matchIdFromParams)
+    ]);
+    
     const currentUserMatchAdmin = serverCurrentUserMatchAdmin.data?.isAdmin as boolean;
 
     const nameColor = player.matchPlayer?.has_paid ? "text-green-500" : "text-red-500";
@@ -138,22 +139,28 @@ export const PlayerInfo = async ({
             </div>
             {showPaymentControls && (
                 <div className="flex flex-wrap mt-2 gap-2">
+                    {/* Fine to pass player object here, since there is no sensitive data in match_players table */}
                     <HasPaidButton 
                         matchIdFromParams={matchIdFromParams}
                         currentUserMatchAdmin={currentUserMatchAdmin}
                         player={player}
                     />
+
+                    {/* Fine to pass player object here, since there is no sensitive data in match_players table */}
                     <HasDiscountButton
                         matchIdFromParams={matchIdFromParams}
                         currentUserMatchAdmin={currentUserMatchAdmin}
                         player={player}
                     />
+
+                    {/* Fine to pass player object here, since there is no sensitive data in match_players table */}
                     <HasGratisButton
                         matchIdFromParams={matchIdFromParams}
                         currentUserMatchAdmin={currentUserMatchAdmin}
                         player={player}
                     />
                     {(currentUserData.isAdmin || currentUserMatchAdmin) && teamNumber !== 0 && areDefaultTeams && (
+                        // Fine to pass player object here, since there is no sensitive data in match_players table
                         <SwitchTeamButton
                             matchIdFromParams={matchIdFromParams}
                             player={player}
@@ -161,10 +168,12 @@ export const PlayerInfo = async ({
                     )}
                     {currentUserData.isAdmin && (
                         <>
+                            {/* Fine to pass player object here, since there is no sensitive data in match_players table */}
                             <ShowAdminModalButton
                                 matchIdFromParams={matchIdFromParams}
                                 player={player}
                             />
+                            {/* Fine to pass player object here, since there is no sensitive data in match_players table */}
                             <AddPlayerMatchAdminButton
                                 matchIdFromParams={matchIdFromParams}
                                 player={player}

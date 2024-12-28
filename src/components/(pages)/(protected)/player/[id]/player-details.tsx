@@ -40,11 +40,12 @@ const InfoItem = ({ icon, text, value }: { icon: React.ReactNode, text: string, 
 export const PlayerDetails = async ({
     playerIdFromParams,
 }: PlayerDetailsProps) => {
-    const t = await getTranslations("PlayerPage");
+    const [t, currentUserData, serverPlayerData] = await Promise.all([
+        getTranslations("PlayerPage"),
+        getUser() as Promise<typesUser>,
+        fetchPlayer(playerIdFromParams)
+    ]);
 
-    const currentUserData = await getUser() as typesUser;
-
-    const serverPlayerData = await fetchPlayer(playerIdFromParams);
     const playerData = serverPlayerData.data as typesUser;
 
     const positionLabel = await getPositionLabel(playerData.player_position);

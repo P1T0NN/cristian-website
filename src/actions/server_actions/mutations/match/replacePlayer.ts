@@ -2,11 +2,14 @@
 
 // NEXTJS IMPORTS
 import { cookies } from 'next/headers';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 // LIBRARIES
 import { supabase } from '@/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
+
+// CONFIG
+import { TAGS_FOR_CACHE_REVALIDATIONS } from "@/config";
 
 // ACTIONS
 import { verifyAuth } from '@/actions/auth/verifyAuth';
@@ -63,6 +66,7 @@ export async function replacePlayer({
     }
 
     revalidatePath("/");
+    revalidateTag(TAGS_FOR_CACHE_REVALIDATIONS.ACTIVE_MATCHES_COUNT);
 
     return { success: true, message: t('PLAYER_REPLACED_SUCCESSFULLY') };
 }

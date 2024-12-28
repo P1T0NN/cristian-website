@@ -48,6 +48,7 @@ export const fetchMyActiveMatches = cache(async (userId: string): Promise<MyActi
             'Authorization': `Bearer ${authToken}`,
             'Content-Type': 'application/json',
         },
+        // No need to cache this
     });
 
     if (!response.ok) {

@@ -41,6 +41,7 @@ export const fetchNoAccessUsers = cache(async (): Promise<NoAccessUsersResponse>
             'Authorization': `Bearer ${authToken}`,
             'Content-Type': 'application/json',
         },
+        // Do not cache this
     });
 
     if (!response.ok) {

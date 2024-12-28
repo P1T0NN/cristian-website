@@ -24,9 +24,11 @@ interface MatchDetails {
 export const MatchDetails = async ({
     matchIdFromParams
 }: MatchDetails) => {
-    const t = await getTranslations("MatchPage");
-
-    const serverMatchData = await fetchMatch(matchIdFromParams);
+    const [t, serverMatchData] = await Promise.all([
+        getTranslations("MatchPage"),
+        fetchMatch(matchIdFromParams)
+    ]);
+    
     const match = serverMatchData.data?.match as typesMatch;
 
     const formattedDate = await formatDate(match.starts_at_day);

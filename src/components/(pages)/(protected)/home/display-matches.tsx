@@ -23,10 +23,12 @@ type DisplayMatchesProps = {
 export const DisplayMatches = async ({ 
     date
 }: DisplayMatchesProps) => {
-    const t = await getTranslations("HomePage");
+    const [t, serverUserData] = await Promise.all([
+        getTranslations("HomePage"),
+        getUser() as Promise<typesUser>
+    ]);
 
-    const serverUserData = await getUser() as typesUser;
-
+    // I do not put this in Promise.all because we need serverUserData fetched first, because we pass it in to fetchMatches, and Promise.all fetches parallel which is against what I want
     const serverMatchesData = await fetchMatches({
         gender: serverUserData.gender, 
         isAdmin: serverUserData.isAdmin, 
@@ -65,6 +67,7 @@ export const DisplayMatches = async ({
             ) : (
                 <div className="space-y-4">
                     {matchesData.map((match) => (
+                        // Fine passing match object here, because MatchCard is RSC
                         <MatchCard 
                             key={match.id} 
                             match={match} 

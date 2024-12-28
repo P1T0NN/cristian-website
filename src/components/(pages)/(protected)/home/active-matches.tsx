@@ -32,9 +32,11 @@ import type { typesUser } from '@/types/typesUser';
 import { MapPin, Users, Clock } from 'lucide-react';
 
 export const ActiveMatches = async () => {
-    const t = await getTranslations('HomePage');
+    const [t, serverUserData] = await Promise.all([
+        getTranslations("HomePage"),
+        getUser() as Promise<typesUser>
+    ]);
 
-    const serverUserData = await getUser() as typesUser;
     const serverActiveMatchesData = await fetchMyActiveMatches(serverUserData.id);
     const activeMatchesData = serverActiveMatchesData.data as typesMatch[];
 

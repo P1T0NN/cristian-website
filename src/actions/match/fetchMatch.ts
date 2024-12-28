@@ -45,6 +45,7 @@ export const fetchMatch = cache(async (matchId: string): Promise<MatchResponse> 
             'Authorization': `Bearer ${authToken}`,
             'Content-Type': 'application/json',
         },
+        // Do not cache this
     });
 
     if (!response.ok) {

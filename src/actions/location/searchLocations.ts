@@ -7,6 +7,9 @@ import { cookies } from "next/headers";
 // LIBRARIES
 import { getTranslations } from "next-intl/server";
 
+// CONFIG
+import { TAGS_FOR_CACHE_REVALIDATIONS } from "@/config";
+
 // ACTIONS
 import { verifyAuth } from "../auth/verifyAuth";
 
@@ -40,6 +43,9 @@ export const serverSearchLocations = cache(async (searchTerm: string): Promise<S
         headers: {
             'Authorization': `Bearer ${authToken}`,
             'Content-Type': 'application/json',
+        },
+        next: {
+            tags: [TAGS_FOR_CACHE_REVALIDATIONS.LOCATIONS]
         }
     });
 

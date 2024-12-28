@@ -31,9 +31,10 @@ export const PlayerList = async ({
     isUserInMatch,
     match,
 }: PlayerListProps) => {
-    const t = await getTranslations('MatchPage');
-
-    const currentUserData = await getUser() as typesUser;
+    const [t, currentUserData] = await Promise.all([
+        getTranslations('MatchPage'),
+        getUser() as Promise<typesUser>
+    ]);
 
     const { maxPlayers, currentPlayers, isFull, blockedSpots } = getTeamStatus(players, match.match_type, match.block_spots_team1, match.block_spots_team2);
 

@@ -24,11 +24,12 @@ type TeamDetailsProps = {
 export const TeamDetails = async ({ 
     teamId, 
 }: TeamDetailsProps) => {
-    const t = await getTranslations("TeamPage");
-
-    const serverUserData = await getUser() as typesUser;
-
-    const serverTeamData = await fetchTeam(teamId);
+    const [t, serverUserData, serverTeamData] = await Promise.all([
+        getTranslations("TeamPage"),
+        getUser() as Promise<typesUser>,
+        fetchTeam(teamId)
+    ]);
+    
     const teamData = serverTeamData.data as typesTeam;
 
     return (

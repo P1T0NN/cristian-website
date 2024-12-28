@@ -44,6 +44,7 @@ export const fetchCurrentUserMatchAdmin = cache(async (matchId: string): Promise
             'Authorization': `Bearer ${authToken}`,
             'Content-Type': 'application/json',
         },
+        // Do not cache this
     });
 
     if (!response.ok) {
