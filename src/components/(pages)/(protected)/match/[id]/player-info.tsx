@@ -44,7 +44,7 @@ export const PlayerInfo = async ({
         fetchCurrentUserMatchAdmin(matchIdFromParams)
     ]);
     
-    const currentUserMatchAdmin = serverCurrentUserMatchAdmin.data?.isAdmin as boolean;
+    const currentUserMatchAdmin = serverCurrentUserMatchAdmin.data?.hasMatchAdmin as boolean;
 
     const nameColor = player.matchPlayer?.has_paid ? "text-green-500" : "text-red-500";
 

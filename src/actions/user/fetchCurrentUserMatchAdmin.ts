@@ -7,6 +7,9 @@ import { cookies } from "next/headers";
 // LIBRARIES
 import { getTranslations } from "next-intl/server";
 
+// CONFIG
+import { TAGS_FOR_CACHE_REVALIDATIONS } from "@/config";
+
 // ACTIONS
 import { verifyAuth } from "../auth/verifyAuth";
 
@@ -14,7 +17,7 @@ interface MatchAdminResponse {
     success: boolean;
     message?: string;
     data?: {
-        isAdmin: boolean;
+        hasMatchAdmin: boolean;
     };
 }
 
@@ -44,7 +47,9 @@ export const fetchCurrentUserMatchAdmin = cache(async (matchId: string): Promise
             'Authorization': `Bearer ${authToken}`,
             'Content-Type': 'application/json',
         },
-        // Do not cache this
+        next: {
+            tags: [TAGS_FOR_CACHE_REVALIDATIONS.MATCHES]
+        }
     });
 
     if (!response.ok) {
@@ -58,6 +63,6 @@ export const fetchCurrentUserMatchAdmin = cache(async (matchId: string): Promise
 
     return { 
         success: true, 
-        data: { isAdmin: result.data.isAdmin }
+        data: { hasMatchAdmin: result.data }
     };
 });
