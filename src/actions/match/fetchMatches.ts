@@ -25,6 +25,7 @@ interface FetchMatchesParams {
     playerLevel?: string;
     userId: string;
     date?: string;
+    includeOldMatches?: boolean;
 }
 
 export const fetchMatches = cache(async ({
@@ -32,7 +33,8 @@ export const fetchMatches = cache(async ({
     isAdmin,
     playerLevel,
     userId,
-    date
+    date,
+    includeOldMatches = false
 }: FetchMatchesParams): Promise<MatchesResponse> => {
     const t = await getTranslations("GenericMessages");
 
@@ -60,6 +62,7 @@ export const fetchMatches = cache(async ({
     if (isAdmin !== undefined) url.searchParams.append('isAdmin', isAdmin.toString());
     if (playerLevel) url.searchParams.append('playerLevel', playerLevel);
     url.searchParams.append('userId', userId);
+    url.searchParams.append('includeOldMatches', includeOldMatches.toString());
 
     const response = await fetch(url.toString(), {
         method: 'GET',

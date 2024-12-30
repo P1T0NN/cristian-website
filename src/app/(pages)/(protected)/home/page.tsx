@@ -1,24 +1,21 @@
 // REACTJS IMPORTS
 import { Suspense } from "react";
 
-// LIBRARIES
-import { getTranslations } from "next-intl/server";
-
 // COMPONENTS
 import { DisplayCalendar } from "@/components/(pages)/(protected)/home/display-calendar";
 import { DisplayMatches } from "@/components/(pages)/(protected)/home/display-matches";
 import { ActiveMatches } from "@/components/(pages)/(protected)/home/active-matches";
 import { DisplayMatchesLoading } from "@/components/(pages)/(protected)/home/loading/display-matches-loading";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MyMatchesCount } from "@/components/(pages)/(protected)/home/my-matches-count";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { TabsListMatches } from "@/components/(pages)/(protected)/home/tabs-list-matches";
+import { OldMatches } from "@/components/(pages)/(protected)/home/old-matches";
+import { TabsListMatchesLoading } from "@/components/(pages)/(protected)/home/loading/tabs-list-matches-loading";
 
 export default async function HomePage({ 
     searchParams 
 }: { 
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-    const t = await getTranslations("HomePage");
-
     const awaitedSearchParams = await searchParams;
 
     const date = awaitedSearchParams.date;
@@ -33,12 +30,9 @@ export default async function HomePage({
                 </div>
         
                 <Tabs defaultValue="all-matches">
-                    <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="all-matches">{t('allMatches')}</TabsTrigger>
-                        <Suspense fallback={<p>...</p>}>
-                            <MyMatchesCount />
-                        </Suspense>
-                    </TabsList>
+                    <Suspense fallback={<TabsListMatchesLoading />}>
+                        <TabsListMatches />
+                    </Suspense>
 
                     <TabsContent value="all-matches">
                         <Suspense fallback={<DisplayMatchesLoading />}>
@@ -49,6 +43,12 @@ export default async function HomePage({
                     <TabsContent value="my-matches">
                         <Suspense fallback={<DisplayMatchesLoading />}>
                             <ActiveMatches />
+                        </Suspense>
+                    </TabsContent>
+
+                    <TabsContent value="old-matches">
+                        <Suspense fallback={<DisplayMatchesLoading />}>
+                            <OldMatches />
                         </Suspense>
                     </TabsContent>
                 </Tabs>

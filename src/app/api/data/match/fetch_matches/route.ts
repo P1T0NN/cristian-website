@@ -28,6 +28,7 @@ export const GET = withAuth(async (request: NextRequest, userId: string, _token:
     const gender = searchParams.get('gender');
     const isAdmin = searchParams.get('isAdmin') === 'true';
     const playerLevel = searchParams.get('playerLevel');
+    const includeOldMatches = searchParams.get('includeOldMatches') === 'true';
 
     const currentDate = new Date();
     const currentDateString = currentDate.toISOString().split('T')[0]; // YYYY-MM-DD
@@ -36,13 +37,20 @@ export const GET = withAuth(async (request: NextRequest, userId: string, _token:
     let matchesQuery = supabase
         .from('matches')
         .select('*')
-        .order('starts_at_day', { ascending: true })
-        .order('starts_at_hour', { ascending: true });
+        .order('starts_at_day', { ascending: includeOldMatches ? false : true })
+        .order('starts_at_hour', { ascending: includeOldMatches ? false : true });
 
-    if (date) {
+    if (includeOldMatches) {
+        matchesQuery = matchesQuery
+            .lt('starts_at_day', currentDateString)
+            .or(`starts_at_day.eq.${currentDateString},starts_at_hour.lt.${currentTimeString}`)
+            .limit(20);
+    } else if (date) {
         matchesQuery = matchesQuery.eq('starts_at_day', date);
     } else {
-        matchesQuery = matchesQuery.gte('starts_at_day', currentDateString);
+        matchesQuery = matchesQuery
+            .gt('starts_at_day', currentDateString)
+            .or(`starts_at_day.eq.${currentDateString},starts_at_hour.gte.${currentTimeString}`);
     }
 
     if (!isAdmin && gender) {
@@ -68,12 +76,12 @@ export const GET = withAuth(async (request: NextRequest, userId: string, _token:
     const userMatchIds = new Set(userMatches?.map(um => um.match_id) || []);
 
     const filteredMatches = dbMatches.filter(match => {
-        if (isAdmin) return true;
+        if (isAdmin || includeOldMatches) return true;
         if (!playerLevel) return false;
         if (match.match_level && !match.match_level.includes(playerLevel)) return false;
 
         // For non-admin users, filter out matches that have already started
-        if (match.starts_at_day === currentDateString && match.starts_at_hour < currentTimeString) {
+        if (!includeOldMatches && match.starts_at_day === currentDateString && match.starts_at_hour < currentTimeString) {
             return false;
         }
 

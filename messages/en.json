@@ -48,7 +48,10 @@
         "minutes": "minutes",
         "matchLevel": "Level",
         "organizer": "Organizer",
-        "available": "Available"
+        "available": "Available",
+        "pastMatches": "Past Matches",
+        "pastEvents": "Past Events",
+        "noPastEventsAvailable": "No past events available"
     },
 
     "LoginPage": {
