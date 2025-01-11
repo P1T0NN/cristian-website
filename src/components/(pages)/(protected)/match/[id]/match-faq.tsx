@@ -136,7 +136,13 @@ export const MatchFAQ = async () => {
                             </span>
                         </AccordionTrigger>
                         <AccordionContent>
-                            <p>{t('weather.answer')}</p>
+                            <div className="space-y-2">
+                                <p>{t('weather.answer1')}</p>
+                                <p>{t('weather.answer2')}</p>
+                                <p className="bg-red-100 dark:bg-red-900 p-2 rounded-md">
+                                    {t('weather.answer3')}
+                                </p>
+                            </div>
                         </AccordionContent>
                     </AccordionItem>
 

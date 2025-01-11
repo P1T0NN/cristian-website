@@ -383,7 +383,9 @@
             },
             "weather": {
                 "question": "¿Qué pasa si hace Mal tiempo?",
-                "answer": "Se mantiene así"
+                "answer1": "En 'Crys Sports' ¡jugamos al fútbol llueva o haga sol!",
+                "answer2": "Así que ya sea Frío, Soleado, Lloviendo o Nevando, Hacemos deporte.",
+                "answer3": "Excepto en condiciones extremas (como alertas), siempre jugamos, los partidos NO SE SUSPENDEN"
             },
             "cancellation": {
                 "question": "¿Qué pasa si ya no puedo acudir a un evento al que me apunté?",

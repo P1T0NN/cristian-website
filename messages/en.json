@@ -381,8 +381,10 @@
                 "answer4": "Shin guards are Optional"
             },
             "weather": {
-                "question": "What happens if the weather is bad?",
-                "answer": "It remains the same"
+                "question": "What happens in bad weather?",
+                "answer1": "At 'Crys Sports' we play football rain or shine!",
+                "answer2": "So whether it's Cold, Sunny, Raining or Snowing, We play sports.",
+                "answer3": "Except in extreme conditions (like alerts), we always play, matches ARE NOT SUSPENDED"
             },
             "cancellation": {
                 "question": "What if I can no longer attend an event I signed up for?",
