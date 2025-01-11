@@ -334,58 +334,85 @@
         "available": "Plazas disponibles",
         "MatchFAQ": {
             "title": "Preguntas Frecuentes",
-            "startTimeDuration": {
-                "question": "Hora de Inicio y Duración",
-                "answer1": "Todos Nuestros Partidos Comienzan 15min' después de la hora indicada.",
-                "answer2": "ROGAMOS ESTAR esos minutos previos, antes en el campo, para prepararse",
-                "answer3": "Los partidos tendrán la Duración marcada en cada partido (pudiendo alternar 5min' menos o 20min extras, según las necesidades del organizador.)",
-                "answer4": "No se podrá abandonar antes un partido! Salvo por una lesión"
+            "aboutUs": {
+                "question": "Sobre Nosotros",
+                "answer1": "De la pasión por el deporte nace nuestra idea, con más de 8 años de experiencia en Valencia ahora nos Renovamos para que puedan seguir disfrutando junto a nosotros.",
+                "answer2": "Somos un Grupo especializado en la organización de Eventos deportivos.",
+                "answer3": "Os Presentamos 'Crys Sports' una plataforma donde la organización de los eventos se vuelve mucho más fácil.",
+                "answer4": "Estamos enfocados en:",
+                "sports": {
+                    "football": "Fútbol (7/8/11)",
+                    "futsal": "Fútbol-Sala",
+                    "volleyball": "Voley (playa y pista)",
+                    "basketball": "Baloncesto",
+                    "multiple": "Deporte Multiple"
+                },
+                "answer5": "Tenemos eventos todos los días y el los próximos meses ampliaremos nuestros deportes.",
+                "answer6": "Gracias por sumarte a nosotros, nos vemos pronto en el próximo evento."
             },
-            "howItWorks": {
-                "question": "¿Cómo Funcionamos?",
-                "answer1": "EN 'CRYS SPORTS' queremos que hacer deporte sea una tarea sencilla por ello:",
-                "answer2": "¡No te preocupes de nada, solo ponte equipaje y a jugar!",
-                "answer3": "¡Es muy simple! No necesitas tener un equipo.",
-                "answer4": "TODOS NUESTROS PARTIDOS SON AMISTOSOS y pueden participar personas de cualquier nivel.",
-                "answer5": "Portero: Si no tenemos portero asignado, Todos los jugadores se turnaran durante 7 minutos"
+            "howToParticipate": {
+                "question": "¿Cómo puedo participar?",
+                "answer1": "Hemos desarrollado un sistema para que te sea muy fácil participar en cualquiera de nuestros eventos.",
+                "answer2": "Solo debes Seleccionar el día y elegir el 'Evento' al que deseas participar, mira los detalles y las Indicaciones y solo pulsar en 'unirte al partido'.",
+                "answer3": "Y después solo preséntate en el campo el dia y a la hora indicada y a jugar.",
+                "answer4": "¡No te preocupes de nada, solo ponte equipaje y a jugar!",
+                "answer5": "El Organizador del partido te indicará todo lo que necesitas saber."
+            },
+            "startTime": {
+                "question": "HORA DE INICIO",
+                "answer1": "Para nosotros es muy importante la Puntualidad: por lo tanto, en todos nuestros eventos 'CITAREMOS A TODOS 15min antes de la hora de inicio en el campo'",
+                "answer2": "La hora indicada en el evento, es la hora a la que deberán estar ya en la instalación",
+                "answer3": "Tiempo para poder encontrar al organizador, saber tu equipo y abonar si fuera necesario."
+            },
+            "footballRules": {
+                "question": "¡Reglas en los Partidos de fútbol!",
+                "answer1": "En todos los partidos antes de empezar se Decidirá si habrá Fuera de Juego o no.",
+                "answer2": "Portero: Si no tenemos portero asignado, Todos los jugadores se turnaran durante 7 minutos",
+                "answer3": "Si Hubiera Suplentes: Todos los Jugadores se cambiarán por a turnos (según el tiempo que determine el organizador) Por lo general cada 7min"
             },
             "equipment": {
-                "question": "¿Qué equipaje se Necesita?",
-                "answer1": "LLEVAMOS SIEMPRE UNA CAMISETA BLANCA Y UNA CAMISETA NEGRA (ambos colores obligatorio)",
-                "answer2": "Recomendamos zapatillas de tacos o multi-tacos para todos los partidos en Césped Artifical",
+                "question": "¿Qué equipaje necesito?",
+                "answer1": "Llevamos siempre:",
+                "items": {
+                    "whiteShirt": "1 camiseta BLANCA",
+                    "blackShirt": "1 camiseta NEGRA"
+                },
+                "answer2": "Recomendamos zapatillas de Tacos o Multi-tacos para todos los Eventos en Césped Artifical o Deportivas (de ser posible que no resbalen)",
                 "answer3": "PROHIBIDO LOS TACOS DE METAL",
-                "answer4": "Para el Futbol SALA: Recomendamos Deportivas lisas o normales o zapatos especiales de sala.",
-                "answer5": "Las Espinilleras es de elección libre, pero no son obligatorias"
+                "answer4": "Las Espinilleras son Opcionales"
             },
             "weather": {
-                "question": "¿Qué pasa si hace mal tiempo?",
-                "answer1": "En 'Crys Sports' ¡Amamos el fútbol bajo el agua!",
-                "answer2": "Así que con Frío, Soleado, lloviendo o Nevando, Hacemos deporte.",
-                "answer3": "A excepción de condiciones extremas (como alertas), Siempre jugamos, los partidos NO SE SUSPENDEN"
+                "question": "¿Qué pasa si hace Mal tiempo?",
+                "answer": "Se mantiene así"
             },
             "cancellation": {
-                "question": "¿Qué Pasa si ya no puedo acudir al partido?",
-                "answer1": "Si te ha surgido un inconveniente puedes quitarte siempre que estes en un plazo de 8 horas antes del partido.",
+                "question": "¿Qué pasa si ya no puedo acudir a un evento al que me apunté?",
+                "answer1": "Si te ha surgido un inconveniente puedes quitarte siempre que estes en un plazo de 10 horas antes del partido.",
                 "answer2": "Una vez pasado este tiempo, tienes la opción de 'solicitar un reemplazo'",
                 "answer3": "Una vez solicitado, cualquiera puede sustituirte y la organización intentará buscarte un sustituto",
-                "answer4": "Pero si por alguna situación la plaza no se ocupara, tu perderías el Dinero/saldo/Tiket de ese partido o lo deberas abonar próximo partido.",
-                "answer5": "¡Cuidado! Si esta situación se repite, podrás ser expulsado de todos nuestros eventos."
+                "answer4": "Pero si por alguna situación la plaza no se ocupara, tu perderías el Dinero/saldo/Tiket de ese partido o lo deberas abonar próximo partido. ¡Cuidado! Si esta situación se repite, podrás ser expulsado de todos nuestros eventos."
             },
             "facilities": {
-                "question": "Duchas y Vestuario",
-                "answer1": "¡En casi todos los campos, podrás hacer uso de los vestuarios y sus duchas!",
-                "answer2": "PERO OJO! si tu partido acaba 22:45 o más tarde....",
+                "question": "Duchas y Vestuarios",
+                "answer1": "¡En casi todas las instalaciones, podrás hacer uso de los vestuarios y sus duchas!",
+                "answer2": "PERO OJO! Si tu Evento acaba 22:45 o más tarde....",
                 "answer3": "22:45 LAS DUCHAS ESTARAN CERRADAS",
-                "answer4": "Para más detalle consulta a tu Organizador antes de empezar y te indicará si hay posibilidad de usar las duchas.",
-                "answer5": "¡Se responsable y cuida las instalaciones!",
-                "answer6": "Si alguien provoca algún daño o es causa de algún problema con la instalación, se le podrá prohibir el acceso para siempre a los eventos."
+                "answer4": "Para más detalle consulta a tu Organizador antes de empezar y te indicará si hay posibilidad de usar las duchas. ¡Se responsable y cuida las instalaciones! Si alguien provoca algún daño o es causa de algún problema con la instalación, se le podrá prohibir el acceso para siempre a los eventos."
+            },
+            "addFriend": {
+                "question": "¿Añadir 1 amigo?",
+                "answer1": "¡Nos alegra saber que quieres traer un amigo!",
+                "answer2": "Puedes añadir 1 amigo y realizar el pago por el y tú serás el Responsable de que acuda."
+            },
+            "addMultipleFriends": {
+                "question": "¿Quieres Añadir más de de 1 amigo o tienes un equipo completo?",
+                "answer": "Para añadir más de 1 amigo o un equipo completo contacta con el soporte"
             },
             "contact": {
-                "title": "¿Todavía tienes dudas o preguntas?",
-                "message": "Contacta aquí.",
-                "phoneNumber": "Teléfono",
-                "email": "Correo electrónico",
-                "emailButton": "Enviar correo"
+                "title": "¿Aún tienes preguntas o inquietudes?",
+                "message": "Contáctanos aquí.",
+                "whatsappButton": "WhatsApp",
+                "emailButton": "Enviar Email"
             }
         }
     },
@@ -901,7 +928,8 @@
         "OPERATION_SUCCESS": "¡Operación exitosa!",
         "OPERATION_PARTIAL_SUCCESS": "Algunas operaciones han fallado",
         "ACCESS_DENIED": "Acceso denegado. No tienes los permisos necesarios.",
-        "UNEXPECTED_ERROR": "Se produjo un error inesperado. Por favor, inténtelo de nuevo más tarde."
+        "UNEXPECTED_ERROR": "Se produjo un error inesperado. Por favor, inténtelo de nuevo más tarde.",
+        "BAD_REQUEST": "Bad request!"
     },
 
     "FetchMessages": {

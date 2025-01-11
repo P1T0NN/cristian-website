@@ -44,7 +44,7 @@ export async function replacePlayer({
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!matchIdFromParams || !userId || !teamNumber) {
+    if (!matchIdFromParams || !userId) {
         return { success: false, message: t('BAD_REQUEST') };
     }
 

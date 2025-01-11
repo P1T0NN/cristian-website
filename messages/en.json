@@ -333,57 +333,84 @@
         "available": "Available",
         "MatchFAQ": {
             "title": "Frequently Asked Questions",
-            "startTimeDuration": {
-                "question": "Start Time and Duration",
-                "answer1": "All our matches start 15 minutes after the indicated time.",
-                "answer2": "WE REQUEST THAT YOU BE on the field those previous minutes to prepare.",
-                "answer3": "The matches will have the duration marked for each match (may alternate 5 minutes less or 20 minutes extra, according to the organizer's needs).",
-                "answer4": "You cannot leave a match early! Except for an injury."
+            "aboutUs": {
+                "question": "About Us",
+                "answer1": "Our idea is born from the passion for sports, with more than 8 years of experience in Valencia, we are now renewing ourselves so that you can continue enjoying with us.",
+                "answer2": "We are a group specialized in organizing sports events.",
+                "answer3": "We present to you 'Crys Sports', a platform where event organization becomes much easier.",
+                "answer4": "We are focused on:",
+                "sports": {
+                    "football": "Football (7/8/11)",
+                    "futsal": "Futsal",
+                    "volleyball": "Volleyball (beach and court)",
+                    "basketball": "Basketball",
+                    "multiple": "Multiple sports"
+                },
+                "answer5": "We have events every day and in the coming months we will expand our sports.",
+                "answer6": "Thank you for joining us, see you soon at the next event."
             },
-            "howItWorks": {
-                "question": "How does it work?",
-                "answer1": "At CRYS SPORTS, we want to make sports a simple task for everyone:",
-                "answer2": "Don't worry about anything, just bring your equipment and play!!",
-                "answer3": "It's very simple! You don't need to have a team.",
-                "answer4": "ALL OUR MATCHES ARE FRIENDLY and people of any level can participate.",
-                "answer5": "Goalkeeper: If we don't have an assigned goalkeeper, all players will rotate every 7 minutes"
+            "howToParticipate": {
+                "question": "How can I participate?",
+                "answer1": "We have developed a system to make it very easy for you to participate in any of our events.",
+                "answer2": "You just need to select the day and choose the 'Event' you want to participate in, look at the details and instructions, and just click on 'join the match'.",
+                "answer3": "Then just show up at the field on the day and time indicated and play.",
+                "answer4": "Don't worry about anything, just put on your gear and play!",
+                "answer5": "The Match Organizer will tell you everything you need to know."
+            },
+            "startTime": {
+                "question": "Start Time",
+                "answer1": "Punctuality is very important to us: therefore, in all our events, 'WE WILL CALL EVERYONE 15 minutes before the start time at the field'",
+                "answer2": "The time indicated in the event is the time you should already be at the facility",
+                "answer3": "Time to find the organizer, know your team, and pay if necessary."
+            },
+            "footballRules": {
+                "question": "Rules in Football Matches!",
+                "answer1": "In all matches, before starting, it will be decided if there will be Offside or not.",
+                "answer2": "Goalkeeper: If we don't have an assigned goalkeeper, all players will rotate every 7 minutes",
+                "answer3": "If there are Substitutes: All Players will change by turns (according to the time determined by the organizer) Generally every 7min"
             },
             "equipment": {
-                "question": "What equipment is needed?",
-                "answer1": "WE ALWAYS BRING A WHITE SHIRT AND A BLACK SHIRT (both colors mandatory)",
-                "answer2": "We recommend cleats or multi-cleats for all matches on Artificial Turf",
-                "answer3": "NO METAL CLEATS ALLOWED",
-                "answer4": "For Indoor Soccer: We recommend smooth or normal sneakers or special indoor shoes.",
-                "answer5": "Shin guards are optional, but not mandatory"
+                "question": "What equipment do I need?",
+                "answer1": "We always bring:",
+                "items": {
+                "whiteShirt": "1 WHITE shirt",
+                "blackShirt": "1 BLACK shirt"
+                },
+                "answer2": "We recommend cleats or multi-cleats for all Events on Artificial Grass or Sneakers (if possible non-slip)",
+                "answer3": "METAL CLEATS ARE PROHIBITED",
+                "answer4": "Shin guards are Optional"
             },
             "weather": {
-                "question": "What happens in bad weather?",
-                "answer1": "At 'Crys Sports' we play football rain or shine!",
-                "answer2": "So whether it's Cold, Sunny, Raining or Snowing, We play sports.",
-                "answer3": "Except in extreme conditions (like alerts), we always play, matches ARE NOT SUSPENDED"
+                "question": "What happens if the weather is bad?",
+                "answer": "It remains the same"
             },
             "cancellation": {
-                "question": "What if I can't attend the match?",
-                "answer1": "If you have an issue, you can remove yourself as long as you're within 8 hours before the match.",
+                "question": "What if I can no longer attend an event I signed up for?",
+                "answer1": "If you have an issue, you can remove yourself as long as you're within 10 hours before the match.",
                 "answer2": "After this time, you have the option to 'request a replacement'",
                 "answer3": "Once requested, anyone can substitute you and the organization will try to find you a substitute",
-                "answer4": "But if for some reason the spot is not filled, you would lose the Money/balance/Ticket for that match or you would have to pay for the next match.",
-                "answer5": "Warning! If this situation repeats, you may be expelled from all our events."
+                "answer4": "But if for some reason the spot is not filled, you would lose the Money/balance/Ticket for that match or you would have to pay for the next match. Warning! If this situation repeats, you may be expelled from all our events."
             },
             "facilities": {
                 "question": "Showers and Changing Rooms",
-                "answer1": "In almost all fields, you can use the changing rooms and showers!",
-                "answer2": "BUT! if your match ends at 22:45 or later....",
-                "answer3": "22:45 SHOWERS WILL BE CLOSED",
-                "answer4": "For more details consult your Organizer before starting and they will indicate if there is a possibility of using the showers.",
-                "answer5": "Be responsible and take care of the facilities!",
-                "answer6": "If someone breaks something or causes any problem with the facility, they may be prohibited from accessing events forever."
+                "answer1": "In almost all facilities, you can use the changing rooms and their showers!",
+                "answer2": "BUT! If your Event ends at 22:45 or later....",
+                "answer3": "22:45 THE SHOWERS WILL BE CLOSED",
+                "answer4": "For more details, consult your Organizer before starting and they will indicate if there is a possibility of using the showers. Be responsible and take care of the facilities! If someone causes any damage or is the cause of any problem with the facility, they may be prohibited from accessing events forever."
+            },
+            "addFriend": {
+                "question": "Add 1 friend?",
+                "answer1": "We're glad to know you want to bring a friend!",
+                "answer2": "You can add 1 friend and make the payment for them, and you will be responsible for their attendance."
+            },
+            "addMultipleFriends": {
+                "question": "Want to add more than 1 friend or have a complete team?",
+                "answer": "To add more than 1 friend or a complete team, contact support"
             },
             "contact": {
                 "title": "Still have questions or concerns?",
                 "message": "Contact us here.",
-                "phoneNumber": "Phone",
-                "email": "Email",
+                "whatsappButton": "WhatsApp",
                 "emailButton": "Send Email"
             }
         }
