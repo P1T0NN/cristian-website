@@ -25,33 +25,48 @@ export const GET = withAuth(async (request: NextRequest, userId: string, _token:
     const gender = searchParams.get('gender');
     const isAdmin = searchParams.get('isAdmin') === 'true';
     const playerLevel = searchParams.get('playerLevel');
+    const isPastMatches = searchParams.get('isPastMatches') === 'true';
     const status = searchParams.get('status');
 
-    const currentDate = searchParams.get('currentDate');
-    const currentTime = searchParams.get('currentTime');
+    const currentDate = new Date();
+    const currentDateString = currentDate.toISOString().split('T')[0]; // YYYY-MM-DD
+    const currentTimeString = currentDate.toTimeString().split(' ')[0].slice(0, 5); // HH:MM
 
+    // Start with a base query
     let matchesQuery = supabase
         .from('matches')
-        .select('*')
-        .order('starts_at_day', { ascending: false })
-        .order('starts_at_hour', { ascending: false });
+        .select('*');
 
-    if (status === 'active') {
-        matchesQuery = matchesQuery.neq('status', 'finished');
-    } else if (searchParams.get('isPastMatches') === 'true' && currentDate && currentTime) {
-        matchesQuery = matchesQuery.or(
-            `starts_at_day.lt.${currentDate},and(starts_at_day.eq.${currentDate},starts_at_hour.lt.${currentTime})`
-        );
-    } else if (status) {
-        matchesQuery = matchesQuery.eq('status', status);
-    } else if (date) {
-        matchesQuery = matchesQuery.eq('starts_at_day', date);
+    // Handle date filtering first, exactly like the old version
+    if (date) {
+        matchesQuery = matchesQuery
+            .eq('starts_at_day', date)
+            .neq('status', 'finished')  // Don't show finished matches
+            .order('starts_at_hour', { ascending: true });
+    } else if (status === 'active') {
+        matchesQuery = matchesQuery
+            .neq('status', 'finished')
+            .gte('starts_at_day', currentDateString)
+            .or(`starts_at_day.eq.${currentDateString},starts_at_hour.gte.${currentTimeString}`)
+            .order('starts_at_day', { ascending: true })
+            .order('starts_at_hour', { ascending: true });
+    } else if (isPastMatches) {
+        matchesQuery = matchesQuery
+            .lt('starts_at_day', currentDateString)
+            .or(`starts_at_day.eq.${currentDateString},starts_at_hour.lt.${currentTimeString}`)
+            .order('starts_at_day', { ascending: false })
+            .order('starts_at_hour', { ascending: false })
+            .limit(20);
     } else {
         matchesQuery = matchesQuery
-            .gt('starts_at_day', currentDate as string)
-            .or(`starts_at_day.eq.${currentDate},starts_at_hour.gte.${currentTime}`);
+            .gt('starts_at_day', currentDateString)
+            .or(`starts_at_day.eq.${currentDateString},starts_at_hour.gte.${currentTimeString}`)
+            .neq('status', 'finished')  // Don't show finished matches
+            .order('starts_at_day', { ascending: true })
+            .order('starts_at_hour', { ascending: true });
     }
 
+    // Apply gender filter after date filtering, exactly like the old version
     if (!isAdmin && gender) {
         matchesQuery = matchesQuery.or(`match_gender.eq.${gender},match_gender.eq.Mixed`);
     }
@@ -77,21 +92,24 @@ export const GET = withAuth(async (request: NextRequest, userId: string, _token:
 
     const userMatchIds = new Set(userMatches?.map(um => um.match_id) || []);
 
-    const matchesWithUserStatus = dbMatches.map(match => ({
-        ...match,
-        isUserInMatch: userMatchIds.has(match.id)
-    }));
-
-    const filteredMatches = matchesWithUserStatus.filter(match => {
-        if (isAdmin) return true;
-        if (status === 'active' && match.isUserInMatch) return true;
+    const filteredMatches = dbMatches.filter(match => {
+        if (isAdmin || isPastMatches) return true;
         if (!playerLevel) return false;
         if (match.match_level && !match.match_level.includes(playerLevel)) return false;
+
+        // For non-admin users, filter out matches that have already started
+        if (!isPastMatches && match.starts_at_day === currentDateString && match.starts_at_hour < currentTimeString) {
+            return false;
+        }
+
         return true;
     });
 
     await Promise.all(filteredMatches.map(async (match) => {
-        const matchWithoutPlayers = { ...match };
+        const matchWithoutPlayers = { 
+            ...match,
+            isUserInMatch: userMatchIds.has(match.id)
+        };
         delete matchWithoutPlayers.match_players;
         
         const cacheKey = `${CACHE_KEYS.MATCH_PREFIX}${match.id}`;
@@ -105,6 +123,9 @@ export const GET = withAuth(async (request: NextRequest, userId: string, _token:
     return NextResponse.json({ 
         success: true, 
         message: t('MATCHES_SUCCESSFULLY_FETCHED'), 
-        data: filteredMatches 
+        data: filteredMatches.map(match => ({
+            ...match,
+            isUserInMatch: userMatchIds.has(match.id)
+        }))
     });
 });
