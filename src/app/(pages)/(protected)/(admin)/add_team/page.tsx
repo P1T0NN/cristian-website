@@ -2,8 +2,8 @@
 import { getTranslations } from "next-intl/server";
 
 // COMPONENTS
-import { AddTeamDialog } from "@/components/(pages)/(protected)/(admin)/add_team/add-team-dialog";
-import { TeamTable } from "@/components/(pages)/(protected)/(admin)/add_team/team-table";
+import { AddTeamDialog } from "@/features/teams/components/add-team-dialog";
+import { TeamTable } from "@/features/teams/components/team-table";
 
 export default async function AddTeamPage() {
     const t = await getTranslations("AddTeamPage");

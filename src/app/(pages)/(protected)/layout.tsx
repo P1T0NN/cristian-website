@@ -1,8 +1,8 @@
 // PROVIDERS
-import { ThemeProvider } from "@/providers/theme-provider";
+import { ThemeProvider } from "@/shared/providers/theme-provider";
 
 // COMPONENTS
-import { HeaderProtected } from "@/components/ui/header/header_protected";
+import { HeaderProtected } from "@/shared/components/ui/header/header_protected";
 
 export default async function ProtectedLayout({
   children,

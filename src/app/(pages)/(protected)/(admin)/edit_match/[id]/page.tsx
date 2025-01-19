@@ -2,8 +2,8 @@
 import { getTranslations } from "next-intl/server";
 
 // COMPONENTS
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { EditMatchDetails } from "@/components/(pages)/(protected)/(admin)/edit_match/[id]/edit-match-details";
+import { Card, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { EditMatchDetails } from "@/features/matches/components/edit-match/edit-match-details";
 
 export default async function EditMatchPage({ 
     params 

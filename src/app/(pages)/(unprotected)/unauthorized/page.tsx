@@ -8,8 +8,8 @@ import { useTranslations } from 'next-intl';
 import { useQuery } from '@tanstack/react-query';
 
 // COMPONENTS
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { GoToLoginPageButton } from '@/components/(pages)/(unprotected)/unauthorized/go-to-login-page-button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { GoToLoginPageButton } from '@/features/auth/components/unauthorized/go-to-login-page-button';
 
 async function deleteAuthCookies() {
     const response = await fetch(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/logout`, {

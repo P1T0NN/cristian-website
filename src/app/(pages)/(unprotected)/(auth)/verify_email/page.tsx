@@ -5,7 +5,7 @@ import { Suspense } from 'react';
 import { getTranslations } from 'next-intl/server';
 
 // COMPONENTS
-import { VerifyEmailContent } from '@/components/(pages)/(unprotected)/(auth)/verify_email/verify-email-content';
+import { VerifyEmailContent } from '@/features/auth/components/(auth)/verify_email/verify-email-content';
 
 export default async function VerifyEmailPage({
   searchParams,

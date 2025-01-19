@@ -2,9 +2,9 @@
 import { getTranslations } from "next-intl/server";
 
 // COMPONENTS
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/shared/components/ui/skeleton";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/shared/components/ui/tabs";
+import { Card, CardContent } from "@/shared/components/ui/card";
 
 export default async function Loading() {
     const t = await getTranslations("SettingsPage");

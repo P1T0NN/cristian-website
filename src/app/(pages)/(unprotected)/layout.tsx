@@ -1,8 +1,8 @@
 // PROVIDERS
-import { ThemeProvider } from "@/providers/theme-provider";
+import { ThemeProvider } from "@/shared/providers/theme-provider";
 
 // COMPONENTS
-import { HeaderUnprotected } from "@/components/ui/header/header_unprotected";
+import { HeaderUnprotected } from "@/shared/components/ui/header/header_unprotected";
 
 export default async function UnprotectedLayout({
   children,

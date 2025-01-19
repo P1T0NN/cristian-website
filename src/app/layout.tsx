@@ -10,11 +10,11 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 
 // PROVIDERS
-import { ThemeProvider } from "@/providers/theme-provider";
-import { ReactQueryClientProvider } from "@/providers/react-query-client-provider";
+import { ThemeProvider } from "@/shared/providers/theme-provider";
+import { ReactQueryClientProvider } from "@/shared/providers/react-query-client-provider";
 
 // COMPONENTS
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@/shared/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 

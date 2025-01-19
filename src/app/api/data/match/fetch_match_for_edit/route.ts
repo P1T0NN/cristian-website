@@ -2,20 +2,20 @@
 import { NextResponse, NextRequest } from 'next/server';
 
 // LIBRARIES
-import { supabase } from '@/lib/supabase/supabase';
+import { supabase } from '@/shared/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
 // SERVICES
-import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
+import { upstashRedisCacheService } from '@/shared/services/server/redis-cache.service';
 
 // MIDDLEWARE
-import { withAuth } from '@/middleware/withAuth';
+import { withAuth } from '@/shared/middleware/withAuth';
 
 // CONFIG
 import { CACHE_KEYS } from '@/config';
 
 // TYPES
-import type { typesMatch } from '@/types/typesMatch';
+import type { typesMatch } from '@/features/matches/types/typesMatch';
 
 const CACHE_TTL = 60 * 60 * 12; // 12 hours in seconds
 

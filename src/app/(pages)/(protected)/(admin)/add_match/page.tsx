@@ -1,16 +1,16 @@
 // COMPONENTS
-import { Card } from "@/components/ui/card";
-import { UserDetails } from "@/components/(pages)/(protected)/(admin)/add_match/user-details";
-import { AddMatchDetails } from "@/components/(pages)/(protected)/(admin)/add_match/add-match-details";
+import { Card } from "@/shared/components/ui/card";
+import { UserDetails } from "@/features/matches/components/add-match/user-details";
+import { AddMatchDetails } from "@/features/matches/components/add-match/add-match-details";
 
 // ACTIONS
-import { getUser } from "@/actions/auth/verifyAuth";
-import { fetchDefaultLocations } from "@/actions/location/fetchDefaultLocations";
-import { fetchLocations } from "@/actions/location/fetchLocations";
+import { getUser } from "@/features/auth/actions/verifyAuth";
+import { fetchDefaultLocations } from "@/features/locations/actions/fetchDefaultLocations";
+import { fetchLocations } from "@/features/locations/actions/fetchLocations";
 
 // TYPES
-import type { typesUser } from "@/types/typesUser";
-import type { typesLocation } from "@/types/typesLocation";
+import type { typesUser } from "@/features/players/types/typesPlayer";
+import type { typesLocation } from "@/features/locations/types/typesLocation";
 
 export default async function AddMatchPage() {
     const serverUserData = await getUser() as typesUser;

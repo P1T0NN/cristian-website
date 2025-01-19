@@ -1,5 +1,5 @@
 // COMPONENTS
-import { TeamDetails } from '@/components/(pages)/(protected)/team/[id]/team-details';
+import { TeamDetails } from "@/features/teams/components/team-details";
 
 export default async function TeamPage({ 
     params 

@@ -2,14 +2,14 @@
 import { getTranslations } from 'next-intl/server';
 
 // COMPONENTS
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DisplayUsers } from "@/components/(pages)/(protected)/(admin)/access_for_registrations/display-users";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { DisplayUsers } from '@/features/players/components/register-access/display-users';
 
 // ACTIONS
-import { fetchNoAccessUsers } from '@/actions/user/fetchNoAccessUsers';
+import { fetchNoAccessUsers } from '@/features/players/actions/fetchNoAccessUsers';
 
 // TYPES
-import type { typesUser } from "@/types/typesUser";
+import type { typesUser } from '@/features/players/types/typesPlayer';
 
 export default async function AccessForRegistrationPage() {
     const t = await getTranslations('AccessForRegistrationPage');

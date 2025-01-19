@@ -2,14 +2,14 @@
 import { Suspense } from "react";
 
 // COMPONENTS
-import { DisplayCalendar } from "@/components/(pages)/(protected)/home/display-calendar";
-import { DisplayMatches } from "@/components/(pages)/(protected)/home/display-matches";
-import { ActiveMatches } from "@/components/(pages)/(protected)/home/active-matches";
-import { DisplayMatchesLoading } from "@/components/(pages)/(protected)/home/loading/display-matches-loading";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { TabsListMatches } from "@/components/(pages)/(protected)/home/tabs-list-matches";
-import { OldMatches } from "@/components/(pages)/(protected)/home/old-matches";
-import { TabsListMatchesLoading } from "@/components/(pages)/(protected)/home/loading/tabs-list-matches-loading";
+import { DisplayCalendar } from "@/features/matches/components/active-matches/display-calendar";
+import { DisplayMatches } from "@/features/matches/components/active-matches/display-matches";
+import { ActiveMatches } from "@/features/matches/components/active-matches/active-matches";
+import { Tabs, TabsContent } from "@/shared/components/ui/tabs";
+import { TabsListMatches } from "@/features/matches/components/active-matches/tabs-list-matches";
+import { DisplayMatchesLoading } from "@/features/matches/components/loading/display-matches-loading";
+import { TabsListMatchesLoading } from "@/features/matches/components/loading/tabs-list-matches-loading";
+import { OldMatches } from "@/features/matches/components/active-matches/old-matches";
 
 export default async function HomePage({ 
     searchParams 

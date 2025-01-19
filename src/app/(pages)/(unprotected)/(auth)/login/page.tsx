@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 // COMPONENTS
-import { LoginContent } from "@/components/(pages)/(unprotected)/(auth)/login/login-content";
+import { LoginContent } from '@/features/auth/components/(auth)/login/login-content';
 
 async function deleteAuthCookies() {
     const response = await fetch(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/logout`, {

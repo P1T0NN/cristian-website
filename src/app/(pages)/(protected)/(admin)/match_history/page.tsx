@@ -2,7 +2,7 @@
 import { getTranslations } from "next-intl/server";
 
 // COMPONENTS
-import { DisplayMatchHistory } from "@/components/(pages)/(protected)/(admin)/match_history/display-match-history";
+import { DisplayMatchHistory } from "@/features/matches/components/match-history/display-match-history";
 
 export default async function MatchHistoryPage() {
     const t = await getTranslations("MatchHistoryPage");

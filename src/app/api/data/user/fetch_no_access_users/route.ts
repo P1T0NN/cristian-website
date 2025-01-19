@@ -2,11 +2,11 @@
 import { NextResponse, NextRequest } from 'next/server';
 
 // LIBRARIES
-import { supabase } from '@/lib/supabase/supabase';
+import { supabase } from '@/shared/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
 // MIDDLEWARE
-import { withAuth } from '@/middleware/withAuth';
+import { withAuth } from '@/shared/middleware/withAuth';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const GET = withAuth(async (_request: NextRequest, _userId: string, _token: string): Promise<NextResponse> => {

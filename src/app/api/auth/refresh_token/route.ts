@@ -2,13 +2,13 @@
 import { NextResponse } from 'next/server';
 
 // LIBRARIES
-import { supabase } from '@/lib/supabase/supabase';
+import { supabase } from '@/shared/lib/supabase/supabase';
 
 // UTILS
-import { generateToken } from '@/utils/auth/jwt';
+import { generateToken } from '@/features/auth/utils/jwt';
 
 // TYPES
-import type { APIResponse } from '@/types/responses/APIResponse';
+import type { APIResponse } from '@/shared/types/responses/APIResponse';
 
 export async function POST(req: Request): Promise<NextResponse<APIResponse>> {
     const { refreshToken } = await req.json();

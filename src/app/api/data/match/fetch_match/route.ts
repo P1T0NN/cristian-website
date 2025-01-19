@@ -2,22 +2,24 @@
 import { NextResponse, NextRequest } from 'next/server';
 
 // LIBRARIES
-import { supabase } from '@/lib/supabase/supabase';
+import { supabase } from '@/shared/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
 // SERVICES
-import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
+import { upstashRedisCacheService } from '@/shared/services/server/redis-cache.service';
 
 // MIDDLEWARE
-import { withAuth } from '@/middleware/withAuth';
+import { withAuth } from '@/shared/middleware/withAuth';
 
 // CONFIG
 import { CACHE_KEYS } from '@/config';
 
 // TYPES
-import type { typesMatch } from '@/types/typesMatch';
-import type { typesMatchWithPlayers } from '@/types/typesMatchWithPlayers';
-import type { typesUser } from '@/types/typesUser';
+import type { typesMatch } from '@/features/matches/types/typesMatch';
+import type { typesMatchWithPlayers } from '@/features/matches/types/typesMatchWithPlayers';
+import type { typesPlayer } from '@/features/players/types/typesPlayer';
+import type { typesRegularPlayer } from '@/features/players/types/typesPlayer';
+import type { typesTemporaryPlayer } from '@/features/players/types/typesPlayer';
 
 const CACHE_TTL = 60 * 60 * 12; // 12 hours in seconds
 
@@ -32,7 +34,7 @@ export const GET = withAuth(async (request: NextRequest, _userId: string, _token
         return NextResponse.json({ success: false, message: t('BAD_REQUEST') }, { status: 400 });
     }
 
-    const [cacheResult, playersResult, temporaryPlayersResult] = await Promise.all([
+    const [cacheResult, playersResult] = await Promise.all([
         upstashRedisCacheService.get<typesMatch>(`${CACHE_KEYS.MATCH_PREFIX}${matchId}`),
         supabase
             .from('match_players')
@@ -46,13 +48,21 @@ export const GET = withAuth(async (request: NextRequest, _userId: string, _token
                     phoneNumber,
                     is_verified,
                     isAdmin,
-                    created_at
+                    created_at,
+                    player_debt,
+                    cristian_debt,
+                    player_level,
+                    dni,
+                    country,
+                    has_access,
+                    balance,
+                    verify_documents
+                ),
+                added_by:users (
+                    id,
+                    fullName
                 )
             `)
-            .eq('match_id', matchId),
-        supabase
-            .from('temporary_players')
-            .select('*')
             .eq('match_id', matchId)
     ]);
 
@@ -83,81 +93,87 @@ export const GET = withAuth(async (request: NextRequest, _userId: string, _token
         return NextResponse.json({ success: false, message: t('MATCH_NOT_FOUND') }, { status: 404 });
     }
 
-    if (playersResult.error || temporaryPlayersResult.error) {
+    if (playersResult.error) {
         return NextResponse.json({ success: false, message: t('MATCH_FAILED_TO_FETCH') }, { status: 500 });
     }
 
     const players = playersResult.data || [];
-    const temporaryPlayers = temporaryPlayersResult.data || [];
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const mapPlayer = (p: any): typesUser => ({
-        ...p.user,
-        matchPlayer: {
+    const mapPlayer = (p: any): typesPlayer => {
+        const basePlayer = {
             id: p.id,
+            teamNumber: p.team_number,
+            substituteRequested: p.substitute_requested,
             matchId: p.match_id,
-            userId: p.user_id,
-            substitute_requested: p.substitute_requested,
-            team_number: p.team_number,
-            created_at: p.created_at,
-            has_paid: p.has_paid,
-            has_discount: p.has_discount,
-            has_gratis: p.has_gratis,
-            has_match_admin: p.has_match_admin,
-            has_added_friend: p.has_added_friend,
-            has_entered_with_balance: p.has_entered_with_balance
+        };
+
+        if (p.player_type === 'regular') {
+            return {
+                ...basePlayer,
+                type: 'regular',
+                user: p.user,
+                matchPlayer: {
+                    id: p.id,
+                    matchId: p.match_id,
+                    userId: p.user_id,
+                    player_type: p.player_type,
+                    team_number: p.team_number,
+                    substitute_requested: p.substitute_requested,
+                    created_at: p.created_at,
+                    has_paid: p.has_paid,
+                    has_discount: p.has_discount,
+                    has_gratis: p.has_gratis,
+                    has_match_admin: p.has_match_admin,
+                    has_added_friend: p.has_added_friend,
+                    has_entered_with_balance: p.has_entered_with_balance,
+                    user: p.user ? {
+                        id: p.user.id,
+                        fullName: p.user.fullName
+                    } : undefined
+                }
+            } as typesRegularPlayer;
+        } else {
+            return {
+                ...basePlayer,
+                type: 'temporary',
+                temporary_player_name: p.temporary_player_name || 'Unknown Player',
+                phoneNumber: p.phone_number || '',
+                teamNumber: p.team_number,
+                substituteRequested: p.substitute_requested,
+                matchPlayer: {
+                    id: p.id,
+                    matchId: p.match_id,
+                    userId: p.user_id,        // This is the added_by_id for temporary players
+                    player_type: 'temporary',
+                    team_number: p.team_number,
+                    substitute_requested: p.substitute_requested,
+                    temporary_player_name: p.temporary_player_name,
+                    created_at: p.created_at,
+                    has_paid: p.has_paid,
+                    has_discount: p.has_discount,
+                    has_gratis: p.has_gratis,
+                    has_match_admin: false,
+                    has_added_friend: p.has_added_friend,
+                    has_entered_with_balance: p.has_entered_with_balance,
+                    added_by: p.added_by ? {
+                        id: p.added_by.id,
+                        fullName: p.added_by.fullName
+                    } : undefined
+                }
+            } as typesTemporaryPlayer;
         }
-    });
+    };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const mapTemporaryPlayer = (p: any): typesUser => ({
-        id: p.id,
-        email: '',
-        fullName: p.name,
-        phoneNumber: p.phone_number || '',
-        gender: '',
-        is_verified: false,
-        isAdmin: false,
-        player_debt: 0,
-        cristian_debt: 0,
-        player_level: '',
-        player_position: '',
-        created_at: new Date(p.created_at),
-        dni: '',
-        country: '',
-        has_access: false,
-        balance: 0,
-        verify_documents: false,
-        temporaryPlayer: {
-            id: p.id,
-            matchId: p.match_id,
-            team_number: p.team_number,
-            name: p.name,
-            added_by: p.added_by,
-            added_by_name: p.added_by_name,
-            has_paid: p.has_paid,
-            has_discount: p.has_discount,
-            has_gratis: p.has_gratis,
-            phone_number: p.phone_number,
-            substitute_requested: p.substitute_requested
-        }
-    });
-    
-
-    const allPlayers: typesUser[] = [
-        ...players.map(mapPlayer),
-        ...temporaryPlayers.map(mapTemporaryPlayer)
-    ];
-
-    const team1Players = allPlayers.filter(p => (p.matchPlayer?.team_number === 1) || (p.temporaryPlayer?.team_number === 1));
-    const team2Players = allPlayers.filter(p => (p.matchPlayer?.team_number === 2) || (p.temporaryPlayer?.team_number === 2));
-    const unassignedPlayers = allPlayers.filter(p => (p.matchPlayer?.team_number === 0) || (p.temporaryPlayer?.team_number === 0));
+    const allPlayers = players.map(mapPlayer);
 
     const matchWithPlayers: typesMatchWithPlayers = {
         match,
-        team1Players,
-        team2Players,
-        unassignedPlayers
+        players: allPlayers.map(player => ({
+            type: player.type,
+            player: player,
+            team_number: player.teamNumber as 0 | 1 | 2
+        }))
     };
 
     return NextResponse.json({ success: true, message: t('MATCH_SUCCESSFULLY_FETCHED'), data: matchWithPlayers });

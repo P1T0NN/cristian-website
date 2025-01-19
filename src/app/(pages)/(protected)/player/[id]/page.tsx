@@ -1,5 +1,5 @@
 // COMPONENTS
-import { PlayerDetails } from '@/components/(pages)/(protected)/player/[id]/player-details';
+import { PlayerDetails } from "@/features/players/components/player-details/player-details";
 
 export default async function PlayerPage({ 
     params 

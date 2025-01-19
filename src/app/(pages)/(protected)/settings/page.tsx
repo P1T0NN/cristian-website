@@ -2,7 +2,7 @@
 import { getTranslations } from "next-intl/server";
 
 // COMPONENTS
-import { SettingsDetails } from "@/components/(pages)/(protected)/settings/settings-details";
+import { SettingsDetails } from "@/features/settings/components/settings-details";
 
 export default async function SettingsPage() {
     const t = await getTranslations("SettingsPage");

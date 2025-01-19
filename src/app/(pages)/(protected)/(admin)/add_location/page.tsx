@@ -5,9 +5,9 @@ import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 
 // COMPONENTS
-import { AddLocationDialog } from "@/components/(pages)/(protected)/(admin)/add_location/add-location-dialog";
-import { LocationTable } from "@/components/(pages)/(protected)/(admin)/add_location/location-table";
-import { LocationTableLoading } from "@/components/(pages)/(protected)/(admin)/add_location/loading/location-table-loading";
+import { AddLocationDialog } from "@/features/locations/components/add-location/add-location-dialog";
+import { LocationTable } from "@/features/locations/components/location-table/location-table";
+import { LocationTableLoading } from "@/features/locations/components/loading/location-table-loading";
 
 export default async function AddLocationPage() {
     const t = await getTranslations("AddLocationPage");

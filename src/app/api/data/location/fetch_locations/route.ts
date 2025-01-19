@@ -3,19 +3,19 @@ import { NextResponse, NextRequest } from 'next/server';
 
 // LIBRARIES
 import { getTranslations } from 'next-intl/server';
-import { supabase } from '@/lib/supabase/supabase';
+import { supabase } from '@/shared/lib/supabase/supabase';
 
 // SERVICES
-import { upstashRedisCacheService } from '@/services/server/redis-cache.service';
+import { upstashRedisCacheService } from '@/shared/services/server/redis-cache.service';
 
 // MIDDLEWARE
-import { withAuth } from '@/middleware/withAuth';
+import { withAuth } from '@/shared/middleware/withAuth';
 
 // CONFIG
 import { CACHE_KEYS } from '@/config';
 
 // TYPES
-import type { typesLocation } from '@/types/typesLocation';
+import type { typesLocation } from '@/features/locations/types/typesLocation';
 
 const CACHE_TTL = 60 * 60; // 1 hour in seconds
 

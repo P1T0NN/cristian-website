@@ -2,20 +2,20 @@
 import { Suspense } from 'react';
 
 // COMPONENTS
-import { MatchDetails } from '@/components/(pages)/(protected)/match/[id]/match-details';
-import { MatchInstructions } from '@/components/(pages)/(protected)/match/[id]/match-instructions';
-import { DisplayTeamDetails } from '@/components/(pages)/(protected)/match/[id]/display-team-details';
-import { SwitchTeamColors } from '@/components/(pages)/(protected)/match/[id]/switch-team-colors';
-import { TeamDetails } from '@/components/(pages)/(protected)/match/[id]/team-details';
-import { AdminFunctions } from '@/components/(pages)/(protected)/match/[id]/admin-functions';
-import { MatchFAQ } from '@/components/(pages)/(protected)/match/[id]/match-faq';
-import { FAQWarning } from '@/components/(pages)/(protected)/match/[id]/faq-warning';
-import { MatchDetailsLoading } from '@/components/(pages)/(protected)/match/[id]/loading/match-details-loading';
-import { MatchInstructionsLoading } from '@/components/(pages)/(protected)/match/[id]/loading/match-instructions-loading';
-import { DisplayTeamDetailsLoading } from '@/components/(pages)/(protected)/match/[id]/loading/display-team-details-loading';
-import { SwitchTeamColorsLoading } from '@/components/(pages)/(protected)/match/[id]/loading/switch-team-colors-loading';
-import { TeamDetailsLoading } from '@/components/(pages)/(protected)/match/[id]/loading/team-details-loading';
-import { AdminFunctionsLoading } from '@/components/(pages)/(protected)/match/[id]/loading/admin-functions-loading';
+import { MatchDetails } from '@/features/matches/components/match-details/match-details';
+import { MatchInstructions } from '@/features/matches/components/match-details/match-instructions';
+import { DisplayTeamDetails } from '@/features/matches/components/match-details/display-team-details';
+import { SwitchTeamColors } from '@/features/matches/components/match-details/switch-team-colors';
+import { TeamDetails } from '@/features/matches/components/match-details/team-details';
+import { AdminFunctions } from '@/features/matches/components/match-details/admin-functions';
+import { MatchFAQ } from '@/features/matches/components/match-details/match-faq';
+import { FAQWarning } from '@/features/matches/components/match-details/faq-warning';
+import { MatchDetailsLoading } from '@/features/matches/components/loading/match-details-loading';
+import { MatchInstructionsLoading } from '@/features/matches/components/loading/match-instructions-loading';
+import { DisplayTeamDetailsLoading } from '@/features/matches/components/loading/display-team-details-loading';
+import { SwitchTeamColorsLoading } from '@/features/matches/components/loading/switch-team-colors-loading';
+import { TeamDetailsLoading } from '@/features/matches/components/loading/team-details-loading';
+import { AdminFunctionsLoading } from '@/features/matches/components/loading/admin-functions-loading';
 
 export default async function MatchPage({ 
     params

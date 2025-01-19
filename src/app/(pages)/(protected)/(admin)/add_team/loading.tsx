@@ -2,8 +2,8 @@
 import { getTranslations } from "next-intl/server"
 
 // COMPONENTS
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/components/ui/table"
+import { Skeleton } from "@/shared/components/ui/skeleton"
 
 export default async function loading() {
     const t = await getTranslations("AddTeamPage");

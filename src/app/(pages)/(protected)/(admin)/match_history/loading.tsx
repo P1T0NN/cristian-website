@@ -2,7 +2,7 @@
 import { getTranslations } from "next-intl/server";
 
 // COMPONENTS
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 export default async function loading() {
     const t = await getTranslations("MatchHistoryPage");

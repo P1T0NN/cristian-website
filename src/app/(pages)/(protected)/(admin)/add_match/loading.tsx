@@ -1,7 +1,7 @@
 // COMPONENTS
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Separator } from "@/components/ui/separator";
+import { Card, CardContent, CardFooter, CardHeader } from "@/shared/components/ui/card";
+import { Skeleton } from "@/shared/components/ui/skeleton";
+import { Separator } from "@/shared/components/ui/separator";
 
 export default async function loading() {
     return (
