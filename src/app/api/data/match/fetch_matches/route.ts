@@ -25,48 +25,37 @@ export const GET = withAuth(async (request: NextRequest, userId: string, _token:
     const gender = searchParams.get('gender');
     const isAdmin = searchParams.get('isAdmin') === 'true';
     const playerLevel = searchParams.get('playerLevel');
-    const isPastMatches = searchParams.get('isPastMatches') === 'true';
     const status = searchParams.get('status');
+    const isPastMatches = searchParams.get('isPastMatches') === 'true';
+    const currentDate = searchParams.get('currentDate');
+    const currentTime = searchParams.get('currentTime');
 
-    const currentDate = new Date();
-    const currentDateString = currentDate.toISOString().split('T')[0]; // YYYY-MM-DD
-    const currentTimeString = currentDate.toTimeString().split(' ')[0].slice(0, 5); // HH:MM
-
-    // Start with a base query
     let matchesQuery = supabase
-        .from('matches')
-        .select('*');
+    .from('matches')
+    .select('*')
+    .order('starts_at_day', { ascending: false })
+    .order('starts_at_hour', { ascending: false });
 
-    // Handle date filtering first, exactly like the old version
     if (date) {
         matchesQuery = matchesQuery
             .eq('starts_at_day', date)
-            .neq('status', 'finished')  // Don't show finished matches
-            .order('starts_at_hour', { ascending: true });
+            .neq('status', 'finished');
+    } else if (isPastMatches && currentDate && currentTime) {
+        matchesQuery = matchesQuery.or(
+            `starts_at_day.lt.${currentDate},and(starts_at_day.eq.${currentDate},starts_at_hour.lt.${currentTime})`
+        );
     } else if (status === 'active') {
         matchesQuery = matchesQuery
-            .neq('status', 'finished')
-            .gte('starts_at_day', currentDateString)
-            .or(`starts_at_day.eq.${currentDateString},starts_at_hour.gte.${currentTimeString}`)
-            .order('starts_at_day', { ascending: true })
-            .order('starts_at_hour', { ascending: true });
-    } else if (isPastMatches) {
-        matchesQuery = matchesQuery
-            .lt('starts_at_day', currentDateString)
-            .or(`starts_at_day.eq.${currentDateString},starts_at_hour.lt.${currentTimeString}`)
-            .order('starts_at_day', { ascending: false })
-            .order('starts_at_hour', { ascending: false })
-            .limit(20);
-    } else {
-        matchesQuery = matchesQuery
-            .gt('starts_at_day', currentDateString)
-            .or(`starts_at_day.eq.${currentDateString},starts_at_hour.gte.${currentTimeString}`)
-            .neq('status', 'finished')  // Don't show finished matches
-            .order('starts_at_day', { ascending: true })
-            .order('starts_at_hour', { ascending: true });
+            .eq('status', status)
+            .neq('status', 'finished');
+    } else if (status) {
+        matchesQuery = matchesQuery.eq('status', status);
+    } else if (currentDate && currentTime) {
+        matchesQuery = matchesQuery.or(
+            `starts_at_day.gt.${currentDate},and(starts_at_day.eq.${currentDate},starts_at_hour.gte.${currentTime})`
+        );
     }
 
-    // Apply gender filter after date filtering, exactly like the old version
     if (!isAdmin && gender) {
         matchesQuery = matchesQuery.or(`match_gender.eq.${gender},match_gender.eq.Mixed`);
     }
@@ -81,6 +70,34 @@ export const GET = withAuth(async (request: NextRequest, userId: string, _token:
         return NextResponse.json({ success: true, message: t('NO_MATCHES_FOUND'), data: [] });
     }
 
+    const { data: matchPlayers, error: matchPlayersError } = await supabase
+        .from('match_players')
+        .select(`
+            *,
+            user:users (
+                id,
+                fullName
+            )
+        `)
+        .in('match_id', dbMatches.map(match => match.id));
+
+    if (matchPlayersError) {
+        return NextResponse.json({ success: false, message: t('MATCHES_FAILED_TO_FETCH') }, { status: 500 });
+    }
+
+    const playersByMatch = matchPlayers?.reduce((acc, player) => {
+        if (!acc[player.match_id]) {
+            acc[player.match_id] = [];
+        }
+        acc[player.match_id].push(player);
+        return acc;
+    }, {});
+
+    const matchesWithPlayers = dbMatches.map(match => ({
+        ...match,
+        match_players: playersByMatch[match.id] || []
+    }));
+
     const { data: userMatches, error: userMatchesError } = await supabase
         .from('match_players')
         .select('match_id')
@@ -92,24 +109,15 @@ export const GET = withAuth(async (request: NextRequest, userId: string, _token:
 
     const userMatchIds = new Set(userMatches?.map(um => um.match_id) || []);
 
-    const filteredMatches = dbMatches.filter(match => {
-        if (isAdmin || isPastMatches) return true;
+    const filteredMatches = matchesWithPlayers.filter(match => {
+        if (isAdmin) return true;
         if (!playerLevel) return false;
         if (match.match_level && !match.match_level.includes(playerLevel)) return false;
-
-        // For non-admin users, filter out matches that have already started
-        if (!isPastMatches && match.starts_at_day === currentDateString && match.starts_at_hour < currentTimeString) {
-            return false;
-        }
-
         return true;
     });
 
     await Promise.all(filteredMatches.map(async (match) => {
-        const matchWithoutPlayers = { 
-            ...match,
-            isUserInMatch: userMatchIds.has(match.id)
-        };
+        const matchWithoutPlayers = { ...match };
         delete matchWithoutPlayers.match_players;
         
         const cacheKey = `${CACHE_KEYS.MATCH_PREFIX}${match.id}`;
@@ -120,12 +128,14 @@ export const GET = withAuth(async (request: NextRequest, userId: string, _token:
         }
     }));
 
+    const matchesWithUserStatus = filteredMatches.map(match => ({
+        ...match,
+        isUserInMatch: userMatchIds.has(match.id)
+    }));
+
     return NextResponse.json({ 
         success: true, 
         message: t('MATCHES_SUCCESSFULLY_FETCHED'), 
-        data: filteredMatches.map(match => ({
-            ...match,
-            isUserInMatch: userMatchIds.has(match.id)
-        }))
+        data: matchesWithUserStatus 
     });
 });

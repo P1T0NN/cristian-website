@@ -23,7 +23,6 @@ interface FetchMatchesParams {
     gender?: string;
     isAdmin?: boolean;
     playerLevel?: string;
-    userId: string;
     date?: string;
     status?: 'active' | 'pending' | 'finished';
     isPastMatches?: boolean;
@@ -35,7 +34,6 @@ export const fetchMatches = cache(async ({
     gender,
     isAdmin,
     playerLevel,
-    userId,
     date,
     status,
     isPastMatches,
@@ -51,7 +49,7 @@ export const fetchMatches = cache(async ({
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    const { isAuth } = await verifyAuth(authToken);
+    const { isAuth, userId } = await verifyAuth(authToken);
 
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };

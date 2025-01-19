@@ -20,7 +20,6 @@ export const DisplayMatchHistory = async () => {
     ]);
 
     const serverMatchesData = await fetchMatches({
-        userId: currentUserData.id,
         isAdmin: currentUserData.isAdmin,
         status: 'finished',
     });

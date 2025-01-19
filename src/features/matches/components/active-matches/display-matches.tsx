@@ -33,7 +33,6 @@ export const DisplayMatches = async ({
         gender: serverUserData.gender, 
         isAdmin: serverUserData.isAdmin, 
         playerLevel: serverUserData.player_level, 
-        userId: serverUserData.id,
         date,
         status: 'active'
     });
