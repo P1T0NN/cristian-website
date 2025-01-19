@@ -22,7 +22,6 @@ export const OldMatches = async () => {
     const currentTime = now.toTimeString().split(' ')[0].slice(0, 5); // Format: HH:mm
 
     const matchesResponse = await fetchMatches({
-        userId: currentUserData.id,
         isAdmin: currentUserData.isAdmin,
         playerLevel: currentUserData.player_level,
         isPastMatches: true,

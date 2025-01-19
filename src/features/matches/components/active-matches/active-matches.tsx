@@ -19,7 +19,6 @@ export const ActiveMatches = async () => {
     ]);
 
     const serverMatchesData = await fetchMatches({
-        userId: currentUserData.id,
         isAdmin: currentUserData.isAdmin,
         status: 'active'
     });
