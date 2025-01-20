@@ -14,10 +14,12 @@ import { PROTECTED_PAGE_ENDPOINTS } from '@/config';
 // ACTIONS
 import { verifyAuth } from "@/features/auth/actions/verifyAuth";
 
+// TYPES
+import type { typesBaseMatchPlayer } from '@/features/players/types/typesPlayer';
+
 interface UpdatePlayerMatchAdminParams {
     matchIdFromParams: string;
     matchPlayerId: string;
-    currentValue: boolean;
     isCurrentUserAdmin: boolean;
 }
 
@@ -26,93 +28,86 @@ interface UpdatePlayerMatchAdminResponse {
     message: string;
 }
 
+interface MatchPlayerWithUser extends Omit<typesBaseMatchPlayer, 'user'> {
+    users: {
+        id: string;
+        fullName: string;
+    };
+}
+
 export async function updatePlayerMatchAdmin({
     matchIdFromParams,
     matchPlayerId,
-    currentValue,
     isCurrentUserAdmin
 }: UpdatePlayerMatchAdminParams): Promise<UpdatePlayerMatchAdminResponse> {
     const t = await getTranslations("GenericMessages");
-    
-    console.log('Update Player Match Admin - Starting:', {
-        matchIdFromParams,
-        matchPlayerId,
-        currentValue,
-        isCurrentUserAdmin,
-        timestamp: new Date().toISOString()
-    });
 
-    // First, let's verify the current state in the database
-    const { data: currentState, error: fetchError } = await supabase
+    const { data: playerData } = await supabase
         .from('match_players')
-        .select('has_match_admin')
+        .select(`
+            has_match_admin,
+            users (
+                id,
+                fullName
+            )
+        `)
         .eq('id', matchPlayerId)
-        .single();
-
-    console.log('Current Database State:', {
-        dbValue: currentState?.has_match_admin,
-        uiValue: currentValue,
-        fetchError: fetchError?.message
-    });
+        .single() as { data: MatchPlayerWithUser | null };
 
     const cookieStore = await cookies();
     const authToken = cookieStore.get("auth_token")?.value;
     
     const { isAuth } = await verifyAuth(authToken as string);
 
-    console.log('Auth Status:', {
-        isAuth,
-        hasToken: !!authToken,
-        isCurrentUserAdmin
-    });
-
     if (!isAuth || !isCurrentUserAdmin) {
-        console.log('Authorization Failed:', {
-            isAuth,
-            isCurrentUserAdmin,
-            reason: !isAuth ? 'Not authenticated' : 'Not an admin'
-        });
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
     // Use the database value instead of UI value
-    const actualCurrentValue = currentState?.has_match_admin ?? false;
+    const actualCurrentValue = playerData?.has_match_admin ?? false;
+    const userFullName = playerData?.users?.fullName;
 
-    console.log('Updating match player admin status:', {
-        matchPlayerId,
-        dbValue: actualCurrentValue,
-        uiValue: currentValue,
-        newValue: !actualCurrentValue
+    // Start a Supabase transaction
+    const { error } = await supabase.rpc('update_match_admin', {
+        p_match_id: matchIdFromParams,
+        p_match_player_id: matchPlayerId,
+        p_has_match_admin: !actualCurrentValue,
+        p_user_full_name: userFullName
     });
 
-    const { error } = await supabase
-        .from('match_players')
-        .update({ has_match_admin: !actualCurrentValue })
-        .eq('id', matchPlayerId)
-        .eq('match_id', matchIdFromParams);
-
     if (error) {
-        console.log('Update Failed:', {
-            error: error.message,
-            code: error.code,
-            details: error.details
-        });
         return { success: false, message: t('OPERATION_FAILED') };
     }
 
-    console.log('Revalidating path');
     revalidatePath(`${PROTECTED_PAGE_ENDPOINTS.MATCH_PAGE}/${matchIdFromParams}`);
-
-    console.log('Operation Completed Successfully:', {
-        matchId: matchIdFromParams,
-        matchPlayerId,
-        oldValue: actualCurrentValue,
-        newValue: !actualCurrentValue,
-        timestamp: new Date().toISOString()
-    });
 
     return { 
         success: true, 
         message: t('MATCH_ADMIN_STATUS_UPDATED')
     };
 }
+
+/* SUPABASE RPC
+
+create or replace function update_match_admin(
+  p_match_id uuid,
+  p_match_player_id uuid,
+  p_has_match_admin boolean,
+  p_user_full_name text
+) returns void as $$
+begin
+  -- Update match_players table
+  update match_players
+  set has_match_admin = p_has_match_admin
+  where id = p_match_player_id;
+
+  -- Update matches table if granting admin (not removing)
+  if p_has_match_admin then
+    update matches
+    set added_by = p_user_full_name
+    where id = p_match_id;
+  end if;
+end;
+$$ language plpgsql;
+
+*/

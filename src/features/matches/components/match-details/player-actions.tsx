@@ -89,7 +89,6 @@ export const PlayerActions = ({
             const response = await updatePlayerMatchAdmin({
                 matchIdFromParams,
                 matchPlayerId: matchPlayerId,
-                currentValue: hasMatchAdmin,
                 isCurrentUserAdmin: isCurrentUserAdmin
             });
 
@@ -102,95 +101,102 @@ export const PlayerActions = ({
     };
     
     return (
-        <div className="flex items-center space-x-2 relative z-10 mt-2 sm:mt-0">
-            {isCurrentUser && (
-                playerSubRequested ? (
-                    <CancelSubstitutionButton 
-                        matchIdFromParams={matchIdFromParams}
-                        matchPlayerId={matchPlayerId}
-                        playerType={playerType}
-                    />
-                ) : (
-                    <PlayerLeaveTeamButton 
-                        matchIdFromParams={matchIdFromParams}
-                        setShowSubstituteDialog={setShowSubstituteDialog}
-                        matchPlayerId={matchPlayerId}
-                        playerType={playerType}
-                    />
-                )
-            )}
-            
-            {!isCurrentUser && playerSubRequested && !isUserInMatch && (
-                <PlayerReplaceButton
-                    matchIdFromParams={matchIdFromParams}
-                    matchPlayerId={matchPlayerId}
-                    teamNumber={teamNumber}
-                />
-            )}
+        <div className="flex flex-col space-y-2">
+            {/* First row: Admin and payment buttons */}
+            <div className="flex flex-wrap gap-2">
+                {isCurrentUserAdmin && (
+                    <>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            className={`${hasMatchAdmin ? 'bg-purple-500 text-white hover:bg-purple-600' : ''}`}
+                            onClick={handleMatchAdminChange}
+                            disabled={isPending}
+                        >
+                            <Shield className={hasMatchAdmin ? 'text-white' : ''} />
+                        </Button>
 
-            {isCurrentUserAdmin && (
-                <div className="flex items-center space-x-2">
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        className={`${hasMatchAdmin ? 'bg-purple-500 text-white hover:bg-purple-600' : ''}`}
-                        onClick={handleMatchAdminChange}
-                        disabled={isPending}
-                    >
-                        <Shield className={hasMatchAdmin ? 'text-white' : ''} />
-                    </Button>
+                        <Button
+                            size="sm"
+                            onClick={() => setShowActionsDialog(true)}
+                        >
+                            <User />
+                        </Button>
+                    </>
+                )}
 
-                    <Button
-                        size="sm"
-                        onClick={() => setShowActionsDialog(true)}
-                    >
-                        <User />
-                    </Button>
-                </div>
-            )}
+                {(isCurrentUserAdmin || userHasMatchAdmin) && (
+                    <>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            className={`${hasPaid ? 'bg-green-500 text-white hover:bg-green-600' : ''}`}
+                            onClick={() => handlePaymentStatusChange('paid')}
+                            disabled={isPending || hasGratis}
+                        >
+                            <DollarSign />
+                        </Button>
 
-            {(isCurrentUserAdmin || userHasMatchAdmin) && (
-                <div className="flex items-center space-x-2">
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        className={`${hasPaid ? 'bg-green-500 text-white hover:bg-green-600' : ''}`}
-                        onClick={() => handlePaymentStatusChange('paid')}
-                        disabled={isPending || hasGratis}
-                    >
-                        <DollarSign />
-                    </Button>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            className={`${hasDiscount ? 'bg-yellow-500 text-white hover:bg-yellow-600' : ''}`}
+                            onClick={() => handlePaymentStatusChange('discount')}
+                            disabled={isPending || hasGratis}
+                        >
+                            <Percent />
+                        </Button>
 
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        className={`${hasDiscount ? 'bg-yellow-500 text-white hover:bg-yellow-600' : ''}`}
-                        onClick={() => handlePaymentStatusChange('discount')}
-                        disabled={isPending || hasGratis}
-                    >
-                        <Percent />
-                    </Button>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            className={`${hasGratis ? 'bg-blue-500 text-white hover:bg-blue-600' : ''}`}
+                            onClick={() => handlePaymentStatusChange('gratis')}
+                            disabled={isPending || hasPaid || hasDiscount}
+                        >
+                            <Gift />
+                        </Button>
 
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        className={`${hasGratis ? 'bg-blue-500 text-white hover:bg-blue-600' : ''}`}
-                        onClick={() => handlePaymentStatusChange('gratis')}
-                        disabled={isPending || hasPaid || hasDiscount}
-                    >
-                        <Gift />
-                    </Button>
+                        {(teamNumber === 1 || teamNumber === 2) && (
+                            <SwitchTeamButton 
+                                matchIdFromParams={matchIdFromParams}
+                                matchPlayerId={matchPlayerId}
+                                playerType={playerType}
+                            />
+                        )}
+                    </>
+                )}
+            </div>
 
-                    {(teamNumber === 1 || teamNumber === 2) && (
-                        <SwitchTeamButton 
+            {/* Second row: Player actions */}
+            <div className="flex flex-wrap gap-2">
+                {isCurrentUser && (
+                    playerSubRequested ? (
+                        <CancelSubstitutionButton 
                             matchIdFromParams={matchIdFromParams}
                             matchPlayerId={matchPlayerId}
                             playerType={playerType}
                         />
-                    )}
-                </div>
-            )}
+                    ) : (
+                        <PlayerLeaveTeamButton 
+                            matchIdFromParams={matchIdFromParams}
+                            setShowSubstituteDialog={setShowSubstituteDialog}
+                            matchPlayerId={matchPlayerId}
+                            playerType={playerType}
+                        />
+                    )
+                )}
+                
+                {!isCurrentUser && playerSubRequested && !isUserInMatch && (
+                    <PlayerReplaceButton
+                        matchIdFromParams={matchIdFromParams}
+                        matchPlayerId={matchPlayerId}
+                        teamNumber={teamNumber}
+                    />
+                )}
+            </div>
 
+            {/* Dialogs */}
             {showSubstituteDialog && (
                 <SubstituteRequestDialog
                     matchIdFromParams={matchIdFromParams}
