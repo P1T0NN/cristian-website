@@ -124,7 +124,7 @@ export const MatchDetailsSection = ({
                     {t("matchLevel")}
                 </label>
                 <div className="flex space-x-2">
-                    {['A', 'B', 'C', 'D', 'F'].map((level) => (
+                    {['A', 'B', 'C', 'D', 'X'].map((level) => (
                         <Button
                             key={level}
                             type="button"
