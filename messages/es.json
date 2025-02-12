@@ -843,24 +843,5 @@
         "DNI_TOO_LONG": "El DNI no puede exceder los 20 caracteres",
         "COUNTRY_REQUIRED": "El país es obligatorio",
         "COUNTRY_TOO_LONG": "El nombre del país es demasiado largo"
-    },
-
-    "EmailTemplateMessages": {
-        "EMAIL_VERIFICATION_SUBJECT": "Verifica tu cuenta de Cris Futbol",
-        "EMAIL_PASSWORD_RESET_SUBJECT": "Restablece tu contraseña de GameInfiny",
-
-        "WELCOME_MESSAGE": "¡Bienvenido a Cris Futbol!",
-        "REGISTRATION_THANK_YOU": "Gracias por registrarte. Para completar tu registro, por favor verifica tu dirección de correo electrónico.",
-        "VERIFY_YOUR_EMAIL": "Verifica tu correo electrónico",
-        "BUTTON_NOT_WORKING": "Si el botón anterior no funciona, también puedes copiar y pegar el siguiente enlace en tu navegador:",
-        "IGNORE_IF_NOT_SIGNED_UP": "Si no te registraste en Cris Futbol, puedes ignorar este correo de forma segura.",
-        "BEST_REGARDS": "Saludos cordiales,",
-        "TEAM_NAME": "El equipo de Cris Futbol",
-
-        "PASSWORD_RESET_REQUEST_RECEIVED": "Hemos recibido una solicitud para restablecer tu contraseña. Si no hiciste esta solicitud, puedes ignorar este correo de forma segura.",
-        "CLICK_BUTTON_RESET_PASSWORD": "Para restablecer tu contraseña, haz clic en el botón a continuación:",
-        "RESET_YOUR_PASSWORD": "Restablece tu contraseña",
-        "PASSWORD_RESET_LINK_EXPIRY": "Este enlace para restablecer la contraseña expirará en 30 minutos por razones de seguridad.",
-        "CONTACT_SUPPORT_IF_NOT_REQUESTED": "Si no solicitaste el restablecimiento de contraseña, contacta a nuestro equipo de soporte de inmediato."
     }
 }

@@ -793,24 +793,5 @@
         "DNI_TOO_LONG": "DNI cannot exceed 20 characters",
         "COUNTRY_REQUIRED": "Country is required",
         "COUNTRY_TOO_LONG": "Country name is too long"
-    },
-
-    "EmailTemplateMessages": {
-        "EMAIL_VERIFICATION_SUBJECT": "Verify your Cris Futbol account",
-        "EMAIL_PASSWORD_RESET_SUBJECT": "Reset Your GameInfiny Password",
-
-        "WELCOME_MESSAGE": "welcome to Cris Futbol!",
-        "REGISTRATION_THANK_YOU": "Thank you for signing up. To complete your registration, please verify your email address.",
-        "VERIFY_YOUR_EMAIL": "Verify Your Email",
-        "BUTTON_NOT_WORKING": "If the button above does not work, you can also copy and paste the following link into your browser:",
-        "IGNORE_IF_NOT_SIGNED_UP": "If you did not sign up for Cris Futbol, you can safely ignore this email.",
-        "BEST_REGARDS": "Best regards,",
-        "TEAM_NAME": "The Cris Futbol Team",
-
-        "PASSWORD_RESET_REQUEST_RECEIVED": "We received a request to reset your password. If you did not make this request, you can safely ignore this email.",
-        "CLICK_BUTTON_RESET_PASSWORD": "To reset your password, click the button below:",
-        "RESET_YOUR_PASSWORD": "Reset Your Password",
-        "PASSWORD_RESET_LINK_EXPIRY": "This password reset link will expire in 30 minutes for security reasons.",
-        "CONTACT_SUPPORT_IF_NOT_REQUESTED": "If you did not request a password reset, please contact our support team immediately."
     }
 }
