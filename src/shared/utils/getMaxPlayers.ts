@@ -1,5 +1,5 @@
 // TYPES
-import type { typesPlayer } from "@/features/players/types/typesPlayer";
+import type { typesPlayer } from "@/features/matches/types/typesMatch";
 
 export const getMaxPlayers = (type: string, isPlayerList: boolean = false): number => {
     if (isPlayerList) {

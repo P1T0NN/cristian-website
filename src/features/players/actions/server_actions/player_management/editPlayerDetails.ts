@@ -14,12 +14,12 @@ import { TAGS_FOR_CACHE_REVALIDATIONS } from "@/config";
 import { verifyAuth } from '@/features/auth/actions/verifyAuth';
 
 // TYPES
-import type { typesPlayer } from '@/features/players/types/typesPlayer';
+import type { typesUser } from '@/features/players/types/typesPlayer';
 
 interface EditPlayerDetailsResponse {
     success: boolean;
     message: string;
-    data?: typesPlayer;
+    data?: typesUser;
 }
 
 interface EditPlayerDetailsParams {
@@ -73,5 +73,5 @@ export async function editPlayerDetails({
 
     revalidateTag(TAGS_FOR_CACHE_REVALIDATIONS.PLAYERS);
 
-    return { success: true, message: t('PLAYER_DETAILS_UPDATED'), data: data as typesPlayer };
+    return { success: true, message: t('PLAYER_DETAILS_UPDATED'), data: data as typesUser };
 }

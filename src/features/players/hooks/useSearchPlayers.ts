@@ -2,12 +2,12 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 
 // TYPES
-import type { typesPlayer } from '../types/typesPlayer';
+import type { typesUser } from '../types/typesPlayer';
 
 type SearchResults = {
     success: boolean;
     message: string;
-    data: typesPlayer[];
+    data: typesUser[];
 }
 
 async function fetchUsers(query: string, limit: number, authToken?: string): Promise<SearchResults> {

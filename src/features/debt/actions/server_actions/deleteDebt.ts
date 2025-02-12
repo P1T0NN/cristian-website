@@ -15,14 +15,14 @@ import { verifyAuth } from '@/features/auth/actions/verifyAuth';
 
 // TYPES
 import type { typesDebt } from '../../types/typesDebt';
-import type { typesPlayer } from '@/features/players/types/typesPlayer';
+import type { typesUser } from '@/features/players/types/typesPlayer';
 
 interface DeleteDebtResponse {
     success: boolean;
     message: string;
     data?: {
         deletedDebt: typesDebt;
-        updatedUser: typesPlayer;
+        updatedUser: typesUser;
     };
 }
 
@@ -102,7 +102,7 @@ export async function deleteDebt({
         message: t("DEBT_DELETED"), 
         data: { 
             deletedDebt: debt as typesDebt, 
-            updatedUser: updatedUser[0] as typesPlayer
+            updatedUser: updatedUser[0] as typesUser
         } 
     };
 }

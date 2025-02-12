@@ -14,12 +14,12 @@ import { TAGS_FOR_CACHE_REVALIDATIONS } from '@/config';
 import { verifyAuth } from '@/features/auth/actions/verifyAuth';
 
 // TYPES
-import type { typesPlayer } from '../../types/typesPlayer';
+import type { typesUser } from '../../types/typesPlayer';
 
 interface UpdateUserNameResponse {
     success: boolean;
     message: string;
-    data?: typesPlayer;
+    data?: typesUser;
 }
 
 interface UpdateUserNameParams {
@@ -54,5 +54,5 @@ export async function updateUserName({
 
     revalidateTag(TAGS_FOR_CACHE_REVALIDATIONS.PLAYERS);
 
-    return { success: true, message: t('USER_FULL_NAME_UPDATED'), data: data as typesPlayer };
+    return { success: true, message: t('USER_FULL_NAME_UPDATED'), data: data as typesUser };
 }

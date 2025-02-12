@@ -8,18 +8,18 @@ import { getTranslations } from "next-intl/server";
 import { apiRequest } from "@/shared/utils/apiUtils";
 
 // TYPES
-import type { typesPlayer } from "../types/typesPlayer";
+import type { typesUser } from "../types/typesPlayer";
 
 interface SearchUsersResponse {
     success: boolean;
     message?: string;
-    data?: typesPlayer[];
+    data?: typesUser[];
 }
 
 export const searchUsers = cache(async (searchTerm: string): Promise<SearchUsersResponse> => {
     const t = await getTranslations("GenericMessages");
 
-    const response = await apiRequest<{ data: typesPlayer[] }>({
+    const response = await apiRequest<{ data: typesUser[] }>({
         endpoint: '/api/data/debt/search_users',
         method: 'GET',
         queryParams: { search: searchTerm },

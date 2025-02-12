@@ -14,12 +14,12 @@ import { TAGS_FOR_CACHE_REVALIDATIONS } from "@/config";
 import { verifyAuth } from '@/features/auth/actions/verifyAuth';
 
 // TYPES
-import type { typesPlayer } from '@/features/players/types/typesPlayer';
+import type { typesUser } from '@/features/players/types/typesPlayer';
 
 interface UpdatePlayerLevelResponse {
     success: boolean;
     message: string;
-    data?: typesPlayer;
+    data?: typesUser;
 }
 
 interface UpdatePlayerLevelParams {
@@ -55,5 +55,5 @@ export async function updatePlayerLevel({
     }
 
     revalidateTag(TAGS_FOR_CACHE_REVALIDATIONS.PLAYERS);
-    return { success: true, message: t('PLAYER_LEVEL_UPDATED_SUCCESSFULLY'), data: data as typesPlayer };
+    return { success: true, message: t('PLAYER_LEVEL_UPDATED_SUCCESSFULLY'), data: data as typesUser };
 }
