@@ -1,18 +1,14 @@
 "use server"
 
 // NEXTJS IMPORTS
-import { cookies } from 'next/headers';
 import { revalidateTag } from 'next/cache';
 
 // LIBRARIES
 import { getTranslations } from 'next-intl/server';
 import { supabase } from '@/shared/lib/supabase/supabase';
 
-// SERVICES
-import { upstashRedisCacheService } from '@/shared/services/server/redis-cache.service';
-
 // CONFIG
-import { CACHE_KEYS, TAGS_FOR_CACHE_REVALIDATIONS } from '@/config';
+import { TAGS_FOR_CACHE_REVALIDATIONS } from '@/config';
 
 // ACTIONS
 import { verifyAuth } from '@/features/auth/actions/verifyAuth';
@@ -37,10 +33,7 @@ export async function updateDefaultPrice({
 }: UpdateDefaultPriceParams): Promise<UpdateDefaultPriceResponse> {
     const t = await getTranslations('GenericMessages');
 
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
-
-    const { isAuth } = await verifyAuth(authToken as string);
+    const { isAuth } = await verifyAuth();
                         
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
@@ -60,10 +53,6 @@ export async function updateDefaultPrice({
     if (error) {
         return { success: false, message: t('DEFAULT_PRICE_UPDATE_ERROR') };
     }
-
-    // Invalidate the locations cache
-    await upstashRedisCacheService.delete(CACHE_KEYS.ALL_LOCATIONS_PREFIX);
-    await upstashRedisCacheService.delete(CACHE_KEYS.DEFAULT_LOCATIONS_CACHE_KEY);
 
     revalidateTag(TAGS_FOR_CACHE_REVALIDATIONS.LOCATIONS);
 

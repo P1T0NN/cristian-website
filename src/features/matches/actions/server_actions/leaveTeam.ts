@@ -1,31 +1,24 @@
 "use server"
 
 // NEXTJS IMPORTS
-import { cookies } from 'next/headers';
 import { revalidatePath, revalidateTag } from 'next/cache';
 
 // LIBRARIES
 import { supabase } from '@/shared/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
-// SERVICES
-import { upstashRedisCacheService } from '@/shared/services/server/redis-cache.service';
-
 // CONFIG
-import { CACHE_KEYS, TAGS_FOR_CACHE_REVALIDATIONS } from '@/config';
+import { TAGS_FOR_CACHE_REVALIDATIONS } from '@/config';
 
 // ACTIONS
 import { verifyAuth } from "@/features/auth/actions/verifyAuth";
-
-// TYPES
-import type { typesMatch } from '../../types/typesMatch';
 
 interface LeaveMatchMetadata {
     code?: string;
     metadata?: {
         canRequestSubstitute?: boolean;
-        updated_balance?: number;
-        updated_places_occupied?: number;
+        updatedBalance?: number;
+        updatedPlacesOccupied?: number;
     };
 }
 
@@ -37,35 +30,32 @@ interface LeaveMatchResponse {
 
 interface LeaveMatchParams {
     matchIdFromParams: string;
-    matchPlayerId: string;
-    playerType: "regular" | "temporary";
+    currentUserId: string;
+    isRemovingFriend?: boolean;
 }
 
-export async function leaveMatch({
+export const leaveMatch = async ({
     matchIdFromParams,
-    matchPlayerId,
-    playerType
-}: LeaveMatchParams): Promise<LeaveMatchResponse> {
+    currentUserId,
+    isRemovingFriend = false
+}: LeaveMatchParams): Promise<LeaveMatchResponse> => {
     const t = await getTranslations("GenericMessages");
 
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
+    const { isAuth, userId: authUserId } = await verifyAuth();
 
-    const { isAuth, userId: authUserId } = await verifyAuth(authToken as string);
-                
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!matchIdFromParams || !matchPlayerId) {
+    if (!matchIdFromParams || !currentUserId) {
         return { success: false, message: t('BAD_REQUEST') };
     }
 
     const { data, error } = await supabase.rpc('leave_match', {
-        p_auth_user_id: authUserId,
-        p_match_id: matchIdFromParams,
-        p_match_player_id: matchPlayerId,
-        p_is_temporary: playerType === 'temporary'
+        pauthuserid: authUserId,
+        pmatchid: matchIdFromParams,
+        pcurrentuserid: currentUserId,
+        pisremovingfriend: isRemovingFriend
     });
 
     if (error) {
@@ -73,23 +63,18 @@ export async function leaveMatch({
     }
 
     if (!data.success) {
+        if (data.code === 'TOO_LATE_TO_LEAVE') {
+            return { 
+                success: false, 
+                message: t('TOO_LATE_TO_LEAVE'),
+                metadata: data as LeaveMatchMetadata 
+            };
+        }
         return { 
             success: false, 
             message: t('PLAYER_LEAVE_FAILED'), 
             metadata: data as LeaveMatchMetadata 
         };
-    }
-
-    // Update the match cache
-    const matchCacheKey = `${CACHE_KEYS.MATCH_PREFIX}${matchIdFromParams}`;
-
-    const cachedMatch = await upstashRedisCacheService.get<typesMatch>(matchCacheKey);
-
-    if (cachedMatch.success && cachedMatch.data) {
-        const updatedPlacesOccupied = Math.max((cachedMatch.data.places_occupied || 0) - 1, 0);
-        const updatedCachedMatch = { ...cachedMatch.data, places_occupied: updatedPlacesOccupied };
-
-        await upstashRedisCacheService.set(matchCacheKey, updatedCachedMatch, 60 * 60 * 12); // 12 hours TTL
     }
 
     revalidatePath("/");
@@ -101,90 +86,112 @@ export async function leaveMatch({
 /* SUPABASE RPC FUNCTION 
 
 CREATE OR REPLACE FUNCTION leave_match(
-    p_auth_user_id UUID,
-    p_match_id UUID,
-    p_match_player_id UUID,
-    p_is_temporary BOOLEAN
+    pauthuserid TEXT,
+    pmatchid UUID,
+    pcurrentuserid TEXT,
+    pisremovingfriend BOOLEAN
 ) RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
 AS $$
 DECLARE
-    v_match RECORD;
-    v_player RECORD;
-    v_current_time TIMESTAMP;
-    v_eight_hours_before_match TIMESTAMP;
-    v_updated_places_occupied INT;
-    v_match_price DECIMAL;
+    vMatch RECORD;
+    vPlayer RECORD;
+    vCurrentTime TIMESTAMP;
+    vEightHoursBeforeMatch TIMESTAMP;
+    vUpdatedPlacesOccupied INT;
+    vMatchPrice DECIMAL;
 BEGIN
-    -- Get match details first
-    SELECT * INTO v_match 
+    SELECT * INTO vMatch 
     FROM matches 
-    WHERE id = p_match_id;
+    WHERE id = pmatchid;
 
     IF NOT FOUND THEN
         RETURN jsonb_build_object('success', false, 'code', 'MATCH_NOT_FOUND');
     END IF;
 
-    -- Get the player record using match_player_id
-    SELECT * INTO v_player 
-    FROM match_players 
-    WHERE id = p_match_player_id
-    AND match_id = p_match_id;
+    vCurrentTime := CURRENT_TIMESTAMP;
+    vEightHoursBeforeMatch := (vMatch."startsAtDay" || ' ' || vMatch."startsAtHour")::TIMESTAMP - INTERVAL '8 hours';
 
-    IF NOT FOUND THEN
-        RETURN jsonb_build_object('success', false, 'code', 'PLAYER_NOT_IN_MATCH');
-    END IF;
+    -- Three cases:
+    -- 1. Removing friend (pisremovingfriend = true)
+    -- 2. Player leaving themselves (pauthuserid = pcurrentuserid)
+    -- 3. Admin removing player (pauthuserid != pcurrentuserid)
+    
+    IF pisremovingfriend THEN
+        -- Case 1: Removing friend
+        SELECT * INTO vPlayer 
+        FROM match_players 
+        WHERE "matchId" = pmatchid
+        AND "userId" = pauthuserid
+        AND "playerType" = 'temporary';
 
-    -- Check authorization based on player_type
-    IF v_player.player_type = 'temporary' THEN
-        -- For temporary players, verify the auth user is the one who added them
-        IF v_player.user_id != p_auth_user_id THEN
-            RETURN jsonb_build_object('success', false, 'code', 'NOT_AUTHORIZED_TO_REMOVE');
+        IF NOT FOUND THEN
+            RETURN jsonb_build_object('success', false, 'code', 'PLAYER_NOT_IN_MATCH');
+        END IF;
+
+        -- Check time limit for friend removal
+        IF vCurrentTime > vEightHoursBeforeMatch THEN
+            RETURN jsonb_build_object('success', false, 'code', 'TOO_LATE_TO_LEAVE', 'metadata', jsonb_build_object('canRequestSubstitute', true));
+        END IF;
+
+        -- Update hasAddedFriend to false for the regular player
+        UPDATE match_players
+        SET "hasAddedFriend" = false
+        WHERE "matchId" = pmatchid
+        AND "userId" = pauthuserid
+        AND "playerType" = 'regular';
+    ELSIF pauthuserid = pcurrentuserid THEN
+        -- Case 2: Player leaving themselves
+        SELECT * INTO vPlayer 
+        FROM match_players 
+        WHERE "matchId" = pmatchid
+        AND "userId" = pcurrentuserid;
+
+        IF NOT FOUND THEN
+            RETURN jsonb_build_object('success', false, 'code', 'PLAYER_NOT_IN_MATCH');
+        END IF;
+
+        -- Check time limit for regular players leaving themselves
+        IF vCurrentTime > vEightHoursBeforeMatch THEN
+            RETURN jsonb_build_object('success', false, 'code', 'TOO_LATE_TO_LEAVE', 'metadata', jsonb_build_object('canRequestSubstitute', true));
         END IF;
     ELSE
-        -- For regular players, verify it's their own record
-        IF v_player.user_id != p_auth_user_id THEN
-            RETURN jsonb_build_object('success', false, 'code', 'NOT_AUTHORIZED_TO_REMOVE');
+        -- Case 3: Admin removing player
+        SELECT * INTO vPlayer 
+        FROM match_players 
+        WHERE "matchId" = pmatchid
+        AND id = pcurrentuserid;
+
+        IF NOT FOUND THEN
+            RETURN jsonb_build_object('success', false, 'code', 'PLAYER_NOT_IN_MATCH');
         END IF;
     END IF;
 
-    v_current_time := CURRENT_TIMESTAMP;
-    v_eight_hours_before_match := (v_match.starts_at_day || ' ' || v_match.starts_at_hour)::TIMESTAMP - INTERVAL '8 hours';
-
-    IF v_current_time > v_eight_hours_before_match THEN
-        RETURN jsonb_build_object('success', false, 'code', 'TOO_LATE_TO_LEAVE', 'metadata', jsonb_build_object('canRequestSubstitute', true));
-    END IF;
-
-    -- If player entered with balance, restore it
-    IF v_player.has_entered_with_balance THEN
-        -- Get match price
-        v_match_price := v_match.price;
+    IF vPlayer."hasEnteredWithBalance" THEN
+        vMatchPrice := vMatch.price;
         
-        -- Restore balance to user
-        UPDATE users
-        SET balance = balance + v_match_price
-        WHERE id = v_player.user_id;
+        UPDATE "user"
+        SET balance = balance + vMatchPrice
+        WHERE id = vPlayer."userId";
     END IF;
 
-    -- Remove the player from the match
     DELETE FROM match_players
-    WHERE id = p_match_player_id;
+    WHERE id = vPlayer.id;
 
-    -- Update the places occupied
     UPDATE matches
-    SET places_occupied = places_occupied - 1
-    WHERE id = p_match_id
-    RETURNING places_occupied INTO v_updated_places_occupied;
+    SET "placesOccupied" = "placesOccupied" - 1
+    WHERE id = pmatchid
+    RETURNING "placesOccupied" INTO vUpdatedPlacesOccupied;
 
     RETURN jsonb_build_object(
         'success', true, 
         'code', 'PLAYER_LEFT_SUCCESSFULLY',
         'metadata', jsonb_build_object(
-            'updated_places_occupied', v_updated_places_occupied,
-            'balance_restored', CASE 
-                WHEN v_player.has_entered_with_balance THEN v_match_price
+            'updatedPlacesOccupied', vUpdatedPlacesOccupied,
+            'balanceRestored', CASE 
+                WHEN vPlayer."hasEnteredWithBalance" THEN vMatchPrice
                 ELSE 0
             END
         )

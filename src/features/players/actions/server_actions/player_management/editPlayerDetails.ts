@@ -1,7 +1,6 @@
 "use server"
 
 // NEXTJS IMPORTS
-import { cookies } from 'next/headers';
 import { revalidateTag } from 'next/cache';
 
 // LIBRARIES
@@ -25,7 +24,7 @@ interface EditPlayerDetailsResponse {
 
 interface EditPlayerDetailsParams {
     playerIdFromParams: string;
-    fullName: string;
+    name: string;
     dni: string;
     country: string;
     phoneNumber: string;
@@ -35,7 +34,7 @@ interface EditPlayerDetailsParams {
 
 export async function editPlayerDetails({
     playerIdFromParams,
-    fullName,
+    name,
     dni,
     country,
     phoneNumber,
@@ -44,26 +43,23 @@ export async function editPlayerDetails({
 }: EditPlayerDetailsParams): Promise<EditPlayerDetailsResponse> {
     const t = await getTranslations("GenericMessages");
 
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
-
-    const { isAuth } = await verifyAuth(authToken as string);
+    const { isAuth } = await verifyAuth();
                         
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!playerIdFromParams || !fullName || !dni || !country || !phoneNumber || !playerLevel || !playerPosition) {
+    if (!playerIdFromParams || !name || !dni || !country || !phoneNumber || !playerLevel || !playerPosition) {
         return { success: false, message: t('BAD_REQUEST') };
     }
 
     const { data, error } = await supabase
-        .from('users')
+        .from('user')
         .update({ 
-            fullName,
+            name,
             dni,
-            player_level: playerLevel,
-            player_position: playerPosition,
+            playerLevel,
+            playerPosition,
             country,
             phoneNumber
         })

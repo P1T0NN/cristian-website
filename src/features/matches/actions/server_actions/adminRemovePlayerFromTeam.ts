@@ -2,23 +2,16 @@
 
 // NEXTJS IMPORTS
 import { revalidatePath, revalidateTag } from 'next/cache';
-import { cookies } from 'next/headers';
 
 // LIBRARIES
 import { supabase } from '@/shared/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
-// SERVICES
-import { upstashRedisCacheService } from '@/shared/services/server/redis-cache.service';
-
 // CONFIG
-import { CACHE_KEYS, TAGS_FOR_CACHE_REVALIDATIONS } from '@/config';
+import { TAGS_FOR_CACHE_REVALIDATIONS } from '@/config';
 
 // ACTIONS
 import { verifyAuth } from "@/features/auth/actions/verifyAuth";
-
-// TYPES
-import type { typesMatch } from '../../types/typesMatch';
 
 interface AdminRemovePlayerFromMatchResponse {
     success: boolean;
@@ -38,10 +31,7 @@ export async function adminRemovePlayerFromMatch({
 }: AdminRemovePlayerFromMatchParams): Promise<AdminRemovePlayerFromMatchResponse> {
     const t = await getTranslations("GenericMessages");
 
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
-
-    const { isAuth, userId } = await verifyAuth(authToken as string);
+    const { isAuth, userId } = await verifyAuth();
     
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
@@ -53,7 +43,7 @@ export async function adminRemovePlayerFromMatch({
 
     // Check if the user is an admin
     const { data: adminUser, error: adminError } = await supabase
-        .from('users')
+        .from('user')
         .select('isAdmin')
         .eq('id', userId)
         .single();
@@ -133,15 +123,6 @@ export async function adminRemovePlayerFromMatch({
 
     if (updateError) {
         return { success: false, message: t('INTERNAL_SERVER_ERROR') };
-    }
-
-    // Update the match cache
-    const matchCacheKey = `${CACHE_KEYS.MATCH_PREFIX}${matchIdFromParams}`;
-    const cachedMatch = await upstashRedisCacheService.get<typesMatch>(matchCacheKey);
-    
-    if (cachedMatch.success && cachedMatch.data) {
-        const updatedCachedMatch = { ...cachedMatch.data, places_occupied: updatedPlacesOccupied };
-        await upstashRedisCacheService.set(matchCacheKey, updatedCachedMatch, 60 * 60 * 12); // 12 hours TTL
     }
 
     revalidatePath("/");

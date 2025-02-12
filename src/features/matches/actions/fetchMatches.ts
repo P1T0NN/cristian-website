@@ -2,13 +2,10 @@
 import { cache } from "react";
 
 // NEXTJS IMPORTS
-import { cookies } from "next/headers";
-
-// LIBRARIES
 import { getTranslations } from "next-intl/server";
 
-// ACTIONS
-import { verifyAuth } from "@/features/auth/actions/verifyAuth";
+// UTILS
+import { apiRequest } from "@/shared/utils/apiUtils";
 
 // TYPES
 import type { typesMatch } from "../types/typesMatch";
@@ -24,73 +21,45 @@ interface FetchMatchesParams {
     isAdmin?: boolean;
     playerLevel?: string;
     date?: string;
-    status?: 'active' | 'pending' | 'finished';
+    status?: "active" | "pending" | "finished";
     isPastMatches?: boolean;
     currentDate?: string;
     currentTime?: string;
+    currentUserId?: string;
 }
 
-export const fetchMatches = cache(async ({
-    gender,
-    isAdmin,
-    playerLevel,
-    date,
-    status,
-    isPastMatches,
-    currentDate,
-    currentTime
-}: FetchMatchesParams): Promise<MatchesResponse> => {
-    const t = await getTranslations("GenericMessages");
+export const fetchMatches = cache(async (params: FetchMatchesParams): Promise<MatchesResponse> => {
+    const t = await getTranslations("GenericMessages")
 
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get('auth_token')?.value;
+    const queryParams: Record<string, string> = {}
+    if (params.date) queryParams.date = params.date
+    if (params.gender !== undefined) queryParams.gender = params.gender
+    if (params.isAdmin !== undefined) queryParams.isAdmin = params.isAdmin.toString()
+    if (params.playerLevel) queryParams.playerLevel = params.playerLevel
+    if (params.status) queryParams.status = params.status
+    if (params.isPastMatches) queryParams.isPastMatches = "true"
+    if (params.currentDate) queryParams.currentDate = params.currentDate
+    if (params.currentTime) queryParams.currentTime = params.currentTime
 
-    if (!authToken) {
-        return { success: false, message: t('UNAUTHORIZED') };
-    }
+    queryParams.currentUserId = params.currentUserId as string
 
-    const { isAuth, userId } = await verifyAuth(authToken);
-
-    if (!isAuth) {
-        return { success: false, message: t('UNAUTHORIZED') };
-    }
-
-    if (!userId) {
-        return { success: false, message: t('BAD_REQUEST') };
-    }
-
-    const url = new URL(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/data/match/fetch_matches`);
-    
-    if (date) url.searchParams.append('date', date);
-    if (gender !== undefined) url.searchParams.append('gender', gender);
-    if (isAdmin !== undefined) url.searchParams.append('isAdmin', isAdmin.toString());
-    if (playerLevel) url.searchParams.append('playerLevel', playerLevel);
-    if (status) url.searchParams.append('status', status);
-    if (isPastMatches) url.searchParams.append('isPastMatches', 'true');
-    if (currentDate) url.searchParams.append('currentDate', currentDate);
-    if (currentTime) url.searchParams.append('currentTime', currentTime);
-    url.searchParams.append('userId', userId);
-
-    const response = await fetch(url.toString(), {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'Content-Type': 'application/json',
+    const response = await apiRequest<{ data: typesMatch[] }>({
+        endpoint: "/api/data/match/fetch_matches",
+        method: "GET",
+        queryParams,
+        errorMessages: {
+            unauthorized: t("UNAUTHORIZED"),
+            requestFailed: t("MATCHES_FAILED_TO_FETCH"),
         },
-        // No need to cache this, it's dynamic
-    });
+    })
 
-    if (!response.ok) {
-        if (response.status === 401) {
-            return { success: false, message: t('UNAUTHORIZED') };
-        }
-        return { success: false, message: t('MATCHES_FAILED_TO_FETCH') };
+    if (!response.success) {
+        return { success: false, message: response.message }
     }
 
-    const result = await response.json();
+    return {
+      success: true,
+      data: response.data?.data,
+    }
+})
 
-    return { 
-        success: true, 
-        data: result.data as typesMatch[]
-    };
-});

@@ -23,7 +23,7 @@ import { searchBar } from '@/features/players/actions/server_actions/searchBar';
 import { Search } from 'lucide-react';
 
 type SearchResult = {
-    users: { id: string; fullName: string }[];
+    users: { id: string; name: string }[];
     teams: { id: string; team_name: string }[];
 }
 
@@ -108,7 +108,7 @@ export function SearchBar() {
                                         href={`${PROTECTED_PAGE_ENDPOINTS.PLAYER_PAGE}/${user.id}`}
                                         onClick={handleItemClick}
                                     >
-                                        {user.fullName}
+                                        {user.name}
                                     </Link>
                                 </Button>
                             ))}

@@ -1,7 +1,6 @@
 "use server"
 
 // NEXTJS IMPORTS
-import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
@@ -18,114 +17,136 @@ interface RequestSubstituteResponse {
 
 interface RequestSubstituteParams {
     matchIdFromParams: string;
-    matchPlayerId: string;
+    userId: string;  // This is the user.id from the user table
     playerType: 'regular' | 'temporary';
 }
 
-export async function requestSubstitute({
+export const requestSubstitute = async ({
     matchIdFromParams,
-    matchPlayerId,
+    userId,  // This is the user.id we want to request substitute for
     playerType
-}: RequestSubstituteParams): Promise<RequestSubstituteResponse> {
+}: RequestSubstituteParams): Promise<RequestSubstituteResponse> => {
+    console.log('Starting requestSubstitute with params:', {
+        matchIdFromParams,
+        userId,
+        playerType
+    });
+
     const t = await getTranslations("GenericMessages");
 
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
-
-    const { isAuth, userId: authUserId } = await verifyAuth(authToken as string);
+    const { isAuth, userId: authUserId } = await verifyAuth();
+    console.log('Auth check result:', { isAuth, authUserId });
                 
     if (!isAuth) {
+        console.log('Auth failed');
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!matchIdFromParams || !matchPlayerId) {
+    if (!matchIdFromParams || !userId) {
+        console.log('Missing required params:', { matchIdFromParams, userId });
         return { success: false, message: t('BAD_REQUEST') };
     }
 
+    console.log('Calling request_substitute RPC with params:', {
+        pauthuserid: authUserId,
+        pmatchid: matchIdFromParams,
+        puserid: userId,  // This is clearly the user.id
+        pistemporary: playerType === 'temporary'
+    });
+
     const { data, error } = await supabase.rpc('request_substitute', {
-        p_auth_user_id: authUserId,
-        p_match_id: matchIdFromParams,
-        p_match_player_id: matchPlayerId,
-        p_is_temporary: playerType === 'temporary'
+        pauthuserid: authUserId,
+        pmatchid: matchIdFromParams,
+        puserid: userId,
+        pistemporary: playerType === 'temporary'
     });
 
     if (error) {
+        console.error('RPC error:', error);
         return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
 
+    console.log('RPC response:', data);
+
     if (!data.success) {
+        console.log('Request failed:', data);
         return { 
             success: false, 
-            message: t('SUBSTITUTE_REQUEST_FAILED'),
+            message: t('SUBSTITUTE_REQUEST_FAILED')
         };
     }
 
     revalidatePath("/");
 
+    console.log('Request successful, returning response');
     return { 
         success: true, 
         message: t(playerType === 'temporary' ? 
-            'TEMPORARY_PLAYER_SUBSTITUTE_REQUESTED' : 
+            'FRIEND_SUBSTITUTE_REQUESTED_SUCCESSFULLY' : 
             'SUBSTITUTE_REQUESTED_SUCCESSFULLY'
         )
     };
-}
+};
 
 /* SUPABASE RPC FUNCTION
 
 CREATE OR REPLACE FUNCTION request_substitute(
-    p_auth_user_id UUID,
-    p_match_id UUID,
-    p_match_player_id UUID,
-    p_is_temporary BOOLEAN
+    pAuthUserId TEXT,      -- The ID of the authenticated user making the request
+    pMatchId UUID,         -- The match ID
+    pUserId TEXT,          -- The user.id of the player to request substitute for
+    pIsTemporary BOOLEAN   -- Whether this is for a temporary player
 ) RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
 AS $$
 DECLARE
-    v_match RECORD;
-    v_player RECORD;
-    v_current_time TIMESTAMP;
-    v_match_start TIMESTAMP;
+    vMatch RECORD;
+    vPlayer RECORD;
 BEGIN
     -- Get match details
-    SELECT * INTO v_match FROM matches WHERE id = p_match_id;
+    SELECT * INTO vMatch FROM matches WHERE id = pMatchId;
     IF NOT FOUND THEN
         RETURN jsonb_build_object('success', false, 'code', 'MATCH_NOT_FOUND');
     END IF;
 
-    -- Get player requesting substitute
-    SELECT * INTO v_player 
+    -- Get player record using userId (not match_players.id)
+    SELECT * INTO vPlayer 
     FROM match_players 
-    WHERE id = p_match_player_id
-    AND match_id = p_match_id;
+    WHERE "matchId" = pMatchId
+    AND "userId" = pUserId  -- Using userId from user table
+    AND "playerType" = CASE 
+        WHEN pIsTemporary THEN 'temporary'
+        ELSE 'regular'
+    END;
 
     IF NOT FOUND THEN
         RETURN jsonb_build_object('success', false, 'code', 'PLAYER_NOT_IN_MATCH');
     END IF;
 
-    -- Check authorization based on player_type
-    IF v_player.player_type = 'temporary' THEN
-        -- For temporary players, verify the auth user is the one who added them
-        IF v_player.user_id != p_auth_user_id THEN
-            RETURN jsonb_build_object('success', false, 'code', 'NOT_AUTHORIZED_TO_REQUEST');
-        END IF;
-    ELSE
-        -- For regular players, verify it's their own record
-        IF v_player.user_id != p_auth_user_id THEN
-            RETURN jsonb_build_object('success', false, 'code', 'NOT_AUTHORIZED_TO_REQUEST');
-        END IF;
+    -- For temporary players, verify the auth user is the one who added them
+    -- For regular players, verify it's their own record
+    IF (pIsTemporary AND vPlayer."userId" != pAuthUserId) OR
+       (NOT pIsTemporary AND pUserId != pAuthUserId) THEN
+        RETURN jsonb_build_object('success', false, 'code', 'NOT_AUTHORIZED_TO_REQUEST');
     END IF;
 
-    -- Update the player's substitute request status
+    -- Update using userId (not match_players.id)
     UPDATE match_players
-    SET substitute_requested = true
-    WHERE id = p_match_player_id;
+    SET "substituteRequested" = true
+    WHERE "matchId" = pMatchId
+    AND "userId" = pUserId
+    AND "playerType" = CASE 
+        WHEN pIsTemporary THEN 'temporary'
+        ELSE 'regular'
+    END;
 
     RETURN jsonb_build_object(
         'success', true,
-        'code', 'SUBSTITUTE_REQUESTED_SUCCESSFULLY'
+        'code', CASE 
+            WHEN pIsTemporary THEN 'FRIEND_SUBSTITUTE_REQUESTED_SUCCESSFULLY'
+            ELSE 'SUBSTITUTE_REQUESTED_SUCCESSFULLY'
+        END
     );
 
 EXCEPTION
@@ -137,5 +158,7 @@ EXCEPTION
         );
 END;
 $$;
+
+GRANT EXECUTE ON FUNCTION request_substitute(TEXT, UUID, TEXT, BOOLEAN) TO authenticated;
 
 */

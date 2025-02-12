@@ -1,7 +1,7 @@
 "use client"
 
 // REACTJS IMPORTS
-import { useState, useTransition } from "react";
+import { useTransition, useState } from "react";
 
 // LIBRARIES
 import { useTranslations } from "next-intl";
@@ -11,97 +11,120 @@ import { Button } from "@/shared/components/ui/button";
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "@/shared/components/ui/dialog"
-import { FormInputField } from "@/shared/components/ui/forms/form-input-field";
+} from "@/shared/components/ui/dialog";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/shared/components/ui/select";
 import { toast } from "sonner";
+
+// LUCIDE ICONS
+import { LockIcon } from "lucide-react";
 
 // SERVER ACTIONS
 import { blockSpots } from "../../actions/server_actions/blockSpots";
 
-type BlockSpotsButtonProps = {
+interface BlockSpotsButtonProps {
     matchIdFromParams: string;
     teamNumber: 1 | 2;
+    maxPlayers: number;
+    currentBlockedSpots: number;
 }
 
-export const BlockSpotsButton = ({ 
-    matchIdFromParams, 
-    teamNumber, 
+export const BlockSpotsButton = ({
+    matchIdFromParams,
+    teamNumber,
+    maxPlayers,
+    currentBlockedSpots
 }: BlockSpotsButtonProps) => {
-    const t = useTranslations("MatchPage");
-
+    const t = useTranslations('MatchPage');
     const [isPending, startTransition] = useTransition();
-
+    const [selectedSpots, setSelectedSpots] = useState<string>(
+        currentBlockedSpots.toString()
+    );
     const [isOpen, setIsOpen] = useState(false);
-    const [spots, setSpots] = useState("");
-    const [error, setError] = useState("");
-  
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSpots(e.target.value);
-        setError("");
-    }
-  
+
     const handleBlockSpots = () => {
-        if (!spots.trim()) {
-            setError(t("emptyFieldError"));
-            return;
-        }
-
-        const spotsToBlock = parseInt(spots, 10);
-
-        if (isNaN(spotsToBlock) || spotsToBlock < 0) {
-            setError(t("invalidSpotsNumber"));
-            return;
-        }
-
         startTransition(async () => {
             const result = await blockSpots({
-                matchIdFromParams: matchIdFromParams, 
-                teamNumber: teamNumber, 
-                spotsToBlock: spotsToBlock
+                matchIdFromParams,
+                teamNumber,
+                spotsToBlock: parseInt(selectedSpots)
             });
-            
-            if (result.success) {
-                setIsOpen(false);
-                setSpots("");
 
+            if (result.success) {
                 toast.success(result.message);
+                setIsOpen(false);
             } else {
                 toast.error(result.message);
             }
         });
-    }
-  
+    };
+
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button variant="destructive" className="w-full">{t("blockSpotsButtonText")}</Button>
+                <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="gap-2"
+                >
+                    <LockIcon className="h-4 w-4" />
+                    {t('blockSpots')}
+                </Button>
             </DialogTrigger>
-
-            <DialogContent className="sm:max-w-[425px]">
+            
+            <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>{t("blockSportsDialogTitle")}</DialogTitle>
+                    <DialogTitle>{t('blockSpotsTitle')}</DialogTitle>
+                    <DialogDescription>
+                        {t('blockSpotsDescription')}
+                    </DialogDescription>
                 </DialogHeader>
 
                 <div className="grid gap-4 py-4">
-                    <FormInputField
-                        name="spots"
-                        type="number"
-                        value={spots}
-                        onChange={handleInputChange}
-                        label={t("spotsLabel")}
-                        placeholder={t("spotsPlaceholder")}
-                        error={error}
-                        autoComplete="off"
-                    />
+                    <Select
+                        value={selectedSpots}
+                        onValueChange={setSelectedSpots}
+                        disabled={isPending}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder={t('selectNumberOfSpots')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {Array.from({ length: maxPlayers + 1 }, (_, i) => (
+                                <SelectItem key={i} value={i.toString()}>
+                                    {i} {t('spots')}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 </div>
-                
-                <Button onClick={handleBlockSpots} className="w-full" disabled={isPending}>
-                    {isPending ? t("saving") : t("confirm")}
-                </Button>
+
+                <DialogFooter>
+                    <Button
+                        variant="outline"
+                        onClick={() => setIsOpen(false)}
+                        disabled={isPending}
+                    >
+                        {t('cancel')}
+                    </Button>
+                    <Button
+                        onClick={handleBlockSpots}
+                        disabled={isPending}
+                    >
+                        {isPending ? t('blockingSpots') : t('confirm')}
+                    </Button>
+                </DialogFooter>
             </DialogContent>
         </Dialog>
-    )
-}
+    );
+};

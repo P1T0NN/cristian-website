@@ -2,23 +2,23 @@
 import { useMemo } from 'react';
 
 // TYPES
-import type { typesBaseMatchPlayer } from '@/features/players/types/typesPlayer';
+import type { typesPlayer } from '@/features/matches/types/typesMatch';
 
-export const useCalculateTotalMoney = (price: number, matchPlayers: typesBaseMatchPlayer[]) => {
+export const useCalculateTotalMoney = (price: number, matchPlayers: typesPlayer[]) => {
     return useMemo(() => {
         // Filter players who paid but don't have gratis
         const paidNonGratisPlayers = matchPlayers.filter(p => 
-            p.has_paid && !p.has_gratis
+            p.hasPaid && !p.hasGratis
         );
     
         // Count players who paid full price (no discount)
         const fullPricePaidCount = paidNonGratisPlayers.filter(p => 
-            !p.has_discount
+            !p.hasDiscount
         ).length;
         
         // Count players who paid with discount
         const discountedPaidCount = paidNonGratisPlayers.filter(p => 
-            p.has_discount
+            p.hasDiscount
         ).length;
     
         // Calculate totals

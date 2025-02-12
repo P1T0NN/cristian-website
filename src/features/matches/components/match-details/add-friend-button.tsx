@@ -1,116 +1,118 @@
-'use client'
+"use client"
 
 // REACTJS IMPORTS
-import { useState, useTransition } from 'react';
+import { useTransition, useState } from "react";
 
-// LIBRARIES
-import { useTranslations } from 'next-intl';
+// NEXTJS IMPORTS
+import { useTranslations } from "next-intl";
 
 // COMPONENTS
-import { Button } from '@/shared/components/ui/button';
-import { Input } from '@/shared/components/ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/shared/components/ui/dialog';
-import { Label } from '@/shared/components/ui/label';
-import { toast } from 'sonner';
+import { Button } from "@/shared/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/shared/components/ui/dialog";
+import { Input } from "@/shared/components/ui/input";
+import { toast } from "sonner";
 
 // SERVER ACTIONS
-import { addFriend } from '../../actions/server_actions/addFriend';
+import { addFriend } from "../../actions/server_actions/addFriend";
 
-type AddFriendButtonProps = {
+interface AddFriendButtonProps {
     matchIdFromParams: string;
-    teamNumber: 0 | 1 | 2;
-    isAdmin: boolean;
+    teamNumber: 1 | 2;
 }
 
-export function AddFriendButton({ 
-    matchIdFromParams, 
-    teamNumber, 
-    isAdmin
-}: AddFriendButtonProps) {
-    const t = useTranslations('MatchPage');
+export const AddFriendButton = ({
+    matchIdFromParams,
+    teamNumber
+}: AddFriendButtonProps) => {
+    const t = useTranslations("MatchPage");
 
     const [isPending, startTransition] = useTransition();
 
-    const [isOpen, setIsOpen] = useState(false);
-    const [friendName, setFriendName] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
+    const [open, setOpen] = useState(false);
+    const [friendName, setFriendName] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState("");
 
-    const isPhoneNumberValid = (number: string) => {
-        // This regex allows for more flexible phone number formats
-        const phoneRegex = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/;
-        return phoneRegex.test(number.trim());
-    };
-
-    const handleAddFriend = async () => {
-        if (!isPhoneNumberValid(phoneNumber)) {
-            toast.error(t('invalidPhoneNumber'));
+    const handleAddFriend = () => {
+        if (!friendName.trim() || !phoneNumber.trim()) {
+            toast.error(t("fillAllFields"));
             return;
         }
 
         startTransition(async () => {
-            const result = await addFriend({
-                matchIdFromParams: matchIdFromParams, 
-                teamNumber: teamNumber, 
-                friendName: friendName, 
+            const response = await addFriend({
+                matchIdFromParams,
+                teamNumber,
+                friendName: friendName.trim(),
                 phoneNumber: phoneNumber.trim()
             });
-            
-            if (result.success) {
-                setIsOpen(false);
-                setFriendName('');
-                setPhoneNumber('');
-                
-                toast.success(result.message);
+
+            if (response.success && response.data) {
+                setOpen(false);
+                setFriendName("");
+                setPhoneNumber("");
+                toast.success(response.message);
             } else {
-                toast.error(result.message);
+                toast.error(response.message);
             }
         });
-    }
-
-    const buttonText = isAdmin ? t('addPlayer') : t('addFriend');
-    const dialogTitle = isAdmin ? t('addPlayerToMatch') : t('addFriendToMatch');
-    const nameLabel = isAdmin ? t('playerName') : t('friendsName');
-    const namePlaceholder = isAdmin ? t('enterPlayerName') : t('enterFriendName');
+    };
 
     return (
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" className='w-full'>{buttonText}</Button>
+                <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="gap-2"
+                >
+                    {t("addFriend")}
+                </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+
+            <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>{dialogTitle}</DialogTitle>
+                    <DialogTitle>{t("addFriendTitle")}</DialogTitle>
+                    <DialogDescription>
+                        {t("addFriendDescription")}
+                    </DialogDescription>
                 </DialogHeader>
 
-                <div className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="friendName">{nameLabel}</Label>
+                <div className="grid gap-4">
+                    <div className="grid gap-2">
                         <Input
                             id="friendName"
                             value={friendName}
                             onChange={(e) => setFriendName(e.target.value)}
-                            placeholder={namePlaceholder}
+                            placeholder={t("enterFriendName")}
                         />
                     </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="phoneNumber">{t('phoneNumber')}</Label>
+                    <div className="grid gap-2">
                         <Input
                             id="phoneNumber"
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
-                            placeholder={t('enterPhoneNumber')}
+                            placeholder={t("enterPhoneNumber")}
                         />
                     </div>
-                    <Button 
-                        type="button" 
-                        onClick={handleAddFriend} 
-                        disabled={isPending || !friendName || !phoneNumber}
-                        className="w-full"
-                    >
-                        {isPending ? t('adding') : buttonText}
-                    </Button>
                 </div>
+
+                <DialogFooter>
+                    <Button
+                        onClick={handleAddFriend}
+                        disabled={isPending}
+                    >
+                        {t("addFriend")}
+                    </Button>
+                </DialogFooter>
             </DialogContent>
         </Dialog>
-    )
-}
+    );
+};

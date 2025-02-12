@@ -5,11 +5,8 @@ import { NextResponse, NextRequest } from 'next/server';
 import { getTranslations } from 'next-intl/server';
 import { supabase } from '@/shared/lib/supabase/supabase';
 
-// MIDDLEWARE
-import { withAuth } from '@/shared/middleware/withAuth';
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const GET = withAuth(async (request: NextRequest, _userId: string, _token: string): Promise<NextResponse> => {
+export const GET = async (request: NextRequest): Promise<NextResponse> => {
     const t = await getTranslations("GenericMessages");
     
     const searchParams = request.nextUrl.searchParams;
@@ -21,10 +18,10 @@ export const GET = withAuth(async (request: NextRequest, _userId: string, _token
     }
 
     const { data, error } = await supabase
-        .from('users')
-        .select('id, fullName, email')
-        .ilike('fullName', `%${search}%`)
-        .order('fullName')
+        .from('user')
+        .select('id, name, email')
+        .ilike('name', `%${search}%`)
+        .order('name')
         .limit(Number(limit));
 
     if (error) {
@@ -32,4 +29,4 @@ export const GET = withAuth(async (request: NextRequest, _userId: string, _token
     }
 
     return NextResponse.json({ success: true, message: t('USERS_FETCHED'), data });
-});
+};

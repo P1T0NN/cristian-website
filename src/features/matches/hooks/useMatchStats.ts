@@ -2,14 +2,14 @@
 import { useMemo } from 'react';
 
 // TYPES
-import type { typesBaseMatchPlayer } from '@/features/players/types/typesPlayer';
+import type { typesPlayer } from '@/features/matches/types/typesMatch';
 
-export const useMatchStats = (matchPlayers: typesBaseMatchPlayer[]) => {
+export const useMatchStats = (matchPlayers: typesPlayer[]) => {
     return useMemo(() => ({
-        playersPaid: matchPlayers.filter(p => p.has_paid),
-        playersWithDiscount: matchPlayers.filter(p => p.has_discount),
-        playersWithGratis: matchPlayers.filter(p => p.has_gratis),
-        playersEnteredWithBalance: matchPlayers.filter(p => p.has_entered_with_balance),
-        playersNotPaid: matchPlayers.filter(p => !p.has_paid)
+        playersPaid: matchPlayers.filter(p => p.hasPaid),
+        playersWithDiscount: matchPlayers.filter(p => p.hasDiscount),
+        playersWithGratis: matchPlayers.filter(p => p.hasGratis),
+        playersEnteredWithBalance: matchPlayers.filter(p => p.hasEnteredWithBalance),
+        playersNotPaid: matchPlayers.filter(p => !p.hasPaid)
     }), [matchPlayers]);
 };

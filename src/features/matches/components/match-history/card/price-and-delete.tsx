@@ -1,13 +1,15 @@
+// NOTE: This component is client because our parent is already
+"use client"
+
 // COMPONENTS
 import { DeleteMatchFromHistoryDialog } from '../delete-match-from-history-dialog';
 
 // TYPES
-import type { typesMatch } from '@/features/matches/types/typesMatch';
-import type { typesBaseMatchPlayer } from '@/features/players/types/typesPlayer';
+import type { typesMatch, typesPlayer } from '@/features/matches/types/typesMatch';
 
 interface PriceAndDeleteProps {
     match: typesMatch & { 
-        match_players: typesBaseMatchPlayer[] 
+        matchPlayers: typesPlayer[] 
     };
 }
 
@@ -19,6 +21,7 @@ export const PriceAndDelete = ({
             <div className="font-semibold text-base sm:text-lg">
                 {match.price}€
             </div>
+
             <DeleteMatchFromHistoryDialog match={match} />
         </div>
     );

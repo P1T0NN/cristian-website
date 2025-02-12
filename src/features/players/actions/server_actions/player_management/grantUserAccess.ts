@@ -1,7 +1,6 @@
 "use server"
 
 // NEXTJS IMPORTS
-import { cookies } from 'next/headers';
 import { revalidateTag } from 'next/cache';
 
 // LIBRARIES
@@ -32,10 +31,7 @@ export async function grantUserAccess({
 }: GrantUserAccessParams): Promise<GrantUserAccessResponse> {
     const t = await getTranslations("GenericMessages");
 
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
-
-    const { isAuth } = await verifyAuth(authToken as string);
+    const { isAuth } = await verifyAuth();
                         
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
@@ -46,8 +42,8 @@ export async function grantUserAccess({
     }
 
     const { data, error } = await supabase
-        .from('users')
-        .update({ has_access: true })
+        .from('user')
+        .update({ hasAccess: true })
         .eq('id', userId)
         .select()
         .single();

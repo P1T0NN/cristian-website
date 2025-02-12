@@ -2,17 +2,10 @@
 
 // NEXTJS IMPORTS
 import { revalidatePath } from 'next/cache';
-import { cookies } from 'next/headers';
 
 // LIBRARIES
 import { supabase } from '@/shared/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
-
-// SERVICES
-import { upstashRedisCacheService } from '@/shared/services/server/redis-cache.service';
-
-// CONFIG
-import { CACHE_KEYS } from '@/config';
 
 // ACTIONS
 import { verifyAuth } from '@/features/auth/actions/verifyAuth';
@@ -32,10 +25,7 @@ export async function sortTeams({
 }: SortTeamsParams): Promise<SortTeamsResponse> {
     const t = await getTranslations("GenericMessages");
 
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
-
-    const { isAuth } = await verifyAuth(authToken as string);
+    const { isAuth } = await verifyAuth();
                 
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
@@ -58,7 +48,6 @@ export async function sortTeams({
         return { success: false, message: t("TEAMS_SORT_FAILED") };
     }
 
-    await upstashRedisCacheService.delete(`${CACHE_KEYS.MATCH_PREFIX}${matchIdFromParams}`);
     revalidatePath("/");
 
     return { success: true, message: t("TEAMS_SORTED_SUCCESSFULLY") };

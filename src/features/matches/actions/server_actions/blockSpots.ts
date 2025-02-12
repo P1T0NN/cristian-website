@@ -1,24 +1,14 @@
 "use server"
 
 // NEXTJS IMPORTS
-import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
 import { supabase } from '@/shared/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
-// SERVICES
-import { upstashRedisCacheService } from '@/shared/services/server/redis-cache.service';
-
-// CONFIG
-import { CACHE_KEYS } from '@/config';
-
 // ACTIONS
 import { verifyAuth } from '@/features/auth/actions/verifyAuth';
-
-// TYPES
-import type { typesMatch } from '../../types/typesMatch';
 
 interface BlockSpotsResponse {
     success: boolean;
@@ -32,18 +22,15 @@ interface BlockSpotsParams {
     spotsToBlock: number;
 }
 
-export async function blockSpots({
+export const blockSpots = async ({
     matchIdFromParams,
     teamNumber,
     spotsToBlock
-}: BlockSpotsParams): Promise<BlockSpotsResponse> {
+}: BlockSpotsParams): Promise<BlockSpotsResponse> => {
     const t = await getTranslations("GenericMessages");
-
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
-
-    const { isAuth, userId } = await verifyAuth(authToken as string);
-                        
+    
+    const { isAuth, userId } = await verifyAuth();
+        
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
     }
@@ -52,39 +39,31 @@ export async function blockSpots({
         return { success: false, message: t('BAD_REQUEST') };
     }
 
-    const { error, data: result } = await supabase.rpc('block_spots', {
-        p_user_id: userId,
+    const { data, error } = await supabase.rpc('block_spots', {
+        p_auth_user_id: userId,
         p_match_id: matchIdFromParams,
         p_team_number: teamNumber,
         p_spots_to_block: spotsToBlock
     });
 
     if (error) {
+        console.error('RPC error:', error);
         return { success: false, message: t('SPOTS_BLOCK_FAILED') };
-    }
-
-    // Update the match cache
-    const cacheKey = `${CACHE_KEYS.MATCH_PREFIX}${matchIdFromParams}`;
-    const cachedMatch = await upstashRedisCacheService.get<typesMatch>(cacheKey);
-    
-    if (cachedMatch.success && cachedMatch.data) {
-        const updatedCachedMatch = { 
-            ...cachedMatch.data, 
-            places_occupied: result.metadata?.updated_places_occupied,
-            [`block_spots_team${teamNumber}`]: spotsToBlock
-        };
-        await upstashRedisCacheService.set(cacheKey, updatedCachedMatch, 60 * 60 * 12); // 12 hours TTL
     }
 
     revalidatePath("/");
 
-    return { success: true, message: t('SPOTS_BLOCKED_SUCCESSFULLY') };
-}
+    return { 
+        success: true, 
+        message: t('SPOTS_BLOCKED_SUCCESSFULLY'),
+        metadata: data?.metadata
+    };
+};
 
 /* SUPABASE RPC FUNCTION
 
 CREATE OR REPLACE FUNCTION block_spots(
-    p_user_id UUID,
+    p_auth_user_id TEXT,
     p_match_id UUID,
     p_team_number INT,
     p_spots_to_block INT
@@ -95,14 +74,14 @@ SET search_path = public
 AS $$
 DECLARE
     v_match RECORD;
-    v_is_admin BOOLEAN;
+    v_user RECORD;
     v_current_blocked_spots INT;
     v_updated_places_occupied INT;
     v_spots_difference INT;
 BEGIN
     -- Check if the user is an admin
-    SELECT "isAdmin" INTO v_is_admin FROM users WHERE id = p_user_id;
-    IF NOT v_is_admin THEN
+    SELECT "isAdmin" INTO v_user FROM "user" WHERE id = p_auth_user_id;
+    IF NOT v_user."isAdmin" THEN
         RETURN jsonb_build_object('success', false, 'code', 'UNAUTHORIZED');
     END IF;
 
@@ -114,25 +93,27 @@ BEGIN
 
     -- Get the current blocked spots
     IF p_team_number = 1 THEN
-        v_current_blocked_spots := COALESCE(v_match.block_spots_team1, 0);
+        v_current_blocked_spots := COALESCE(v_match."blockSpotsTeam1", 0);
     ELSE
-        v_current_blocked_spots := COALESCE(v_match.block_spots_team2, 0);
+        v_current_blocked_spots := COALESCE(v_match."blockSpotsTeam2", 0);
     END IF;
 
     -- Calculate the difference in blocked spots
     v_spots_difference := p_spots_to_block - v_current_blocked_spots;
 
     -- Update places_occupied
-    v_updated_places_occupied := GREATEST(0, COALESCE(v_match.places_occupied, 0) + v_spots_difference);
+    v_updated_places_occupied := GREATEST(0, COALESCE(v_match."placesOccupied", 0) + v_spots_difference);
 
     -- Update the blocked spots and places_occupied
     IF p_team_number = 1 THEN
         UPDATE matches 
-        SET block_spots_team1 = p_spots_to_block, places_occupied = v_updated_places_occupied
+        SET "blockSpotsTeam1" = p_spots_to_block, 
+            "placesOccupied" = v_updated_places_occupied
         WHERE id = p_match_id;
     ELSE
         UPDATE matches 
-        SET block_spots_team2 = p_spots_to_block, places_occupied = v_updated_places_occupied
+        SET "blockSpotsTeam2" = p_spots_to_block, 
+            "placesOccupied" = v_updated_places_occupied
         WHERE id = p_match_id;
     END IF;
 
@@ -144,20 +125,16 @@ BEGIN
             'blocked_spots', p_spots_to_block
         )
     );
-
 EXCEPTION
     WHEN OTHERS THEN
         RETURN jsonb_build_object(
             'success', false, 
             'code', 'UNEXPECTED_ERROR', 
-            'message', SQLERRM,
-            'sqlstate', SQLSTATE,
-            'detail', COALESCE(SQLERRM, 'Unknown error'),
-            'context', 'block_spots function'
+            'message', SQLERRM
         );
 END;
 $$;
 
-GRANT EXECUTE ON FUNCTION block_spots(UUID, UUID, INT, INT) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION block_spots(TEXT, UUID, INT, INT) TO authenticated;
 
 */

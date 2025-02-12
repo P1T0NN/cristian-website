@@ -141,13 +141,14 @@ export const LocationField = ({
             {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
 
             <div>
-                <Label htmlFor="location_url" className="text-sm font-medium">{t("locationUrl")}</Label>
+                <Label htmlFor="locationUrl" className="text-sm font-medium">{t("locationUrl")}</Label>
                 <Input
                     type="text"
-                    id="location_url"
-                    name="location_url"
+                    id="locationUrl"
+                    name="locationUrl"
                     value={locationUrl}
                     onChange={handleLocationUrlChange}
+
                     readOnly={isLocationSelected}
                     className={`w-full mt-1 ${isLocationSelected ? 'bg-gray-100' : ''}`}
                     placeholder={t('locationUrlPlaceholder')}

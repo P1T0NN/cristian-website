@@ -5,19 +5,10 @@ import { NextResponse, NextRequest } from 'next/server';
 import { supabase } from '@/shared/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
-// SERVICES
-import { upstashRedisCacheService } from '@/shared/services/server/redis-cache.service';
+// TYPES
+import type { typesPlayer } from '@/features/matches/types/typesMatch';
 
-// MIDDLEWARE
-import { withAuth } from '@/shared/middleware/withAuth';
-
-// CONFIG
-import { CACHE_KEYS } from '@/config';
-
-const CACHE_TTL = 60 * 60 * 12; // 12 hours in seconds
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const GET = withAuth(async (request: NextRequest, userId: string, _token: string): Promise<NextResponse> => {
+export async function GET(request: NextRequest) {
     const t = await getTranslations("GenericMessages");
 
     const searchParams = request.nextUrl.searchParams;
@@ -29,20 +20,22 @@ export const GET = withAuth(async (request: NextRequest, userId: string, _token:
     const isPastMatches = searchParams.get('isPastMatches') === 'true';
     const currentDate = searchParams.get('currentDate');
     const currentTime = searchParams.get('currentTime');
+    const requestedUserId = searchParams.get('currentUserId');
 
     let matchesQuery = supabase
-    .from('matches')
-    .select('*')
-    .order('starts_at_day', { ascending: false })
-    .order('starts_at_hour', { ascending: false });
+        .from('matches')
+        .select('*')
+        .order('startsAtDay', { ascending: false })
+        .order('startsAtHour', { ascending: false });
 
+    // Apply date and status filters
     if (date) {
         matchesQuery = matchesQuery
-            .eq('starts_at_day', date)
+            .eq('startsAtDay', date)
             .neq('status', 'finished');
     } else if (isPastMatches && currentDate && currentTime) {
         matchesQuery = matchesQuery.or(
-            `starts_at_day.lt.${currentDate},and(starts_at_day.eq.${currentDate},starts_at_hour.lt.${currentTime})`
+            `startsAtDay.lt.${currentDate},and(startsAtDay.eq.${currentDate},startsAtHour.lt.${currentTime})`
         );
     } else if (status === 'active') {
         matchesQuery = matchesQuery
@@ -52,12 +45,13 @@ export const GET = withAuth(async (request: NextRequest, userId: string, _token:
         matchesQuery = matchesQuery.eq('status', status);
     } else if (currentDate && currentTime) {
         matchesQuery = matchesQuery.or(
-            `starts_at_day.gt.${currentDate},and(starts_at_day.eq.${currentDate},starts_at_hour.gte.${currentTime})`
+            `startsAtDay.gt.${currentDate},and(startsAtDay.eq.${currentDate},startsAtHour.gte.${currentTime})`
         );
     }
 
+    // Apply gender filter for non-admin users
     if (!isAdmin && gender) {
-        matchesQuery = matchesQuery.or(`match_gender.eq.${gender},match_gender.eq.Mixed`);
+        matchesQuery = matchesQuery.or(`matchGender.eq.${gender},matchGender.eq.Mixed`);
     }
 
     const { data: dbMatches, error: supabaseError } = await matchesQuery;
@@ -70,67 +64,64 @@ export const GET = withAuth(async (request: NextRequest, userId: string, _token:
         return NextResponse.json({ success: true, message: t('NO_MATCHES_FOUND'), data: [] });
     }
 
+    // Fetch match players with user information
     const { data: matchPlayers, error: matchPlayersError } = await supabase
         .from('match_players')
         .select(`
             *,
-            user:users (
+            user:user (
                 id,
-                fullName
+                name
             )
         `)
-        .in('match_id', dbMatches.map(match => match.id));
+        .in('matchId', dbMatches.map(match => match.id));
 
     if (matchPlayersError) {
         return NextResponse.json({ success: false, message: t('MATCHES_FAILED_TO_FETCH') }, { status: 500 });
     }
 
+    // Group players by match
     const playersByMatch = matchPlayers?.reduce((acc, player) => {
-        if (!acc[player.match_id]) {
-            acc[player.match_id] = [];
+        if (!acc[player.matchId]) {
+            acc[player.matchId] = [];
         }
-        acc[player.match_id].push(player);
+        // Add the player with the correct name field
+        acc[player.matchId].push({
+            ...player,
+            name: player.playerType === 'temporary' ? 
+                player.temporaryPlayerName : 
+                player.user?.name
+        });
         return acc;
     }, {});
 
-    const matchesWithPlayers = dbMatches.map(match => ({
+    let filteredMatches = dbMatches.map(match => ({
         ...match,
-        match_players: playersByMatch[match.id] || []
+        matchPlayers: playersByMatch[match.id] || []
     }));
 
-    const { data: userMatches, error: userMatchesError } = await supabase
-        .from('match_players')
-        .select('match_id')
-        .eq('user_id', userId);
-
-    if (userMatchesError) {
-        return NextResponse.json({ success: false, message: t('MATCHES_FAILED_TO_FETCH') }, { status: 500 });
+    // Filter matches by player level if not admin
+    if (!isAdmin) {
+        filteredMatches = filteredMatches.filter(match => {
+            if (!playerLevel) return false;
+            if (match.matchLevel && !match.matchLevel.includes(playerLevel)) return false;
+            return true;
+        });
     }
 
-    const userMatchIds = new Set(userMatches?.map(um => um.match_id) || []);
+    // Only filter by userId if it's explicitly provided
+    if (requestedUserId && requestedUserId !== 'undefined') {
+        filteredMatches = filteredMatches.filter(match => 
+            match.matchPlayers.some((player: typesPlayer) => player.userId === requestedUserId)
+        );
+    }
 
-    const filteredMatches = matchesWithPlayers.filter(match => {
-        if (isAdmin) return true;
-        if (!playerLevel) return false;
-        if (match.match_level && !match.match_level.includes(playerLevel)) return false;
-        return true;
-    });
-
-    await Promise.all(filteredMatches.map(async (match) => {
-        const matchWithoutPlayers = { ...match };
-        delete matchWithoutPlayers.match_players;
-        
-        const cacheKey = `${CACHE_KEYS.MATCH_PREFIX}${match.id}`;
-        try {
-            await upstashRedisCacheService.set(cacheKey, matchWithoutPlayers, CACHE_TTL);
-        } catch {
-            // Silently fail if caching encounters an error
-        }
-    }));
-
+    // Add isUserInMatch flag to each match
     const matchesWithUserStatus = filteredMatches.map(match => ({
         ...match,
-        isUserInMatch: userMatchIds.has(match.id)
+        isUserInMatch: requestedUserId ? 
+            match.matchPlayers.some((player: typesPlayer) => player.userId === requestedUserId) : 
+            false
     }));
 
     return NextResponse.json({ 
@@ -138,4 +129,4 @@ export const GET = withAuth(async (request: NextRequest, userId: string, _token:
         message: t('MATCHES_SUCCESSFULLY_FETCHED'), 
         data: matchesWithUserStatus 
     });
-});
+}

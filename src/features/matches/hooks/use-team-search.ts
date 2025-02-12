@@ -58,26 +58,26 @@ export const useTeamSearch = (handleInputChange: (e: React.ChangeEvent<HTMLInput
         setTeam1QueryState(query);
         setIsTeam1Open(query.length > 0);
         setIsTeam2Open(false);
-        handleInputChange({ target: { name: 'team1_name', value: query } } as React.ChangeEvent<HTMLInputElement>);
+        handleInputChange({ target: { name: 'team1Name', value: query } } as React.ChangeEvent<HTMLInputElement>);
     };
 
     const setTeam2Query = (query: string) => {
         setTeam2QueryState(query);
         setIsTeam2Open(query.length > 0);
         setIsTeam1Open(false);
-        handleInputChange({ target: { name: 'team2_name', value: query } } as React.ChangeEvent<HTMLInputElement>);
+        handleInputChange({ target: { name: 'team2Name', value: query } } as React.ChangeEvent<HTMLInputElement>);
     };
 
     useEffect(() => {
-        handleInputChange({ target: { name: 'team1_name', value: 'Equipo 1' } } as React.ChangeEvent<HTMLInputElement>);
-        handleInputChange({ target: { name: 'team2_name', value: 'Equipo 2' } } as React.ChangeEvent<HTMLInputElement>);
+        handleInputChange({ target: { name: 'team1Name', value: 'Equipo 1' } } as React.ChangeEvent<HTMLInputElement>);
+        handleInputChange({ target: { name: 'team2Name', value: 'Equipo 2' } } as React.ChangeEvent<HTMLInputElement>);
     }, []);
 
     const handleTeamSelect = (team: string, teamName: string) => {
         handleInputChange({
             target: { name: team, value: teamName }
         } as React.ChangeEvent<HTMLInputElement>);
-        if (team === 'team1_name') {
+        if (team === 'team1Name') {
             setTeam1Query(teamName);
             setIsTeam1Open(false);
         } else {

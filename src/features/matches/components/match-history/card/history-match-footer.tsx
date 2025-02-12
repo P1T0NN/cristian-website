@@ -7,22 +7,21 @@ import { CardFooter } from "@/shared/components/ui/card";
 import { useCalculateTotalMoney } from "@/features/matches/hooks/useCalculateTotalMoney";
 
 // TYPES
-import type { typesMatch } from "@/features/matches/types/typesMatch";
-import type { typesBaseMatchPlayer } from "@/features/players/types/typesPlayer";
+import type { typesMatch, typesPlayer } from "@/features/matches/types/typesMatch";
 
 // LUCIDE ICONS
 import { MapPin, EuroIcon } from 'lucide-react';
 
 interface HistoryMatchFooterProps {
     match: typesMatch & { 
-        match_players: typesBaseMatchPlayer[] 
+        matchPlayers: typesPlayer[] 
     };
 }
 
 export const HistoryMatchFooter = ({ 
     match 
 }: HistoryMatchFooterProps) => {
-    const totalMoney = useCalculateTotalMoney(Number(match.price), match.match_players);
+    const totalMoney = useCalculateTotalMoney(Number(match.price), match.matchPlayers);
 
     return (
         <CardFooter className="bg-muted/50 py-2 px-4 flex flex-col sm:flex-row justify-between items-start sm:items-center">

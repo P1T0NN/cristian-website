@@ -1,0 +1,62 @@
+// SERVICES
+import { getUserLocale } from "@/shared/services/server/locale";
+
+// COMPONENTS
+import { MatchTeamCard } from "./match-team-card";
+
+// ACTIONS
+import { fetchMatch } from "../../actions/fetchMatch";
+import { getUser } from "@/features/auth/actions/verifyAuth";
+
+// TYPES
+import type { typesUser } from "@/features/players/types/typesPlayer";
+import type { typesPlayer } from "@/features/matches/types/typesMatch";
+
+interface MatchTeamsProps {
+    matchIdFromParams: string;
+}
+
+export const MatchTeams = async ({ 
+    matchIdFromParams 
+}: MatchTeamsProps) => {
+    const [currentUserData, locale] = await Promise.all([
+        getUser() as Promise<typesUser>,
+        getUserLocale()
+    ]);
+
+    // NOTE: I have to pass userId like this because in route.ts when I call verifyAuth it doesn't work for some reason
+    const { data: match } = await fetchMatch(matchIdFromParams, currentUserData.id);
+
+    // Check if current user is a match admin in any team
+    const isMatchAdmin = Boolean(
+        match?.team1Players.some(player => 
+            player.userId === currentUserData.id && player.hasMatchAdmin
+        ) || match?.team2Players.some(player => 
+            player.userId === currentUserData.id && player.hasMatchAdmin
+        )
+    );
+
+    return (
+        <div className="space-y-6">
+            <MatchTeamCard
+                matchIdFromParams={matchIdFromParams}
+                teamName={match?.team1Name as string}
+                teamColor="red"
+                teamNumber={1}
+                players={match?.team1Players as typesPlayer[]}
+                locale={locale}
+                isMatchAdmin={isMatchAdmin}
+            />
+
+            <MatchTeamCard
+                matchIdFromParams={matchIdFromParams}
+                teamName={match?.team2Name as string}
+                teamColor="blue"
+                teamNumber={2}
+                players={match?.team2Players as typesPlayer[]}
+                locale={locale}
+                isMatchAdmin={isMatchAdmin}
+            />
+        </div>
+    );
+};

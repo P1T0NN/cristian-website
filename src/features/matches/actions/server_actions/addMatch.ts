@@ -1,7 +1,6 @@
 "use server"
 
 // NEXTJS IMPORTS
-import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
@@ -30,35 +29,32 @@ export async function addMatch({
 }: AddMatchParams): Promise<AddMatchResponse> {
     const t = await getTranslations("GenericMessages");
 
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
-
-    const { isAuth } = await verifyAuth(authToken as string);
+    const { isAuth } = await verifyAuth();
     
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
     // Convert match_level to uppercase
-    const uppercaseMatchLevel = addMatchData.match_level.toUpperCase();
+    const uppercaseMatchLevel = addMatchData.matchLevel.toUpperCase();
 
     const { data, error } = await supabase
         .from('matches')
         .insert([
             {
                 location: addMatchData.location,
-                location_url: addMatchData.location_url,
+                locationUrl: addMatchData.locationUrl,
                 price: addMatchData.price,
-                team1_name: addMatchData.team1_name,
-                team2_name: addMatchData.team2_name,
-                starts_at_day: addMatchData.starts_at_day,
-                starts_at_hour: addMatchData.starts_at_hour,
-                match_type: addMatchData.match_type,
-                match_gender: addMatchData.match_gender,
-                match_duration: addMatchData.match_duration,
-                added_by: addMatchData.added_by,
-                match_level: uppercaseMatchLevel,
-                has_teams: addMatchData.has_teams,
+                team1Name: addMatchData.team1Name,
+                team2Name: addMatchData.team2Name,
+                startsAtDay: addMatchData.startsAtDay,
+                startsAtHour: addMatchData.startsAtHour,
+                matchType: addMatchData.matchType,
+                matchGender: addMatchData.matchGender,
+                matchDuration: addMatchData.matchDuration,
+                addedBy: addMatchData.addedBy,
+                matchLevel: uppercaseMatchLevel,
+                hasTeams: addMatchData.hasTeams,
                 status: addMatchData.status
             }
         ])

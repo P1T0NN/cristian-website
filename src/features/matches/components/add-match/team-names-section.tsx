@@ -16,6 +16,8 @@ type TeamNamesSectionProps = {
     t: (key: string) => string;
 }
 
+// TODO: Fix team names
+
 export const TeamNamesSection = ({
     team1Query,
     setTeam1Query,
@@ -36,12 +38,12 @@ export const TeamNamesSection = ({
                 <div className="relative">
                     <FormInputField
                         label={t("team1Name")}
-                        name="team1_name"
+                        name="team1Name"
                         type="text"
                         value={team1Query}
                         onChange={(e) => setTeam1Query(e.target.value)}
                         placeholder={t('team1NamePlaceholder')}
-                        error={errors.team1_name}
+                        error={errors.team1Name}
                     />
                     {isTeam1Open && team1Results.length > 0 && (
                         <div className="absolute z-10 w-full mt-1 bg-popover rounded-md shadow-md max-h-60 overflow-auto border border-border">
@@ -50,7 +52,7 @@ export const TeamNamesSection = ({
                                     key={team.id}
                                     variant="ghost"
                                     className="w-full justify-start font-normal"
-                                    onClick={() => handleTeamSelect('team1_name', team.team_name)}
+                                    onClick={() => handleTeamSelect('team1Name', team.team_name)}
                                 >
                                     {team.team_name}
                                 </Button>
@@ -61,12 +63,12 @@ export const TeamNamesSection = ({
                 <div className="relative">
                     <FormInputField
                         label={t("team2Name")}
-                        name="team2_name"
+                        name="team2Name"
                         type="text"
                         value={team2Query}
                         onChange={(e) => setTeam2Query(e.target.value)}
                         placeholder={t('team2NamePlaceholder')}
-                        error={errors.team2_name}
+                        error={errors.team2Name}
                     />
                     {isTeam2Open && team2Results.length > 0 && (
                         <div className="absolute z-10 w-full mt-1 bg-popover rounded-md shadow-md max-h-60 overflow-auto border border-border">
@@ -75,7 +77,7 @@ export const TeamNamesSection = ({
                                     key={team.id}
                                     variant="ghost"
                                     className="w-full justify-start font-normal"
-                                    onClick={() => handleTeamSelect('team2_name', team.team_name)}
+                                    onClick={() => handleTeamSelect('team2Name', team.team_name)}
                                 >
                                     {team.team_name}
                                 </Button>

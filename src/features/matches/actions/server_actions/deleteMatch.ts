@@ -1,7 +1,6 @@
 "use server"
 
 // NEXTJS IMPORTS
-import { cookies } from 'next/headers';
 import { revalidatePath, revalidateTag } from 'next/cache';
 
 // LIBRARIES
@@ -9,13 +8,10 @@ import { supabase } from '@/shared/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
 // CONFIG
-import { CACHE_KEYS, TAGS_FOR_CACHE_REVALIDATIONS } from '@/config';
-
-// SERVICES
-import { upstashRedisCacheService } from '@/shared/services/server/redis-cache.service';
+import { TAGS_FOR_CACHE_REVALIDATIONS } from '@/config';
 
 // ACTIONS
-import { verifyAuth } from '@/features/auth/actions/verifyAuth';
+import { verifyAuth } from "@/features/auth/actions/verifyAuth";
 
 // In match_players table when we delete match we run this SQL:
 //  ALTER TABLE match_players
@@ -40,49 +36,59 @@ interface DeleteMatchParams {
     matchIdFromParams: string;
 }
 
-export async function deleteMatch({
+export const deleteMatch = async ({
     matchIdFromParams
-}: DeleteMatchParams): Promise<DeleteMatchResponse> {
+}: DeleteMatchParams): Promise<DeleteMatchResponse> => {
+    console.log('Starting deleteMatch with params:', { matchIdFromParams });
+    
     const t = await getTranslations("GenericMessages");
-
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
     
-    const { isAuth } = await verifyAuth(authToken as string);
-    
+    const { isAuth, userId: authUserId } = await verifyAuth();
+    console.log('Auth check result:', { isAuth, authUserId });
+        
     if (!isAuth) {
+        console.log('Auth failed');
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
     if (!matchIdFromParams) {
+        console.log('Missing matchIdFromParams');
         return { success: false, message: t('BAD_REQUEST') };
     }
 
-    // Call RPC function to handle all database operations
+    console.log('Calling delete_match RPC with params:', {
+        p_auth_user_id: authUserId,
+        p_match_id: matchIdFromParams
+    });
+
     const { data, error } = await supabase.rpc('delete_match', {
+        p_auth_user_id: authUserId,
         p_match_id: matchIdFromParams
     });
 
     if (error) {
-        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
-    }
-
-    if (!data.success) {
+        console.error('RPC error:', error);
         return { success: false, message: t('MATCH_DELETION_FAILED') };
     }
 
-    // Delete the specific match cache
-    await upstashRedisCacheService.delete(`${CACHE_KEYS.MATCH_PREFIX}${matchIdFromParams}`);
+    console.log('RPC response:', data);
 
+    if (!data.success) {
+        console.log('Deletion failed with code:', data.code);
+        return { success: false, message: t('MATCH_DELETION_FAILED') };
+    }
+
+    console.log('Match deleted successfully, revalidating paths');
     revalidatePath("/");
     revalidateTag(TAGS_FOR_CACHE_REVALIDATIONS.ACTIVE_MATCHES_COUNT);
 
-    return { success: true, message: t("MATCH_DELETED") };
-}
+    return { success: true, message: t("MATCH_DELETED_SUCCESSFULLY") };
+};
 
 /* SUPABASE RPC FUNCTION
 
 CREATE OR REPLACE FUNCTION delete_match(
+    p_auth_user_id TEXT,
     p_match_id UUID
 ) RETURNS JSONB
 LANGUAGE plpgsql
@@ -91,37 +97,57 @@ SET search_path = public
 AS $$
 DECLARE
     v_match RECORD;
+    v_user RECORD;
     v_player RECORD;
     v_refunded_count INT := 0;
 BEGIN
-    -- Get match details first
-    SELECT * INTO v_match 
-    FROM matches 
-    WHERE id = p_match_id;
+    RAISE LOG 'Starting delete_match with params: auth_user=%, match=%',
+        p_auth_user_id, p_match_id;
 
+    -- Verify admin permissions (either global admin or match admin)
+    SELECT "isAdmin" INTO v_user FROM "user" WHERE id = p_auth_user_id;
+    
+    IF NOT EXISTS (
+        SELECT 1 FROM match_players 
+        WHERE "matchId" = p_match_id 
+        AND "userId" = p_auth_user_id 
+        AND "hasMatchAdmin" = true
+    ) AND NOT v_user."isAdmin" THEN
+        RAISE LOG 'User not authorized: %', p_auth_user_id;
+        RETURN jsonb_build_object('success', false, 'code', 'NOT_AUTHORIZED');
+    END IF;
+
+    -- Get match details
+    SELECT * INTO v_match FROM matches WHERE id = p_match_id;
     IF NOT FOUND THEN
+        RAISE LOG 'Match not found: %', p_match_id;
         RETURN jsonb_build_object('success', false, 'code', 'MATCH_NOT_FOUND');
     END IF;
 
     -- Refund all players who entered with balance
     FOR v_player IN (
-        SELECT mp.user_id, mp.has_entered_with_balance
+        SELECT mp."userId"
         FROM match_players mp
-        WHERE mp.match_id = p_match_id
-        AND mp.has_entered_with_balance = true
+        WHERE mp."matchId" = p_match_id
+        AND mp."hasEnteredWithBalance" = true
     ) LOOP
         -- Restore balance to user
-        UPDATE users 
-        SET balance = balance + v_match.price
-        WHERE id = v_player.user_id;
+        UPDATE "user"
+        SET balance = balance + v_match.price::numeric
+        WHERE id = v_player."userId";
         
         v_refunded_count := v_refunded_count + 1;
+        
+        RAISE LOG 'Refunded balance for player: %', v_player."userId";
     END LOOP;
 
-    -- Delete the match (this will cascade to match_players and temporary_players)
+    -- Delete the match (this will cascade to match_players)
     DELETE FROM matches 
     WHERE id = p_match_id;
 
+    RAISE LOG 'Successfully deleted match: %, refunded % players', 
+        p_match_id, v_refunded_count;
+    
     RETURN jsonb_build_object(
         'success', true,
         'code', 'MATCH_DELETED_SUCCESSFULLY',
@@ -130,18 +156,17 @@ BEGIN
             'match_price', v_match.price
         )
     );
-
 EXCEPTION
     WHEN OTHERS THEN
+        RAISE LOG 'Unexpected error in delete_match: %', SQLERRM;
         RETURN jsonb_build_object(
             'success', false,
             'code', 'UNEXPECTED_ERROR',
-            'message', SQLERRM,
-            'sqlstate', SQLSTATE
+            'message', SQLERRM
         );
 END;
 $$;
 
-GRANT EXECUTE ON FUNCTION delete_match(UUID) TO authenticated;
+GRANT EXECUTE ON FUNCTION delete_match(TEXT, UUID) TO authenticated;
 
 */

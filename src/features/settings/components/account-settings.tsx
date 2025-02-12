@@ -18,33 +18,33 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avat
 import { toast } from 'sonner';
 
 // SERVER ACTIONS
-import { updateUserFullName } from '@/features/players/actions/server_actions/updateUserFullName';
+import { updateUserName } from '@/features/players/actions/server_actions/updateUserName';
 
 // TYPES
 import type { Locale } from '@/i18n/config';
 
 type AccountSettingsProps = {
     currentLocale: string;
-    currentUserFullName: string;
+    currentUserName: string;
     currentUserEmail: string;
 }
 
 export const AccountSettings = ({ 
     currentLocale,
-    currentUserFullName,
+    currentUserName,
     currentUserEmail,
 }: AccountSettingsProps) => {
     const t = useTranslations('SettingsPage');
 
     const [isPending, startTransition] = useTransition();
 
-    const [fullName, setFullName] = useState(currentUserFullName);
+    const [name, setName] = useState(currentUserName);
 
-    const handleSaveFullName = async () => {
-        if (fullName) {
+    const handleSaveName = async () => {
+        if (name) {
             startTransition(async () => {
-                const result = await updateUserFullName({
-                    fullName: fullName
+                const result = await updateUserName({
+                    name: name
                 });
 
                 if (result.success) {
@@ -71,16 +71,16 @@ export const AccountSettings = ({
             <CardContent className="space-y-4">
                 <div className="flex items-center">
                     <Avatar className="h-16 w-16">
-                        <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${fullName}`} />
-                        <AvatarFallback>{fullName.charAt(0)}</AvatarFallback>
+                        <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${name}`} />
+                        <AvatarFallback>{name.charAt(0)}</AvatarFallback>
                     </Avatar>
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="name">{t('name')}</Label>
                     <Input 
                         id="name" 
-                        value={fullName} 
-                        onChange={(e) => setFullName(e.target.value)}
+                        value={name} 
+                        onChange={(e) => setName(e.target.value)}
                         disabled
                     />
                 </div>
@@ -113,8 +113,8 @@ export const AccountSettings = ({
             <CardFooter>
                 <Button 
                     className="w-full" 
-                    onClick={handleSaveFullName} 
-                    disabled={isPending || fullName === currentUserFullName}
+                    onClick={handleSaveName} 
+                    disabled={isPending || name === currentUserName}
                 >
                     {isPending ? t('saving') : t('saveChanges')}
                 </Button>

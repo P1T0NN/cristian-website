@@ -1,7 +1,6 @@
 "use server"
 
 // NEXTJS IMPORTS
-import { cookies } from 'next/headers';
 import { revalidatePath, revalidateTag } from 'next/cache';
 
 // LIBRARIES
@@ -21,64 +20,81 @@ interface ReplacePlayerResponse {
 
 interface ReplacePlayerParams {
     matchIdFromParams: string;
-    matchPlayerId: string;
-    teamNumber: number;
+    playerToReplaceId: string;
     withBalance: boolean;
 }
 
-export async function replacePlayer({
+export const replacePlayer = async ({
     matchIdFromParams,
-    matchPlayerId,
-    teamNumber,
+    playerToReplaceId,
     withBalance
-}: ReplacePlayerParams): Promise<ReplacePlayerResponse> {
+}: ReplacePlayerParams): Promise<ReplacePlayerResponse> => {
+    console.log('Starting replacePlayer with params:', {
+        matchIdFromParams,
+        playerToReplaceId,
+        withBalance
+    });
+
     const t = await getTranslations("GenericMessages");
 
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
-
-    const { isAuth, userId: authUserId } = await verifyAuth(authToken as string);
+    const { isAuth, userId: authUserId } = await verifyAuth();
+    console.log('Auth check result:', { isAuth, authUserId });
                 
     if (!isAuth) {
+        console.log('Auth failed');
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!matchIdFromParams || !matchPlayerId) {
+    if (!matchIdFromParams || !playerToReplaceId) {
+        console.log('Missing required params:', { matchIdFromParams, playerToReplaceId });
         return { success: false, message: t('BAD_REQUEST') };
     }
+
+    console.log('Calling replace_player RPC with params:', {
+        p_auth_user_id: authUserId,
+        p_match_id: matchIdFromParams,
+        p_match_player_id: playerToReplaceId,
+        p_with_balance: withBalance
+    });
 
     const { data, error } = await supabase.rpc('replace_player', {
         p_auth_user_id: authUserId,
         p_match_id: matchIdFromParams,
-        p_match_player_id: matchPlayerId,
-        p_team_number: teamNumber,
+        p_match_player_id: playerToReplaceId,
         p_with_balance: withBalance
     });
 
     if (error) {
-        return { success: false, message: t('PLAYER_REPLACE_FAILED') };
+        console.error('RPC error:', error);
+        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
 
+    console.log('RPC response:', data);
+
     if (!data.success) {
+        console.log('Replace failed with code:', data.code);
         if (data.code === 'INSUFFICIENT_BALANCE') {
             return { success: false, message: t("INSUFFICIENT_BALANCE_TRY_CASH") };
         }
         return { success: false, message: t('PLAYER_REPLACE_FAILED') };
     }
 
+    console.log('Replace successful, revalidating paths');
     revalidatePath("/");
     revalidateTag(TAGS_FOR_CACHE_REVALIDATIONS.ACTIVE_MATCHES_COUNT);
 
-    return { success: true, message: t('PLAYER_REPLACED_SUCCESSFULLY') };
-}
+    return { 
+        success: true, 
+        message: t('PLAYER_REPLACED_SUCCESSFULLY')
+    };
+};
 
-/*
+/* SUPABASE RPC FUNCTION
 
 CREATE OR REPLACE FUNCTION replace_player(
-    p_auth_user_id UUID,
+    p_auth_user_id TEXT,
     p_match_id UUID,
-    p_match_player_id UUID,
-    p_team_number INTEGER,
+    p_match_player_id TEXT,
     p_with_balance BOOLEAN
 ) RETURNS JSONB
 LANGUAGE plpgsql
@@ -91,10 +107,13 @@ DECLARE
     v_user RECORD;
     v_current_time TIMESTAMP;
     v_match_start TIMESTAMP;
-    v_original_adder_id UUID;
     v_match_price DECIMAL;
     v_updated_balance NUMERIC;
+    v_player_name TEXT;
 BEGIN
+    RAISE LOG 'Starting replace_player with params: auth_user=%, match=%, player=%, with_balance=%',
+        p_auth_user_id, p_match_id, p_match_player_id, p_with_balance;
+
     -- Get match details
     SELECT * INTO v_match FROM matches WHERE id = p_match_id;
     IF NOT FOUND THEN
@@ -105,41 +124,34 @@ BEGIN
     SELECT * INTO v_player 
     FROM match_players 
     WHERE id = p_match_player_id
-    AND match_id = p_match_id;
+    AND "matchId" = p_match_id;
 
     IF NOT FOUND THEN
         RETURN jsonb_build_object('success', false, 'code', 'PLAYER_NOT_IN_MATCH');
     END IF;
 
-    -- Check if player has requested a substitute
-    IF NOT v_player.substitute_requested THEN
-        RETURN jsonb_build_object('success', false, 'code', 'NO_SUBSTITUTE_REQUESTED');
+    -- Get user details for balance check and info
+    SELECT * INTO v_user FROM "user" WHERE id = p_auth_user_id;
+    IF NOT FOUND THEN
+        RETURN jsonb_build_object('success', false, 'code', 'USER_NOT_FOUND');
     END IF;
 
-    -- Check if auth user is not the same as the player being replaced
-    IF v_player.user_id = p_auth_user_id THEN
-        RETURN jsonb_build_object('success', false, 'code', 'CANNOT_REPLACE_SELF');
-    END IF;
+    -- Store user info
+    v_player_name := v_user.name;
 
-    -- Check if match hasn't started yet
+    -- Check time limit
     v_current_time := CURRENT_TIMESTAMP;
-    v_match_start := (v_match.starts_at_day || ' ' || v_match.starts_at_hour)::TIMESTAMP;
+    v_match_start := (v_match."startsAtDay" || ' ' || v_match."startsAtHour")::TIMESTAMP;
     
     IF v_current_time > v_match_start THEN
         RETURN jsonb_build_object('success', false, 'code', 'MATCH_ALREADY_STARTED');
-    END IF;
-
-    -- Get user details for balance check
-    SELECT * INTO v_user FROM users WHERE id = p_auth_user_id;
-    IF NOT FOUND THEN
-        RETURN jsonb_build_object('success', false, 'code', 'USER_NOT_FOUND');
     END IF;
 
     -- Handle balance payment for new player
     IF p_with_balance THEN
         IF v_user.balance >= v_match.price::numeric THEN
             -- Deduct balance from new player
-            UPDATE users
+            UPDATE "user"
             SET balance = balance - v_match.price::numeric
             WHERE id = p_auth_user_id
             RETURNING balance INTO v_updated_balance;
@@ -148,49 +160,23 @@ BEGIN
         END IF;
     END IF;
 
-    -- If this is a temporary player, store the ID of the player who added them
-    IF v_player.player_type = 'temporary' THEN
-        v_original_adder_id := v_player.user_id;
-    ELSE
-        -- For regular players, check if they entered with balance and restore it
-        IF v_player.has_entered_with_balance THEN
-            v_match_price := v_match.price;
-            
-            -- Restore balance to the original player
-            UPDATE users
-            SET balance = balance + v_match_price
-            WHERE id = v_player.user_id;
-        END IF;
-    END IF;
-
     -- Update the player record with the new player
     UPDATE match_players
-    SET user_id = p_auth_user_id,
-        substitute_requested = false,
-        player_type = 'regular',
-        has_entered_with_balance = p_with_balance
+    SET "userId" = p_auth_user_id,
+        "substituteRequested" = false,
+        "playerType" = 'regular',
+        "hasEnteredWithBalance" = p_with_balance
     WHERE id = p_match_player_id;
-
-    -- If this was a temporary player, reset has_added_friend for the original adder
-    IF v_player.player_type = 'temporary' THEN
-        UPDATE match_players
-        SET has_added_friend = false
-        WHERE match_id = p_match_id 
-        AND user_id = v_original_adder_id;
-    END IF;
 
     RETURN jsonb_build_object(
         'success', true,
         'code', 'PLAYER_REPLACED_SUCCESSFULLY',
         'metadata', jsonb_build_object(
-            'team_number', p_team_number,
-            'was_temporary', v_player.player_type = 'temporary',
-            'original_adder_id', v_original_adder_id,
-            'balance_restored', CASE 
-                WHEN v_player.player_type = 'regular' AND v_player.has_entered_with_balance THEN v_match_price
-                ELSE 0
-            END,
-            'updated_balance', CASE 
+            'playerId', p_match_player_id,
+            'playerName', v_player_name,
+            'playerPosition', v_user."playerPosition",
+            'hasEnteredWithBalance', p_with_balance,
+            'updatedBalance', CASE 
                 WHEN p_with_balance THEN v_updated_balance
                 ELSE NULL
             END
@@ -199,15 +185,15 @@ BEGIN
 
 EXCEPTION
     WHEN OTHERS THEN
+        RAISE LOG 'Unexpected error in replace_player: %', SQLERRM;
         RETURN jsonb_build_object(
             'success', false,
-            'code', 'REPLACEMENT_FAILED',
+            'code', 'UNEXPECTED_ERROR',
             'message', SQLERRM
         );
 END;
 $$;
 
--- Grant execute permissions
-GRANT EXECUTE ON FUNCTION replace_player(UUID, UUID, UUID, INTEGER, BOOLEAN) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION replace_player(TEXT, UUID, TEXT, BOOLEAN) TO authenticated;
 
 */

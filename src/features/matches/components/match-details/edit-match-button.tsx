@@ -1,37 +1,38 @@
-"use client"
-
 // NEXTJS IMPORTS
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 // LIBRARIES
-import { useTranslations } from "next-intl";
-
-// COMPONENTS
-import { Button } from "@/shared/components/ui/button";
+import { getTranslations } from "next-intl/server";
 
 // CONFIG
 import { ADMIN_PAGE_ENDPOINTS } from "@/config";
 
+// COMPONENTS
+import { Button } from "@/shared/components/ui/button";
+
 // LUCIDE ICONS
 import { Edit } from "lucide-react";
 
-type EditMatchButtonProps = {
-    matchId: string;
+interface EditMatchButtonProps {
+    matchIdFromParams: string;
 }
 
-export const EditMatchButton = ({
-    matchId
+export const EditMatchButton = async ({
+    matchIdFromParams
 }: EditMatchButtonProps) => {
-    const t = useTranslations("MatchPage");
-    const router = useRouter();
-
-    const handleEditMatch = () => {
-        router.push(`${ADMIN_PAGE_ENDPOINTS.EDIT_MATCH_PAGE}/${matchId}`)
-    };
+    const t = await getTranslations('MatchPage');
 
     return (
-        <Button onClick={handleEditMatch} variant="outline" className="w-full sm:w-auto">
-            <Edit className="mr-2 h-4 w-4" /> {t('editMatch')}
+        <Button 
+            variant="outline"
+            size="sm"
+            className="inline-flex items-center"
+            asChild
+        >
+            <Link href={`${ADMIN_PAGE_ENDPOINTS.EDIT_MATCH_PAGE}/${matchIdFromParams}`}>
+                <Edit className="w-4 h-4 mr-2" />
+                {t('editMatch')}
+            </Link>
         </Button>
     )
 }

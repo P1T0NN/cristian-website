@@ -1,7 +1,6 @@
 "use server"
 
 // NEXTJS IMPORTS
-import { cookies } from 'next/headers';
 import { revalidateTag } from 'next/cache';
 
 // LIBRARIES
@@ -40,10 +39,7 @@ export async function removeBalance({
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
-
-    const { isAuth } = await verifyAuth(authToken as string);
+    const { isAuth } = await verifyAuth();
                         
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
@@ -66,7 +62,7 @@ export async function removeBalance({
 
     // Fetch the current user balance
     const { data: userData, error: fetchError } = await supabase
-        .from('users')
+        .from('user')
         .select('balance')
         .eq('id', playerIdFromParams)
         .single();
@@ -81,7 +77,7 @@ export async function removeBalance({
 
     // Update user balance
     const { data, error } = await supabase
-        .from('users')
+        .from('user')
         .update({ balance: newBalance })
         .eq('id', playerIdFromParams);
 
@@ -98,7 +94,7 @@ export async function removeBalance({
     if (deleteError) {
         // If deletion fails, revert the balance update
         await supabase
-            .from('users')
+            .from('user')
             .update({ balance: currentBalance })
             .eq('id', playerIdFromParams);
             

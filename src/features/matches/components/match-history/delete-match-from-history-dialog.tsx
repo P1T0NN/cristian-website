@@ -2,6 +2,8 @@
 
 // REACTJS IMPORTS
 import { useTransition } from "react";
+
+// NEXTJS IMPORTS
 import { useRouter } from "next/navigation";
 
 // LIBRARIES
@@ -43,6 +45,7 @@ export const DeleteMatchFromHistoryDialog = ({
 }: DeleteMatchFromHistoryDialogProps) => {
     const t = useTranslations('MatchHistoryPage');
     const router = useRouter();
+
     const [isPending, startTransition] = useTransition();
 
     const handleDeleteMatch = () => {

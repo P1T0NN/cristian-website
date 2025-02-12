@@ -49,7 +49,7 @@ export const PlayerDetails = async ({
     const playerData = serverPlayerData.data as typesUser;
     
     // Add null check for player_position
-    const positionLabel = await formatPlayerPositionLocalized(playerData.player_position || '');
+    const positionLabel = await formatPlayerPositionLocalized(playerData.playerPosition || '');
 
     return (
         <Card className="max-w-4xl mx-auto">
@@ -59,14 +59,14 @@ export const PlayerDetails = async ({
                 </p>
                 <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-4">
                     <Avatar className="h-20 w-20">
-                        <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${playerData.fullName}`} />
-                        <AvatarFallback>{playerData.fullName.split(' ').map(n => n[0]).join('').toUpperCase()}</AvatarFallback>
+                        <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${playerData.name}`} />
+                        <AvatarFallback>{playerData.name.split(' ').map(n => n[0]).join('').toUpperCase()}</AvatarFallback>
                     </Avatar>
 
                     <div className="text-center sm:text-left">
-                        <CardTitle className="text-2xl font-bold">{playerData.fullName}</CardTitle>
+                        <CardTitle className="text-2xl font-bold">{playerData.name}</CardTitle>
                         <div className="flex flex-wrap justify-center sm:justify-start items-center mt-1 gap-2">
-                            {playerData.verify_documents && (
+                            {playerData.verifyDocuments && (
                                 <Badge variant="secondary" className="text-xs">
                                     <CheckCircle className="w-3 h-3 mr-1" />
                                     {t('verified')}
@@ -87,12 +87,12 @@ export const PlayerDetails = async ({
                     <InfoItem icon={<Mail className="h-5 w-5 text-muted-foreground" />} text={playerData.email} />
                     <InfoItem icon={<Phone className="h-5 w-5 text-muted-foreground" />} text={playerData.phoneNumber} />
                     <InfoItem icon={<MapPin className="h-5 w-5 text-muted-foreground" />} text={playerData.country || t('notProvided')} />
-                    <InfoItem icon={<Calendar className="h-5 w-5 text-muted-foreground" />} text={`${t('joined')} ${new Date(playerData.created_at).toLocaleDateString()}`} />
+                    <InfoItem icon={<Calendar className="h-5 w-5 text-muted-foreground" />} text={`${t('joined')} ${new Date(playerData.createdAt).toLocaleDateString()}`} />
                     <InfoItem icon={<IdCard className="h-5 w-5 text-muted-foreground" />} text={`${t('dni')}: ${playerData.dni || t('notProvided')}`} />
                     <InfoItem icon={<Users className="h-5 w-5 text-muted-foreground" />} text={`${t('playerPosition')}: ${positionLabel || t('notProvided')}`} />
-                    {currentUserData.isAdmin && <InfoItem icon={<Star className="h-5 w-5 text-muted-foreground" />} text={`${t('playerLevel')}: ${playerData.player_level || t('notProvided')}`} />}
-                    <InfoItem icon={<Euro className="h-5 w-5 text-muted-foreground" />} text={`${t('playerOwes')}: `} value={<span className="font-semibold text-red-500">{playerData.player_debt.toFixed(2)}€</span>} />
-                    <InfoItem icon={<Euro className="h-5 w-5 text-muted-foreground" />} text={`${t('iOwe')}: `} value={<span className="font-semibold text-green-500">{playerData.cristian_debt.toFixed(2)}€</span>} />
+                    {currentUserData.isAdmin && <InfoItem icon={<Star className="h-5 w-5 text-muted-foreground" />} text={`${t('playerLevel')}: ${playerData.playerLevel || t('notProvided')}`} />}
+                    <InfoItem icon={<Euro className="h-5 w-5 text-muted-foreground" />} text={`${t('playerOwes')}: `} value={<span className="font-semibold text-red-500">{playerData.playerDebt.toFixed(2)}€</span>} />
+                    <InfoItem icon={<Euro className="h-5 w-5 text-muted-foreground" />} text={`${t('iOwe')}: `} value={<span className="font-semibold text-green-500">{playerData.cristianDebt.toFixed(2)}€</span>} />
                     <InfoItem icon={<Wallet className="h-5 w-5 text-muted-foreground" />} text={`${t('balance')}: `} value={<span className={`font-semibold ${playerData.balance >= 0 ? 'text-blue-500' : 'text-red-500'}`}>{playerData.balance.toFixed(2)}€</span>} />
                 </div>
 
@@ -100,30 +100,30 @@ export const PlayerDetails = async ({
                     {currentUserData.isAdmin && (
                         <>
                             <AddDebtDialog 
-                                initialPlayerName={playerData.fullName}
-                                addedBy={currentUserData.fullName}
+                                initialPlayerName={playerData.name}
+                                addedBy={currentUserData.name}
                             />
 
                             <AddBalanceButton
                                 playerIdFromParams={playerIdFromParams}
                                 isAdmin={currentUserData.isAdmin}
-                                addedBy={currentUserData.fullName}
+                                addedBy={currentUserData.name}
                             />
 
                             <VerifyDocumentsButton
                                 playerIdFromParams={playerIdFromParams}
-                                isVerified={playerData.verify_documents}
+                                isVerified={playerData.verifyDocuments}
                             />
                         </>
                     )}
                     <EditPlayerDetails
                         playerIdFromParams={playerIdFromParams}
-                        initialFullName={playerData.fullName}
+                        initialName={playerData.name}
                         initialPhoneNumber={playerData.phoneNumber}
                         initialCountry={playerData.country}
                         initialDNI={playerData.dni}
-                        initialPlayerLevel={playerData.player_level}
-                        initialPlayerPosition={playerData.player_position}
+                        initialPlayerLevel={playerData.playerLevel}
+                        initialPlayerPosition={playerData.playerPosition}
                         isAdmin={currentUserData.isAdmin}
                     />
                 </div>

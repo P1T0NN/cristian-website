@@ -1,7 +1,6 @@
 "use server"
 
 // NEXTJS IMPORTS
-import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
@@ -22,30 +21,26 @@ interface UpdatePlayerPaymentStatusResponse {
     success: boolean;
     message: string;
     metadata?: {
-        has_paid: boolean;
-        has_discount: boolean;
-        has_gratis: boolean;
+        hasPaid: boolean;
+        hasDiscount: boolean;
+        hasGratis: boolean;
     };
 }
 
-export async function updatePlayerPaymentStatus({
+export const updatePlayerPaymentStatus = async ({
     matchIdFromParams,
     matchPlayerId,
     type,
     currentValue
-}: UpdatePlayerPaymentStatusParams): Promise<UpdatePlayerPaymentStatusResponse> {
+}: UpdatePlayerPaymentStatusParams): Promise<UpdatePlayerPaymentStatusResponse> => {
     const t = await getTranslations("GenericMessages");
     
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
-    
-    const { isAuth } = await verifyAuth(authToken as string);
+    const { isAuth } = await verifyAuth();
 
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    // Call RPC function to handle all payment status updates
     const { data, error } = await supabase.rpc('update_player_payment_status', {
         p_match_id: matchIdFromParams,
         p_player_id: matchPlayerId,
@@ -72,9 +67,11 @@ export async function updatePlayerPaymentStatus({
 
 /* SUPABASE RPC FUNCTION
 
+DROP FUNCTION IF EXISTS update_player_payment_status(UUID, TEXT, TEXT, BOOLEAN);
+
 CREATE OR REPLACE FUNCTION update_player_payment_status(
     p_match_id UUID,
-    p_player_id UUID,
+    p_player_id TEXT,
     p_type TEXT,
     p_current_value BOOLEAN
 ) RETURNS JSONB
@@ -85,30 +82,31 @@ AS $$
 DECLARE
     v_updated_player RECORD;
 BEGIN
-    -- Update the player's payment status
+    -- Update the player's payment status based on type
     WITH updated AS (
         UPDATE match_players
         SET 
-            has_paid = CASE 
+            "hasPaid" = CASE 
                 WHEN p_type = 'paid' THEN NOT p_current_value
-                WHEN p_type = 'gratis' THEN NOT p_current_value  -- Set has_paid when gratis changes
-                ELSE has_paid
+                WHEN p_type = 'gratis' AND NOT p_current_value THEN true  -- Auto set hasPaid when gratis is given
+                ELSE "hasPaid"
             END,
-            has_discount = CASE 
+            "hasDiscount" = CASE 
                 WHEN p_type = 'discount' THEN NOT p_current_value
                 WHEN p_type = 'gratis' AND NOT p_current_value THEN false  -- Reset discount when gratis is given
-                ELSE has_discount
+                ELSE "hasDiscount"
             END,
-            has_gratis = CASE 
+            "hasGratis" = CASE 
                 WHEN p_type = 'gratis' THEN NOT p_current_value
-                ELSE has_gratis
+                ELSE "hasGratis"
             END
         WHERE id = p_player_id 
-        AND match_id = p_match_id
+        AND "matchId" = p_match_id
         RETURNING *
     )
     SELECT * INTO v_updated_player FROM updated;
 
+    -- Check if player was found and updated
     IF NOT FOUND THEN
         RETURN jsonb_build_object(
             'success', false,
@@ -116,13 +114,14 @@ BEGIN
         );
     END IF;
 
+    -- Return success response with updated status
     RETURN jsonb_build_object(
         'success', true,
         'code', 'PAYMENT_STATUS_UPDATED',
         'metadata', jsonb_build_object(
-            'has_paid', v_updated_player.has_paid,
-            'has_discount', v_updated_player.has_discount,
-            'has_gratis', v_updated_player.has_gratis
+            'hasPaid', v_updated_player."hasPaid",
+            'hasDiscount', v_updated_player."hasDiscount",
+            'hasGratis', v_updated_player."hasGratis"
         )
     );
 
@@ -137,6 +136,7 @@ EXCEPTION
 END;
 $$;
 
-GRANT EXECUTE ON FUNCTION update_player_payment_status(UUID, UUID, TEXT, BOOLEAN) TO authenticated;
+-- Grant execute permission to authenticated users
+GRANT EXECUTE ON FUNCTION update_player_payment_status(UUID, TEXT, TEXT, BOOLEAN) TO authenticated;
 
 */

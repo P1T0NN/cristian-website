@@ -35,14 +35,14 @@ export const DisplayUsers = async ({
                 <TableBody>
                     {users.map((user) => (
                         <TableRow key={user.id}>
-                            <TableCell className="px-2 py-4 whitespace-normal break-words text-sm font-medium">{user.fullName}</TableCell>
+                            <TableCell className="px-2 py-4 whitespace-normal break-words text-sm font-medium">{user.name}</TableCell>
                             <TableCell className="px-2 py-4 whitespace-normal break-words text-sm">{user.email}</TableCell>
                             <TableCell className="px-2 py-4 whitespace-normal break-words text-sm">{user.phoneNumber}</TableCell>
                             <TableCell className="px-2 py-4 whitespace-normal break-words text-sm">{user.gender}</TableCell>
                             <TableCell className="px-2 py-4 whitespace-normal break-words text-sm">
                                 <UpdatePlayerLevel
                                     userId={user.id}
-                                    currentLevel={user.player_level}
+                                    currentLevel={user.playerLevel}
                                 />
                             </TableCell>
                             <TableCell className="px-2 py-4 whitespace-nowrap text-sm">

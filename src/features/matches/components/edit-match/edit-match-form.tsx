@@ -56,18 +56,18 @@ export const EditMatchForm = ({
     const { formData, errors, handleInputChange, handleSubmit } = useForm({
         initialValues: {
             location: matchData.location || "",
-            location_url: matchData.location_url || "",
+            locationUrl: matchData.locationUrl || "",
             price: matchData.price?.toString() || "",
-            team1_name: matchData.team1_name || "",
-            team2_name: matchData.team2_name || "",
-            starts_at_day: matchData.starts_at_day || "",
-            starts_at_hour: matchData.starts_at_hour || "",
-            match_type: matchData.match_type || "",
-            match_gender: matchData.match_gender || "Male",
-            match_duration: matchData.match_duration || 60,
-            added_by: matchData.added_by || "",
-            match_level: matchData.match_level || "",
-            has_teams: false,
+            team1Name: matchData.team1Name || "",
+            team2Name: matchData.team2Name || "",
+            startsAtDay: matchData.startsAtDay || "",
+            startsAtHour: matchData.startsAtHour || "",
+            matchType: matchData.matchType || "",
+            matchGender: matchData.matchGender || "Male",
+            matchDuration: matchData.matchDuration || 60,
+            addedBy: matchData.addedBy || "",
+            matchLevel: matchData.matchLevel || "",
+            hasTeams: false,
             status: matchData.status || "active"
         },
         validationSchema: addMatchSchema,
@@ -99,7 +99,7 @@ export const EditMatchForm = ({
             target: { name: 'location', value: locationName }
         } as React.ChangeEvent<HTMLInputElement>);
         handleInputChange({
-            target: { name: 'location_url', value: locationUrl }
+            target: { name: 'locationUrl', value: locationUrl }
         } as React.ChangeEvent<HTMLInputElement>);
     };
 
@@ -116,7 +116,7 @@ export const EditMatchForm = ({
     ];
 
     const toggleMatchLevel = (level: string) => {
-        const currentLevels = formData.match_level.split('');
+        const currentLevels = formData.matchLevel.split('');
         const updatedLevels = currentLevels.includes(level)
             ? currentLevels.filter(l => l !== level)
             : [...currentLevels, level].sort();
@@ -125,16 +125,16 @@ export const EditMatchForm = ({
         } as React.ChangeEvent<HTMLInputElement>);
     };
 
-    const isLevelActive = (level: string) => formData.match_level.includes(level);
+    const isLevelActive = (level: string) => formData.matchLevel.includes(level);
 
     return (
         <div className="flex flex-col space-y-4">
             <LocationField
                 locationName={formData.location}
-                locationUrl={formData.location_url}
+                locationUrl={formData.locationUrl}
                 onLocationChange={handleLocationChange}
                 error={errors.location}
-                urlError={errors.location_url}
+                urlError={errors.locationUrl}
                 locationsData={locationsData}
                 defaultLocationsData={defaultLocationsData}
             />
@@ -152,12 +152,12 @@ export const EditMatchForm = ({
 
                 <FormInputField
                     label={t("matchDuration")}
-                    name="match_duration"
+                    name="matchDuration"
                     type="number"
-                    value={formData.match_duration}
+                    value={formData.matchDuration}
                     onChange={handleInputChange}
                     placeholder={t('matchDurationPlaceholder')}
-                    error={errors.match_duration}
+                    error={errors.matchDuration}
                 />
 
                 <div className="space-y-2">
@@ -176,8 +176,8 @@ export const EditMatchForm = ({
                             </Button>
                         ))}
                     </div>
-                    {errors.match_level && (
-                        <p className="text-sm text-red-500 mt-1">{errors.match_level}</p>
+                    {errors.matchLevel && (
+                        <p className="text-sm text-red-500 mt-1">{errors.matchLevel}</p>
                     )}
                 </div>
             </div>
@@ -185,42 +185,42 @@ export const EditMatchForm = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormInputField
                     label={t("team1Name")}
-                    name="team1_name"
+                    name="team1Name"
                     type="text"
-                    value={formData.team1_name}
+                    value={formData.team1Name}
                     onChange={handleInputChange}
                     placeholder={t('team1NamePlaceholder')}
-                    error={errors.team1_name}
+                    error={errors.team1Name}
                 />
-        
+
                 <FormInputField
                     label={t("team2Name")}
-                    name="team2_name"
+                    name="team2Name"
                     type="text"
-                    value={formData.team2_name}
+                    value={formData.team2Name}
                     onChange={handleInputChange}
                     placeholder={t('team2NamePlaceholder')}
-                    error={errors.team2_name}
+                    error={errors.team2Name}
                 />
             </div>
     
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormDateField
                     label={t("date")}
-                    name="starts_at_day"
-                    value={formData.starts_at_day}
+                    name="startsAtDay"
+                    value={formData.startsAtDay}
                     onChange={(date) => handleInputChange({
-                        target: { name: "starts_at_day", value: date as string }
+                        target: { name: "startsAtDay", value: date as string }
                     } as React.ChangeEvent<HTMLInputElement>)}
-                    error={errors.starts_at_day}
+                    error={errors.startsAtDay}
                 />
-        
+
                 <FormTimeField
                     label={t("time")}
-                    name="starts_at_hour"
-                    value={formData.starts_at_hour}
+                    name="startsAtHour"
+                    value={formData.startsAtHour}
                     onChange={handleInputChange}
-                    error={errors.starts_at_hour}
+                    error={errors.startsAtHour}
                     disableArrows={false}
                 />
             </div>
@@ -228,22 +228,22 @@ export const EditMatchForm = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormSelectField
                     label={t("matchType")}
-                    name="match_type"
-                    value={formData.match_type}
-                    onChange={handleSelectChange('match_type')}
+                    name="matchType"
+                    value={formData.matchType}
+                    onChange={handleSelectChange('matchType')}
                     options={matchTypeOptions}
                     placeholder={t('matchTypePlaceholder')}
-                    error={errors.match_type}
+                    error={errors.matchType}
                 />
 
                 <FormSelectField
                     label={t("matchGender")}
-                    name="match_gender"
-                    value={formData.match_gender}
-                    onChange={handleSelectChange('match_gender')}
+                    name="matchGender"
+                    value={formData.matchGender}
+                    onChange={handleSelectChange('matchGender')}
                     options={matchGenderOptions}
                     placeholder={t('matchGenderPlaceholder')}
-                    error={errors.match_gender}
+                    error={errors.matchGender}
                 />
             </div>
 

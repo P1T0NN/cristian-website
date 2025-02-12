@@ -1,7 +1,6 @@
 "use server"
 
 // NEXTJS IMPORTS
-import { cookies } from 'next/headers';
 import { revalidateTag } from 'next/cache';
 
 // LIBRARIES
@@ -51,10 +50,7 @@ export async function addBalance({
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
-
-    const { isAuth } = await verifyAuth(authToken as string);
+    const { isAuth } = await verifyAuth();
                         
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
@@ -66,7 +62,7 @@ export async function addBalance({
 
     // Fetch the user data
     const { data: userData, error: userFetchError } = await supabase
-        .from('users')
+        .from('user')
         .select('*')
         .eq('id', playerIdFromParams)
         .single();
@@ -86,7 +82,7 @@ export async function addBalance({
             .from('balances')
             .insert([
                 {
-                    player_name: user.fullName,
+                    player_name: user.name,
                     balance_added: amount,
                     reason: reason,
                     added_by: addedBy
@@ -94,7 +90,7 @@ export async function addBalance({
             ])
             .select(),
         supabase
-            .from('users')
+            .from('user')
             .update({ balance: newBalance })
             .eq('id', playerIdFromParams)
             .select()

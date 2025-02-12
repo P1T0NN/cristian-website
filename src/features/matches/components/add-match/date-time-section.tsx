@@ -23,19 +23,19 @@ export const DateTimeSection = ({
             <h3 className="text-lg font-semibold">{t("dateAndTime")}</h3>
             <FormDateField
                 label={t("date")}
-                name="starts_at_day"
-                value={formData.starts_at_day}
+                name="startsAtDay"
+                value={formData.startsAtDay}
                 onChange={(date) => handleInputChange({
-                    target: { name: "starts_at_day", value: date as string }
+                    target: { name: "startsAtDay", value: date as string }
                 } as React.ChangeEvent<HTMLInputElement>)}
-                error={errors.starts_at_day}
+                error={errors.startsAtDay}
             />
             <FormTimeField
                 label={t("time")}
-                name="starts_at_hour"
-                value={formData.starts_at_hour}
+                name="startsAtHour"
+                value={formData.startsAtHour}
                 onChange={handleInputChange}
-                error={errors.starts_at_hour}
+                error={errors.startsAtHour}
                 every15Min
             />
         </div>

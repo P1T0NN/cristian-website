@@ -8,12 +8,11 @@ import { HistoryMatchCard } from './card/history-match-card';
 import { MatchHistoryPagination } from './pagination/match-history-pagination';
 
 // TYPES
-import type { typesMatch } from "../../types/typesMatch";
-import type { typesBaseMatchPlayer } from "@/features/players/types/typesPlayer";
+import type { typesMatch, typesPlayer } from "../../types/typesMatch";
 
 type PaginatedMatchHistoryProps = {
     matches: (typesMatch & { 
-        match_players: typesBaseMatchPlayer[] 
+        matchPlayers: typesPlayer[] 
     })[];
 }
 
@@ -35,6 +34,7 @@ export const PaginatedMatchHistory = ({
         <>
             <div className="space-y-4">
                 {paginatedMatches.map((match) => (
+                    /* Client Component */
                     <HistoryMatchCard 
                         key={match.id} 
                         match={match} 
@@ -42,6 +42,7 @@ export const PaginatedMatchHistory = ({
                 ))}
             </div>
 
+            {/* Client Component */}
             <MatchHistoryPagination 
                 currentPage={currentPage}
                 totalPages={totalPages}

@@ -1,28 +1,33 @@
 "use server"
 
 // NEXTJS IMPORTS
-import { cookies } from 'next/headers';
 import { revalidateTag, revalidatePath } from 'next/cache';
 
 // LIBRARIES
 import { supabase } from '@/shared/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
-// SERVICES
-import { upstashRedisCacheService } from '@/shared/services/server/redis-cache.service';
-
 // CONFIG
-import { CACHE_KEYS, PROTECTED_PAGE_ENDPOINTS, TAGS_FOR_CACHE_REVALIDATIONS } from '@/config';
+import { PROTECTED_PAGE_ENDPOINTS, TAGS_FOR_CACHE_REVALIDATIONS } from '@/config';
 
 // ACTIONS
 import { verifyAuth } from "@/features/auth/actions/verifyAuth";
 
-// TYPES
-import type { typesMatch } from '../../types/typesMatch';
-
 interface JoinMatchResponse {
     success: boolean;
     message: string;
+    data?: {
+        id: string;
+        userId: string;
+        name: string;
+        hasMatchAdmin: boolean;
+        hasPaid: boolean;
+        hasDiscount: boolean;
+        hasGratis: boolean;
+        hasEnteredWithBalance: boolean;
+        playerType: 'regular' | 'temporary';
+        playerPosition: string;
+    }
 }
 
 interface JoinMatchParams {
@@ -36,83 +41,113 @@ export async function joinMatch({
     teamNumber,
     withBalance
 }: JoinMatchParams): Promise<JoinMatchResponse> {
+    console.log('Starting joinMatch with params:', {
+        matchIdFromParams,
+        teamNumber,
+        withBalance
+    });
+
     const t = await getTranslations("GenericMessages");
 
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
-
-    const { isAuth, userId } = await verifyAuth(authToken as string);
+    const { isAuth, userId } = await verifyAuth();
+    console.log('Auth check result:', { isAuth, userId });
             
     if (!isAuth) {
+        console.log('Unauthorized attempt to join match');
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
     if (!matchIdFromParams) {
+        console.log('Missing matchId parameter');
         return { success: false, message: t('BAD_REQUEST') };
     }
 
-    const { data, error } = await supabase.rpc('join_team', {
-        p_auth_user_id: userId,
-        p_match_id: matchIdFromParams,
-        p_user_id: userId,
-        p_team_number: teamNumber,
-        p_with_balance: withBalance
+    console.log('Calling join_team RPC with:', {
+        pauthuserid: userId,
+        pmatchid: matchIdFromParams,
+        puserid: userId,
+        pteamnumber: teamNumber,
+        pwithbalance: withBalance
     });
 
+    const { data, error } = await supabase.rpc('join_team', {
+        pauthuserid: userId,
+        pmatchid: matchIdFromParams,
+        puserid: userId,
+        pteamnumber: teamNumber,
+        pwithbalance: withBalance
+    });
+
+    console.log('RPC response:', { data, error });
+
     if (error) {
+        console.error('RPC error:', error);
         return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
 
     if (!data.success) {
+        console.log('Join match failed:', data.code);
         if (data.code === 'INSUFFICIENT_BALANCE') {
             return { success: false, message: t("INSUFFICIENT_BALANCE_TRY_CASH") };
         }
         return { success: false, message: t("PLAYER_JOIN_FAILED") };
     }
 
-    // Update the match cache
-    const matchCacheKey = `${CACHE_KEYS.MATCH_PREFIX}${matchIdFromParams}`;
-    const cachedMatch = await upstashRedisCacheService.get<typesMatch>(matchCacheKey);
-    
-    if (cachedMatch.success && cachedMatch.data) {
-        const updatedPlacesOccupied = (cachedMatch.data.places_occupied || 0) + 1;
-        const updatedCachedMatch = { ...cachedMatch.data, places_occupied: updatedPlacesOccupied };
-        await upstashRedisCacheService.set(matchCacheKey, updatedCachedMatch, 60 * 60 * 12); // 12 hours TTL
-    }
+    console.log('Join match successful, returning player data:', data.metadata);
 
     revalidatePath("/");
     revalidatePath(`${PROTECTED_PAGE_ENDPOINTS.HOME_PAGE}`);
     revalidateTag(TAGS_FOR_CACHE_REVALIDATIONS.ACTIVE_MATCHES_COUNT);
 
-    return { success: true, message: t("PLAYER_JOINED_SUCCESSFULLY") };
+    return { 
+        success: true, 
+        message: t("PLAYER_JOINED_SUCCESSFULLY"),
+        data: {
+            id: data.metadata.playerId,
+            userId: userId as string,
+            name: data.metadata.playerName,
+            hasMatchAdmin: false,
+            hasPaid: data.metadata.hasPaid,
+            hasDiscount: false,
+            hasGratis: false,
+            hasEnteredWithBalance: data.metadata.hasEnteredWithBalance,
+            playerType: 'regular',
+            playerPosition: data.metadata.playerPosition
+        }
+    };
 }
 
 /* SUPABASE RPC FUNCTION
 
+DROP FUNCTION IF EXISTS join_team(text, uuid, text, integer, boolean);
+
 CREATE OR REPLACE FUNCTION join_team(
-    p_auth_user_id UUID,
-    p_match_id UUID,
-    p_user_id UUID,
-    p_team_number INT,
-    p_with_balance BOOLEAN
+    pauthuserid TEXT,
+    pmatchid UUID,
+    puserid TEXT,
+    pteamnumber INT,
+    pwithbalance BOOLEAN
 ) RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
 AS $$
 DECLARE
-    v_match RECORD;
-    v_user RECORD;
-    v_updated_places_occupied INT;
-    v_updated_balance NUMERIC;
-    v_has_entered_with_balance BOOLEAN;
+    vMatch RECORD;
+    vUser RECORD;
+    vUpdatedPlacesOccupied INT;
+    vUpdatedBalance NUMERIC;
+    vHasEnteredWithBalance BOOLEAN;
+    vPlayerId TEXT;
+    vPlayerName TEXT;
+    vPlayerPosition TEXT;
 BEGIN
-    SELECT * INTO v_match FROM matches WHERE id = p_match_id;
+    SELECT * INTO vMatch FROM matches WHERE id = pmatchid;
     IF NOT FOUND THEN
         RETURN jsonb_build_object('success', false, 'code', 'MATCH_NOT_FOUND');
     END IF;
 
-    SELECT * INTO v_user FROM users WHERE id = p_user_id;
+    SELECT * INTO vUser FROM "user" WHERE id = puserid;
     IF NOT FOUND THEN
         RETURN jsonb_build_object('success', false, 'code', 'USER_NOT_FOUND');
     END IF;
@@ -120,59 +155,69 @@ BEGIN
     -- Check if player is already in match
     IF EXISTS (
         SELECT 1 FROM match_players 
-        WHERE match_id = p_match_id 
-        AND user_id = p_user_id
+        WHERE "matchId" = pmatchid 
+        AND "userId" = puserid
     ) THEN
         RETURN jsonb_build_object('success', false, 'code', 'PLAYER_ALREADY_IN_MATCH');
     END IF;
 
-    v_updated_places_occupied := COALESCE(v_match.places_occupied, 0) + 1;
+    vUpdatedPlacesOccupied := COALESCE(vMatch."placesOccupied", 0) + 1;
+    vPlayerName := vUser.name;
+    vPlayerId := gen_random_uuid()::text;
+    vPlayerPosition := vUser.position;
 
-    IF p_with_balance THEN
-        IF v_user.balance >= v_match.price::numeric THEN
-            UPDATE users
-            SET balance = balance - v_match.price::numeric
-            WHERE id = p_user_id
-            RETURNING balance INTO v_updated_balance;
+    IF pwithbalance THEN
+        IF vUser.balance >= vMatch.price::numeric THEN
+            UPDATE "user"
+            SET balance = balance - vMatch.price::numeric
+            WHERE id = puserid
+            RETURNING balance INTO vUpdatedBalance;
 
-            v_has_entered_with_balance := true;
+            vHasEnteredWithBalance := true;
         ELSE
             RETURN jsonb_build_object('success', false, 'code', 'INSUFFICIENT_BALANCE');
         END IF;
     ELSE
-        v_has_entered_with_balance := false;
-        v_updated_balance := v_user.balance;
+        vHasEnteredWithBalance := false;
+        vUpdatedBalance := vUser.balance;
     END IF;
 
     INSERT INTO match_players (
-        match_id, 
-        user_id, 
-        team_number, 
-        has_paid, 
-        has_entered_with_balance,
-        player_type
+        id,
+        "matchId", 
+        "userId", 
+        "teamNumber", 
+        "hasPaid", 
+        "hasEnteredWithBalance",
+        "playerType",
+        "playerPosition"
     )
     VALUES (
-        p_match_id, 
-        p_user_id, 
-        p_team_number, 
+        vPlayerId,
+        pmatchid, 
+        puserid, 
+        pteamnumber, 
         false, 
-        v_has_entered_with_balance,
-        'regular'
+        vHasEnteredWithBalance,
+        'regular',
+        vPlayerPosition
     );
 
     UPDATE matches
-    SET places_occupied = v_updated_places_occupied
-    WHERE id = p_match_id;
+    SET "placesOccupied" = vUpdatedPlacesOccupied
+    WHERE id = pmatchid;
 
     RETURN jsonb_build_object(
         'success', true, 
         'code', 'PLAYER_JOINED_SUCCESSFULLY',
         'metadata', jsonb_build_object(
-            'has_paid', false,
-            'has_entered_with_balance', v_has_entered_with_balance,
-            'updated_balance', v_updated_balance,
-            'places_occupied', v_updated_places_occupied
+            'playerId', vPlayerId,
+            'playerName', vPlayerName,
+            'hasPaid', false,
+            'hasEnteredWithBalance', vHasEnteredWithBalance,
+            'updatedBalance', vUpdatedBalance,
+            'placesOccupied', vUpdatedPlacesOccupied,
+            'playerPosition', vPlayerPosition
         )
     );
 
@@ -189,6 +234,6 @@ EXCEPTION
 END;
 $$;
 
-GRANT EXECUTE ON FUNCTION join_team(UUID, UUID, UUID, INT, BOOLEAN) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION join_team(TEXT, UUID, TEXT, INT, BOOLEAN) TO anon, authenticated;
 
 */

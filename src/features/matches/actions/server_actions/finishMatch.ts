@@ -1,18 +1,14 @@
 "use server"
 
 // NEXTJS IMPORTS
-import { cookies } from 'next/headers';
 import { revalidatePath, revalidateTag } from 'next/cache';
 
 // LIBRARIES
 import { supabase } from '@/shared/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
-// SERVICES
-import { upstashRedisCacheService } from '@/shared/services/server/redis-cache.service';
-
 // CONFIG
-import { CACHE_KEYS, TAGS_FOR_CACHE_REVALIDATIONS } from '@/config';
+import { TAGS_FOR_CACHE_REVALIDATIONS } from '@/config';
 
 // ACTIONS
 import { verifyAuth } from "@/features/auth/actions/verifyAuth";
@@ -26,15 +22,12 @@ interface FinishMatchParams {
     matchIdFromParams: string;
 }
 
-export async function finishMatch({
+export const finishMatch = async ({
     matchIdFromParams
-}: FinishMatchParams): Promise<FinishMatchResponse> {
+}: FinishMatchParams): Promise<FinishMatchResponse> => {
     const t = await getTranslations("GenericMessages");
     
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
-    
-    const { isAuth } = await verifyAuth(authToken as string);
+    const { isAuth, userId: authUserId } = await verifyAuth();
         
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
@@ -45,6 +38,7 @@ export async function finishMatch({
     }
 
     const { data, error } = await supabase.rpc('finish_match', {
+        p_auth_user_id: authUserId,
         p_match_id: matchIdFromParams
     });
 
@@ -53,91 +47,128 @@ export async function finishMatch({
     }
 
     if (!data.success) {
-        return { success: false, message: t("MATCH_FINISHED_SUCCESSFULLY") };
+        console.log('Finish failed with code:', data.code);
+        return { success: false, message: t('MATCH_FINISH_FAILED') };
     }
-
-    await upstashRedisCacheService.delete(`${CACHE_KEYS.MATCH_PREFIX}${matchIdFromParams}`);
 
     revalidatePath("/");
     revalidateTag(TAGS_FOR_CACHE_REVALIDATIONS.ACTIVE_MATCHES_COUNT);
 
     return { success: true, message: t("MATCH_FINISHED_SUCCESSFULLY") };
-}
+};
 
-/*
+/* SUPABASE RPC FUNCTION
 
-CREATE OR REPLACE FUNCTION finish_match(p_match_id UUID) RETURNS JSONB AS $$
+CREATE OR REPLACE FUNCTION finish_match(
+    p_auth_user_id TEXT,
+    p_match_id UUID
+) RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 DECLARE
     v_match RECORD;
     v_player RECORD;
+    v_user RECORD;
     v_new_debt NUMERIC;
-    v_price_numeric NUMERIC;
     v_current_debt NUMERIC;
-    v_formatted_time TEXT;
 BEGIN
-    -- Log start and match ID
-    RAISE NOTICE 'Starting finish_match for match ID: %', p_match_id;
+    RAISE LOG 'Starting finish_match with params: auth_user=%, match=%',
+        p_auth_user_id, p_match_id;
 
+    -- Verify admin permissions (either global admin or match admin)
+    SELECT "isAdmin" INTO v_user FROM "user" WHERE id = p_auth_user_id;
+    
+    IF NOT EXISTS (
+        SELECT 1 FROM match_players 
+        WHERE "matchId" = p_match_id 
+        AND "userId" = p_auth_user_id 
+        AND "hasMatchAdmin" = true
+    ) AND NOT v_user."isAdmin" THEN
+        RAISE LOG 'User not authorized: %', p_auth_user_id;
+        RETURN jsonb_build_object('success', false, 'code', 'NOT_AUTHORIZED');
+    END IF;
+
+    -- Get match details
     SELECT * INTO v_match FROM matches WHERE id = p_match_id;
     IF NOT FOUND THEN
-        RAISE NOTICE 'Match not found with ID: %', p_match_id;
-        RETURN jsonb_build_object('success', false, 'code', 'MATCH_ID_INVALID');
+        RAISE LOG 'Match not found: %', p_match_id;
+        RETURN jsonb_build_object('success', false, 'code', 'MATCH_NOT_FOUND');
     END IF;
-    
-    v_price_numeric := v_match.price::NUMERIC;
-    v_formatted_time := TO_CHAR(v_match.starts_at_hour::time, 'HH24:MI');
-    
+
     -- Handle debts for regular players who haven't paid
     FOR v_player IN 
-        SELECT * FROM match_players 
-        WHERE match_id = p_match_id 
-        AND player_type = 'regular' 
-        AND NOT has_paid 
-        AND NOT has_gratis 
-        AND NOT has_entered_with_balance
+        SELECT mp.*, u.name as player_name 
+        FROM match_players mp
+        JOIN "user" u ON u.id = mp."userId"
+        WHERE mp."matchId" = p_match_id 
+        AND mp."playerType" = 'regular' 
+        AND NOT mp."hasPaid"
+        AND NOT mp."hasGratis"
+        AND NOT mp."hasEnteredWithBalance"
     LOOP
         BEGIN
-            SELECT COALESCE(player_debt, 0) INTO v_current_debt
-            FROM users
-            WHERE id = v_player.user_id;
+            -- Get current debt
+            SELECT "playerDebt" INTO v_current_debt
+            FROM "user"
+            WHERE id = v_player."userId";
 
-            UPDATE users
-            SET player_debt = v_current_debt + v_price_numeric
-            WHERE id = v_player.user_id
-            RETURNING player_debt INTO v_new_debt;
+            -- Update user's debt
+            UPDATE "user"
+            SET "playerDebt" = COALESCE(v_current_debt, 0) + v_match.price::numeric
+            WHERE id = v_player."userId"
+            RETURNING "playerDebt" INTO v_new_debt;
             
-            INSERT INTO debts (player_name, player_debt, cristian_debt, reason, added_by)
-            SELECT 
-                "fullName",
-                v_price_numeric,
+            -- Insert debt record with snake_case column names
+            INSERT INTO debts (
+                player_name,
+                player_debt,
+                cristian_debt,
+                reason,
+                added_by
+            )
+            VALUES (
+                v_player.player_name,
+                v_match.price::numeric,
                 0,
-                'Cuota no pagada para el partido del ' || v_match.starts_at_day || 
-                ' a las ' || v_formatted_time || ' en ' || v_match.location,
+                'Match fee not paid for match on ' || v_match."startsAtDay" || 
+                ' at ' || v_match."startsAtHour" || ' in ' || v_match.location,
                 'System'
-            FROM users
-            WHERE id = v_player.user_id;
+            );
+
+            RAISE LOG 'Updated debt for player: %, new debt: %', 
+                v_player."userId", v_new_debt;
         EXCEPTION WHEN OTHERS THEN
-            RAISE NOTICE 'Error handling debt for player: %', SQLERRM;
-            RETURN jsonb_build_object('success', false, 'code', 'DEBT_UPDATE_FAILED', 'details', SQLERRM);
+            RAISE LOG 'Error handling debt for player %: %', 
+                v_player."userId", SQLERRM;
+            RETURN jsonb_build_object(
+                'success', false, 
+                'code', 'DEBT_UPDATE_FAILED',
+                'message', SQLERRM
+            );
         END;
     END LOOP;
     
     -- Update match status to finished
-    BEGIN
-        UPDATE matches 
-        SET status = 'finished'
-        WHERE id = p_match_id;
-    EXCEPTION WHEN OTHERS THEN
-        RAISE NOTICE 'Error updating match status: %', SQLERRM;
-        RETURN jsonb_build_object('success', false, 'code', 'MATCH_UPDATE_FAILED', 'details', SQLERRM);
-    END;
+    UPDATE matches 
+    SET status = 'finished'
+    WHERE id = p_match_id;
+
+    RAISE LOG 'Successfully finished match: %', p_match_id;
     
     RETURN jsonb_build_object('success', true, 'code', 'MATCH_FINISHED_SUCCESSFULLY');
 EXCEPTION
     WHEN OTHERS THEN
-        RAISE NOTICE 'Unexpected error in finish_match: %', SQLERRM;
-        RETURN jsonb_build_object('success', false, 'code', 'UNEXPECTED_ERROR', 'details', SQLERRM);
+        RAISE LOG 'Unexpected error in finish_match: %', SQLERRM;
+        RETURN jsonb_build_object(
+            'success', false,
+            'code', 'UNEXPECTED_ERROR',
+            'message', SQLERRM
+        );
 END;
-$$ LANGUAGE plpgsql;
+$$;
+
+GRANT EXECUTE ON FUNCTION finish_match(TEXT, UUID) TO authenticated;
 
 */

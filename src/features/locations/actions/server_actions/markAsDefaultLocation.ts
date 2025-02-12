@@ -1,18 +1,14 @@
 "use server"
 
 // NEXTJS IMPORTS
-import { cookies } from 'next/headers';
 import { revalidateTag } from 'next/cache';
 
 // LIBRARIES
 import { getTranslations } from 'next-intl/server';
 import { supabase } from '@/shared/lib/supabase/supabase';
 
-// SERVICES
-import { upstashRedisCacheService } from '@/shared/services/server/redis-cache.service';
-
 // CONFIG
-import { CACHE_KEYS, TAGS_FOR_CACHE_REVALIDATIONS } from '@/config';
+import { TAGS_FOR_CACHE_REVALIDATIONS } from '@/config';
 
 // ACTIONS
 import { verifyAuth } from '@/features/auth/actions/verifyAuth';
@@ -36,11 +32,8 @@ export async function markAsDefaultLocation({
     isDefault 
 }: MarkAsDefaultLocationParams): Promise<MarkAsDefaultLocationResponse> {
     const t = await getTranslations("GenericMessages");
-
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
     
-    const { isAuth } = await verifyAuth(authToken as string);
+    const { isAuth } = await verifyAuth();
                         
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
@@ -61,10 +54,6 @@ export async function markAsDefaultLocation({
     if (error) {
         return { success: false, message: isDefault ? t('DEFAULT_LOCATION_SET_FAILED') : t('DEFAULT_LOCATION_UNSET_FAILED') };
     }
-
-    // Invalidate the locations cache
-    await upstashRedisCacheService.delete(CACHE_KEYS.ALL_LOCATIONS_PREFIX);
-    await upstashRedisCacheService.delete(CACHE_KEYS.DEFAULT_LOCATIONS_CACHE_KEY);
 
     revalidateTag(TAGS_FOR_CACHE_REVALIDATIONS.LOCATIONS);
 

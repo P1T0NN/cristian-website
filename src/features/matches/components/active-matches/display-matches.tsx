@@ -32,7 +32,7 @@ export const DisplayMatches = async ({
     const serverMatchesData = await fetchMatches({
         gender: serverUserData.gender, 
         isAdmin: serverUserData.isAdmin, 
-        playerLevel: serverUserData.player_level, 
+        playerLevel: serverUserData.playerLevel, 
         date,
         status: 'active'
     });
@@ -44,10 +44,11 @@ export const DisplayMatches = async ({
 
         // Sort matches by starts_at_hour
         matchesData.sort((a, b) => {
-            if (a.starts_at_hour < b.starts_at_hour) return -1;
-            if (a.starts_at_hour > b.starts_at_hour) return 1;
+            if (a.startsAtHour < b.startsAtHour) return -1;
+            if (a.startsAtHour > b.startsAtHour) return 1;
             return 0;
         });
+
     }
 
     return (

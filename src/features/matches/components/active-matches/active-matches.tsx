@@ -9,8 +9,8 @@ import { fetchMatches } from '../../actions/fetchMatches';
 import { getUser } from '@/features/auth/actions/verifyAuth';
 
 // TYPES
-import type { typesMatch } from '../../types/typesMatch';
 import type { typesUser } from '@/features/players/types/typesPlayer';
+import { typesMatch } from '../../types/typesMatch';
 
 export const ActiveMatches = async () => {
     const [t, currentUserData] = await Promise.all([
@@ -20,28 +20,24 @@ export const ActiveMatches = async () => {
 
     const serverMatchesData = await fetchMatches({
         isAdmin: currentUserData.isAdmin,
-        status: 'active'
+        status: 'active',
+        currentUserId: currentUserData.id
     });
-
-    let activeMatches = (serverMatchesData.data || []) as typesMatch[];
     
-    // Filter to only show matches where the user is participating
-    activeMatches = activeMatches.filter(match => match.isUserInMatch);
-
     return (
         <div className="space-y-4">
             <h2 className="text-xl font-semibold">{t('myMatches')}</h2>
 
-            {activeMatches.length === 0 ? (
+            {serverMatchesData.data?.length === 0 ? (
                 <div className="text-center text-muted-foreground">
                     {t('noActiveMatches')}
                 </div>
             ) : (
                 <div className="space-y-4">
-                    {activeMatches.map((match) => (
+                    {serverMatchesData.data?.map((match: typesMatch) => (
                         <MatchCard 
                             key={match.id} 
-                            match={match} 
+                            match={match}
                         />
                     ))}
                 </div>

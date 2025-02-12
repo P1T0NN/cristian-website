@@ -10,6 +10,24 @@ import type {
     typesBaseMatchPlayer 
 } from "../types/typesPlayer";
 
+export const formatPlayerPositionLocalizedSync = (position: string, locale: string) => {
+    if (locale === "es") {
+        switch (position) {
+            case "Goalkeeper":
+                return "Portero";
+            case "Defender":
+                return "Defensa";
+            case "Middle":
+                return "Centrocampista";
+            case "Forward":
+                return "Delantero";
+            default:
+                return position;
+        }
+    }
+    return position;
+};
+
 export const formatPlayerPositionLocalized = async (position: string) => {
     const locale = await getUserLocale();
 
@@ -30,11 +48,11 @@ export const formatPlayerPositionLocalized = async (position: string) => {
     return position;
 };
 
-export const formatPlayerInitials = (fullName: string): string => {
-    if (!fullName) return '';
+export const formatPlayerInitials = (name: string): string => {
+    if (!name) return '';
 
     // Split the name into words and filter out empty strings
-    const words = fullName.split(' ').filter(word => word.length > 0);
+    const words = name.split(' ').filter(word => word.length > 0);
     
     if (words.length === 0) return '';
     
@@ -63,7 +81,7 @@ export const hasAddedFriend = (player: typesPlayer | null): boolean => {
 
 export const formatPlayerDisplayName = (player: typesPlayer): string => {
     if (isRegularPlayer(player)) {
-        return player.user.fullName;
+        return player.user.name;
     }
     // For temporary players, use their name
     return player.temporary_player_name;

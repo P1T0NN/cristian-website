@@ -4,7 +4,7 @@
 import { useTranslations } from 'next-intl';
 
 // TYPES
-import type { typesBaseMatchPlayer } from '@/features/players/types/typesPlayer';
+import type { typesPlayer } from '@/features/matches/types/typesMatch';
 
 // LUCIDE ICONS
 import { Users, Ticket, Gift, CreditCard, XCircle } from 'lucide-react';
@@ -14,7 +14,7 @@ type StatsItemIcon = 'users' | 'ticket' | 'gift' | 'credit-card' | 'x-circle';
 interface StatsItemProps {
     icon: StatsItemIcon;
     label: string;
-    players: typesBaseMatchPlayer[];
+    players: typesPlayer[];
 }
 
 const ICON_MAP = {
@@ -25,13 +25,13 @@ const ICON_MAP = {
     'x-circle': XCircle
 } as const;
 
-const formatPlayerNames = (players: typesBaseMatchPlayer[]) => {
+const formatPlayerNames = (players: typesPlayer[]) => {
     return players.length > 0 
         ? ` (${players.map(p => {
-            if (p.player_type === 'temporary') {
-                return p.temporary_player_name;
+            if (p.playerType === 'temporary') {
+                return p.temporaryPlayerName;
             }
-            return p.user?.fullName;
+            return p.name;
         }).filter(Boolean).join(', ')})` 
         : '';
 };

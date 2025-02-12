@@ -1,7 +1,6 @@
 "use server"
 
 // NEXTJS IMPORTS
-import { cookies } from 'next/headers';
 import { revalidateTag } from 'next/cache';
 
 // LIBRARIES
@@ -32,10 +31,7 @@ export async function verifyDocuments({
 }: VerifyDocumentsParams): Promise<VerifyDocumentsResponse> {
     const t = await getTranslations("GenericMessages");
 
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
-
-    const { isAuth, userId: adminId } = await verifyAuth(authToken as string);
+    const { isAuth, userId: adminId } = await verifyAuth();
                         
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
@@ -47,7 +43,7 @@ export async function verifyDocuments({
 
     // Check if the user is an admin
     const { data: adminUser } = await supabase
-        .from('users')
+        .from('user')
         .select('isAdmin')
         .eq('id', adminId)
         .single();
@@ -57,8 +53,8 @@ export async function verifyDocuments({
     }
 
     const { data, error } = await supabase
-        .from('users')
-        .update({ verify_documents: true })
+        .from('user')
+        .update({ verifyDocuments: true })
         .eq('id', playerIdFromParams)
         .select()
         .single();

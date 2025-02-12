@@ -1,7 +1,6 @@
 "use server"
 
 // NEXTJS IMPORTS
-import { cookies } from 'next/headers';
 import { revalidateTag } from 'next/cache';
 
 // LIBRARIES
@@ -37,10 +36,7 @@ export async function addDebt({
 }: AddDebtParams): Promise<AddDebtResponse> {
     const t = await getTranslations("GenericMessages");
 
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
-
-    const { isAuth } = await verifyAuth(authToken as string);
+    const { isAuth } = await verifyAuth();
                         
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
@@ -65,9 +61,9 @@ export async function addDebt({
             ])
             .select(),
         supabase
-            .from('users')
+            .from('user')
             .select('*')
-            .eq('fullName', addDebtData.player_name)
+            .eq('name', addDebtData.player_name)
             .single()
     ]);
 
@@ -82,17 +78,17 @@ export async function addDebt({
     const user = userFetchResult.data as typesUser;
 
     // Calculate new debt values
-    const newPlayerDebt = (user.player_debt || 0) + (addDebtData.player_debt || 0);
-    const newCristianDebt = (user.cristian_debt || 0) + (addDebtData.cristian_debt || 0);
+    const newPlayerDebt = (user.playerDebt || 0) + (addDebtData.player_debt || 0);
+    const newCristianDebt = (user.cristianDebt || 0) + (addDebtData.cristian_debt || 0);
 
     // Update users table
     const { data: userUpdateData, error: userUpdateError } = await supabase
-        .from('users')
+        .from('user')
         .update({
             player_debt: newPlayerDebt,
             cristian_debt: newCristianDebt
         })
-        .eq('fullName', addDebtData.player_name)
+        .eq('name', addDebtData.player_name)
         .select();
 
     if (userUpdateError) {

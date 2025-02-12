@@ -1,8 +1,5 @@
 "use server"
 
-// NEXTJS IMPORTS
-import { cookies } from 'next/headers';
-
 // LIBRARIES
 import { supabase } from '@/shared/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
@@ -13,7 +10,7 @@ import { verifyAuth } from '@/features/auth/actions/verifyAuth';
 // I made custom User and Team interfaces because I was lazy to add them in respected typesUser and typesTeam as a reminder to why it is here
 interface User {
     id: string;
-    fullName: string;
+    name: string;
 }
 
 interface Team {
@@ -41,10 +38,7 @@ export async function searchBar({
 }: SearchBarParams): Promise<SearchBarResponse> {
     const t = await getTranslations("GenericMessages");
 
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
-
-    const { isAuth } = await verifyAuth(authToken as string);
+    const { isAuth } = await verifyAuth();
                        
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
@@ -52,9 +46,9 @@ export async function searchBar({
 
     // Search for users
     const { data: users, error: usersError } = await supabase
-        .from('users')
-        .select('id, fullName')
-        .ilike('fullName', `${query}%`)
+        .from('user')
+        .select('id, name')
+        .ilike('name', `${query}%`)
         .limit(5);
 
     if (usersError) {

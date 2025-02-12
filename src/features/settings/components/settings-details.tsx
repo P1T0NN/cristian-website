@@ -37,7 +37,7 @@ export const SettingsDetails = async () => {
                 {/* Client component */}
                 <AccountSettings 
                     currentLocale={locale} 
-                    currentUserFullName={serverUserData.fullName}
+                    currentUserName={serverUserData.name}
                     currentUserEmail={serverUserData.email}
                 />
             </TabsContent>

@@ -15,8 +15,9 @@ export const PUBLIC_PAGE_ENDPOINTS = {
     REGISTER_PAGE: "/register",
     FORGOT_PASSWORD_PAGE: "/forgot_password",
     VERIFY_EMAIL_PAGE: "/verify_email",
-    RESET_PASSWORD_PAGE: "/reset_password",
+    RESET_PASSWORD_PAGE: "/reset_password"
 };
+
 
 export const PROTECTED_PAGE_ENDPOINTS = {
     HOME_PAGE: "/home",
@@ -24,6 +25,7 @@ export const PROTECTED_PAGE_ENDPOINTS = {
     MATCH_PAGE: "/match",
     ACTIVE_MATCHES: "/active_matches",
     PLAYER_PAGE: "/player",
+    NEW_USER_DETAILS_PAGE: "/new_user_details"
 };
 
 export const ADMIN_PAGE_ENDPOINTS = {

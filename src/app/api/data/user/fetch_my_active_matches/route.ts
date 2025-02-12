@@ -5,14 +5,11 @@ import { NextResponse, NextRequest } from 'next/server';
 import { getTranslations } from 'next-intl/server';
 import { supabase } from '@/shared/lib/supabase/supabase';
 
-// MIDDLEWARE
-import { withAuth } from '@/shared/middleware/withAuth';
-
 // TYPES
 import type { typesMatch } from '@/features/matches/types/typesMatch';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const GET = withAuth(async (request: NextRequest, _userId: string, _token: string): Promise<NextResponse> => {
+export const GET = async (request: NextRequest): Promise<NextResponse> => {
     const t = await getTranslations("GenericMessages");
 
     const searchParams = request.nextUrl.searchParams;
@@ -24,14 +21,14 @@ export const GET = withAuth(async (request: NextRequest, _userId: string, _token
 
     const { data: matchPlayers, error: matchPlayersError } = await supabase
         .from('match_players')
-        .select('match_id')
-        .eq('user_id', requestUserId);
+        .select('matchId')
+        .eq('userId', requestUserId);
 
     if (matchPlayersError) {
         return NextResponse.json({ success: false, message: t('ACTIVE_MATCHES_FETCH_FAILED') });
     }
 
-    const matchIds = matchPlayers.map(mp => mp.match_id);
+    const matchIds = matchPlayers.map(mp => mp.matchId);
 
     const currentDate = new Date().toISOString().split('T')[0];
 
@@ -39,8 +36,8 @@ export const GET = withAuth(async (request: NextRequest, _userId: string, _token
         .from('matches')
         .select('*')
         .in('id', matchIds)
-        .gte('starts_at_day', currentDate)
-        .order('starts_at_day', { ascending: true });
+        .gte('startsAtDay', currentDate)
+        .order('startsAtDay', { ascending: true });
 
     if (matchesError) {
         return NextResponse.json({ success: false, message: t('ACTIVE_MATCHES_FETCH_FAILED') });
@@ -49,4 +46,4 @@ export const GET = withAuth(async (request: NextRequest, _userId: string, _token
     const typedMatches = matches as typesMatch[];
 
     return NextResponse.json({ success: true, message: t('ACTIVE_MATCHES_FETCHED'), data: typedMatches });
-});
+};

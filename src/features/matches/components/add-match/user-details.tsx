@@ -5,17 +5,17 @@ import { getTranslations } from "next-intl/server";
 import { CardHeader, CardTitle, CardDescription } from "@/shared/components/ui/card";
 
 type UserDetailsProps = {
-    currentUserFullName: string;
+    currentUserName: string;
 }
 
 export const UserDetails = async ({
-    currentUserFullName
+    currentUserName
 }: UserDetailsProps) => {
     const t = await getTranslations("AddMatchPage");
 
     return (
         <CardHeader>
-            <CardTitle>{t("hello")} {currentUserFullName}</CardTitle>
+            <CardTitle>{t("hello")} {currentUserName}</CardTitle>
             <CardDescription>{t("description")}</CardDescription>
         </CardHeader>
     )

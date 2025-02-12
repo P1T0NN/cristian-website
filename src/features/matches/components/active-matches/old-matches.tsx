@@ -23,7 +23,7 @@ export const OldMatches = async () => {
 
     const matchesResponse = await fetchMatches({
         isAdmin: currentUserData.isAdmin,
-        playerLevel: currentUserData.player_level,
+        playerLevel: currentUserData.playerLevel,
         isPastMatches: true,
         currentDate,
         currentTime

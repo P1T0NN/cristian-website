@@ -53,7 +53,7 @@ export const AddMatchForm = ({
 
     const handleLocationChange = (locationName: string, locationUrl: string, defaultPrice: string | null) => {
         setFieldValue('location', locationName);
-        setFieldValue('location_url', locationUrl);
+        setFieldValue('locationUrl', locationUrl);
         if (defaultPrice) {
             setFieldValue('price', defaultPrice);
         }

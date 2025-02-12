@@ -1,7 +1,6 @@
 "use server"
 
 // NEXTJS IMPORTS
-import { cookies } from 'next/headers';
 import { revalidateTag } from 'next/cache';
 
 // LIBRARIES
@@ -28,10 +27,7 @@ export async function deleteMatchFromHistory({
 }: DeleteMatchFromHistoryParams): Promise<DeleteMatchFromHistoryResponse> {
     const t = await getTranslations("GenericMessages");
 
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
-
-    const { isAuth } = await verifyAuth(authToken as string);
+    const { isAuth } = await verifyAuth();
         
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };

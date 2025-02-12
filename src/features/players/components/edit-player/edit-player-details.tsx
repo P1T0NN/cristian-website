@@ -18,7 +18,7 @@ import { editPlayerDetails } from "../../actions/server_actions/player_managemen
 
 type EditPlayerDetailsProps = {
     playerIdFromParams: string;
-    initialFullName: string;
+    initialName: string;
     initialPhoneNumber: string;
     initialCountry: string;
     initialDNI: string;
@@ -29,7 +29,7 @@ type EditPlayerDetailsProps = {
 
 export function EditPlayerDetails({ 
     playerIdFromParams, 
-    initialFullName,
+    initialName,
     initialPhoneNumber,
     initialCountry,
     initialDNI, 
@@ -43,7 +43,7 @@ export function EditPlayerDetails({
 
     const [isOpen, setIsOpen] = useState(false);
 
-    const [fullName, setFullName] = useState(initialFullName ?? '');
+    const [name, setName] = useState(initialName ?? '');
     const [phoneNumber, setPhoneNumber] = useState(initialPhoneNumber ?? '');
     const [country, setCountry] = useState(initialCountry ?? '');
     const [dni, setDNI] = useState(initialDNI ?? '');
@@ -54,7 +54,7 @@ export function EditPlayerDetails({
         startTransition(async () => {
             const result = await editPlayerDetails({
                 playerIdFromParams: playerIdFromParams,
-                fullName: fullName,
+                name: name,
                 dni: dni, 
                 country: country, 
                 phoneNumber: phoneNumber, 
@@ -111,12 +111,12 @@ export function EditPlayerDetails({
                     {isAdmin && (
                         <>
                             <FormInputField
-                                label={t('fullName')}
-                                name="fullName"
+                                label={t('name')}
+                                name="name"
                                 type="text"
-                                value={fullName}
-                                onChange={(e) => setFullName(e.target.value)}
-                                placeholder={t('enterFullName')}
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                placeholder={t('enterName')}
                             />
                             
                             <FormInputField

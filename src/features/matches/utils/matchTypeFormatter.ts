@@ -3,7 +3,7 @@ import { getUserLocale } from "@/shared/services/server/locale";
 
 type MatchType = string;
 
-export async function formatMatchType(matchType: MatchType): Promise<string> {
+export async function formatMatchTypeLong(matchType: MatchType): Promise<string> {
     const locale = await getUserLocale();
 
     const formats: Record<MatchType, { en: string[], es: string[] }> = {
@@ -16,3 +16,23 @@ export async function formatMatchType(matchType: MatchType): Promise<string> {
     const [top, bottom] = formats[matchType][locale === 'es' ? 'es' : 'en'];
     return `${top}\n${bottom}`;
 }
+
+export const getMaxPlayersByMatchType = (matchType: string): number => {
+    const matchTypes: Record<string, number> = {
+        'F11': 22, // 11v11
+        'F8': 16,  // 8v8
+        'F7': 14,  // 7v7
+        'F5': 10   // 5v5
+    };
+
+    return matchTypes[matchType] || 0;
+};
+
+export const formatMatchTypeShort = (type: string) => {
+    switch (type) {
+        case "F8": return "8v8"
+        case "F7": return "7v7"
+        case "F11": return "11v11"
+        default: return type
+    }
+};

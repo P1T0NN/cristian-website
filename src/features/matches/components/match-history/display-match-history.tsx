@@ -9,8 +9,7 @@ import { getUser } from "@/features/auth/actions/verifyAuth";
 import { fetchMatches } from "../../actions/fetchMatches";
 
 // TYPES
-import type { typesMatch } from "../../types/typesMatch";
-import type { typesBaseMatchPlayer } from "@/features/players/types/typesPlayer";
+import type { typesMatch, typesPlayer } from "../../types/typesMatch";
 import type { typesUser } from "@/features/players/types/typesPlayer";
 
 export const DisplayMatchHistory = async () => {
@@ -25,7 +24,7 @@ export const DisplayMatchHistory = async () => {
     });
     
     const finishedMatches = serverMatchesData.data as (typesMatch & {
-        match_players: typesBaseMatchPlayer[];
+        matchPlayers: typesPlayer[];
     })[];
 
     return (

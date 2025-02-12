@@ -59,24 +59,26 @@ export const MatchDetailsSection = ({
     };
 
     const toggleMatchLevel = (level: string) => {
-        const currentLevels = formData.match_level.split('');
+        const currentLevels = formData.matchLevel.split('');
         const updatedLevels = currentLevels.includes(level)
             ? currentLevels.filter(l => l !== level)
             : [...currentLevels, level].sort();
-        setFieldValue('match_level', updatedLevels.join(''));
+        setFieldValue('matchLevel', updatedLevels.join(''));
     };
     
-    const isLevelActive = (level: string) => formData.match_level.includes(level);
+    const isLevelActive = (level: string) => formData.matchLevel.includes(level);
+
+    // TODO: Fix matchLevel
 
     return (
         <div className="space-y-4">
             <h3 className="text-lg font-semibold">{t("matchDetails")}</h3>
             <LocationField
                 locationName={formData.location}
-                locationUrl={formData.location_url}
+                locationUrl={formData.locationUrl}
                 onLocationChange={handleLocationChangeWithPrice}
                 error={errors.location}
-                urlError={errors.location_url}
+                urlError={errors.locationUrl}
                 locationsData={locationsData}
                 defaultLocationsData={defaultLocationsData}
             />
@@ -93,36 +95,37 @@ export const MatchDetailsSection = ({
                 />
                 <FormSelectField
                     label={t("matchType")}
-                    name="match_type"
-                    value={formData.match_type}
-                    onChange={handleSelectChange('match_type')}
+                    name="matchType"
+                    value={formData.matchType}
+                    onChange={handleSelectChange('matchType')}
                     options={matchTypeOptions}
                     placeholder={t('matchTypePlaceholder')}
-                    error={errors.match_type}
+                    error={errors.matchType}
                 />
             </div>
             <FormSelectField
                 label={t("matchGender")}
-                name="match_gender"
-                value={formData.match_gender}
-                onChange={handleSelectChange('match_gender')}
+                name="matchGender"
+                value={formData.matchGender}
+                onChange={handleSelectChange('matchGender')}
                 options={matchGenderOptions}
                 placeholder={t('matchGenderPlaceholder')}
-                error={errors.match_gender}
+                error={errors.matchGender}
             />
             <FormInputField
                 label={t("matchDuration")}
-                name="match_duration"
+                name="matchDuration"
                 type="number"
-                value={formData.match_duration}
+                value={formData.matchDuration}
                 onChange={handleInputChange}
                 placeholder={t('matchDurationPlaceholder')}
-                error={errors.match_duration}
+                error={errors.matchDuration}
             />
             <div className="space-y-2">
                 <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                     {t("matchLevel")}
                 </label>
+
                 <div className="flex space-x-2">
                     {['A', 'B', 'C', 'D', 'X'].map((level) => (
                         <Button
@@ -135,8 +138,8 @@ export const MatchDetailsSection = ({
                         </Button>
                     ))}
                 </div>
-                {errors.match_level && (
-                    <p className="text-sm text-red-500 mt-1">{errors.match_level}</p>
+                {errors.matchLevel && (
+                    <p className="text-sm text-red-500 mt-1">{errors.matchLevel}</p>
                 )}
             </div>
             <div className="space-y-2">
@@ -146,23 +149,24 @@ export const MatchDetailsSection = ({
                 <div className="flex space-x-2">
                     <Button
                         type="button"
-                        variant={formData.has_teams ? "default" : "outline"}
-                        onClick={() => setFieldValue('has_teams', true)}
+                        variant={formData.hasTeams ? "default" : "outline"}
+                        onClick={() => setFieldValue('hasTeams', true)}
                     >
                         <Check className="mr-2 h-4 w-4" />
+
                         {t("yes")}
                     </Button>
                     <Button
                         type="button"
-                        variant={!formData.has_teams ? "default" : "outline"}
-                        onClick={() => setFieldValue('has_teams', false)}
+                        variant={!formData.hasTeams ? "default" : "outline"}
+                        onClick={() => setFieldValue('hasTeams', false)}
                     >
                         <X className="mr-2 h-4 w-4" />
                         {t("no")}
                     </Button>
                 </div>
-                {errors.has_teams && (
-                    <p className="text-sm text-red-500 mt-1">{errors.has_teams}</p>
+                {errors.hasTeams && (
+                    <p className="text-sm text-red-500 mt-1">{errors.hasTeams}</p>
                 )}
             </div>
         </div>

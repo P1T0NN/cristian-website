@@ -1,3 +1,5 @@
+"use client"
+
 // COMPONENTS
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/shared/components/ui/pagination";
 

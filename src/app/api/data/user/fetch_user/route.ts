@@ -5,11 +5,8 @@ import { NextResponse, NextRequest } from 'next/server';
 import { getTranslations } from 'next-intl/server';
 import { supabase } from '@/shared/lib/supabase/supabase';
 
-// MIDDLEWARE
-import { withAuth } from '@/shared/middleware/withAuth';
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const GET = withAuth(async (request: NextRequest, _userId: string, _token: string): Promise<NextResponse> => {
+export const GET = async (request: NextRequest): Promise<NextResponse> => {
     const t = await getTranslations("GenericMessages");
 
     const searchParams = request.nextUrl.searchParams;
@@ -21,7 +18,7 @@ export const GET = withAuth(async (request: NextRequest, _userId: string, _token
 
     // Fetch user data first
     const { data: user, error: userError } = await supabase
-        .from('users')
+        .from('user')
         .select('*')
         .eq('id', playerId)
         .single();
@@ -34,13 +31,13 @@ export const GET = withAuth(async (request: NextRequest, _userId: string, _token
     const { data: debts, error: debtsError } = await supabase
         .from('debts')
         .select('*')
-        .eq('player_name', user.fullName);
+        .eq('player_name', user.name);
 
     // Fetch balances using the user's fullName
     const { data: balances, error: balancesError } = await supabase
         .from('balances')
         .select('*')
-        .eq('player_name', user.fullName);
+        .eq('player_name', user.name);
 
     // If there's an error fetching debts or balances, we'll just set them to empty arrays
     const userDebts = debtsError ? [] : debts;
@@ -54,4 +51,4 @@ export const GET = withAuth(async (request: NextRequest, _userId: string, _token
     };
 
     return NextResponse.json({ success: true, message: t('USER_FETCHED'), data: userData });
-});
+};

@@ -1,139 +1,152 @@
 "use server"
 
 // NEXTJS IMPORTS
-import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
 import { supabase } from '@/shared/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
 
-// SERVICES
-import { upstashRedisCacheService } from '@/shared/services/server/redis-cache.service';
-
-// CONFIG
-import { CACHE_KEYS } from '@/config';
-
 // ACTIONS
 import { verifyAuth } from "@/features/auth/actions/verifyAuth";
 
-interface CancelSubstitutionRequestResponse {
+interface CancelSubstituteResponse {
     success: boolean;
     message: string;
 }
 
-interface CancelSubstitutionRequestParams {
+interface CancelSubstituteParams {
     matchIdFromParams: string;
-    matchPlayerId: string;
-    playerType: "regular" | "temporary";
+    currentUserId: string;
+    playerType: 'regular' | 'temporary';
 }
 
-export async function cancelSubstitutionRequest({
+export const cancelSubstitute = async ({
     matchIdFromParams,
-    matchPlayerId,
+    currentUserId,
     playerType
-}: CancelSubstitutionRequestParams): Promise<CancelSubstitutionRequestResponse> {
+}: CancelSubstituteParams): Promise<CancelSubstituteResponse> => {
+    console.log('Starting cancelSubstitute with params:', {
+        matchIdFromParams,
+        currentUserId,
+        playerType
+    });
+
     const t = await getTranslations("GenericMessages");
 
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
-
-    const { isAuth, userId: authUserId } = await verifyAuth(authToken as string);
+    const { isAuth, userId: authUserId } = await verifyAuth();
+    console.log('Auth check result:', { isAuth, authUserId });
                 
     if (!isAuth) {
+        console.log('Auth failed');
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!matchIdFromParams || !matchPlayerId) {
+    if (!matchIdFromParams || !currentUserId) {
+        console.log('Missing required params:', { matchIdFromParams, currentUserId });
         return { success: false, message: t('BAD_REQUEST') };
     }
 
-    const { data, error } = await supabase.rpc('cancel_substitution_request', {
-        p_auth_user_id: authUserId,
-        p_match_id: matchIdFromParams,
-        p_match_player_id: matchPlayerId,
-        p_is_temporary: playerType === 'temporary'
+    console.log('Calling cancel_substitute RPC with params:', {
+        pauthuserid: authUserId,
+        pmatchid: matchIdFromParams,
+        pcurrentuserid: currentUserId,
+        pistemporary: playerType === 'temporary'
     });
 
+    const { data, error } = await supabase.rpc('cancel_substitute', {
+        pauthuserid: authUserId,
+        pmatchid: matchIdFromParams,
+        pcurrentuserid: currentUserId,
+        pistemporary: playerType === 'temporary'
+    });
+
+    console.log('RPC response:', { data, error });
+
     if (error) {
-        return { success: false, message: t('CANCEL_SUBSTITUTION_FAILED') };
+        console.error('RPC error:', error);
+        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
 
     if (!data.success) {
-        return { success: false, message: t('CANCEL_SUBSTITUTION_FAILED') };
+        console.log('Operation failed with data:', data);
+        return { 
+            success: false, 
+            message: t('CANCEL_SUBSTITUTE_FAILED')
+        };
     }
 
-    // Update the match cache
-    const matchCacheKey = `${CACHE_KEYS.MATCH_PREFIX}${matchIdFromParams}`;
-    await upstashRedisCacheService.delete(matchCacheKey);
-
+    console.log('Operation successful, revalidating path');
     revalidatePath("/");
 
-    return { success: true, message: t("SUBSTITUTION_REQUEST_CANCELED") };
-}
+    return { 
+        success: true, 
+        message: t(playerType === 'temporary' ? 
+            'FRIEND_SUBSTITUTE_CANCELED_SUCCESSFULLY' : 
+            'SUBSTITUTE_CANCELED_SUCCESSFULLY'
+        )
+    };
+};
 
 /* SUPABASE RPC FUNCTION
 
-CREATE OR REPLACE FUNCTION cancel_substitution_request(
-    p_auth_user_id UUID,
-    p_match_id UUID,
-    p_match_player_id UUID,
-    p_is_temporary BOOLEAN
+CREATE OR REPLACE FUNCTION cancel_substitute(
+    pauthuserid TEXT,
+    pmatchid UUID,
+    pcurrentuserid TEXT,
+    pistemporary BOOLEAN
 ) RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
 AS $$
 DECLARE
-    v_player RECORD;
+    vPlayer RECORD;
 BEGIN
-    -- Check if the player is in the match and has requested a substitute
-    SELECT * INTO v_player 
+    -- Get player record based on playerType
+    SELECT * INTO vPlayer 
     FROM match_players 
-    WHERE id = p_match_player_id
-    AND match_id = p_match_id;
+    WHERE "matchId" = pmatchid
+    AND "userId" = pcurrentuserid
+    AND "playerType" = CASE 
+        WHEN pistemporary THEN 'temporary'
+        ELSE 'regular'
+    END;
 
     IF NOT FOUND THEN
         RETURN jsonb_build_object('success', false, 'code', 'PLAYER_NOT_IN_MATCH');
     END IF;
 
-    -- Check authorization based on player_type
-    IF v_player.player_type = 'temporary' THEN
-        -- For temporary players, verify the auth user is the one who added them
-        IF v_player.user_id != p_auth_user_id THEN
-            RETURN jsonb_build_object('success', false, 'code', 'NOT_AUTHORIZED_TO_CANCEL');
-        END IF;
-    ELSE
-        -- For regular players, verify it's their own record
-        IF v_player.user_id != p_auth_user_id THEN
-            RETURN jsonb_build_object('success', false, 'code', 'NOT_AUTHORIZED_TO_CANCEL');
-        END IF;
+    -- For temporary players, the userId is the ID of the user who added them
+    -- For regular players, verify it's their own record
+    IF (pistemporary AND vPlayer."userId" != pauthuserid) OR
+       (NOT pistemporary AND vPlayer."userId" != pauthuserid) THEN
+        RETURN jsonb_build_object('success', false, 'code', 'NOT_AUTHORIZED');
     END IF;
 
-    IF NOT v_player.substitute_requested THEN
-        RETURN jsonb_build_object('success', false, 'code', 'NO_SUBSTITUTE_REQUESTED');
-    END IF;
-
-    -- Cancel the substitution request
+    -- Update the substitute request status
     UPDATE match_players
-    SET substitute_requested = false
-    WHERE id = p_match_player_id;
+    SET "substituteRequested" = false
+    WHERE id = vPlayer.id;
 
     RETURN jsonb_build_object(
-        'success', true, 
-        'code', 'SUBSTITUTION_REQUEST_CANCELED'
+        'success', true,
+        'code', CASE 
+            WHEN pistemporary THEN 'FRIEND_SUBSTITUTE_CANCELED_SUCCESSFULLY'
+            ELSE 'SUBSTITUTE_CANCELED_SUCCESSFULLY'
+        END
     );
 
 EXCEPTION
     WHEN OTHERS THEN
         RETURN jsonb_build_object(
-            'success', false, 
-            'code', 'UNEXPECTED_ERROR', 
+            'success', false,
+            'code', 'UNEXPECTED_ERROR',
             'message', SQLERRM
         );
 END;
 $$;
 
-GRANT EXECUTE ON FUNCTION cancel_substitution_request(UUID, UUID, UUID, BOOLEAN) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION cancel_substitute(TEXT, UUID, TEXT, BOOLEAN) TO authenticated;
 
 */

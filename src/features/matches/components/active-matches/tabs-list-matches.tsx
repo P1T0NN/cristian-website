@@ -13,8 +13,8 @@ import type { typesUser } from "@/features/players/types/typesPlayer";
 
 export const TabsListMatches = async () => {
     const [t, currentUserData] = await Promise.all([
-            getTranslations("HomePage"),
-            getUser() as Promise<typesUser>
+        getTranslations("HomePage"),
+        getUser() as Promise<typesUser>
     ]);
     
     // Do not put it in promise.all because we need currentUserData first!

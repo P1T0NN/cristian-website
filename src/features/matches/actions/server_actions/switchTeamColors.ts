@@ -1,18 +1,11 @@
 "use server"
 
 // NEXTJS IMPORTS
-import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // LIBRARIES
 import { supabase } from '@/shared/lib/supabase/supabase';
 import { getTranslations } from 'next-intl/server';
-
-// SERVICES
-import { upstashRedisCacheService } from '@/shared/services/server/redis-cache.service';
-
-// CONFIG
-import { CACHE_KEYS } from '@/config';
 
 // ACTIONS
 import { verifyAuth } from '@/features/auth/actions/verifyAuth';
@@ -33,10 +26,7 @@ export async function switchTeamColors({
 }: SwitchTeamColorsParams): Promise<SwitchTeamColorsResponse> {
     const t = await getTranslations("GenericMessages");
 
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get("auth_token")?.value;
-
-    const { isAuth } = await verifyAuth(authToken as string);
+    const { isAuth } = await verifyAuth();
                     
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
@@ -71,9 +61,6 @@ export async function switchTeamColors({
     if (error) {
         return { success: false, message: t('COLOR_TOGGLE_FAILED') };
     }
-
-    // Invalidate the specific match cache
-    await upstashRedisCacheService.delete(`${CACHE_KEYS.MATCH_PREFIX}${matchIdFromParams}`);
 
     revalidatePath("/");
 

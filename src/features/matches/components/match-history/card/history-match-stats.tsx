@@ -1,3 +1,5 @@
+"use client"
+
 // COMPONENTS
 import { StatsItem } from './stats-item';
 
@@ -5,19 +7,19 @@ import { StatsItem } from './stats-item';
 import { useMatchStats } from '@/features/matches/hooks/useMatchStats';
 
 // TYPES
-import type { typesMatch } from "../../../types/typesMatch";
-import type { typesBaseMatchPlayer } from "@/features/players/types/typesPlayer";
+import type { typesMatch, typesPlayer } from "../../../types/typesMatch";
+
 
 interface HistoryMatchStatsProps {
     match: typesMatch & { 
-        match_players: typesBaseMatchPlayer[] 
+        matchPlayers: typesPlayer[] 
     };
 }
 
 export const HistoryMatchStats = ({ 
     match 
 }: HistoryMatchStatsProps) => {
-    const stats = useMatchStats(match.match_players);
+    const stats = useMatchStats(match.matchPlayers);
 
     return (
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">
