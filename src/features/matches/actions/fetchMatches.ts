@@ -26,6 +26,7 @@ interface FetchMatchesParams {
     currentDate?: string;
     currentTime?: string;
     currentUserId?: string;
+    filterByUserId?: boolean;
 }
 
 export const fetchMatches = cache(async (params: FetchMatchesParams): Promise<MatchesResponse> => {
@@ -41,7 +42,12 @@ export const fetchMatches = cache(async (params: FetchMatchesParams): Promise<Ma
     if (params.currentDate) queryParams.currentDate = params.currentDate
     if (params.currentTime) queryParams.currentTime = params.currentTime
 
-    queryParams.currentUserId = params.currentUserId as string
+    if (params.currentUserId) {
+        queryParams.currentUserId = params.currentUserId;
+        if (params.filterByUserId) {
+            queryParams.filterByUserId = 'true';
+        }
+    }
 
     const response = await apiRequest<{ data: typesMatch[] }>({
         endpoint: "/api/data/match/fetch_matches",

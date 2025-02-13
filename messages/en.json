@@ -263,6 +263,10 @@
         "matchCompleted": "Match Full",
         "lastPlacesLeft": "Last Places!",
         "available": "Available",
+        "save": "Save",
+        "saving": "Saving...",
+        "editInstructions": "Edit Instructions",
+        "enterMatchInstructions": "Enter match instructions",
         "MatchFAQ": {
             "title": "Frequently Asked Questions",
             "aboutUs": {

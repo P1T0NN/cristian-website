@@ -34,7 +34,9 @@ export const DisplayMatches = async ({
         isAdmin: serverUserData.isAdmin, 
         playerLevel: serverUserData.playerLevel, 
         date,
-        status: 'active'
+        status: 'active',
+        currentUserId: serverUserData.id,
+        filterByUserId: false
     });
 
     let matchesData: typesMatch[] = [];

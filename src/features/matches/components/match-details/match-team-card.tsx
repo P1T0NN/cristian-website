@@ -58,14 +58,6 @@ export const MatchTeamCard = async ({
         blockedSpots
     );
 
-    const hasAddedFriend = Boolean(
-        match?.team1Players.some(player => 
-            player.userId === currentUserData?.id && player.hasAddedFriend
-        ) || match?.team2Players.some(player => 
-            player.userId === currentUserData?.id && player.hasAddedFriend
-        )
-    );
-
     const hasCurrentUserRequestedSubstitute = Boolean(
         match?.team1Players.some(player => 
             player.userId === currentUserData?.id && 
@@ -103,16 +95,16 @@ export const MatchTeamCard = async ({
     );
 
     return (
-        <div className={`rounded-xl ${teamColor === "red" ? "bg-red-50/10" : "bg-blue-50/10"} p-6`}>
-            <div className="flex justify-between items-center mb-6">
+        <div className={`rounded-xl ${teamColor === "red" ? "bg-red-50/10" : "bg-blue-50/10"} p-3 sm:p-6`}>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
                 <div className="flex items-center gap-2">
-                    <h2 className={`text-xl font-semibold ${
+                    <h2 className={`text-lg sm:text-xl font-semibold ${
                         teamColor === "red" ? "text-red-500" : "text-blue-500"
                     }`}>
                         {teamName}
                     </h2>
                     <span className={cn(
-                        "text-sm px-2 py-0.5 rounded-full",
+                        "text-xs sm:text-sm px-2 py-0.5 rounded-full",
                         teamIsFull
                             ? "bg-gray-100/10 text-gray-500"
                             : teamColor === "red" 
@@ -123,7 +115,7 @@ export const MatchTeamCard = async ({
                     </span>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                     {currentUserData.isAdmin && (
                         <BlockSpotsButton
                             matchIdFromParams={matchIdFromParams}
@@ -135,25 +127,27 @@ export const MatchTeamCard = async ({
                     
                     {match?.isUserInMatch ? (
                         <>
-                            {hasCurrentUserRequestedSubstitute ? (
-                                <CancelSubstituteButton 
-                                    matchIdFromParams={matchIdFromParams}
-                                    currentUserId={currentUserData.id}
-                                    playerType="regular"
-                                />
-                            ) : (
-                                <LeaveMatchButton 
-                                    matchIdFromParams={matchIdFromParams}
-                                    currentUserId={currentUserData.id}
-                                />
+                            {match.hasDirectlyJoined && (
+                                hasCurrentUserRequestedSubstitute ? (
+                                    <CancelSubstituteButton 
+                                        matchIdFromParams={matchIdFromParams}
+                                        currentUserId={currentUserData.id}
+                                        playerType="regular"
+                                    />
+                                ) : (
+                                    <LeaveMatchButton 
+                                        matchIdFromParams={matchIdFromParams}
+                                        currentUserId={currentUserData.id}
+                                    />
+                                )
                             )}
-                            {!teamIsFull && !hasAddedFriend && (
+                            {!teamIsFull && !match.hasAddedFriend && (
                                 <AddFriendButton 
                                     matchIdFromParams={matchIdFromParams}
                                     teamNumber={teamNumber}
                                 />
                             )}
-                            {hasAddedFriend && (
+                            {match.hasAddedFriend && (
                                 hasFriendRequestedSubstitute ? (
                                     <CancelSubstituteButton 
                                         matchIdFromParams={matchIdFromParams}
@@ -179,7 +173,7 @@ export const MatchTeamCard = async ({
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
                 {players.map((player) => (
                     <MatchTeamsPlayerSlot
                         key={player.id}
@@ -189,6 +183,7 @@ export const MatchTeamCard = async ({
                         locale={locale}
                         player={player}
                         isMatchAdmin={isMatchAdmin}
+                        hasDirectlyJoined={match?.hasDirectlyJoined}
                     />
                 ))}
 

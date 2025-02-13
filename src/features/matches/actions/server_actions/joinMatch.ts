@@ -41,34 +41,17 @@ export async function joinMatch({
     teamNumber,
     withBalance
 }: JoinMatchParams): Promise<JoinMatchResponse> {
-    console.log('Starting joinMatch with params:', {
-        matchIdFromParams,
-        teamNumber,
-        withBalance
-    });
-
     const t = await getTranslations("GenericMessages");
 
     const { isAuth, userId } = await verifyAuth();
-    console.log('Auth check result:', { isAuth, userId });
             
     if (!isAuth) {
-        console.log('Unauthorized attempt to join match');
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
     if (!matchIdFromParams) {
-        console.log('Missing matchId parameter');
         return { success: false, message: t('BAD_REQUEST') };
     }
-
-    console.log('Calling join_team RPC with:', {
-        pauthuserid: userId,
-        pmatchid: matchIdFromParams,
-        puserid: userId,
-        pteamnumber: teamNumber,
-        pwithbalance: withBalance
-    });
 
     const { data, error } = await supabase.rpc('join_team', {
         pauthuserid: userId,
@@ -78,22 +61,16 @@ export async function joinMatch({
         pwithbalance: withBalance
     });
 
-    console.log('RPC response:', { data, error });
-
     if (error) {
-        console.error('RPC error:', error);
         return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
 
     if (!data.success) {
-        console.log('Join match failed:', data.code);
         if (data.code === 'INSUFFICIENT_BALANCE') {
             return { success: false, message: t("INSUFFICIENT_BALANCE_TRY_CASH") };
         }
         return { success: false, message: t("PLAYER_JOIN_FAILED") };
     }
-
-    console.log('Join match successful, returning player data:', data.metadata);
 
     revalidatePath("/");
     revalidatePath(`${PROTECTED_PAGE_ENDPOINTS.HOME_PAGE}`);

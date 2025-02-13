@@ -47,7 +47,6 @@ export const finishMatch = async ({
     }
 
     if (!data.success) {
-        console.log('Finish failed with code:', data.code);
         return { success: false, message: t('MATCH_FINISH_FAILED') };
     }
 

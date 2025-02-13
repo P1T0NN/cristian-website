@@ -149,7 +149,6 @@ export default function NewUserDetailsPage() {
                     </Button>
                 </div>
             </div>
-
         </div>
     );
 }

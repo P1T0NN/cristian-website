@@ -38,7 +38,7 @@ export async function editMatchInstructions({
 
     const { error } = await supabase
         .from('matches')
-        .update({ match_instructions: matchInstructions })
+        .update({ matchInstructions: matchInstructions })
         .eq('id', matchId);
 
     if (error) {

@@ -113,8 +113,28 @@ export const GET = async (request: NextRequest) => {
         : [];
         
     const isUserInMatch = Boolean(
-        team1Players.some(player => player.userId === userId) ||
-        team2Players.some(player => player.userId === userId)
+        team1Players.some(player => 
+            player.userId === userId || 
+            (player.playerType === 'temporary' && player.addedByUser?.id === userId)
+        ) ||
+        team2Players.some(player => 
+            player.userId === userId || 
+            (player.playerType === 'temporary' && player.addedByUser?.id === userId)
+        )
+    );
+
+    const hasDirectlyJoined = Boolean(
+        team1Players.some(player => player.userId === userId && player.playerType === 'regular') ||
+        team2Players.some(player => player.userId === userId && player.playerType === 'regular')
+    );
+
+    const hasAddedFriend = Boolean(
+        team1Players.some(player => 
+            player.playerType === 'temporary' && player.addedByUser?.id === userId
+        ) ||
+        team2Players.some(player => 
+            player.playerType === 'temporary' && player.addedByUser?.id === userId
+        )
     );
 
     const mapPlayerData = (player: MatchPlayerResponse): typesPlayer => ({
@@ -163,6 +183,8 @@ export const GET = async (request: NextRequest) => {
         blockSpotsTeam2: match.blockSpotsTeam2,
         status: match.status,
         isUserInMatch,
+        hasDirectlyJoined,
+        hasAddedFriend,
         team1Players: team1Players.map(mapPlayerData),
         team2Players: team2Players.map(mapPlayerData)
     };

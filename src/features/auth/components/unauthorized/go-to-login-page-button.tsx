@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 // LIBRARIES
 import { useTranslations } from "next-intl";
+import { authClient } from '@/features/auth/auth-client';
 
 // CONFIG
 import { PUBLIC_PAGE_ENDPOINTS } from "@/config";
@@ -18,6 +19,7 @@ export const GoToLoginPageButton = () => {
     const router = useRouter();
 
     const handleGoToLoginPage = async () => {
+        await authClient.signOut();
         router.replace(PUBLIC_PAGE_ENDPOINTS.LOGIN_PAGE);
     }
 

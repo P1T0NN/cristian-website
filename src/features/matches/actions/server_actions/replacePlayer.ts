@@ -29,33 +29,17 @@ export const replacePlayer = async ({
     playerToReplaceId,
     withBalance
 }: ReplacePlayerParams): Promise<ReplacePlayerResponse> => {
-    console.log('Starting replacePlayer with params:', {
-        matchIdFromParams,
-        playerToReplaceId,
-        withBalance
-    });
-
     const t = await getTranslations("GenericMessages");
 
     const { isAuth, userId: authUserId } = await verifyAuth();
-    console.log('Auth check result:', { isAuth, authUserId });
                 
     if (!isAuth) {
-        console.log('Auth failed');
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
     if (!matchIdFromParams || !playerToReplaceId) {
-        console.log('Missing required params:', { matchIdFromParams, playerToReplaceId });
         return { success: false, message: t('BAD_REQUEST') };
     }
-
-    console.log('Calling replace_player RPC with params:', {
-        p_auth_user_id: authUserId,
-        p_match_id: matchIdFromParams,
-        p_match_player_id: playerToReplaceId,
-        p_with_balance: withBalance
-    });
 
     const { data, error } = await supabase.rpc('replace_player', {
         p_auth_user_id: authUserId,
@@ -65,21 +49,16 @@ export const replacePlayer = async ({
     });
 
     if (error) {
-        console.error('RPC error:', error);
         return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
 
-    console.log('RPC response:', data);
-
     if (!data.success) {
-        console.log('Replace failed with code:', data.code);
         if (data.code === 'INSUFFICIENT_BALANCE') {
             return { success: false, message: t("INSUFFICIENT_BALANCE_TRY_CASH") };
         }
         return { success: false, message: t('PLAYER_REPLACE_FAILED') };
     }
 
-    console.log('Replace successful, revalidating paths');
     revalidatePath("/");
     revalidateTag(TAGS_FOR_CACHE_REVALIDATIONS.ACTIVE_MATCHES_COUNT);
 

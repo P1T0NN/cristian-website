@@ -26,37 +26,26 @@ export const switchTeam = async ({
     playerId,
     playerType
 }: SwitchTeamParams): Promise<SwitchTeamResponse> => {
-    console.log('Switching team for:', {
-        matchId: matchIdFromParams,
-        playerId,
-        playerType
-    });
-
     const t = await getTranslations("GenericMessages");
 
     const { isAuth } = await verifyAuth();
                     
     if (!isAuth) {
-        console.log('Auth failed');
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    const { data, error } = await supabase.rpc('switchplayerteam', {
+    const { error } = await supabase.rpc('switchplayerteam', {
         matchid: matchIdFromParams,
         playerid: playerId,
         playertype: playerType
     });
 
-    console.log('Supabase response:', { data, error });
-
     if (error) {
-        console.error('Switch team error:', error);
         return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
 
     revalidatePath("/");
 
-    console.log('Switch team successful');
     return { 
         success: true, 
         message: t('PLAYER_SWITCHED_TEAM_SUCCESSFULLY') 

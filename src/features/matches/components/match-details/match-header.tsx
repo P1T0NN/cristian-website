@@ -50,10 +50,6 @@ export const MatchHeader = async ({
                         </div>
 
                         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                            <h1 className="text-3xl font-bold">
-                                {match?.team1Name} vs {match?.team2Name}
-                            </h1>
-
                             <div className="flex flex-wrap gap-2">
                                 {currentUserData.isAdmin && (
                                     <Badge

@@ -47,7 +47,6 @@ export const blockSpots = async ({
     });
 
     if (error) {
-        console.error('RPC error:', error);
         return { success: false, message: t('SPOTS_BLOCK_FAILED') };
     }
 

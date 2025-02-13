@@ -1,29 +1,21 @@
+// NEXTJS IMPORTS
+import Link from "next/link";
+
 // LIBRARIES
 import { cn } from "@/shared/lib/utils";
 import { getTranslations } from "next-intl/server";
 
 // COMPONENTS
 import { Avatar, AvatarFallback } from "@/shared/components/ui/avatar";
-import { Button } from "@/shared/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuTrigger,
-} from "@/shared/components/ui/dropdown-menu";
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
 } from "@/shared/components/ui/tooltip";
-import { HasPaidButton } from "./has-paid-button";
-import { HasGratisButton } from "./has-gratis-button";
-import { HasDiscountButton } from "./has-discount-button";
-import { SwapPlayerTeamButton } from "./swap-player-team-button";
-import { AdminRemovePlayerFromMatchButton } from "./admin-remove-player-from-match-button";
 import { ReplacePlayerButton } from "./replace-player-button";
-import { MatchAdminButton } from "./match-admin-button";
 import { MatchTeamsPlayerSlotEmpty } from "./match-teams-player-slot-empty";
+import { PlayerSlotAdminControls } from "./player-slot-admin-controls";
 
 // ACTIONS
 import { getUser } from "@/features/auth/actions/verifyAuth";
@@ -36,7 +28,7 @@ import type { typesUser } from "@/features/players/types/typesPlayer";
 import type { typesPlayer } from "@/features/matches/types/typesMatch";
 
 // LUCIDE ICONS
-import { MoreVertical, UserMinus } from "lucide-react";
+import { UserMinus } from "lucide-react";
 
 interface MatchTeamsPlayerSlotProps {
     id?: string;
@@ -46,6 +38,7 @@ interface MatchTeamsPlayerSlotProps {
     player?: typesPlayer;
     isMatchAdmin?: boolean;
     isBlocked?: boolean;
+    hasDirectlyJoined?: boolean;
 }
 
 export const MatchTeamsPlayerSlot = async ({ 
@@ -55,7 +48,8 @@ export const MatchTeamsPlayerSlot = async ({
     locale,
     player,
     isMatchAdmin,
-    isBlocked
+    isBlocked,
+    hasDirectlyJoined
 }: MatchTeamsPlayerSlotProps) => {
     const t = await getTranslations("MatchPage");
 
@@ -72,11 +66,12 @@ export const MatchTeamsPlayerSlot = async ({
         />
     }
 
-    return (
+    const PlayerContent = () => (
         <div
             className={cn(
                 "flex items-center justify-between p-4 rounded-xl",
-                "transition-colors duration-200"
+                "transition-colors duration-200",
+                currentUserData.isAdmin && player.userId && "hover:bg-accent cursor-pointer"
             )}
         >
             <div className="flex items-center space-x-4">
@@ -134,60 +129,41 @@ export const MatchTeamsPlayerSlot = async ({
             </div>
 
             <div className="flex items-center gap-2">
-                {player?.substituteRequested && id && (player?.userId !== currentUserData.id) && (
+                {/* Only show replace button if user is not directly playing */}
+                {player?.substituteRequested && id && (player?.userId !== currentUserData.id) && !hasDirectlyJoined &&
+                (
                     <ReplacePlayerButton 
                         matchIdFromParams={matchIdFromParams as string}
                         playerToReplaceId={id}
                     />
                 )}
                 
-                {/* Show admin controls for both global admins and match admins */}
                 {canAccessAdminControls && id && (
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                                <MoreVertical className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        
-                        <DropdownMenuContent align="end">
-                            {/* Only global admins can manage match admin status */}
-                            {currentUserData.isAdmin && player?.playerType === 'regular' && (
-                                <MatchAdminButton 
-                                    id={id}
-                                    matchIdFromParams={matchIdFromParams as string}
-                                    isMatchAdmin={player?.hasMatchAdmin as boolean}
-                                />
-                            )}
-                            <SwapPlayerTeamButton 
-                                id={id}
-                                matchIdFromParams={matchIdFromParams as string}
-                                playerType={player?.playerType as 'regular' | 'temporary'}
-                            />
-                            <AdminRemovePlayerFromMatchButton 
-                                id={id}
-                                matchIdFromParams={matchIdFromParams as string}
-                                playerType={player?.playerType as 'regular' | 'temporary'}
-                            />
-                            <HasPaidButton 
-                                id={id}
-                                matchIdFromParams={matchIdFromParams as string}
-                                hasPaid={player?.hasPaid as boolean}
-                            />
-                            <HasGratisButton
-                                id={id}
-                                matchIdFromParams={matchIdFromParams as string}
-                                hasGratis={player?.hasGratis as boolean}
-                            />
-                            <HasDiscountButton
-                                id={id}
-                                matchIdFromParams={matchIdFromParams as string}
-                                hasDiscount={player?.hasDiscount as boolean}
-                            />
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    /* Client Component */
+                    <PlayerSlotAdminControls
+                        id={id}
+                        matchIdFromParams={matchIdFromParams as string}
+                        currentUserIsAdmin={currentUserData.isAdmin}
+                        playerType={player.playerType as 'regular' | 'temporary'}
+                        hasMatchAdmin={player.hasMatchAdmin as boolean}
+                        hasPaid={player.hasPaid as boolean}
+                        hasGratis={player.hasGratis as boolean}
+                        hasDiscount={player.hasDiscount as boolean}
+                    />
                 )}
             </div>
         </div>
     );
+
+    // If admin and player has userId, wrap in Link
+    if (currentUserData.isAdmin && player.userId) {
+        return (
+            <Link href={`/player/${player.userId}`}>
+                <PlayerContent />
+            </Link>
+        );
+    }
+
+    // Otherwise return normal content
+    return <PlayerContent />;
 }

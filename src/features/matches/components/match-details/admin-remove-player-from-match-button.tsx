@@ -5,16 +5,16 @@ import { useTransition } from "react";
 
 // LIBRARIES
 import { useTranslations } from "next-intl";
-import { toast } from "sonner";
 
 // COMPONENTS
 import { DropdownMenuItem } from "@/shared/components/ui/dropdown-menu";
-
-// LUCIDE ICONS
-import { UserX } from "lucide-react";
+import { toast } from "sonner";
 
 // SERVER ACTIONS
 import { leaveMatch } from "../../actions/server_actions/leaveTeam";
+
+// LUCIDE ICONS
+import { UserX } from "lucide-react";
 
 interface AdminRemovePlayerFromMatchButtonProps {
     id: string;
@@ -28,6 +28,7 @@ export const AdminRemovePlayerFromMatchButton = ({
     playerType
 }: AdminRemovePlayerFromMatchButtonProps) => {
     const t = useTranslations('MatchPage');
+
     const [isPending, startTransition] = useTransition();
 
     const handleRemovePlayer = () => {
@@ -35,7 +36,8 @@ export const AdminRemovePlayerFromMatchButton = ({
             const result = await leaveMatch({
                 matchIdFromParams,
                 currentUserId: id,
-                isRemovingFriend: playerType === 'temporary'
+                isRemovingFriend: playerType === 'temporary',
+                adminOverride: true
             });
 
             if (result.success) {

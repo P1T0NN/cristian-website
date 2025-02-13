@@ -5,11 +5,14 @@ import { cache } from 'react';
 
 // NEXTJS IMPORTS
 import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 // LIBRARIES
 import { supabase } from '@/shared/lib/supabase/supabase';
 import { auth } from '../auth';
-import { getTranslations } from 'next-intl/server';
+
+// CONFIG
+import { PUBLIC_PAGE_ENDPOINTS } from '@/config';
 
 // TYPES
 import type { typesUser } from '@/features/players/types/typesPlayer';
@@ -31,7 +34,7 @@ export const verifyAuth = cache(async () => {
     return { isAuth: true, userId: session.user.id };
 });
 
-export const checkUserAccess = async (): Promise<boolean> => {
+export const checkUserAccess = cache(async (): Promise<boolean> => {
     try {
         const session = await auth.api.getSession({
             headers: await headers()
@@ -51,30 +54,24 @@ export const checkUserAccess = async (): Promise<boolean> => {
     } catch {
         return false;
     }
-}
+})
 
 export const getUser = cache(async () => {
-    const t = await getTranslations("GenericMessages");
+    const { isAuth, userId } = await verifyAuth();
 
-    try {
-        const { isAuth, userId } = await verifyAuth();
-
-        if (!isAuth) {
-            return { success: false, message: t('UNAUTHORIZED') };
-        }
-
-        const { data: user } = await supabase
-            .from('user')
-            .select('*')
-            .eq('id', userId)
-            .single();
-
-        if (!user) {
-            return null;
-        }
-
-        return user as typesUser;
-    } catch {
-        return null;
+    if (!isAuth) {
+        return redirect(PUBLIC_PAGE_ENDPOINTS.UNAUTHORIZED_PAGE);
     }
+
+    const { data: user } = await supabase
+        .from('user')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+    if (!user.hasAccess) {
+        return redirect(PUBLIC_PAGE_ENDPOINTS.UNAUTHORIZED_PAGE);
+    }
+
+    return user as typesUser;
 });

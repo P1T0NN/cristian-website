@@ -21,7 +21,8 @@ export const ActiveMatches = async () => {
     const serverMatchesData = await fetchMatches({
         isAdmin: currentUserData.isAdmin,
         status: 'active',
-        currentUserId: currentUserData.id
+        currentUserId: currentUserData.id,
+        filterByUserId: true
     });
     
     return (

@@ -3,7 +3,7 @@ export type typesMatchGender = 'Male' | 'Female' | 'Mixed';
 export type typesMatchLevel = 'A' | 'B' | 'C' | 'D' | string;
 export type typesMatchStatus = 'active' | 'pending' | 'finished';
 
-export type typesMatch = {
+export interface typesMatch {
     id: string;
     addedBy: string;
     location: string;
@@ -29,8 +29,10 @@ export type typesMatch = {
     status: typesMatchStatus;
     team1Players: typesPlayer[];
     team2Players: typesPlayer[];
-    isUserInMatch?: boolean;
-};
+    isUserInMatch: boolean;
+    hasDirectlyJoined: boolean;
+    hasAddedFriend: boolean;
+}
 
 export type typesPlayer = {
     id: string;

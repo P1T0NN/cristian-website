@@ -265,6 +265,10 @@
         "matchCompleted": "Partido Completo",
         "lastPlacesLeft": "¡Últimas Plazas!",
         "available": "Disponible",
+        "save": "Guardar",
+        "saving": "Guardando...",
+        "editInstructions": "Editar Instrucciones",
+        "enterMatchInstructions": "Introduce las instrucciones del partido",
         "MatchFAQ": {
             "title": "Preguntas Frecuentes",
             "aboutUs": {

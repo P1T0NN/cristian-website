@@ -32,12 +32,14 @@ interface LeaveMatchParams {
     matchIdFromParams: string;
     currentUserId: string;
     isRemovingFriend?: boolean;
+    adminOverride?: boolean;
 }
 
 export const leaveMatch = async ({
     matchIdFromParams,
     currentUserId,
-    isRemovingFriend = false
+    isRemovingFriend = false,
+    adminOverride = false
 }: LeaveMatchParams): Promise<LeaveMatchResponse> => {
     const t = await getTranslations("GenericMessages");
 
@@ -55,7 +57,8 @@ export const leaveMatch = async ({
         pauthuserid: authUserId,
         pmatchid: matchIdFromParams,
         pcurrentuserid: currentUserId,
-        pisremovingfriend: isRemovingFriend
+        pisremovingfriend: isRemovingFriend,
+        padminoverride: adminOverride
     });
 
     if (error) {
@@ -89,7 +92,8 @@ CREATE OR REPLACE FUNCTION leave_match(
     pauthuserid TEXT,
     pmatchid UUID,
     pcurrentuserid TEXT,
-    pisremovingfriend BOOLEAN
+    pisremovingfriend BOOLEAN,
+    padminoverride BOOLEAN DEFAULT FALSE
 ) RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -102,7 +106,19 @@ DECLARE
     vEightHoursBeforeMatch TIMESTAMP;
     vUpdatedPlacesOccupied INT;
     vMatchPrice DECIMAL;
+    vIsAdmin BOOLEAN;
 BEGIN
+    -- Check if user is admin
+    SELECT EXISTS (
+        SELECT 1 FROM "user"
+        WHERE id = pauthuserid AND "isAdmin" = true
+    ) INTO vIsAdmin;
+
+    -- Only allow admin override if user is actually an admin
+    IF padminoverride AND NOT vIsAdmin THEN
+        RETURN jsonb_build_object('success', false, 'code', 'UNAUTHORIZED');
+    END IF;
+
     SELECT * INTO vMatch 
     FROM matches 
     WHERE id = pmatchid;
@@ -131,8 +147,8 @@ BEGIN
             RETURN jsonb_build_object('success', false, 'code', 'PLAYER_NOT_IN_MATCH');
         END IF;
 
-        -- Check time limit for friend removal
-        IF vCurrentTime > vEightHoursBeforeMatch THEN
+        -- Check time limit for friend removal (skip if admin override)
+        IF NOT padminoverride AND vCurrentTime > vEightHoursBeforeMatch THEN
             RETURN jsonb_build_object('success', false, 'code', 'TOO_LATE_TO_LEAVE', 'metadata', jsonb_build_object('canRequestSubstitute', true));
         END IF;
 
@@ -153,8 +169,8 @@ BEGIN
             RETURN jsonb_build_object('success', false, 'code', 'PLAYER_NOT_IN_MATCH');
         END IF;
 
-        -- Check time limit for regular players leaving themselves
-        IF vCurrentTime > vEightHoursBeforeMatch THEN
+        -- Check time limit for regular players leaving themselves (skip if admin override)
+        IF NOT padminoverride AND vCurrentTime > vEightHoursBeforeMatch THEN
             RETURN jsonb_build_object('success', false, 'code', 'TOO_LATE_TO_LEAVE', 'metadata', jsonb_build_object('canRequestSubstitute', true));
         END IF;
     ELSE

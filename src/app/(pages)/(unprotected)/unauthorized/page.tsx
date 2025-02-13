@@ -1,39 +1,19 @@
-"use client"
-
-// REACTJS IMPORTS
-import { useEffect } from 'react';
-
 // LIBRARIES
-import { useTranslations } from 'next-intl';
-import { useQuery } from '@tanstack/react-query';
+import { getTranslations } from 'next-intl/server';
+import { authClient } from '@/features/auth/auth-client';
 
 // COMPONENTS
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { GoToLoginPageButton } from '@/features/auth/components/unauthorized/go-to-login-page-button';
 
 async function deleteAuthCookies() {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/logout`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    });
-
-    return response.json();
+    await authClient.signOut();
 }
 
-export default function UnauthorizedPage() {
-    const t = useTranslations('UnauthorizedPage');
-
-    const { refetch } = useQuery({
-        queryKey: ['deleteAuthCookies'],
-        queryFn: deleteAuthCookies,
-        enabled: false, // This prevents the query from running automatically
-    });
-
-    useEffect(() => {
-        refetch(); // This will run the query when the component mounts
-    }, [refetch]);
+export default async function UnauthorizedPage() {
+    const t = await getTranslations('UnauthorizedPage');
+    
+    await deleteAuthCookies();
   
     return (
         <div className="flex items-center justify-center bg-background p-4 overflow-hidden">

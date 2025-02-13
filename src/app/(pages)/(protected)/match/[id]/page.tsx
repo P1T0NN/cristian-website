@@ -18,13 +18,13 @@ export default async function MatchPage({
     const { id } = await params;
 
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen">
             <Suspense fallback={<MatchHeaderLoading />}>
                 <MatchHeader matchIdFromParams={id} />
             </Suspense>
 
             <main className="container mx-auto px-4 py-6">
-                <div className="flex flex-col">
+                <div className="flex flex-col gap-y-6">
                     <div className="flex flex-col lg:flex-row gap-8">
                         {/* Left Sidebar */}
                         <div className="lg:w-1/4">

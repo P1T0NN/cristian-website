@@ -15,7 +15,8 @@ export const PUBLIC_PAGE_ENDPOINTS = {
     REGISTER_PAGE: "/register",
     FORGOT_PASSWORD_PAGE: "/forgot_password",
     VERIFY_EMAIL_PAGE: "/verify_email",
-    RESET_PASSWORD_PAGE: "/reset_password"
+    RESET_PASSWORD_PAGE: "/reset_password",
+    UNAUTHORIZED_PAGE: "/unauthorized"
 };
 
 

@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
     const currentDate = searchParams.get('currentDate');
     const currentTime = searchParams.get('currentTime');
     const requestedUserId = searchParams.get('currentUserId');
+    const filterByUserId = searchParams.get('filterByUserId') === 'true';
 
     let matchesQuery = supabase
         .from('matches')
@@ -109,14 +110,14 @@ export async function GET(request: NextRequest) {
         });
     }
 
-    // Only filter by userId if it's explicitly provided
-    if (requestedUserId && requestedUserId !== 'undefined') {
+    // Only filter by userId if filterByUserId is true
+    if (filterByUserId && requestedUserId && requestedUserId !== 'undefined') {
         filteredMatches = filteredMatches.filter(match => 
             match.matchPlayers.some((player: typesPlayer) => player.userId === requestedUserId)
         );
     }
 
-    // Add isUserInMatch flag to each match
+    // Always add isUserInMatch flag regardless of filtering
     const matchesWithUserStatus = filteredMatches.map(match => ({
         ...match,
         isUserInMatch: requestedUserId ? 

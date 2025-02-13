@@ -26,33 +26,17 @@ export const cancelSubstitute = async ({
     currentUserId,
     playerType
 }: CancelSubstituteParams): Promise<CancelSubstituteResponse> => {
-    console.log('Starting cancelSubstitute with params:', {
-        matchIdFromParams,
-        currentUserId,
-        playerType
-    });
-
     const t = await getTranslations("GenericMessages");
 
     const { isAuth, userId: authUserId } = await verifyAuth();
-    console.log('Auth check result:', { isAuth, authUserId });
                 
     if (!isAuth) {
-        console.log('Auth failed');
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
     if (!matchIdFromParams || !currentUserId) {
-        console.log('Missing required params:', { matchIdFromParams, currentUserId });
         return { success: false, message: t('BAD_REQUEST') };
     }
-
-    console.log('Calling cancel_substitute RPC with params:', {
-        pauthuserid: authUserId,
-        pmatchid: matchIdFromParams,
-        pcurrentuserid: currentUserId,
-        pistemporary: playerType === 'temporary'
-    });
 
     const { data, error } = await supabase.rpc('cancel_substitute', {
         pauthuserid: authUserId,
@@ -61,22 +45,17 @@ export const cancelSubstitute = async ({
         pistemporary: playerType === 'temporary'
     });
 
-    console.log('RPC response:', { data, error });
-
     if (error) {
-        console.error('RPC error:', error);
         return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
 
     if (!data.success) {
-        console.log('Operation failed with data:', data);
         return { 
             success: false, 
             message: t('CANCEL_SUBSTITUTE_FAILED')
         };
     }
 
-    console.log('Operation successful, revalidating path');
     revalidatePath("/");
 
     return { 

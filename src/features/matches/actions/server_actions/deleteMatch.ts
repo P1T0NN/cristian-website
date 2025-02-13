@@ -39,27 +39,17 @@ interface DeleteMatchParams {
 export const deleteMatch = async ({
     matchIdFromParams
 }: DeleteMatchParams): Promise<DeleteMatchResponse> => {
-    console.log('Starting deleteMatch with params:', { matchIdFromParams });
-    
     const t = await getTranslations("GenericMessages");
     
     const { isAuth, userId: authUserId } = await verifyAuth();
-    console.log('Auth check result:', { isAuth, authUserId });
         
     if (!isAuth) {
-        console.log('Auth failed');
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
     if (!matchIdFromParams) {
-        console.log('Missing matchIdFromParams');
         return { success: false, message: t('BAD_REQUEST') };
     }
-
-    console.log('Calling delete_match RPC with params:', {
-        p_auth_user_id: authUserId,
-        p_match_id: matchIdFromParams
-    });
 
     const { data, error } = await supabase.rpc('delete_match', {
         p_auth_user_id: authUserId,
@@ -67,18 +57,13 @@ export const deleteMatch = async ({
     });
 
     if (error) {
-        console.error('RPC error:', error);
         return { success: false, message: t('MATCH_DELETION_FAILED') };
     }
-
-    console.log('RPC response:', data);
 
     if (!data.success) {
-        console.log('Deletion failed with code:', data.code);
         return { success: false, message: t('MATCH_DELETION_FAILED') };
     }
 
-    console.log('Match deleted successfully, revalidating paths');
     revalidatePath("/");
     revalidateTag(TAGS_FOR_CACHE_REVALIDATIONS.ACTIVE_MATCHES_COUNT);
 

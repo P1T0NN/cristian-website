@@ -3,9 +3,11 @@ import { getTranslations } from "next-intl/server";
 
 // COMPONENTS
 import { Card, CardHeader, CardContent, CardTitle } from "@/shared/components/ui/card";
+import { EditMatchInstructionsButton } from "./edit-match-instructions-button";
 
 // ACTIONS
 import { fetchMatch } from "../../actions/fetchMatch";
+import { getUser } from "@/features/auth/actions/verifyAuth";
 
 // UTILS
 import { formatDate, formatTime } from "@/shared/utils/dateUtils";
@@ -23,9 +25,10 @@ interface MatchInfoProps {
 export const MatchInfo = async ({ 
     matchIdFromParams
 }: MatchInfoProps) => {
-    const [t, serverMatchData] = await Promise.all([
+    const [t, serverMatchData, currentUserData] = await Promise.all([
         getTranslations("MatchPage"),
-        fetchMatch(matchIdFromParams)
+        fetchMatch(matchIdFromParams),
+        getUser()
     ]);
 
     const match = serverMatchData.data as typesMatch;
@@ -97,15 +100,23 @@ export const MatchInfo = async ({
 
             {/* Instructions Card */}
             <Card>
-                <CardHeader>
+                <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle>{t('instructions')}</CardTitle>
+                    {currentUserData?.isAdmin && (
+                        <EditMatchInstructionsButton 
+                            matchId={matchIdFromParams}
+                            currentInstructions={match.matchInstructions || ''}
+                        />
+                    )}
                 </CardHeader>
+
                 <CardContent>
                     <div className="flex items-start gap-3">
-                        <div className="mt-1">
+                        <div className="mt-1 flex-shrink-0">
                             <Info className="h-5 w-5 text-muted-foreground" />
                         </div>
-                        <p className="text-muted-foreground">
+                        
+                        <p className="text-muted-foreground whitespace-pre-wrap break-words overflow-auto max-h-[300px] text-sm sm:text-base">
                             {match.matchInstructions || t('noInstructions')}
                         </p>
                     </div>

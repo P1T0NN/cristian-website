@@ -26,33 +26,17 @@ export const requestSubstitute = async ({
     userId,  // This is the user.id we want to request substitute for
     playerType
 }: RequestSubstituteParams): Promise<RequestSubstituteResponse> => {
-    console.log('Starting requestSubstitute with params:', {
-        matchIdFromParams,
-        userId,
-        playerType
-    });
-
     const t = await getTranslations("GenericMessages");
 
     const { isAuth, userId: authUserId } = await verifyAuth();
-    console.log('Auth check result:', { isAuth, authUserId });
                 
     if (!isAuth) {
-        console.log('Auth failed');
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
     if (!matchIdFromParams || !userId) {
-        console.log('Missing required params:', { matchIdFromParams, userId });
         return { success: false, message: t('BAD_REQUEST') };
     }
-
-    console.log('Calling request_substitute RPC with params:', {
-        pauthuserid: authUserId,
-        pmatchid: matchIdFromParams,
-        puserid: userId,  // This is clearly the user.id
-        pistemporary: playerType === 'temporary'
-    });
 
     const { data, error } = await supabase.rpc('request_substitute', {
         pauthuserid: authUserId,
@@ -62,14 +46,10 @@ export const requestSubstitute = async ({
     });
 
     if (error) {
-        console.error('RPC error:', error);
         return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
 
-    console.log('RPC response:', data);
-
     if (!data.success) {
-        console.log('Request failed:', data);
         return { 
             success: false, 
             message: t('SUBSTITUTE_REQUEST_FAILED')
@@ -78,7 +58,6 @@ export const requestSubstitute = async ({
 
     revalidatePath("/");
 
-    console.log('Request successful, returning response');
     return { 
         success: true, 
         message: t(playerType === 'temporary' ? 
