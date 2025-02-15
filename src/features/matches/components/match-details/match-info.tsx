@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 // COMPONENTS
 import { Card, CardHeader, CardContent, CardTitle } from "@/shared/components/ui/card";
 import { EditMatchInstructionsButton } from "./edit-match-instructions-button";
+import { RevealMatchPriceButton } from "./reveal-match-price-button";
 
 // ACTIONS
 import { fetchMatch } from "../../actions/fetchMatch";
@@ -16,7 +17,7 @@ import { formatDate, formatTime } from "@/shared/utils/dateUtils";
 import type { typesMatch } from "../../types/typesMatch";
 
 // LUCIDE ICONS
-import { Clock, MapPin, Info, Calendar, EuroIcon } from "lucide-react";
+import { Clock, MapPin, Info, Calendar } from "lucide-react";
 
 interface MatchInfoProps {
     matchIdFromParams: string;
@@ -65,16 +66,8 @@ export const MatchInfo = async ({
                         </div>
                     </div>
 
-                    {/* Price */}
-                    <div className="flex items-start gap-3">
-                        <div className="mt-1">
-                            <EuroIcon className="h-5 w-5 text-muted-foreground" />
-                        </div>
-                        <div>
-                            <h3 className="font-medium">{t('pricePerPlayer')}</h3>
-                            <p className="text-muted-foreground">{match.price}€</p>
-                        </div>
-                    </div>
+                    {/* Client Component */}
+                    <RevealMatchPriceButton price={match.price} />
 
                     {/* Location */}
                     <div className="flex items-start gap-3">
