@@ -58,7 +58,7 @@ export const MatchCard = async ({
                                 <div className="text-2xl font-bold leading-none">{formattedTime}</div>
                                 <div className="text-sm text-muted-foreground">{formattedDate}</div>
                             </div>
-                            <div className="font-semibold text-lg">{match.price}€</div>
+                            {/*<div className="font-semibold text-lg">{match.price}€</div>*/}
                         </div>
                         <div>
                             {currentUserData.isAdmin && <h3 className="font-semibold text-lg truncate">{title}</h3>}
