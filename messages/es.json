@@ -270,6 +270,8 @@
         "editInstructions": "Editar Instrucciones",
         "enterMatchInstructions": "Introduce las instrucciones del partido",
         "showPrice": "Mostrar Precio",
+        "substituteNeeded": "Sustituto necesario",
+        "substituteNeededTooltip": "Los jugadores han solicitado un sustituto. Por favor, usa el botón 'Reemplazar Jugador' en su slot en lugar de unirte directamente.",
         "MatchFAQ": {
             "title": "Preguntas Frecuentes",
             "aboutUs": {

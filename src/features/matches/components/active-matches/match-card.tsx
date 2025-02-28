@@ -64,19 +64,23 @@ export const MatchCard = async ({
                             {currentUserData.isAdmin && <h3 className="font-semibold text-lg truncate">{title}</h3>}
                             <div className="flex flex-wrap items-center gap-2 mt-2">
                                 <span className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600">{format}</span>
+                                
                                 <span className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600 flex items-center">
                                     <Clock className="w-3 h-3 mr-1" />
                                     {match.matchDuration} {t('minutes')}
                                 </span>
+
                                 <div className="flex items-center gap-1">
                                     <span className={`w-2.5 h-2.5 rounded-full ${match.team1Color ? 'bg-black' : 'bg-white border border-gray-300'}`} />
                                     <span className={`w-2.5 h-2.5 rounded-full ${match.team2Color ? 'bg-black' : 'bg-white border border-gray-300'}`} />
 
                                 </div>
+
                                 <span className={`flex text-xs px-2 py-1 rounded-full items-center ${placesLeft < 3 ? 'text-white' : 'text-blue-600'} ${placesLeftColor}`}>
                                     <Users className="w-3 h-3 mr-1" />
                                     {placesLeftText}
                                 </span>
+
                                 {currentUserData.isAdmin && match.matchLevel && (
                                     <span className="text-xs bg-yellow-100 px-2 py-1 rounded-full text-yellow-600 flex items-center">
                                         <Star className="w-3 h-3 mr-1" />

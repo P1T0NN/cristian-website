@@ -36,6 +36,12 @@ export const MatchTeams = async ({
         )
     );
 
+    // Check if any player in either team has requested a substitute
+    const hasSubstituteRequests = Boolean(
+        match?.team1Players.some(player => player.substituteRequested) ||
+        match?.team2Players.some(player => player.substituteRequested)
+    );
+
     return (
         <div className="space-y-6">
             <MatchTeamCard
@@ -46,6 +52,7 @@ export const MatchTeams = async ({
                 players={match?.team1Players as typesPlayer[]}
                 locale={locale}
                 isMatchAdmin={isMatchAdmin}
+                hasSubstituteRequests={hasSubstituteRequests}
             />
 
             <MatchTeamCard
@@ -56,6 +63,7 @@ export const MatchTeams = async ({
                 players={match?.team2Players as typesPlayer[]}
                 locale={locale}
                 isMatchAdmin={isMatchAdmin}
+                hasSubstituteRequests={hasSubstituteRequests}
             />
         </div>
     );

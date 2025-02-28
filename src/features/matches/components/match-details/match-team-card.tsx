@@ -9,6 +9,7 @@ import { LeaveMatchButton } from "./leave-match-button";
 import { RemoveFriendButton } from "./remove-friend-button";
 import { CancelSubstituteButton } from "./cancel-substitute-button";
 import { BlockSpotsButton } from "./block-spots-button";
+import { SubstituteNeededButton } from "./substitute-needed-button";
 
 // ACTIONS
 import { getUser } from "@/features/auth/actions/verifyAuth";
@@ -31,8 +32,8 @@ interface MatchTeamCardProps {
     // NOTE: I pass players so I dont have to do here a fetch to get them
     players: typesPlayer[];
     isMatchAdmin: boolean;
+    hasSubstituteRequests: boolean;
 }
-
 
 export const MatchTeamCard = async ({
     matchIdFromParams,
@@ -41,7 +42,8 @@ export const MatchTeamCard = async ({
     teamNumber,
     locale,
     players,
-    isMatchAdmin
+    isMatchAdmin,
+    hasSubstituteRequests
 }: MatchTeamCardProps) => {
     const currentUserData = await getUser() as typesUser;
 
@@ -164,10 +166,14 @@ export const MatchTeamCard = async ({
                         </>
                     ) : (
                         !teamIsFull && (
-                            <JoinMatchButton 
-                                matchIdFromParams={matchIdFromParams}
-                                teamNumber={teamNumber}
-                            />
+                            hasSubstituteRequests ? (
+                                <SubstituteNeededButton />
+                            ) : (
+                                <JoinMatchButton 
+                                    matchIdFromParams={matchIdFromParams}
+                                    teamNumber={teamNumber}
+                                />
+                            )
                         )
                     )}
                 </div>
