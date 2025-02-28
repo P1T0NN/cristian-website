@@ -270,6 +270,8 @@
         "showPrice": "Show Price",
         "substituteNeeded": "Substitute needed",
         "substituteNeededTooltip": "Players have requested substitutes. Please use the 'Replace Player' button on their slot instead of joining directly.",
+        "beforeJoinReadFAQ": "Before joining, read the FAQ below",
+        "teamsNotFixed": "Teams are not fixed, you can join the match with your team or with another team",
         "MatchFAQ": {
             "title": "Frequently Asked Questions",
             "aboutUs": {

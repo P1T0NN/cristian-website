@@ -14,7 +14,7 @@ import {
 } from "@/shared/components/ui/dropdown-menu";
 
 // LUCIDE ICONS
-import { Trash2, Edit, ShieldAlert, TrophyIcon, MoreVertical } from "lucide-react";
+import { ShieldAlert, MoreVertical } from "lucide-react";
 
 interface MatchHeaderAdminControlsProps {
     matchIdFromParams: string;
@@ -54,18 +54,15 @@ export const MatchHeaderAdminControls = async ({
 
                             <DropdownMenuContent align="end" className="w-48">
                                 <DropdownMenuItem className="flex items-center text-green-600">
-                                    <TrophyIcon className="w-4 h-4 mr-2" />
-                                    {t('finishMatch')}
+                                    <FinishMatchButton matchIdFromParams={matchIdFromParams} />
                                 </DropdownMenuItem>
 
                                 <DropdownMenuItem className="flex items-center">
-                                    <Edit className="w-4 h-4 mr-2" />
-                                    {t('editMatch')}
+                                    <EditMatchButton matchIdFromParams={matchIdFromParams} />
                                 </DropdownMenuItem>
 
                                 <DropdownMenuItem className="flex items-center text-red-600">
-                                    <Trash2 className="w-4 h-4 mr-2" />
-                                    {t('deleteMatch')}
+                                    <DeleteMatchButton matchIdFromParams={matchIdFromParams} />
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>

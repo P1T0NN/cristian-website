@@ -1,3 +1,9 @@
+// NEXTJS IMPORTS
+import Link from "next/link";
+
+// LIBRARIES
+import { getTranslations } from "next-intl/server";
+
 // COMPONENTS
 import { MatchHeaderAdminControls } from "./match-header-admin-controls";
 import { Badge } from "@/shared/components/ui/badge";
@@ -24,12 +30,10 @@ interface MatchHeaderProps {
 export const MatchHeader = async ({ 
     matchIdFromParams 
 }: MatchHeaderProps) => {
-    const [
-        serverMatchData, 
-        currentUserData,
-    ] = await Promise.all([
+    const [serverMatchData, currentUserData, t] = await Promise.all([
         fetchMatch(matchIdFromParams),
         getUser() as Promise<typesUser>,
+        getTranslations('MatchPage')
     ]);
 
     const match = serverMatchData.data;
@@ -86,6 +90,20 @@ export const MatchHeader = async ({
                     </div>
                 </div>
             </header>
+
+            <Link href="#match-faq">
+                <div className="container mx-auto px-4 py-4 text-center bg-red-50 border-b border-red-100">
+                    <p className="text-yellow-800 font-medium">
+                        {t('beforeJoinReadFAQ')}
+                    </p>
+                </div>
+            </Link>
+
+            <div className="container mx-auto px-4 py-3 text-center bg-blue-50 border-b border-blue-100">
+                <p className="text-blue-800 font-medium italic">
+                    {t('teamsNotFixed')}
+                </p>
+            </div>
         </>
     )
 }

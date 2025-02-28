@@ -18,7 +18,7 @@ export const MatchFAQ = async () => {
     const t = await getTranslations('MatchPage.MatchFAQ');
 
     return (
-        <Card>
+        <Card id="match-faq">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <AlertCircle className="h-5 w-5" />
