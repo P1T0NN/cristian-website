@@ -32,6 +32,7 @@ export default async function UnauthorizedPage() {
 
                 <CardFooter className="flex justify-center space-x-4">
                     <GoToLoginPageButton />
+
                     {!country && <GoToNewUserPage />}
                 </CardFooter>
             </Card>
