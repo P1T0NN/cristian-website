@@ -1,19 +1,18 @@
 // LIBRARIES
 import { getTranslations } from 'next-intl/server';
-import { authClient } from '@/features/auth/auth-client';
 
 // COMPONENTS
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { GoToLoginPageButton } from '@/features/auth/components/unauthorized/go-to-login-page-button';
+import { GoToNewUserPage } from '@/features/auth/components/unauthorized/go-to-new-user-page';
 
-async function deleteAuthCookies() {
-    await authClient.signOut();
-}
+// ACTIONS
+import { checkUserAccess } from '@/features/auth/actions/verifyAuth';
 
 export default async function UnauthorizedPage() {
     const t = await getTranslations('UnauthorizedPage');
-    
-    await deleteAuthCookies();
+
+    const { country } = await checkUserAccess();
   
     return (
         <div className="flex items-center justify-center bg-background p-4 overflow-hidden">
@@ -33,6 +32,7 @@ export default async function UnauthorizedPage() {
 
                 <CardFooter className="flex justify-center space-x-4">
                     <GoToLoginPageButton />
+                    {!country && <GoToNewUserPage />}
                 </CardFooter>
             </Card>
         </div>

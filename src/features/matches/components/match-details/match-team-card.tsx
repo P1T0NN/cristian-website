@@ -10,6 +10,7 @@ import { RemoveFriendButton } from "./remove-friend-button";
 import { CancelSubstituteButton } from "./cancel-substitute-button";
 import { BlockSpotsButton } from "./block-spots-button";
 import { SubstituteNeededButton } from "./substitute-needed-button";
+import { AdminAddPlayerButton } from "./admin-add-player-button";
 
 // ACTIONS
 import { getUser } from "@/features/auth/actions/verifyAuth";
@@ -119,12 +120,20 @@ export const MatchTeamCard = async ({
 
                 <div className="flex flex-wrap gap-2">
                     {currentUserData.isAdmin && (
-                        <BlockSpotsButton
-                            matchIdFromParams={matchIdFromParams}
-                            teamNumber={teamNumber}
-                            maxPlayers={maxPlayers}
-                            currentBlockedSpots={blockedSpots}
-                        />
+                        <>
+                            <BlockSpotsButton
+                                matchIdFromParams={matchIdFromParams}
+                                teamNumber={teamNumber}
+                                maxPlayers={maxPlayers}
+                                currentBlockedSpots={blockedSpots}
+                            />
+                            {!teamIsFull && (
+                                <AdminAddPlayerButton
+                                    matchIdFromParams={matchIdFromParams}
+                                    teamNumber={teamNumber}
+                                />
+                            )}
+                        </>
                     )}
                     
                     {match?.isUserInMatch ? (

@@ -13,7 +13,8 @@
         "restricted": "Tu acceso ha sido temporalmente restringido",
         "permissions": "Estás intentando acceder a una página que requiere permisos especiales",
         "contactSupport": "Si crees que esto es un error, por favor contacta a nuestro equipo de soporte para obtener ayuda.",
-        "goToHomepage": "Ir a la Página de Inicio"
+        "goToHomepage": "Ir a la Página de Inicio",
+        "goToNewUserPage": "Ir a la Página de Nuevo Usuario"
     },
 
     "AuthPage": {
@@ -274,6 +275,12 @@
         "substituteNeededTooltip": "Los jugadores han solicitado un sustituto. Por favor, usa el botón 'Reemplazar Jugador' en su slot en lugar de unirte directamente.",
         "beforeJoinReadFAQ": "Antes de unirte, lee el FAQ a continuación",
         "teamsNotFixed": "Los equipos no son fijos / se emparejaran según el criterio del organizador para un buen equilibrio de los partidos.",
+        "addPlayer": "Añadir Jugador",
+        "addPlayerToTeam": "Añadir Jugador al Equipo",
+        "playerName": "Nombre del Jugador",
+        "enterPlayerName": "Introduce el nombre del jugador",
+        "addingPlayer": "Añadiendo...",
+        "adding": "Añadiendo",
         "MatchFAQ": {
             "title": "Preguntas Frecuentes",
             "aboutUs": {

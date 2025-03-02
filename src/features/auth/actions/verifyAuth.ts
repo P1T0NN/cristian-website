@@ -34,25 +34,28 @@ export const verifyAuth = cache(async () => {
     return { isAuth: true, userId: session.user.id };
 });
 
-export const checkUserAccess = cache(async (): Promise<boolean> => {
+export const checkUserAccess = cache(async (): Promise<{ hasAccess: boolean, country?: string }> => {
     try {
         const session = await auth.api.getSession({
             headers: await headers()
         });
 
         if (!session) {
-            return false;
+            return { hasAccess: false };
         }
 
         const { data } = await supabase
             .from('user')
-            .select('hasAccess')
+            .select('hasAccess, country')
             .eq('id', session.user.id)
             .single();
 
-        return data?.hasAccess ?? false;
+        return { 
+            hasAccess: data?.hasAccess ?? false,
+            country: data?.country
+        };
     } catch {
-        return false;
+        return { hasAccess: false };
     }
 })
 
@@ -68,8 +71,8 @@ export const getUser = cache(async () => {
         .select('*')
         .eq('id', userId)
         .single();
-
-    if (!user.hasAccess) {
+        
+    if(!user.hasAccess) {
         return redirect(PUBLIC_PAGE_ENDPOINTS.UNAUTHORIZED_PAGE);
     }
 

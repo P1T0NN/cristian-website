@@ -13,7 +13,8 @@
         "restricted": "Your access has been temporarily restricted",
         "permissions": "You're trying to access a page that requires special permissions",
         "contactSupport": "If you believe this is an error, please contact our support team for assistance.",
-        "goToHomepage": "Go to Homepage"
+        "goToHomepage": "Go to Homepage",
+        "goToNewUserPage": "Go to New User Page"
     },
 
     "AuthPage": {
@@ -272,6 +273,12 @@
         "substituteNeededTooltip": "Players have requested substitutes. Please use the 'Replace Player' button on their slot instead of joining directly.",
         "beforeJoinReadFAQ": "Before joining, read the FAQ below",
         "teamsNotFixed": "Teams are not fixed, you can join the match with your team or with another team",
+        "addPlayer": "Add Player",
+        "addPlayerToTeam": "Add Player to Team",
+        "playerName": "Player Name",
+        "enterPlayerName": "Enter player name",
+        "addingPlayer": "Adding...",
+        "adding": "Addding",
         "MatchFAQ": {
             "title": "Frequently Asked Questions",
             "aboutUs": {
