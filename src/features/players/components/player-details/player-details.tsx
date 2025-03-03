@@ -11,6 +11,7 @@ import { EditPlayerDetails } from "../edit-player/edit-player-details";
 import { AddDebtDialog } from "./add-debt-dialog";
 import { AddBalanceButton } from "./add-balance-button";
 import { VerifyDocumentsButton } from "../verify-player/verify-documents-button";
+import { RestrictAccessButton } from "@/features/players/components/player-details/restrict-access-button";
 
 // ACTIONS
 import { fetchPlayer } from "../../actions/fetchPlayer";
@@ -114,10 +115,17 @@ export const PlayerDetails = async ({
                                 playerIdFromParams={playerIdFromParams}
                                 isVerified={playerData.verifyDocuments}
                             />
+
+                            <RestrictAccessButton 
+                                playerId={playerIdFromParams}
+                                playerName={playerData.name}
+                                isAdmin={currentUserData.isAdmin}
+                            />
                         </>
                     )}
                     <EditPlayerDetails
                         playerIdFromParams={playerIdFromParams}
+                        initialEmail={playerData.email}
                         initialName={playerData.name}
                         initialPhoneNumber={playerData.phoneNumber}
                         initialCountry={playerData.country}

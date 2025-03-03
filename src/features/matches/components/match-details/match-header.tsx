@@ -98,12 +98,6 @@ export const MatchHeader = async ({
                     </p>
                 </div>
             </Link>
-
-            <div className="container mx-auto px-4 py-3 text-center bg-blue-50 border-b border-blue-100">
-                <p className="text-blue-800 font-medium italic">
-                    {t('teamsNotFixed')}
-                </p>
-            </div>
         </>
     )
 }

@@ -34,7 +34,7 @@
         "countryLabel": "Country",
         "countryPlaceholder": "Enter your country",
         "phoneNumberLabel": "Phone Number",
-        "phoneNumberPlaceholder": "Enter your phone number",
+        "phoneNumberPlaceholder": "Enter your phone number with country prefix",
         "genderLabel": "Gender",
         "genderPlaceholder": "Select your gender",
         "male": "Male",
@@ -271,7 +271,7 @@
         "showPrice": "Show Price",
         "substituteNeeded": "Substitute needed",
         "substituteNeededTooltip": "Players have requested substitutes. Please use the 'Replace Player' button on their slot instead of joining directly.",
-        "beforeJoinReadFAQ": "Before joining, read the FAQ below",
+        "beforeJoinReadFAQ": "Before joining the match, you must read the FAQ, click here",
         "teamsNotFixed": "Teams are not fixed, you can join the match with your team or with another team",
         "addPlayer": "Add Player",
         "addPlayerToTeam": "Add Player to Team",
@@ -487,7 +487,15 @@
         "cristianDebtPlaceholder": "Select how much you owe a player",
         "reasonPlaceholder": "Write the reason to why you are adding debt",
         "name": "Player Name",
-        "enterName": "Enter player name"
+        "enterName": "Enter player name",
+        "restrictAccess": "Restrict Access",
+        "restrictAccessTitle": "Restrict Player Access",
+        "restrictAccessDescription": "If you proceed, {playerName} will no longer be able to access any information in the system. They will be logged out and redirected to the unauthorized page when they try to log in again. Are you sure you want to continue?",
+        "confirmRestrictAccess": "Yes, Restrict Access",
+        "confirming": "Confirming...",
+        "restricting": "Restricting...",
+        "enterEmail": "Enter email",
+        "email": "Email"
     },
 
     "AddTeamPage": {
@@ -720,6 +728,8 @@
         "USER_ID_FETCHED":" Fetched user ID successfully!",
         "FAILED_TO_SEARCH_USERS": "Failed to search users",
         "USERS_WITH_NO_ACCESS_FETCHED": "Users without access successfully fetched",
+        "USER_RESTRICTED_ACCESS_SUCCESSFULLY": "User access restricted successfully",
+        "USER_RESTRICTED_ACCESS_FAILED": "Failed to restrict user access",
 
         "FRIEND_ADDITION_FAILED": "Failed to add friend",
         "FRIEND_ADDED_SUCCESSFULLY": "Friend added successfully",

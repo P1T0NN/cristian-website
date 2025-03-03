@@ -52,7 +52,7 @@
         "countryLabel": "País",
         "countryPlaceholder": "Ingresa tu país",
         "phoneNumberLabel": "Número de Teléfono",
-        "phoneNumberPlaceholder": "Ingresa tu número de teléfono",
+        "phoneNumberPlaceholder": "Ingresa tú teléfono con prefijo incluido",
         "genderLabel": "Género",
         "genderPlaceholder": "Selecciona tu género",
         "male": "Masculino",
@@ -273,7 +273,7 @@
         "showPrice": "Mostrar Precio",
         "substituteNeeded": "Sustituto necesario",
         "substituteNeededTooltip": "Los jugadores han solicitado un sustituto. Por favor, usa el botón 'Reemplazar Jugador' en su slot en lugar de unirte directamente.",
-        "beforeJoinReadFAQ": "Antes de unirte, lee el FAQ a continuación",
+        "beforeJoinReadFAQ": "Antes de unirte al partido, Debes leer el FAQ, click aquí",
         "teamsNotFixed": "Los equipos no son fijos / se emparejaran según el criterio del organizador para un buen equilibrio de los partidos.",
         "addPlayer": "Añadir Jugador",
         "addPlayerToTeam": "Añadir Jugador al Equipo",
@@ -489,7 +489,15 @@
         "cristianDebtPlaceholder": "Selecciona cuánto debes al jugador",
         "reasonPlaceholder": "Escribe la razón para añadir esta deuda",
         "name": "Nombre del Jugador",
-        "enterName": "Ingrese el nombre del jugador"
+        "enterName": "Ingrese el nombre del jugador",
+        "restrictAccess": "Restringir Acceso",
+        "restrictAccessTitle": "Restringir Acceso al Jugador",
+        "restrictAccessDescription": "Si procedes, {playerName} ya no podrá acceder a ninguna información en el sistema. Será desconectado y redirigido a la página de no autorizado cuando intente iniciar sesión de nuevo. ¿Está seguro de que desea continuar?",
+        "confirmRestrictAccess": "Sí, Restringir Acceso",
+        "confirming": "Confirmando...",
+        "restricting": "Restringiendo...",
+        "enterEmail": "Ingrese el correo electrónico",
+        "email": "Correo electrónico"
     },
 
     "AddTeamPage": {
@@ -722,6 +730,8 @@
         "USER_ID_FETCHED": "¡ID de usuario obtenido con éxito!",
         "FAILED_TO_SEARCH_USERS": "No se pudo buscar usuarios",
         "USERS_WITH_NO_ACCESS_FETCHED": "Usuarios sin acceso obtenidos con éxito",
+        "USER_RESTRICTED_ACCESS_SUCCESSFULLY": "Acceso restringido con éxito",
+        "USER_RESTRICTED_ACCESS_FAILED": "No se pudo restringir el acceso al usuario",
 
         "FRIEND_ADDITION_FAILED": "No se pudo añadir al amigo",
         "FRIEND_ADDED_SUCCESSFULLY": "Amigo añadido con éxito",

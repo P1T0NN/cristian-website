@@ -16,33 +16,19 @@ import { verifyAuth } from '@/features/auth/actions/verifyAuth';
 // TYPES
 import type { typesUser } from '@/features/players/types/typesPlayer';
 
-interface EditPlayerDetailsResponse {
+interface RestrictUserAccessParams {
+    playerIdFromParams: string;
+}
+
+interface RestrictUserAccessResponse {
     success: boolean;
     message: string;
     data?: typesUser;
 }
 
-interface EditPlayerDetailsParams {
-    playerIdFromParams: string;
-    email: string;
-    name: string;
-    dni: string;
-    country: string;
-    phoneNumber: string;
-    playerLevel: string;
-    playerPosition: string;
-}
-
-export async function editPlayerDetails({
-    playerIdFromParams,
-    email,
-    name,
-    dni,
-    country,
-    phoneNumber,
-    playerLevel,
-    playerPosition
-}: EditPlayerDetailsParams): Promise<EditPlayerDetailsResponse> {
+export const restrictUserAccess = async ({ 
+    playerIdFromParams
+}: RestrictUserAccessParams): Promise<RestrictUserAccessResponse> => {
     const t = await getTranslations("GenericMessages");
 
     const { isAuth } = await verifyAuth();
@@ -57,24 +43,20 @@ export async function editPlayerDetails({
 
     const { data, error } = await supabase
         .from('user')
-        .update({
-            email,
-            name,
-            dni,
-            playerLevel,
-            playerPosition,
-            country,
-            phoneNumber
-        })
+        .update({ hasAccess: false })
         .eq('id', playerIdFromParams)
         .select()
         .single();
 
     if (error) {
-        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
+        return { success: false, message: t('USER_RESTRICT_ACCESS_FAILED') };
     }
 
     revalidateTag(TAGS_FOR_CACHE_REVALIDATIONS.PLAYERS);
 
-    return { success: true, message: t('PLAYER_DETAILS_UPDATED'), data: data as typesUser };
+    return { 
+        success: true, 
+        message: t('USER_ACCESS_RESTRICTED_SUCCESSFULLY'), 
+        data: data as typesUser 
+    };
 }

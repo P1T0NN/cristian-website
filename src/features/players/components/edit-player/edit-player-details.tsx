@@ -18,6 +18,7 @@ import { editPlayerDetails } from "../../actions/server_actions/player_managemen
 
 type EditPlayerDetailsProps = {
     playerIdFromParams: string;
+    initialEmail: string;
     initialName: string;
     initialPhoneNumber: string;
     initialCountry: string;
@@ -28,7 +29,8 @@ type EditPlayerDetailsProps = {
 }
 
 export function EditPlayerDetails({ 
-    playerIdFromParams, 
+    playerIdFromParams,
+    initialEmail,
     initialName,
     initialPhoneNumber,
     initialCountry,
@@ -43,6 +45,7 @@ export function EditPlayerDetails({
 
     const [isOpen, setIsOpen] = useState(false);
 
+    const [email, setEmail] = useState(initialEmail ?? '');
     const [name, setName] = useState(initialName ?? '');
     const [phoneNumber, setPhoneNumber] = useState(initialPhoneNumber ?? '');
     const [country, setCountry] = useState(initialCountry ?? '');
@@ -54,6 +57,7 @@ export function EditPlayerDetails({
         startTransition(async () => {
             const result = await editPlayerDetails({
                 playerIdFromParams: playerIdFromParams,
+                email: email,
                 name: name,
                 dni: dni, 
                 country: country, 
@@ -110,6 +114,15 @@ export function EditPlayerDetails({
 
                     {isAdmin && (
                         <>
+                            <FormInputField
+                                label={t('email')}
+                                name="email"
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder={t('enterEmail')}
+                            />
+                            
                             <FormInputField
                                 label={t('name')}
                                 name="name"
