@@ -21,20 +21,19 @@ import { PlayerSlotAdminControls } from "./player-slot-admin-controls";
 import { getUser } from "@/features/auth/actions/verifyAuth";
 
 // UTILS
-import { formatPlayerPositionLocalizedSync } from "@/features/players/utils/playerUtils";
+import { formatPlayerPositionLocalized } from "@/features/players/utils/playerUtils";
 
 // TYPES
 import type { typesUser } from "@/features/players/types/typesPlayer";
 import type { typesPlayer } from "@/features/matches/types/typesMatch";
 
 // LUCIDE ICONS
-import { UserMinus } from "lucide-react";
+import { UserMinus, Wallet } from "lucide-react";
 
 interface MatchTeamsPlayerSlotProps {
     id?: string;
     teamColor: "red" | "blue";
     matchIdFromParams?: string;
-    locale?: string;
     player?: typesPlayer;
     isMatchAdmin?: boolean;
     isBlocked?: boolean;
@@ -45,7 +44,6 @@ export const MatchTeamsPlayerSlot = async ({
     id,
     teamColor,
     matchIdFromParams,
-    locale,
     player,
     isMatchAdmin,
     isBlocked,
@@ -107,6 +105,20 @@ export const MatchTeamsPlayerSlot = async ({
                                 </Tooltip>
                             </TooltipProvider>
                         )}
+                        
+                        {canAccessAdminControls && player?.hasEnteredWithBalance && (
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger>
+                                        <Wallet className="h-4 w-4 text-emerald-500" />
+                                    </TooltipTrigger>
+                                    
+                                    <TooltipContent>
+                                        <p>{t('enteredWithBalance')}</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        )}
                     </div>
                     <div className={cn(
                         "text-sm",
@@ -116,7 +128,7 @@ export const MatchTeamsPlayerSlot = async ({
                     )}>
                         {player?.playerPosition?.startsWith('Added by') 
                             ? player?.playerPosition 
-                            : formatPlayerPositionLocalizedSync(player?.playerPosition as string, locale as string)
+                            : formatPlayerPositionLocalized(player?.playerPosition as string)
                         }
                     </div>
                     {/* Status indicators */}

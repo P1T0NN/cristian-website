@@ -279,6 +279,7 @@
         "enterPlayerName": "Enter player name",
         "addingPlayer": "Adding...",
         "adding": "Addding",
+        "enteredWithBalance": "Entered with Balance",
         "MatchFAQ": {
             "title": "Frequently Asked Questions",
             "aboutUs": {

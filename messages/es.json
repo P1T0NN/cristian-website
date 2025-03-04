@@ -281,6 +281,7 @@
         "enterPlayerName": "Introduce el nombre del jugador",
         "addingPlayer": "Añadiendo...",
         "adding": "Añadiendo",
+        "enteredWithBalance": "Entró con Saldo",
         "MatchFAQ": {
             "title": "Preguntas Frecuentes",
             "aboutUs": {

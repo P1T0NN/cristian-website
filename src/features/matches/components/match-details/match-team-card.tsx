@@ -29,7 +29,6 @@ interface MatchTeamCardProps {
     teamName: string;
     teamColor: "red" | "blue";
     teamNumber: 1 | 2;
-    locale: string;
     // NOTE: I pass players so I dont have to do here a fetch to get them
     players: typesPlayer[];
     isMatchAdmin: boolean;
@@ -41,7 +40,6 @@ export const MatchTeamCard = async ({
     teamName,
     teamColor, 
     teamNumber,
-    locale,
     players,
     isMatchAdmin,
     hasSubstituteRequests
@@ -195,7 +193,6 @@ export const MatchTeamCard = async ({
                         id={player.id}
                         teamColor={teamColor}
                         matchIdFromParams={matchIdFromParams}
-                        locale={locale}
                         player={player}
                         isMatchAdmin={isMatchAdmin}
                         hasDirectlyJoined={match?.hasDirectlyJoined}

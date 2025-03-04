@@ -1,6 +1,3 @@
-// SERVICES
-import { getUserLocale } from "@/shared/services/server/locale";
-
 // COMPONENTS
 import { MatchTeamCard } from "./match-team-card";
 
@@ -19,10 +16,7 @@ interface MatchTeamsProps {
 export const MatchTeams = async ({ 
     matchIdFromParams 
 }: MatchTeamsProps) => {
-    const [currentUserData, locale] = await Promise.all([
-        getUser() as Promise<typesUser>,
-        getUserLocale()
-    ]);
+    const currentUserData = await getUser() as typesUser;
 
     // NOTE: I have to pass userId like this because in route.ts when I call verifyAuth it doesn't work for some reason
     const { data: match } = await fetchMatch(matchIdFromParams, currentUserData.id);
@@ -50,7 +44,6 @@ export const MatchTeams = async ({
                 teamColor="red"
                 teamNumber={1}
                 players={match?.team1Players as typesPlayer[]}
-                locale={locale}
                 isMatchAdmin={isMatchAdmin}
                 hasSubstituteRequests={hasSubstituteRequests}
             />
@@ -61,7 +54,6 @@ export const MatchTeams = async ({
                 teamColor="blue"
                 teamNumber={2}
                 players={match?.team2Players as typesPlayer[]}
-                locale={locale}
                 isMatchAdmin={isMatchAdmin}
                 hasSubstituteRequests={hasSubstituteRequests}
             />
