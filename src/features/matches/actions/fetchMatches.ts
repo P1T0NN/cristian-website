@@ -56,7 +56,7 @@ export const fetchMatches = cache(async (params: FetchMatchesParams): Promise<Ma
         errorMessages: {
             unauthorized: t("UNAUTHORIZED"),
             requestFailed: t("MATCHES_FAILED_TO_FETCH"),
-        },
+        }
     })
 
     if (!response.success) {
@@ -64,8 +64,8 @@ export const fetchMatches = cache(async (params: FetchMatchesParams): Promise<Ma
     }
 
     return {
-      success: true,
-      data: response.data?.data,
+        success: true,
+        data: response.data?.data,
     }
 })
 

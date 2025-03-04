@@ -10,20 +10,31 @@ import { getUser } from '@/features/auth/actions/verifyAuth';
 
 // TYPES
 import type { typesUser } from '@/features/players/types/typesPlayer';
-import { typesMatch } from '../../types/typesMatch';
+import type { typesMatch } from '../../types/typesMatch';
+
+interface FetchMatchesParams {
+    gender?: string;
+    isAdmin?: boolean;
+    playerLevel?: string;
+    date?: string;
+    status?: "active" | "pending" | "finished";
+}
 
 export const ActiveMatches = async () => {
     const [t, currentUserData] = await Promise.all([
         getTranslations('HomePage'),
         getUser() as Promise<typesUser>
     ]);
-
-    const serverMatchesData = await fetchMatches({
+    
+    const fetchParams = {
         isAdmin: currentUserData.isAdmin,
         status: 'active',
         currentUserId: currentUserData.id,
-        filterByUserId: true
-    });
+        filterByUserId: true,
+        playerLevel: currentUserData.playerLevel
+    };
+    
+    const serverMatchesData = await fetchMatches(fetchParams as FetchMatchesParams);
     
     return (
         <div className="space-y-4">
