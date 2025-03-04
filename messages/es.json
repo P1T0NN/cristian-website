@@ -497,7 +497,11 @@
         "confirming": "Confirmando...",
         "restricting": "Restringiendo...",
         "enterEmail": "Ingrese el correo electrónico",
-        "email": "Correo electrónico"
+        "email": "Correo electrónico",
+        "gender": "Género",
+        "selectGender": "Seleccionar género",
+        "male": "Masculino",
+        "female": "Femenino"
     },
 
     "AddTeamPage": {

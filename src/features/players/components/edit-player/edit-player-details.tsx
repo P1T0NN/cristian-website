@@ -18,6 +18,7 @@ import { editPlayerDetails } from "../../actions/server_actions/player_managemen
 
 type EditPlayerDetailsProps = {
     playerIdFromParams: string;
+    initialGender: string;
     initialEmail: string;
     initialName: string;
     initialPhoneNumber: string;
@@ -30,6 +31,7 @@ type EditPlayerDetailsProps = {
 
 export function EditPlayerDetails({ 
     playerIdFromParams,
+    initialGender,
     initialEmail,
     initialName,
     initialPhoneNumber,
@@ -45,6 +47,7 @@ export function EditPlayerDetails({
 
     const [isOpen, setIsOpen] = useState(false);
 
+    const [gender, setGender] = useState(initialGender ?? '');
     const [email, setEmail] = useState(initialEmail ?? '');
     const [name, setName] = useState(initialName ?? '');
     const [phoneNumber, setPhoneNumber] = useState(initialPhoneNumber ?? '');
@@ -57,6 +60,7 @@ export function EditPlayerDetails({
         startTransition(async () => {
             const result = await editPlayerDetails({
                 playerIdFromParams: playerIdFromParams,
+                gender: gender,
                 email: email,
                 name: name,
                 dni: dni, 
@@ -80,6 +84,11 @@ export function EditPlayerDetails({
         { value: 'Defender', label: t('defender') },
         { value: 'Middle', label: t('midfielder') },
         { value: 'Forward', label: t('attacker') },
+    ];
+
+    const genderOptions = [
+        { value: 'Male', label: t('male') },
+        { value: 'Female', label: t('female') },
     ];
 
     return (
@@ -131,7 +140,16 @@ export function EditPlayerDetails({
                                 onChange={(e) => setName(e.target.value)}
                                 placeholder={t('enterName')}
                             />
-                            
+
+                            <FormSelectField
+                                label={t('gender')}
+                                name="gender"
+                                value={gender}
+                                onChange={(value) => setGender(value)}
+                                options={genderOptions}
+                                placeholder={t('selectGender')}
+                            />
+
                             <FormInputField
                                 label={t('dni')}
                                 name="dni"

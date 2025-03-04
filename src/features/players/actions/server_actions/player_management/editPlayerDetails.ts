@@ -24,6 +24,7 @@ interface EditPlayerDetailsResponse {
 
 interface EditPlayerDetailsParams {
     playerIdFromParams: string;
+    gender: string;
     email: string;
     name: string;
     dni: string;
@@ -35,6 +36,7 @@ interface EditPlayerDetailsParams {
 
 export async function editPlayerDetails({
     playerIdFromParams,
+    gender,
     email,
     name,
     dni,
@@ -58,6 +60,7 @@ export async function editPlayerDetails({
     const { data, error } = await supabase
         .from('user')
         .update({
+            gender,
             email,
             name,
             dni,

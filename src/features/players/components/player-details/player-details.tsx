@@ -90,6 +90,7 @@ export const PlayerDetails = async ({
                     <InfoItem icon={<MapPin className="h-5 w-5 text-muted-foreground" />} text={playerData.country || t('notProvided')} />
                     <InfoItem icon={<Calendar className="h-5 w-5 text-muted-foreground" />} text={`${t('joined')} ${new Date(playerData.createdAt).toLocaleDateString()}`} />
                     <InfoItem icon={<IdCard className="h-5 w-5 text-muted-foreground" />} text={`${t('dni')}: ${playerData.dni || t('notProvided')}`} />
+                    <InfoItem icon={<Users className="h-5 w-5 text-muted-foreground" />} text={`${t('gender')}: ${playerData.gender || t('notProvided')}`} />
                     <InfoItem icon={<Users className="h-5 w-5 text-muted-foreground" />} text={`${t('playerPosition')}: ${positionLabel || t('notProvided')}`} />
                     {currentUserData.isAdmin && <InfoItem icon={<Star className="h-5 w-5 text-muted-foreground" />} text={`${t('playerLevel')}: ${playerData.playerLevel || t('notProvided')}`} />}
                     <InfoItem icon={<Euro className="h-5 w-5 text-muted-foreground" />} text={`${t('playerOwes')}: `} value={<span className="font-semibold text-red-500">{playerData.playerDebt.toFixed(2)}€</span>} />
@@ -125,6 +126,7 @@ export const PlayerDetails = async ({
                     )}
                     <EditPlayerDetails
                         playerIdFromParams={playerIdFromParams}
+                        initialGender={playerData.gender}
                         initialEmail={playerData.email}
                         initialName={playerData.name}
                         initialPhoneNumber={playerData.phoneNumber}
