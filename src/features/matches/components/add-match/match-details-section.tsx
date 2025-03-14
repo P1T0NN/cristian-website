@@ -14,7 +14,7 @@ import type { typesAddMatchForm } from "../../types/AddMatchForm";
 import type { typesLocation } from "@/features/locations/types/typesLocation";
 
 // LUCIDE ICONS
-import { Check, X } from 'lucide-react';
+//import { Check, X } from 'lucide-react';
 
 type MatchDetailsSectionProps = {
     formData: typesAddMatchForm;
@@ -142,7 +142,8 @@ export const MatchDetailsSection = ({
                     <p className="text-sm text-red-500 mt-1">{errors.matchLevel}</p>
                 )}
             </div>
-            <div className="space-y-2">
+
+            {/*<div className="space-y-2">
                 <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                     {t("hasTeams")}
                 </label>
@@ -168,7 +169,7 @@ export const MatchDetailsSection = ({
                 {errors.hasTeams && (
                     <p className="text-sm text-red-500 mt-1">{errors.hasTeams}</p>
                 )}
-            </div>
+            </div>*/}
         </div>
     );
 };

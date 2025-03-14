@@ -9,7 +9,6 @@ import { DeleteMatchButton } from "./delete-match-button";
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
 
@@ -52,18 +51,12 @@ export const MatchHeaderAdminControls = async ({
                                 </Button>
                             </DropdownMenuTrigger>
 
-                            <DropdownMenuContent align="end" className="w-48">
-                                <DropdownMenuItem className="flex items-center text-green-600">
-                                    <FinishMatchButton matchIdFromParams={matchIdFromParams} />
-                                </DropdownMenuItem>
+                            <DropdownMenuContent align="end" className="flex flex-col gap-y-3 w-48">
+                                <FinishMatchButton matchIdFromParams={matchIdFromParams} />
 
-                                <DropdownMenuItem className="flex items-center">
-                                    <EditMatchButton matchIdFromParams={matchIdFromParams} />
-                                </DropdownMenuItem>
+                                <EditMatchButton matchIdFromParams={matchIdFromParams} />
 
-                                <DropdownMenuItem className="flex items-center text-red-600">
-                                    <DeleteMatchButton matchIdFromParams={matchIdFromParams} />
-                                </DropdownMenuItem>
+                                <DeleteMatchButton matchIdFromParams={matchIdFromParams} />
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>

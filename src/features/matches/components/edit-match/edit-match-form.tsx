@@ -121,7 +121,7 @@ export const EditMatchForm = ({
             ? currentLevels.filter(l => l !== level)
             : [...currentLevels, level].sort();
         handleInputChange({
-            target: { name: 'match_level', value: updatedLevels.join('') }
+            target: { name: 'matchLevel', value: updatedLevels.join('') }
         } as React.ChangeEvent<HTMLInputElement>);
     };
 
@@ -165,7 +165,7 @@ export const EditMatchForm = ({
                         {t("matchLevel")}
                     </label>
                     <div className="flex space-x-2">
-                        {['A', 'B', 'C', 'D'].map((level) => (
+                        {['A', 'B', 'C', 'D', 'X'].map((level) => (
                             <Button
                                 key={level}
                                 type="button"
