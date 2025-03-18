@@ -3,7 +3,7 @@ import { LoginContent } from '@/features/auth/components/(auth)/login/login-cont
 
 export default function LoginPage() {
     return (
-        <main>
+        <main className='p-4'>
             <LoginContent />
         </main>
     )

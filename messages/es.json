@@ -87,7 +87,8 @@
         "pastMatches": "Partidos Pasados",
         "pastEvents": "Eventos Pasados",
         "noPastEventsAvailable": "No hay eventos pasados disponibles",
-        "youAreInThisMatch": "Estás en este partido"
+        "youAreInThisMatch": "Estás en este partido",
+        "cancelled": "Cancelado"
     },
 
     "AddMatchPage": {
@@ -205,6 +206,13 @@
         "addFriendDescription": "Introduce los detalles del amigo a continuación",
         "enterFriendName": "Introduce el nombre del amigo",
         "enterPhoneNumber": "Introduce el número de teléfono del amigo",
+        "playerPosition": "Posición del jugador",
+        "enterPlayerPosition": "Introduce la posición del jugador",
+        "playerPositionPlaceholder": "Selecciona la posición del jugador",
+        "goalkeeper": "Portero",
+        "defender": "Defensa",
+        "midfielder": "Centrocampista",
+        "attacker": "Delantero",
         "fillAllFields": "Por favor, completa todos los campos",
         "leaveMatch": "Abandonar Partido",
         "leaveMatchTitle": "Abandonar Partido",
@@ -282,6 +290,10 @@
         "addingPlayer": "Añadiendo...",
         "adding": "Añadiendo",
         "enteredWithBalance": "Entró con Saldo",
+        "cancelMatch": "Cancelar Partido",
+        "cancelingMatch": "Cancelando...",
+        "cancelMatchTitle": "Cancelar Partido",
+        "cancelMatchDescription": "¿Estás seguro de que quieres cancelar este partido? Esto reembolsará el saldo de todos los jugadores que pagaron con saldo y marcará el partido como cancelado. Los jugadores aún podrán ver el historial del partido.",
         "MatchFAQ": {
             "title": "Preguntas Frecuentes",
             "aboutUs": {
@@ -638,6 +650,8 @@
         "MATCH_HISTORY_DELETION_FAILED": "¡No se pudo eliminar el partido del historial de partidos!",
         "MATCH_FINISH_FAILED": "¡No se pudo finalizar el partido! Por favor, inténtalo de nuevo.",
         "MATCH_HISTORY_DELETED": "¡Partido eliminado con éxito del historial de partidos!",
+        "MATCH_CANCELED_SUCCESSFULLY": "Partido cancelado exitosamente",
+        "MATCH_CANCELLATION_FAILED": "Error al cancelar el partido",
         "NO_MATCHES_FOUND": "No hay partidos activos",
         "MATCHES_FAILED_TO_FETCH": "No se pudieron obtener los partidos",
         "MATCHES_SUCCESSFULLY_FETCHED": "Partidos obtenidos con éxito",

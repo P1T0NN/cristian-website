@@ -126,10 +126,18 @@ export const MatchTeamsPlayerSlot = async ({
                             ? "italic text-gray-500"
                             : teamColor === "red" ? "text-red-600/60" : "text-blue-600/60"
                     )}>
-                        {player?.playerPosition?.startsWith('Added by') 
-                            ? player?.playerPosition 
-                            : formatPlayerPositionLocalized(player?.playerPosition as string)
-                        }
+                        {/* For temporary players with a position */}
+                        {player?.playerType === 'temporary' && player?.temporaryPlayerPosition ? (
+                            <>
+                                {formatPlayerPositionLocalized(player.temporaryPlayerPosition)} 
+                                <span className="italic text-gray-500 ml-1">({player.playerPosition})</span>
+                            </>
+                        ) : (
+                            /* For regular players or temporary players without a position */
+                            player?.playerPosition?.startsWith('Added by') 
+                                ? player?.playerPosition 
+                                : formatPlayerPositionLocalized(player?.playerPosition as string)
+                        )}
                     </div>
                     {/* Status indicators */}
                     <div className="flex gap-2 mt-1">

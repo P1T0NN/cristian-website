@@ -18,7 +18,8 @@ interface AddFriendResponse {
         temporaryPlayerName: string;
         teamNumber: number;
         playerType: 'temporary';
-        playerPosition: string; // This contains "Added by: [name]"
+        playerPosition: string; // This contains "Added by: [name]" or custom position
+        temporaryPlayerPosition: string; // This is the actual position of the player
         hasPaid: boolean;
         hasGratis: boolean;
         hasDiscount: boolean;
@@ -32,13 +33,15 @@ interface AddFriendParams {
     teamNumber: 0 | 1 | 2;
     friendName: string;
     phoneNumber: string;
+    playerPosition: string;
 }
 
 export const addFriend = async ({
     matchIdFromParams,
     teamNumber,
     friendName,
-    phoneNumber
+    phoneNumber,
+    playerPosition
 }: AddFriendParams): Promise<AddFriendResponse> => {
     const t = await getTranslations("GenericMessages");
 
@@ -51,19 +54,20 @@ export const addFriend = async ({
     if (!matchIdFromParams || !teamNumber || !friendName || !phoneNumber) {
         return { success: false, message: t('BAD_REQUEST') };
     }
-
+    
     const { data, error } = await supabase.rpc('addtemporaryplayer', {
         p_user_id: userId,
         p_match_id: matchIdFromParams,
         p_team_number: teamNumber,
         p_friend_name: friendName,
-        p_phone_number: phoneNumber
+        p_phone_number: phoneNumber,
+        p_player_position: playerPosition || ''
     });
 
     if (error) {
         return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
-
+    
     if (!data.success) {
         if (data.code === 'ALREADY_ADDED_FRIEND') {
             return { success: false, message: t('ALREADY_ADDED_FRIEND') };
@@ -82,6 +86,7 @@ export const addFriend = async ({
             teamNumber: data.data.teamNumber,
             playerType: data.data.playerType,
             playerPosition: data.data.playerPosition, // This will be "Added by: [name]"
+            temporaryPlayerPosition: data.data.temporaryPlayerPosition, // The actual position
             hasPaid: data.data.hasPaid,
             hasGratis: data.data.hasGratis,
             hasDiscount: data.data.hasDiscount,
@@ -100,7 +105,8 @@ CREATE OR REPLACE FUNCTION addtemporaryplayer(
     p_match_id UUID,
     p_team_number INT,
     p_friend_name TEXT,
-    p_phone_number TEXT
+    p_phone_number TEXT,
+    p_player_position TEXT DEFAULT ''
 ) RETURNS JSONB AS $$
 DECLARE
     vMatch RECORD;
@@ -148,6 +154,7 @@ BEGIN
         "teamNumber",
         "playerType",
         "temporaryPlayerName",
+        "temporaryPlayerPosition",
         "substituteRequested",
         "hasPaid",
         "hasDiscount",
@@ -164,6 +171,7 @@ BEGIN
         p_team_number,
         'temporary',
         p_friend_name,
+        p_player_position,
         false,
         false,
         false,
@@ -193,6 +201,7 @@ BEGIN
         'data', jsonb_build_object(
             'id', vTempPlayer.id,
             'temporaryPlayerName', vTempPlayer."temporaryPlayerName",
+            'temporaryPlayerPosition', vTempPlayer."temporaryPlayerPosition",
             'teamNumber', vTempPlayer."teamNumber",
             'playerType', vTempPlayer."playerType",
             'playerPosition', 'Added by: ' || vAddedByName,

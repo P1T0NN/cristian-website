@@ -11,6 +11,13 @@ import { Button } from "@/shared/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/shared/components/ui/dialog";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/shared/components/ui/select";
 import { toast } from "sonner";
 
 // SERVER ACTIONS
@@ -32,11 +39,19 @@ export const AdminAddPlayerButton = ({
     
     const [isOpen, setIsOpen] = useState(false);
     const [playerName, setPlayerName] = useState("");
+    const [playerPosition, setPlayerPosition] = useState("");
     const [isPending, startTransition] = useTransition();
 
+    const positionOptions = [
+        { value: 'Goalkeeper', label: t('goalkeeper') },
+        { value: 'Defender', label: t('defender') },
+        { value: 'Midfielder', label: t('midfielder') },
+        { value: 'Forward', label: t('attacker') },
+    ];
+
     const handleAddPlayer = () => {
-        if (!playerName.trim()) {
-            toast.error(t("playerNameRequired"));
+        if (!playerName.trim() || !playerPosition) {
+            toast.error(t("fillAllFields"));
             return;
         }
 
@@ -44,13 +59,15 @@ export const AdminAddPlayerButton = ({
             const result = await adminAddPlayerToMatch({
                 matchIdFromParams,
                 teamNumber,
-                playerName: playerName.trim()
+                playerName: playerName.trim(),
+                playerPosition
             });
 
             if (result.success) {
                 toast.success(result.message);
                 setIsOpen(false);
                 setPlayerName("");
+                setPlayerPosition("");
             } else {
                 toast.error(result.message);
             }
@@ -87,6 +104,27 @@ export const AdminAddPlayerButton = ({
                             onChange={(e) => setPlayerName(e.target.value)}
                         />
                     </div>
+
+                    <div className="space-y-2">
+                        <Label className="flex items-center gap-2">
+                            {t("playerPosition")}
+                        </Label>
+                        <Select
+                            value={playerPosition}
+                            onValueChange={setPlayerPosition}
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder={t("playerPositionPlaceholder")} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {positionOptions.map((option) => (
+                                    <SelectItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
                 
                 <DialogFooter>
@@ -100,7 +138,7 @@ export const AdminAddPlayerButton = ({
 
                     <Button 
                         onClick={handleAddPlayer}
-                        disabled={isPending || !playerName.trim()}
+                        disabled={isPending || !playerName.trim() || !playerPosition}
                     >
                         {isPending ? t("addingPlayer") : t("addPlayer")}
                     </Button>

@@ -3,7 +3,7 @@ import { RegisterContent } from "@/features/auth/components/(auth)/register/regi
 
 export default function RegisterPage() {
     return (
-        <main>
+        <main className="p-4">
             <RegisterContent />
         </main>
     )

@@ -1,7 +1,7 @@
 export type typesMatchType = 'F7' | 'F8' | 'F11';
 export type typesMatchGender = 'Male' | 'Female' | 'Mixed';
 export type typesMatchLevel = 'A' | 'B' | 'C' | 'D' | string;
-export type typesMatchStatus = 'active' | 'pending' | 'finished';
+export type typesMatchStatus = 'active' | 'pending' | 'finished' | 'cancelled';
 
 export interface typesMatch {
     id: string;
@@ -49,6 +49,7 @@ export type typesPlayer = {
     substituteRequested?: boolean;
     hasMatchAdmin?: boolean;
     temporaryPlayerName?: string;
+    temporaryPlayerPosition?: string;
     hasEnteredWithBalance?: boolean;
 };
 

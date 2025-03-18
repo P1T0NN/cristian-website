@@ -19,6 +19,7 @@ interface MatchPlayerResponse {
     hasDiscount: boolean;
     playerType: string;
     temporaryPlayerName: string | null;
+    temporaryPlayerPosition: string | null;
     hasAddedFriend: boolean;
     substituteRequested: boolean;
     hasMatchAdmin: boolean;
@@ -71,6 +72,7 @@ export const GET = async (request: NextRequest) => {
                 substituteRequested,
                 hasMatchAdmin,
                 temporaryPlayerName,
+                temporaryPlayerPosition,
                 hasEnteredWithBalance,
                 user:userId (
                     id,
@@ -156,6 +158,7 @@ export const GET = async (request: NextRequest) => {
         substituteRequested: player.substituteRequested,
         hasMatchAdmin: player.hasMatchAdmin,
         temporaryPlayerName: player.temporaryPlayerName as string,
+        temporaryPlayerPosition: player.temporaryPlayerPosition as string,
         hasEnteredWithBalance: player.hasEnteredWithBalance
     });
 

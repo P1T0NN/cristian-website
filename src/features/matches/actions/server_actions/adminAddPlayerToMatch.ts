@@ -19,12 +19,14 @@ interface AdminAddPlayerToMatchParams {
     matchIdFromParams: string;
     teamNumber: 1 | 2;
     playerName: string;
+    playerPosition: string;
 }
 
 export async function adminAddPlayerToMatch({
     matchIdFromParams,
     teamNumber,
-    playerName
+    playerName,
+    playerPosition
 }: AdminAddPlayerToMatchParams): Promise<AdminAddPlayerToMatchResponse> {
     const t = await getTranslations("GenericMessages");
 
@@ -34,7 +36,7 @@ export async function adminAddPlayerToMatch({
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!matchIdFromParams || !teamNumber || !playerName) {
+    if (!matchIdFromParams || !teamNumber || !playerName || !playerPosition) {
         return { success: false, message: t('BAD_REQUEST') };
     }
 
@@ -42,7 +44,8 @@ export async function adminAddPlayerToMatch({
         p_match_id: matchIdFromParams,
         p_team_number: teamNumber,
         p_player_name: playerName,
-        p_admin_user_id: userId
+        p_admin_user_id: userId,
+        p_player_position: playerPosition
     });
 
     if (error) {
@@ -62,7 +65,8 @@ CREATE OR REPLACE FUNCTION admin_add_player(
   p_match_id UUID,
   p_team_number INTEGER,
   p_player_name TEXT,
-  p_admin_user_id TEXT
+  p_admin_user_id TEXT,
+  p_player_position TEXT
 )
 RETURNS JSONB
 LANGUAGE plpgsql
@@ -119,7 +123,8 @@ BEGIN
       "userId", 
       "playerType", 
       "teamNumber", 
-      "temporaryPlayerName", 
+      "temporaryPlayerName",
+      "temporaryPlayerPosition", 
       "createdAt", 
       "hasPaid", 
       "hasDiscount", 
@@ -134,6 +139,7 @@ BEGIN
       'temporary',
       p_team_number,
       p_player_name,
+      p_player_position,
       NOW(),
       false,
       false,

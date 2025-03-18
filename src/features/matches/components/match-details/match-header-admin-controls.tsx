@@ -6,6 +6,7 @@ import { Button } from "@/shared/components/ui/button";
 import { FinishMatchButton } from "./finish-match-button";
 import { EditMatchButton } from "./edit-match-button";
 import { DeleteMatchButton } from "./delete-match-button";
+import { CancelMatchButton } from "./cancel-match-button";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -37,6 +38,8 @@ export const MatchHeaderAdminControls = async ({
                     <div className="hidden md:flex gap-3">
                         <FinishMatchButton matchIdFromParams={matchIdFromParams} />
 
+                        <CancelMatchButton matchIdFromParams={matchIdFromParams} />
+
                         <EditMatchButton matchIdFromParams={matchIdFromParams} />
 
                         <DeleteMatchButton matchIdFromParams={matchIdFromParams} />
@@ -53,6 +56,8 @@ export const MatchHeaderAdminControls = async ({
 
                             <DropdownMenuContent align="end" className="flex flex-col gap-y-3 w-48">
                                 <FinishMatchButton matchIdFromParams={matchIdFromParams} />
+
+                                <CancelMatchButton matchIdFromParams={matchIdFromParams} />
 
                                 <EditMatchButton matchIdFromParams={matchIdFromParams} />
 

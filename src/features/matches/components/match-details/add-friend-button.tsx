@@ -18,6 +18,13 @@ import {
     DialogTrigger,
 } from "@/shared/components/ui/dialog";
 import { Input } from "@/shared/components/ui/input";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/shared/components/ui/select";
 import { toast } from "sonner";
 
 // SERVER ACTIONS
@@ -39,9 +46,17 @@ export const AddFriendButton = ({
     const [open, setOpen] = useState(false);
     const [friendName, setFriendName] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
+    const [playerPosition, setPlayerPosition] = useState("");
+
+    const positionOptions = [
+        { value: 'Goalkeeper', label: t('goalkeeper') },
+        { value: 'Defender', label: t('defender') },
+        { value: 'Midfielder', label: t('midfielder') },
+        { value: 'Forward', label: t('attacker') },
+    ];
 
     const handleAddFriend = () => {
-        if (!friendName.trim() || !phoneNumber.trim()) {
+        if (!friendName.trim() || !phoneNumber.trim() || !playerPosition) {
             toast.error(t("fillAllFields"));
             return;
         }
@@ -51,13 +66,15 @@ export const AddFriendButton = ({
                 matchIdFromParams,
                 teamNumber,
                 friendName: friendName.trim(),
-                phoneNumber: phoneNumber.trim()
+                phoneNumber: phoneNumber.trim(),
+                playerPosition: playerPosition
             });
 
             if (response.success && response.data) {
                 setOpen(false);
                 setFriendName("");
                 setPhoneNumber("");
+                setPlayerPosition("");
                 toast.success(response.message);
             } else {
                 toast.error(response.message);
@@ -101,6 +118,25 @@ export const AddFriendButton = ({
                             onChange={(e) => setPhoneNumber(e.target.value)}
                             placeholder={t("enterPhoneNumber")}
                         />
+                    </div>
+                    <div className="grid gap-2">
+                        <div className="flex items-center space-x-2">
+                            <Select
+                                value={playerPosition}
+                                onValueChange={setPlayerPosition}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder={t("playerPositionPlaceholder")} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {positionOptions.map((option) => (
+                                        <SelectItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
                     </div>
                 </div>
 

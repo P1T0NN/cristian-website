@@ -86,7 +86,8 @@
         "pastMatches": "Past Matches",
         "pastEvents": "Past Events",
         "noPastEventsAvailable": "No past events available",
-        "youAreInThisMatch": "You are in this match"
+        "youAreInThisMatch": "You are in this match",
+        "cancelled": "Cancelled"
     },
 
     "AddMatchPage": {
@@ -204,6 +205,13 @@
         "addFriendDescription": "Enter your friend's details below",
         "enterFriendName": "Enter friend's name",
         "enterPhoneNumber": "Enter phone number",
+        "playerPosition": "Player Position",
+        "enterPlayerPosition": "Enter player position",
+        "playerPositionPlaceholder": "Select player position",
+        "goalkeeper": "Goalkeeper",
+        "defender": "Defender",
+        "midfielder": "Midfielder",
+        "attacker": "Forward",
         "fillAllFields": "Please fill in all fields",
         "leaveMatch": "Leave Match",
         "leaveMatchTitle": "Leave Match",
@@ -280,6 +288,10 @@
         "addingPlayer": "Adding...",
         "adding": "Addding",
         "enteredWithBalance": "Entered with Balance",
+        "cancelMatch": "Cancel Match",
+        "cancelingMatch": "Canceling...",
+        "cancelMatchTitle": "Cancel Match",
+        "cancelMatchDescription": "Are you sure you want to cancel this match? This will refund all players who paid with balance and mark the match as canceled. Players will still be able to see the match history.",
         "MatchFAQ": {
             "title": "Frequently Asked Questions",
             "aboutUs": {
@@ -636,6 +648,8 @@
         "MATCH_FINISH_FAILED": "Failed to finish match. Please try again!",
         "MATCH_HISTORY_DELETION_FAILED": "Failed to delete match from match history!",
         "MATCH_HISTORY_DELETED": "Match successfully deleted from match history!",
+        "MATCH_CANCELED_SUCCESSFULLY": "Match canceled successfully",
+        "MATCH_CANCELLATION_FAILED": "Failed to cancel the match",
         "NO_MATCHES_FOUND": "There are no matches active",
         "MATCHES_FAILED_TO_FETCH": "Failed to get matches",
         "MATCHES_SUCCESSFULLY_FETCHED": "Matches fetched successfully",
