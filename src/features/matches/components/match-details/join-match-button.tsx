@@ -49,6 +49,7 @@ export const JoinMatchButton = ({
                 setOpen(false);
                 toast.success(response.message);
             } else {
+                console.error('Failed to join match:', response.message);
                 toast.error(response.message);
             }
         });

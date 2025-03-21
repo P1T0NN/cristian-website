@@ -20,22 +20,23 @@ import {
 } from "@/shared/components/ui/dialog";
 import { RequestSubstituteDialog } from "./request-substitute-dialog";
 
+// LUCIDE ICONS
+import { DoorOpen } from "lucide-react";
+
 // SERVER ACTIONS
 import { leaveMatch } from "../../actions/server_actions/leaveTeam";
 
 interface LeaveMatchButtonProps {
     matchIdFromParams: string;
-    currentUserId: string;
 }
 
 export const LeaveMatchButton = ({
-    matchIdFromParams,
-    currentUserId
+    matchIdFromParams
 }: LeaveMatchButtonProps) => {
     const t = useTranslations('MatchPage');
     
     const [isPending, startTransition] = useTransition();
-
+    
     const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false);
     const [isSubstituteDialogOpen, setIsSubstituteDialogOpen] = useState(false);
 
@@ -43,15 +44,13 @@ export const LeaveMatchButton = ({
         startTransition(async () => {
             const result = await leaveMatch({
                 matchIdFromParams,
-                currentUserId,
-                isRemovingFriend: false
             });
 
             if (result.success) {
                 toast.success(result.message);
                 setIsLeaveDialogOpen(false);
             } else {
-                if (result.metadata?.code === 'TOO_LATE_TO_LEAVE') {
+                if (result.code === 'TOO_LATE_TO_LEAVE') {
                     setIsLeaveDialogOpen(false);
                     setIsSubstituteDialogOpen(true);
                 } else {
@@ -65,10 +64,11 @@ export const LeaveMatchButton = ({
         <>
             <Dialog open={isLeaveDialogOpen} onOpenChange={setIsLeaveDialogOpen}>
                 <DialogTrigger asChild>
-                    <Button 
-                        variant="destructive" 
+                    <Button
+                        variant="outline"
                         size="sm"
                     >
+                        <DoorOpen className="h-4 w-4 mr-2" />
                         {t('leaveMatch')}
                     </Button>
                 </DialogTrigger>
@@ -104,7 +104,6 @@ export const LeaveMatchButton = ({
                 isOpen={isSubstituteDialogOpen}
                 onClose={() => setIsSubstituteDialogOpen(false)}
                 matchIdFromParams={matchIdFromParams}
-                currentUserId={currentUserId}
             />
         </>
     );

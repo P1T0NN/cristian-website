@@ -1,7 +1,8 @@
 "use server"
 
 // NEXTJS IMPORTS
-import { revalidatePath, revalidateTag } from 'next/cache';
+import { revalidatePath } from 'next/cache';
+import { revalidateTag } from 'next/cache';
 
 // LIBRARIES
 import { supabase } from '@/shared/lib/supabase/supabase';
@@ -12,6 +13,13 @@ import { TAGS_FOR_CACHE_REVALIDATIONS } from '@/config';
 
 // ACTIONS
 import { verifyAuth } from "@/features/auth/actions/verifyAuth";
+
+// UTILS
+import { 
+    restorePlayerBalance, 
+    getPlayersEnteredWithBalance,
+    checkMatchAdminPermissions
+} from '../../utils/matchUtils';
 
 interface CancelMatchResponse {
     success: boolean;
@@ -27,9 +35,9 @@ export const cancelMatch = async ({
 }: CancelMatchParams): Promise<CancelMatchResponse> => {
     const t = await getTranslations("GenericMessages");
     
-    const { isAuth, userId: authUserId } = await verifyAuth();
+    const { isAuth, userId: currentUserId } = await verifyAuth();
         
-    if (!isAuth) {
+    if (!isAuth || !currentUserId) {
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
@@ -37,108 +45,68 @@ export const cancelMatch = async ({
         return { success: false, message: t('BAD_REQUEST') };
     }
 
-    const { data, error } = await supabase.rpc('cancel_match', {
-        p_auth_user_id: authUserId,
-        p_match_id: matchIdFromParams
-    });
-
-    if (error) {
+    // 1. Verify admin permissions (either global admin or match admin)
+    const permissionCheck = await checkMatchAdminPermissions(currentUserId, matchIdFromParams);
+    
+    if (!permissionCheck.hasPermission) {
+        if (permissionCheck.error) {
+            console.error('Error checking admin permissions:', permissionCheck.error);
+            return { success: false, message: t('INTERNAL_SERVER_ERROR') };
+        }
+        return { success: false, message: t('UNAUTHORIZED') };
+    }
+    
+    // 2. Get match details
+    const { data: matchData, error: matchError } = await supabase
+        .from('matches')
+        .select('*')
+        .eq('id', matchIdFromParams)
+        .single();
+    
+    if (matchError || !matchData) {
+        console.error('Error fetching match:', matchError);
+        return { success: false, message: t('MATCH_NOT_FOUND') };
+    }
+    
+    // 3. Get all players who entered with balance
+    const playersResult = await getPlayersEnteredWithBalance(matchIdFromParams);
+    
+    if (!playersResult.success) {
+        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
+    }
+    
+    // 4. Refund all players who entered with balance
+    for (const player of playersResult.players) {
+        const balanceResult = await restorePlayerBalance({
+            userId: player.userId,
+            matchPrice: matchData.price,
+            currentBalance: player.user.balance,
+            hasEnteredWithBalance: true // We already filtered for hasEnteredWithBalance=true
+        });
+        
+        if (!balanceResult.success) {
+            console.error('Error restoring balance for player:', player.userId);
+            return { success: false, message: t('INTERNAL_SERVER_ERROR') };
+        }
+    }
+    
+    // 5. Set match status to cancelled
+    const { error: updateError } = await supabase
+        .from('matches')
+        .update({ status: 'cancelled' })
+        .eq('id', matchIdFromParams);
+    
+    if (updateError) {
+        console.error('Error updating match status:', updateError);
         return { success: false, message: t('MATCH_CANCELLATION_FAILED') };
     }
     
-    if (!data.success) {
-        return { success: false, message: t('MATCH_CANCELLATION_FAILED') };
-    }
-
+    // 6. Revalidate cache
     revalidatePath("/");
     revalidateTag(TAGS_FOR_CACHE_REVALIDATIONS.ACTIVE_MATCHES_COUNT);
-
-    return { success: true, message: t("MATCH_CANCELED_SUCCESSFULLY") };
+    
+    return { 
+        success: true, 
+        message: t('MATCH_CANCELED_SUCCESSFULLY')
+    };
 };
-
-/* SUPABASE RPC FUNCTION
-
-CREATE OR REPLACE FUNCTION cancel_match(
-    p_auth_user_id TEXT,
-    p_match_id UUID
-) RETURNS JSONB
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public
-AS $$
-DECLARE
-    v_match RECORD;
-    v_user RECORD;
-    v_player RECORD;
-    v_refunded_count INT := 0;
-BEGIN
-    RAISE LOG 'Starting cancel_match with params: auth_user=%, match=%',
-        p_auth_user_id, p_match_id;
-
-    -- Verify admin permissions (either global admin or match admin)
-    SELECT "isAdmin" INTO v_user FROM "user" WHERE id = p_auth_user_id;
-    
-    IF NOT EXISTS (
-        SELECT 1 FROM match_players 
-        WHERE "matchId" = p_match_id 
-        AND "userId" = p_auth_user_id 
-        AND "hasMatchAdmin" = true
-    ) AND NOT v_user."isAdmin" THEN
-        RAISE LOG 'User not authorized: %', p_auth_user_id;
-        RETURN jsonb_build_object('success', false, 'code', 'NOT_AUTHORIZED');
-    END IF;
-
-    -- Get match details
-    SELECT * INTO v_match FROM matches WHERE id = p_match_id;
-    IF NOT FOUND THEN
-        RAISE LOG 'Match not found: %', p_match_id;
-        RETURN jsonb_build_object('success', false, 'code', 'MATCH_NOT_FOUND');
-    END IF;
-
-    -- Refund all players who entered with balance
-    FOR v_player IN (
-        SELECT mp."userId"
-        FROM match_players mp
-        WHERE mp."matchId" = p_match_id
-        AND mp."hasEnteredWithBalance" = true
-    ) LOOP
-        -- Restore balance to user
-        UPDATE "user"
-        SET balance = balance + v_match.price::numeric
-        WHERE id = v_player."userId";
-        
-        v_refunded_count := v_refunded_count + 1;
-        
-        RAISE LOG 'Refunded balance for player: %', v_player."userId";
-    END LOOP;
-
-    -- Set match status to cancelled (with double L as per enum definition)
-    UPDATE matches 
-    SET status = 'cancelled'
-    WHERE id = p_match_id;
-
-    RAISE LOG 'Successfully cancelled match: %, refunded % players', 
-        p_match_id, v_refunded_count;
-    
-    RETURN jsonb_build_object(
-        'success', true,
-        'code', 'MATCH_CANCELED_SUCCESSFULLY',
-        'metadata', jsonb_build_object(
-            'refunded_players_count', v_refunded_count,
-            'match_price', v_match.price
-        )
-    );
-EXCEPTION
-    WHEN OTHERS THEN
-        RAISE LOG 'Unexpected error in cancel_match: %', SQLERRM;
-        RETURN jsonb_build_object(
-            'success', false,
-            'code', 'UNEXPECTED_ERROR',
-            'message', SQLERRM
-        );
-END;
-$$;
-
-GRANT EXECUTE ON FUNCTION cancel_match(TEXT, UUID) TO authenticated;
-
-*/ 

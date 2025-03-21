@@ -85,13 +85,17 @@ export async function addDebt({
     const { data: userUpdateData, error: userUpdateError } = await supabase
         .from('user')
         .update({
-            player_debt: newPlayerDebt,
-            cristian_debt: newCristianDebt
+            playerDebt: newPlayerDebt,
+            cristianDebt: newCristianDebt
         })
         .eq('name', addDebtData.player_name)
         .select();
 
     if (userUpdateError) {
+        return { success: false, message: t('USER_DEBT_UPDATE_FAILED') };
+    }
+
+    if (!userUpdateData || userUpdateData.length === 0) {
         return { success: false, message: t('USER_DEBT_UPDATE_FAILED') };
     }
 

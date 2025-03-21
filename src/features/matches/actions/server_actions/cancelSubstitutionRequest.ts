@@ -13,49 +13,73 @@ import { verifyAuth } from "@/features/auth/actions/verifyAuth";
 interface CancelSubstituteResponse {
     success: boolean;
     message: string;
+    code?: string;
 }
 
 interface CancelSubstituteParams {
     matchIdFromParams: string;
-    currentUserId: string;
     playerType: 'regular' | 'temporary';
 }
 
 export const cancelSubstitute = async ({
     matchIdFromParams,
-    currentUserId,
     playerType
 }: CancelSubstituteParams): Promise<CancelSubstituteResponse> => {
     const t = await getTranslations("GenericMessages");
 
-    const { isAuth, userId: authUserId } = await verifyAuth();
+    const { isAuth, userId: currentUserId } = await verifyAuth();
                 
     if (!isAuth) {
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
-    if (!matchIdFromParams || !currentUserId) {
+    if (!matchIdFromParams) {
         return { success: false, message: t('BAD_REQUEST') };
     }
 
-    const { data, error } = await supabase.rpc('cancel_substitute', {
-        pauthuserid: authUserId,
-        pmatchid: matchIdFromParams,
-        pcurrentuserid: currentUserId,
-        pistemporary: playerType === 'temporary'
-    });
+    // Find the player record
+    let playerQuery = supabase
+        .from('match_players')
+        .select('*')
+        .eq('matchId', matchIdFromParams)
+        .eq('playerType', playerType);
 
-    if (error) {
-        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
+    if (playerType === 'temporary') {
+        // For temporary players, find the player added by the current user
+        playerQuery = playerQuery.eq('userId', currentUserId);
+    } else {
+        // For regular players, find the player that is the current user
+        playerQuery = playerQuery.eq('userId', currentUserId);
     }
 
-    if (!data.success) {
+    const { data: playerData, error: playerError } = await playerQuery.single();
+
+    if (playerError || !playerData) {
+        console.error('Error finding player:', playerError);
         return { 
             success: false, 
-            message: t('CANCEL_SUBSTITUTE_FAILED')
+            message: t('PLAYER_NOT_FOUND'),
+            code: 'PLAYER_NOT_FOUND' 
         };
     }
 
+    // Update the player's substituteRequested status
+    const { error: updateError } = await supabase
+        .from('match_players')
+        .update({ substituteRequested: false })
+        .eq('id', playerData.id);
+
+    if (updateError) {
+        console.error('Error updating substitute request:', updateError);
+        return { 
+            success: false, 
+            message: t('CANCEL_SUBSTITUTE_FAILED'),
+            code: 'UPDATE_FAILED'
+        };
+    }
+
+    // Revalidate paths
+    revalidatePath(`/matches/${matchIdFromParams}`);
     revalidatePath("/");
 
     return { 
@@ -63,69 +87,9 @@ export const cancelSubstitute = async ({
         message: t(playerType === 'temporary' ? 
             'FRIEND_SUBSTITUTE_CANCELED_SUCCESSFULLY' : 
             'SUBSTITUTE_CANCELED_SUCCESSFULLY'
-        )
+        ),
+        code: playerType === 'temporary' ? 
+            'FRIEND_SUBSTITUTE_CANCELED_SUCCESSFULLY' : 
+            'SUBSTITUTE_CANCELED_SUCCESSFULLY'
     };
 };
-
-/* SUPABASE RPC FUNCTION
-
-CREATE OR REPLACE FUNCTION cancel_substitute(
-    pauthuserid TEXT,
-    pmatchid UUID,
-    pcurrentuserid TEXT,
-    pistemporary BOOLEAN
-) RETURNS JSONB
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public
-AS $$
-DECLARE
-    vPlayer RECORD;
-BEGIN
-    -- Get player record based on playerType
-    SELECT * INTO vPlayer 
-    FROM match_players 
-    WHERE "matchId" = pmatchid
-    AND "userId" = pcurrentuserid
-    AND "playerType" = CASE 
-        WHEN pistemporary THEN 'temporary'
-        ELSE 'regular'
-    END;
-
-    IF NOT FOUND THEN
-        RETURN jsonb_build_object('success', false, 'code', 'PLAYER_NOT_IN_MATCH');
-    END IF;
-
-    -- For temporary players, the userId is the ID of the user who added them
-    -- For regular players, verify it's their own record
-    IF (pistemporary AND vPlayer."userId" != pauthuserid) OR
-       (NOT pistemporary AND vPlayer."userId" != pauthuserid) THEN
-        RETURN jsonb_build_object('success', false, 'code', 'NOT_AUTHORIZED');
-    END IF;
-
-    -- Update the substitute request status
-    UPDATE match_players
-    SET "substituteRequested" = false
-    WHERE id = vPlayer.id;
-
-    RETURN jsonb_build_object(
-        'success', true,
-        'code', CASE 
-            WHEN pistemporary THEN 'FRIEND_SUBSTITUTE_CANCELED_SUCCESSFULLY'
-            ELSE 'SUBSTITUTE_CANCELED_SUCCESSFULLY'
-        END
-    );
-
-EXCEPTION
-    WHEN OTHERS THEN
-        RETURN jsonb_build_object(
-            'success', false,
-            'code', 'UNEXPECTED_ERROR',
-            'message', SQLERRM
-        );
-END;
-$$;
-
-GRANT EXECUTE ON FUNCTION cancel_substitute(TEXT, UUID, TEXT, BOOLEAN) TO authenticated;
-
-*/

@@ -27,13 +27,11 @@ import { UserX2 } from "lucide-react";
 
 interface CancelSubstituteButtonProps {
     matchIdFromParams: string;
-    currentUserId: string;
     playerType: 'regular' | 'temporary';
 }
 
 export const CancelSubstituteButton = ({
     matchIdFromParams,
-    currentUserId,
     playerType
 }: CancelSubstituteButtonProps) => {
     const t = useTranslations('MatchPage');
@@ -46,7 +44,6 @@ export const CancelSubstituteButton = ({
         startTransition(async () => {
             const result = await cancelSubstitute({
                 matchIdFromParams,
-                currentUserId,
                 playerType
             });
 

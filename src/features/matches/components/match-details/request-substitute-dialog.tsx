@@ -25,7 +25,6 @@ interface RequestSubstituteDialogProps {
     isOpen: boolean;
     onClose: () => void;
     matchIdFromParams: string;
-    currentUserId: string;
     playerType?: 'regular' | 'temporary';
 }
 
@@ -33,7 +32,6 @@ export const RequestSubstituteDialog = ({
     isOpen,
     onClose,
     matchIdFromParams,
-    currentUserId,
     playerType = 'regular'
 }: RequestSubstituteDialogProps) => {
     const t = useTranslations('MatchPage');
@@ -44,7 +42,6 @@ export const RequestSubstituteDialog = ({
         startTransition(async () => {
             const result = await requestSubstitute({
                 matchIdFromParams,
-                userId: currentUserId,
                 playerType
             });
 

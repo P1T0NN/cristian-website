@@ -45,6 +45,23 @@ export const AddDebtDialog = ({
 
    const { addDebtSchema } = useZodSchemas();
 
+   const handleOptionChange = (option: 'player' | 'cristian') => {
+       setSelectedOption(option);
+       
+       // Reset the other debt type when changing options
+       if (option === 'player') {
+           // Direct form value update without event
+           handleInputChange({
+               target: { name: 'cristian_debt', value: '0' }
+           } as unknown as React.ChangeEvent<HTMLInputElement>);
+       } else {
+           // Direct form value update without event
+           handleInputChange({
+               target: { name: 'player_debt', value: '0' }
+           } as unknown as React.ChangeEvent<HTMLInputElement>);
+       }
+   };
+
    const { formData, errors, handleInputChange, handleSubmit } = useForm({
        initialValues: {
            player_name: initialPlayerName as string,
@@ -56,8 +73,15 @@ export const AddDebtDialog = ({
        validationSchema: addDebtSchema,
        onSubmit: async (values) => {
            startTransition(async () => {
+               // Ensure values are proper numbers
+               const submissionData = {
+                   ...values,
+                   player_debt: Number(values.player_debt),
+                   cristian_debt: Number(values.cristian_debt)
+               };
+               
                const result = await addDebt({
-                   addDebtData: values
+                   addDebtData: submissionData
                });
                
                if (result.success) {
@@ -88,7 +112,7 @@ export const AddDebtDialog = ({
                        errors={errors}
                        handleInputChange={handleInputChange}
                        selectedOption={selectedOption}
-                       setSelectedOption={setSelectedOption}
+                       setSelectedOption={(option: 'player' | 'cristian') => handleOptionChange(option)}
                        initialPlayerName={initialPlayerName}
                    />
                </div>

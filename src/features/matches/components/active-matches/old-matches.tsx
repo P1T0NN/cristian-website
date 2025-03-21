@@ -8,6 +8,9 @@ import { MatchCard } from "./match-card";
 import { getUser } from "@/features/auth/actions/verifyAuth";
 import { fetchMatches } from "../../actions/fetchMatches";
 
+// UTILS
+import { getCurrentDateTimeStrings } from "@/shared/utils/dateUtils";
+
 // TYPES
 import type { typesUser } from "@/features/players/types/typesPlayer";
 
@@ -17,9 +20,7 @@ export const OldMatches = async () => {
         getUser() as Promise<typesUser>
     ]);
 
-    const now = new Date();
-    const currentDate = now.toISOString().split('T')[0];
-    const currentTime = now.toTimeString().split(' ')[0].slice(0, 5); // Format: HH:mm
+    const { currentDate, currentTime } = getCurrentDateTimeStrings();
 
     const matchesResponse = await fetchMatches({
         isAdmin: currentUserData.isAdmin,

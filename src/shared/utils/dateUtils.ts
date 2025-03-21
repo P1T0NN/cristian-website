@@ -34,3 +34,48 @@ export const formatDate = async (dateStr: string, showTomorrow: boolean = false)
         return format(date, "EEEE, do MMMM", { locale: localeObj });
     }
 };
+
+/**
+ * Returns the current date in YYYY-MM-DD format
+ */
+export const getCurrentDateString = (): string => {
+    const now = new Date();
+    return now.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+};
+
+/**
+ * Returns the current time in HH:MM format
+ */
+export const getCurrentTimeString = (): string => {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`; // Format: HH:MM
+};
+
+/**
+ * Returns current date and time strings for use in queries
+ */
+export const getCurrentDateTimeStrings = () => {
+    return {
+        currentDate: getCurrentDateString(),
+        currentTime: getCurrentTimeString()
+    };
+};
+
+/**
+ * Returns a date string for N days ago
+ * @param daysAgo Number of days to go back
+ */
+export const getDateDaysAgo = (daysAgo: number): string => {
+    const date = new Date();
+    date.setDate(date.getDate() - daysAgo);
+    return date.toISOString().split('T')[0];
+};
+
+/**
+ * Returns the current date and time as a Date object
+ */
+export const getCurrentDateTime = (): Date => {
+    return new Date();
+};

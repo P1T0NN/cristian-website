@@ -5,6 +5,9 @@ import { NextResponse, NextRequest } from 'next/server';
 import { getTranslations } from 'next-intl/server';
 import { supabase } from '@/shared/lib/supabase/supabase';
 
+// Import our date utility functions
+import { getCurrentDateString } from '@/shared/utils/dateUtils';
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const GET = async (request: NextRequest): Promise<NextResponse> => {
     const t = await getTranslations("GenericMessages");
@@ -14,7 +17,7 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
         return NextResponse.json({ success: false, message: t('BAD_REQUEST') });
     }
  
-    const currentDate = new Date().toISOString().split('T')[0];
+    const currentDate = getCurrentDateString();
     const { data: matchIds, error: matchIdsError } = await supabase
         .from('match_players')
         .select('matchId')

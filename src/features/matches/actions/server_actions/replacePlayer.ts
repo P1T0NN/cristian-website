@@ -13,6 +13,9 @@ import { TAGS_FOR_CACHE_REVALIDATIONS } from "@/config";
 // ACTIONS
 import { verifyAuth } from '@/features/auth/actions/verifyAuth';
 
+// UTILS
+import { getCurrentDateTime } from '@/shared/utils/dateUtils';
+
 interface ReplacePlayerResponse {
     success: boolean;
     message: string;
@@ -31,9 +34,9 @@ export const replacePlayer = async ({
 }: ReplacePlayerParams): Promise<ReplacePlayerResponse> => {
     const t = await getTranslations("GenericMessages");
 
-    const { isAuth, userId: authUserId } = await verifyAuth();
+    const { isAuth, userId } = await verifyAuth();
                 
-    if (!isAuth) {
+    if (!isAuth || !userId) {
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
@@ -41,22 +44,90 @@ export const replacePlayer = async ({
         return { success: false, message: t('BAD_REQUEST') };
     }
 
-    const { data, error } = await supabase.rpc('replace_player', {
-        p_auth_user_id: authUserId,
-        p_match_id: matchIdFromParams,
-        p_match_player_id: playerToReplaceId,
-        p_with_balance: withBalance
-    });
-
-    if (error) {
-        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
+    // Get match details
+    const { data: matchData, error: matchError } = await supabase
+        .from("matches")
+        .select("*")
+        .eq("id", matchIdFromParams)
+        .single();
+    
+    if (matchError) {
+        return { success: false, message: t('MATCH_NOT_FOUND') };
     }
-
-    if (!data.success) {
-        if (data.code === 'INSUFFICIENT_BALANCE') {
-            return { success: false, message: t("INSUFFICIENT_BALANCE_TRY_CASH") };
+    
+    // Get player requesting substitute
+    const { error: playerError } = await supabase
+        .from("match_players")
+        .select("*")
+        .eq("id", playerToReplaceId)
+        .eq("matchId", matchIdFromParams)
+        .single();
+    
+    if (playerError) {
+        return { success: false, message: t('PLAYER_NOT_IN_MATCH') };
+    }
+    
+    // Get user details
+    const { data: userData, error: userError } = await supabase
+        .from("user")
+        .select("*")
+        .eq("id", userId)
+        .single();
+    
+    if (userError) {
+        return { success: false, message: t('USER_NOT_FOUND') };
+    }
+    
+    // Check time limit
+    const currentTime = getCurrentDateTime();
+    const matchStart = new Date(`${matchData.startsAtDay} ${matchData.startsAtHour}`);
+    
+    if (currentTime > matchStart) {
+        return { success: false, message: t('MATCH_ALREADY_STARTED') };
+    }
+    
+    // Handle balance payment
+    let hasEnteredWithBalance = false;
+    
+    if (withBalance) {
+        if (userData.balance >= matchData.price) {
+            // Deduct balance from new player
+            const { error: balanceError } = await supabase
+                .from("user")
+                .update({ balance: userData.balance - matchData.price })
+                .eq("id", userId);
+            
+            if (balanceError) {
+                return { success: false, message: t('INTERNAL_SERVER_ERROR') };
+            }
+            
+            hasEnteredWithBalance = true;
+        } else {
+            return { success: false, message: t('INSUFFICIENT_BALANCE_TRY_CASH') };
         }
-        return { success: false, message: t('PLAYER_REPLACE_FAILED') };
+    }
+    
+    // Update the player record with the new player
+    const { error: updateError } = await supabase
+        .from("match_players")
+        .update({
+            userId: userId,
+            substituteRequested: false,
+            playerType: 'regular',
+            hasEnteredWithBalance: hasEnteredWithBalance,
+            hasPaid: hasEnteredWithBalance
+        })
+        .eq("id", playerToReplaceId);
+    
+    if (updateError) {
+        // If there was an error, refund the balance if needed
+        if (hasEnteredWithBalance) {
+            await supabase
+                .from("user")
+                .update({ balance: userData.balance })
+                .eq("id", userId);
+        }
+        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
 
     revalidatePath("/");
@@ -67,112 +138,3 @@ export const replacePlayer = async ({
         message: t('PLAYER_REPLACED_SUCCESSFULLY')
     };
 };
-
-/* SUPABASE RPC FUNCTION
-
-CREATE OR REPLACE FUNCTION replace_player(
-    p_auth_user_id TEXT,
-    p_match_id UUID,
-    p_match_player_id TEXT,
-    p_with_balance BOOLEAN
-) RETURNS JSONB
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public
-AS $$
-DECLARE
-    v_match RECORD;
-    v_player RECORD;
-    v_user RECORD;
-    v_current_time TIMESTAMP;
-    v_match_start TIMESTAMP;
-    v_match_price DECIMAL;
-    v_updated_balance NUMERIC;
-    v_player_name TEXT;
-BEGIN
-    RAISE LOG 'Starting replace_player with params: auth_user=%, match=%, player=%, with_balance=%',
-        p_auth_user_id, p_match_id, p_match_player_id, p_with_balance;
-
-    -- Get match details
-    SELECT * INTO v_match FROM matches WHERE id = p_match_id;
-    IF NOT FOUND THEN
-        RETURN jsonb_build_object('success', false, 'code', 'MATCH_NOT_FOUND');
-    END IF;
-
-    -- Get player requesting substitute
-    SELECT * INTO v_player 
-    FROM match_players 
-    WHERE id = p_match_player_id
-    AND "matchId" = p_match_id;
-
-    IF NOT FOUND THEN
-        RETURN jsonb_build_object('success', false, 'code', 'PLAYER_NOT_IN_MATCH');
-    END IF;
-
-    -- Get user details for balance check and info
-    SELECT * INTO v_user FROM "user" WHERE id = p_auth_user_id;
-    IF NOT FOUND THEN
-        RETURN jsonb_build_object('success', false, 'code', 'USER_NOT_FOUND');
-    END IF;
-
-    -- Store user info
-    v_player_name := v_user.name;
-
-    -- Check time limit
-    v_current_time := CURRENT_TIMESTAMP;
-    v_match_start := (v_match."startsAtDay" || ' ' || v_match."startsAtHour")::TIMESTAMP;
-    
-    IF v_current_time > v_match_start THEN
-        RETURN jsonb_build_object('success', false, 'code', 'MATCH_ALREADY_STARTED');
-    END IF;
-
-    -- Handle balance payment for new player
-    IF p_with_balance THEN
-        IF v_user.balance >= v_match.price::numeric THEN
-            -- Deduct balance from new player
-            UPDATE "user"
-            SET balance = balance - v_match.price::numeric
-            WHERE id = p_auth_user_id
-            RETURNING balance INTO v_updated_balance;
-        ELSE
-            RETURN jsonb_build_object('success', false, 'code', 'INSUFFICIENT_BALANCE');
-        END IF;
-    END IF;
-
-    -- Update the player record with the new player
-    UPDATE match_players
-    SET "userId" = p_auth_user_id,
-        "substituteRequested" = false,
-        "playerType" = 'regular',
-        "hasEnteredWithBalance" = p_with_balance
-    WHERE id = p_match_player_id;
-
-    RETURN jsonb_build_object(
-        'success', true,
-        'code', 'PLAYER_REPLACED_SUCCESSFULLY',
-        'metadata', jsonb_build_object(
-            'playerId', p_match_player_id,
-            'playerName', v_player_name,
-            'playerPosition', v_user."playerPosition",
-            'hasEnteredWithBalance', p_with_balance,
-            'updatedBalance', CASE 
-                WHEN p_with_balance THEN v_updated_balance
-                ELSE NULL
-            END
-        )
-    );
-
-EXCEPTION
-    WHEN OTHERS THEN
-        RAISE LOG 'Unexpected error in replace_player: %', SQLERRM;
-        RETURN jsonb_build_object(
-            'success', false,
-            'code', 'UNEXPECTED_ERROR',
-            'message', SQLERRM
-        );
-END;
-$$;
-
-GRANT EXECUTE ON FUNCTION replace_player(TEXT, UUID, TEXT, BOOLEAN) TO authenticated;
-
-*/

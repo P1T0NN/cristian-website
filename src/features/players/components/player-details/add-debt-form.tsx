@@ -17,7 +17,7 @@ type AddDebtFormProps = {
     errors: Record<string, string>;
     handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     selectedOption: 'player' | 'cristian';
-    setSelectedOption: React.Dispatch<React.SetStateAction<'player' | 'cristian'>>;
+    setSelectedOption: (option: 'player' | 'cristian') => void;
     initialPlayerName?: string;
 };
 

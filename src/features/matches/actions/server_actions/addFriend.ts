@@ -47,7 +47,7 @@ export const addFriend = async ({
 
     const { isAuth, userId } = await verifyAuth();
 
-    if (!isAuth) {
+    if (!isAuth || !userId) {
         return { success: false, message: t('UNAUTHORIZED') };
     }
 
@@ -55,24 +55,100 @@ export const addFriend = async ({
         return { success: false, message: t('BAD_REQUEST') };
     }
     
-    const { data, error } = await supabase.rpc('addtemporaryplayer', {
-        p_user_id: userId,
-        p_match_id: matchIdFromParams,
-        p_team_number: teamNumber,
-        p_friend_name: friendName,
-        p_phone_number: phoneNumber,
-        p_player_position: playerPosition || ''
-    });
-
-    if (error) {
+    // Check if user has already added a friend
+    const { data: playerData, error: playerError } = await supabase
+        .from("match_players")
+        .select("hasAddedFriend")
+        .eq("matchId", matchIdFromParams)
+        .eq("userId", userId)
+        .eq("playerType", "regular")
+        .single();
+    
+    if (playerError) {
         return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
     
-    if (!data.success) {
-        if (data.code === 'ALREADY_ADDED_FRIEND') {
-            return { success: false, message: t('ALREADY_ADDED_FRIEND') };
-        }
-        return { success: false, message: t('FRIEND_ADDITION_FAILED') };
+    if (playerData.hasAddedFriend) {
+        return { success: false, message: t('ALREADY_ADDED_FRIEND') };
+    }
+    
+    // Fetch match details
+    const { data: matchData, error: matchError } = await supabase
+        .from("matches")
+        .select("*")
+        .eq("id", matchIdFromParams)
+        .single();
+    
+    if (matchError) {
+        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
+    }
+    
+    // Get user name who's adding the friend
+    const { data: userData, error: userError } = await supabase
+        .from("user")
+        .select("name")
+        .eq("id", userId)
+        .single();
+    
+    if (userError) {
+        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
+    }
+    
+    const addedByName = userData.name;
+    
+    // Update places occupied
+    const updatedPlacesOccupied = (matchData.placesOccupied || 0) + 1;
+    
+    // Generate unique ID for temporary player
+    const tempPlayerId = crypto.randomUUID();
+    
+    // Insert temporary player
+    const { data: tempPlayer, error: insertError } = await supabase
+        .from("match_players")
+        .insert({
+            id: tempPlayerId,
+            matchId: matchIdFromParams,
+            userId: userId,
+            teamNumber: teamNumber,
+            playerType: 'temporary',
+            temporaryPlayerName: friendName,
+            temporaryPlayerPosition: playerPosition,
+            substituteRequested: false,
+            hasPaid: false,
+            hasDiscount: false,
+            hasGratis: false,
+            hasMatchAdmin: false,
+            hasAddedFriend: false,
+            hasEnteredWithBalance: false,
+            hasArrived: false
+        })
+        .select()
+        .single();
+    
+    if (insertError) {
+        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
+    }
+    
+    // Update places occupied
+    const { error: updateMatchError } = await supabase
+        .from("matches")
+        .update({ placesOccupied: updatedPlacesOccupied })
+        .eq("id", matchIdFromParams);
+    
+    if (updateMatchError) {
+        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
+    }
+    
+    // Update hasAddedFriend status for the regular player
+    const { error: updatePlayerError } = await supabase
+        .from("match_players")
+        .update({ hasAddedFriend: true })
+        .eq("matchId", matchIdFromParams)
+        .eq("userId", userId)
+        .eq("playerType", "regular");
+    
+    if (updatePlayerError) {
+        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
 
     revalidatePath(`/matches/${matchIdFromParams}`);
@@ -81,146 +157,17 @@ export const addFriend = async ({
         success: true, 
         message: t('FRIEND_ADDED_SUCCESSFULLY'),
         data: {
-            id: data.data.id,
-            temporaryPlayerName: data.data.temporaryPlayerName,
-            teamNumber: data.data.teamNumber,
-            playerType: data.data.playerType,
-            playerPosition: data.data.playerPosition, // This will be "Added by: [name]"
-            temporaryPlayerPosition: data.data.temporaryPlayerPosition, // The actual position
-            hasPaid: data.data.hasPaid,
-            hasGratis: data.data.hasGratis,
-            hasDiscount: data.data.hasDiscount,
-            hasArrived: data.data.hasArrived,
-            addedBy: data.data.addedBy // The name of who added the friend
+            id: tempPlayer.id,
+            temporaryPlayerName: tempPlayer.temporaryPlayerName,
+            teamNumber: tempPlayer.teamNumber,
+            playerType: tempPlayer.playerType,
+            playerPosition: `Added by: ${addedByName}`, // This will be "Added by: [name]"
+            temporaryPlayerPosition: tempPlayer.temporaryPlayerPosition, // The actual position
+            hasPaid: tempPlayer.hasPaid,
+            hasGratis: tempPlayer.hasGratis,
+            hasDiscount: tempPlayer.hasDiscount,
+            hasArrived: tempPlayer.hasArrived,
+            addedBy: addedByName // The name of who added the friend
         }
     };
 };
-
-/*
-
-OUR SUPABASE RPC FUNCTION
-
-CREATE OR REPLACE FUNCTION addtemporaryplayer(
-    p_user_id TEXT,
-    p_match_id UUID,
-    p_team_number INT,
-    p_friend_name TEXT,
-    p_phone_number TEXT,
-    p_player_position TEXT DEFAULT ''
-) RETURNS JSONB AS $$
-DECLARE
-    vMatch RECORD;
-    vUser RECORD;
-    vUpdatedPlacesOccupied INT;
-    vTempPlayer RECORD;
-    vHasAlreadyAddedFriend BOOLEAN;
-    vAddedByName TEXT;
-BEGIN
-    -- Check if user has already added a friend
-    SELECT "hasAddedFriend" INTO vHasAlreadyAddedFriend
-    FROM "match_players"
-    WHERE "matchId" = p_match_id 
-    AND "userId" = p_user_id 
-    AND "playerType" = 'regular';
-
-    IF vHasAlreadyAddedFriend THEN
-        RETURN jsonb_build_object('success', false, 'code', 'ALREADY_ADDED_FRIEND');
-    END IF;
-
-    -- Fetch match details
-    SELECT * INTO vMatch FROM "matches" WHERE id = p_match_id;
-    IF NOT FOUND THEN
-        RETURN jsonb_build_object('success', false, 'code', 'MATCH_NOT_FOUND');
-    END IF;
-
-    -- Fetch user details and name of who's adding the friend
-    SELECT * INTO vUser FROM "user" WHERE id = p_user_id;
-    IF NOT FOUND THEN
-        RETURN jsonb_build_object('success', false, 'code', 'USER_NOT_FOUND');
-    END IF;
-
-    -- Get the name of the user who's adding the friend
-    SELECT name INTO vAddedByName
-    FROM "user"
-    WHERE id = p_user_id;
-
-    vUpdatedPlacesOccupied := COALESCE(vMatch."placesOccupied", 0) + 1;
-
-    -- Insert temporary player
-    INSERT INTO "match_players" (
-        "id",
-        "matchId",
-        "userId",
-        "teamNumber",
-        "playerType",
-        "temporaryPlayerName",
-        "temporaryPlayerPosition",
-        "substituteRequested",
-        "hasPaid",
-        "hasDiscount",
-        "hasGratis",
-        "hasMatchAdmin",
-        "hasAddedFriend",
-        "hasEnteredWithBalance",
-        "hasArrived"
-    )
-    VALUES (
-        gen_random_uuid()::TEXT,
-        p_match_id,
-        p_user_id,
-        p_team_number,
-        'temporary',
-        p_friend_name,
-        p_player_position,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false
-    )
-    RETURNING * INTO vTempPlayer;
-
-    -- Update places occupied
-    UPDATE "matches"
-    SET "placesOccupied" = vUpdatedPlacesOccupied
-    WHERE id = p_match_id;
-
-    -- Update hasAddedFriend status for the regular player
-    UPDATE "match_players"
-    SET "hasAddedFriend" = true
-    WHERE "matchId" = p_match_id 
-    AND "userId" = p_user_id 
-    AND "playerType" = 'regular';
-
-    RETURN jsonb_build_object(
-        'success', true, 
-        'code', 'FRIEND_ADDED_SUCCESSFULLY',
-        'data', jsonb_build_object(
-            'id', vTempPlayer.id,
-            'temporaryPlayerName', vTempPlayer."temporaryPlayerName",
-            'temporaryPlayerPosition', vTempPlayer."temporaryPlayerPosition",
-            'teamNumber', vTempPlayer."teamNumber",
-            'playerType', vTempPlayer."playerType",
-            'playerPosition', 'Added by: ' || vAddedByName,
-            'hasPaid', vTempPlayer."hasPaid",
-            'hasGratis', vTempPlayer."hasGratis",
-            'hasDiscount', vTempPlayer."hasDiscount",
-            'hasArrived', vTempPlayer."hasArrived",
-            'addedBy', vAddedByName
-        )
-    );
-
-EXCEPTION
-    WHEN OTHERS THEN
-        RETURN jsonb_build_object(
-            'success', false, 
-            'code', 'UNEXPECTED_ERROR', 
-            'details', SQLERRM
-        );
-END;
-$$ LANGUAGE plpgsql
-
-*/

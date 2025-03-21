@@ -28,12 +28,10 @@ import { leaveMatch } from "../../actions/server_actions/leaveTeam";
 
 interface RemoveFriendButtonProps {
     matchIdFromParams: string;
-    currentUserId: string;
 }
 
 export const RemoveFriendButton = ({
-    matchIdFromParams,
-    currentUserId
+    matchIdFromParams
 }: RemoveFriendButtonProps) => {
     const t = useTranslations('MatchPage');
     
@@ -46,7 +44,6 @@ export const RemoveFriendButton = ({
         startTransition(async () => {
             const result = await leaveMatch({
                 matchIdFromParams,
-                currentUserId,
                 isRemovingFriend: true
             });
 
@@ -54,7 +51,7 @@ export const RemoveFriendButton = ({
                 toast.success(result.message);
                 setIsRemoveDialogOpen(false);
             } else {
-                if (result.metadata?.code === 'TOO_LATE_TO_LEAVE') {
+                if (result.code === 'TOO_LATE_TO_LEAVE') {
                     setIsRemoveDialogOpen(false);
                     setIsSubstituteDialogOpen(true);
                 } else {
@@ -108,7 +105,6 @@ export const RemoveFriendButton = ({
                 isOpen={isSubstituteDialogOpen}
                 onClose={() => setIsSubstituteDialogOpen(false)}
                 matchIdFromParams={matchIdFromParams}
-                currentUserId={currentUserId}
                 playerType="temporary"
             />
         </>

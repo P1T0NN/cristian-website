@@ -45,7 +45,11 @@ export const MatchCard = async ({
     const formattedTime = formatTime(match.startsAtHour);
     const formattedDate = await formatDate(match.startsAtDay);
 
-    const { placesLeft } = calculateMatchPlaces(match);
+    const { placesLeft } = calculateMatchPlaces({
+        ...match,
+        extraSpotsTeam1: match.extraSpotsTeam1,
+        extraSpotsTeam2: match.extraSpotsTeam2
+    });
     const placesLeftText = getPlacesLeftText(placesLeft, currentUserData.isAdmin);
     const placesLeftColor = getPlacesLeftColor(placesLeft);
     
@@ -116,7 +120,7 @@ export const MatchCard = async ({
                                     </span>
                                 )}
 
-                                {match.isUserInMatch && !isCancelled && (
+                                {match.isUserInMatch && (
                                     <span className="text-xs bg-green-100 px-2 py-1 rounded-full text-green-600 flex items-center">
                                         <CheckCircle className="w-3 h-3 mr-1" />
                                         {t('youAreInThisMatch')}

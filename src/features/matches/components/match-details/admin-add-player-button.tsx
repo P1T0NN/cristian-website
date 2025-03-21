@@ -19,16 +19,22 @@ import {
     SelectValue,
 } from "@/shared/components/ui/select";
 import { toast } from "sonner";
+import { ScrollArea } from "@/shared/components/ui/scroll-area";
 
 // SERVER ACTIONS
 import { adminAddPlayerToMatch } from "../../actions/server_actions/adminAddPlayerToMatch";
 
 // LUCIDE ICONS
-import { UserPlus } from "lucide-react";
+import { UserPlus, PlusCircle, X } from "lucide-react";
 
 interface AdminAddPlayerProps {
     matchIdFromParams: string;
     teamNumber: 1 | 2;
+}
+
+interface PlayerToAdd {
+    name: string;
+    position: string;
 }
 
 export const AdminAddPlayerButton = ({ 
@@ -38,8 +44,7 @@ export const AdminAddPlayerButton = ({
     const t = useTranslations("MatchPage");
     
     const [isOpen, setIsOpen] = useState(false);
-    const [playerName, setPlayerName] = useState("");
-    const [playerPosition, setPlayerPosition] = useState("");
+    const [players, setPlayers] = useState<PlayerToAdd[]>([{ name: "", position: "" }]);
     const [isPending, startTransition] = useTransition();
 
     const positionOptions = [
@@ -49,8 +54,32 @@ export const AdminAddPlayerButton = ({
         { value: 'Forward', label: t('attacker') },
     ];
 
-    const handleAddPlayer = () => {
-        if (!playerName.trim() || !playerPosition) {
+    const addPlayerField = () => {
+        setPlayers([...players, { name: "", position: "" }]);
+    };
+
+    const removePlayerField = (index: number) => {
+        if (players.length > 1) {
+            const updatedPlayers = [...players];
+            updatedPlayers.splice(index, 1);
+            setPlayers(updatedPlayers);
+        }
+    };
+
+    const updatePlayerField = (index: number, field: 'name' | 'position', value: string) => {
+        const updatedPlayers = [...players];
+        updatedPlayers[index] = {
+            ...updatedPlayers[index],
+            [field]: value
+        };
+        setPlayers(updatedPlayers);
+    };
+
+    const handleAddPlayers = () => {
+        // Filter out empty player names
+        const validPlayers = players.filter(player => player.name.trim() !== '');
+        
+        if (validPlayers.length === 0) {
             toast.error(t("fillAllFields"));
             return;
         }
@@ -59,20 +88,21 @@ export const AdminAddPlayerButton = ({
             const result = await adminAddPlayerToMatch({
                 matchIdFromParams,
                 teamNumber,
-                playerName: playerName.trim(),
-                playerPosition
+                players: validPlayers
             });
 
             if (result.success) {
                 toast.success(result.message);
                 setIsOpen(false);
-                setPlayerName("");
-                setPlayerPosition("");
+                // Reset to a single empty player field
+                setPlayers([{ name: "", position: "" }]);
             } else {
                 toast.error(result.message);
             }
         });
     };
+
+    const hasAtLeastOneValidPlayer = players.some(player => player.name.trim() !== '');
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -94,38 +124,65 @@ export const AdminAddPlayerButton = ({
                     <DialogTitle>{t("addPlayerToTeam")}</DialogTitle>
                 </DialogHeader>
                 
-                <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="player-name">{t("playerName")}</Label>
-                        <Input
-                            id="player-name"
-                            placeholder={t("enterPlayerName")}
-                            value={playerName}
-                            onChange={(e) => setPlayerName(e.target.value)}
-                        />
-                    </div>
+                <ScrollArea className="max-h-[60vh]">
+                    <div className="space-y-6 py-4 pr-4">
+                        {players.map((player, index) => (
+                            <div key={index} className="space-y-4 rounded-md border p-4 relative">
+                                {players.length > 1 && (
+                                    <Button 
+                                        variant="ghost" 
+                                        size="icon" 
+                                        className="absolute top-2 right-2 h-6 w-6"
+                                        onClick={() => removePlayerField(index)}
+                                    >
+                                        <X className="h-4 w-4" />
+                                    </Button>
+                                )}
+                                
+                                <div className="space-y-2">
+                                    <Label htmlFor={`player-name-${index}`}>{t("playerName")}</Label>
+                                    <Input
+                                        id={`player-name-${index}`}
+                                        placeholder={t("enterPlayerName")}
+                                        value={player.name}
+                                        onChange={(e) => updatePlayerField(index, 'name', e.target.value)}
+                                    />
+                                </div>
 
-                    <div className="space-y-2">
-                        <Label className="flex items-center gap-2">
-                            {t("playerPosition")}
-                        </Label>
-                        <Select
-                            value={playerPosition}
-                            onValueChange={setPlayerPosition}
+                                <div className="space-y-2">
+                                    <Label className="flex items-center gap-2">
+                                        {t("playerPosition")} <span className="text-sm text-muted-foreground">{t("optional")}</span>
+                                    </Label>
+                                    <Select
+                                        value={player.position}
+                                        onValueChange={(value) => updatePlayerField(index, 'position', value)}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder={t("playerPositionPlaceholder")} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {positionOptions.map((option) => (
+                                                <SelectItem key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+                        ))}
+                        
+                        <Button 
+                            type="button" 
+                            variant="outline" 
+                            className="w-full flex items-center justify-center gap-2"
+                            onClick={addPlayerField}
                         >
-                            <SelectTrigger>
-                                <SelectValue placeholder={t("playerPositionPlaceholder")} />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {positionOptions.map((option) => (
-                                    <SelectItem key={option.value} value={option.value}>
-                                        {option.label}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                            <PlusCircle className="h-4 w-4" />
+                            {t("addAnotherPlayer")}
+                        </Button>
                     </div>
-                </div>
+                </ScrollArea>
                 
                 <DialogFooter>
                     <Button 
@@ -137,10 +194,13 @@ export const AdminAddPlayerButton = ({
                     </Button>
 
                     <Button 
-                        onClick={handleAddPlayer}
-                        disabled={isPending || !playerName.trim() || !playerPosition}
+                        onClick={handleAddPlayers}
+                        disabled={isPending || !hasAtLeastOneValidPlayer}
                     >
-                        {isPending ? t("addingPlayer") : t("addPlayer")}
+                        {isPending 
+                            ? players.length > 1 ? t("addingPlayers") : t("addingPlayer") 
+                            : players.length > 1 ? t("addPlayers") : t("addPlayer")
+                        }
                     </Button>
                 </DialogFooter>
             </DialogContent>

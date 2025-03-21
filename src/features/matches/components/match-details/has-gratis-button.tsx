@@ -8,10 +8,19 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 // COMPONENTS
-import { DropdownMenuItem } from "@/shared/components/ui/dropdown-menu";
+import { Button } from "@/shared/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/shared/components/ui/tooltip";
 
 // SERVER ACTIONS
 import { updatePlayerPaymentStatus } from "../../actions/server_actions/updatePlayerPaymentStatus";
+
+// LUCIDE ICONS
+import { Gift } from "lucide-react";
 
 interface HasGratisButtonProps {
     id: string;
@@ -46,11 +55,23 @@ export const HasGratisButton = ({
     };
 
     return (
-        <DropdownMenuItem 
-            onClick={handleUpdatePaymentStatus}
-            disabled={isPending}
-        >
-            {hasGratis ? t("removeGratis") : t("markAsGratis")}
-        </DropdownMenuItem>
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button 
+                        variant={hasGratis ? "default" : "outline"} 
+                        size="icon"
+                        className={hasGratis ? "bg-blue-600 hover:bg-blue-700 h-10 w-10" : "h-10 w-10"}
+                        onClick={handleUpdatePaymentStatus}
+                        disabled={isPending}
+                    >
+                        <Gift className="h-5 w-5" />
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>{hasGratis ? t("removeGratis") : t("markAsGratis")}</p>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
     );
 };

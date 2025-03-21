@@ -26,6 +26,8 @@ export interface typesMatch {
     hasTeams: boolean;
     blockSpotsTeam1: number;
     blockSpotsTeam2: number;
+    extraSpotsTeam1: number;
+    extraSpotsTeam2: number;
     status: typesMatchStatus;
     team1Players: typesPlayer[];
     team2Players: typesPlayer[];

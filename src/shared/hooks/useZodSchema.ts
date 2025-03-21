@@ -52,7 +52,13 @@ export const useZodSchemas = () => {
         cristian_debt: z.number().min(0, { message: t('CRISTIAN_DEBT_REQUIRED') }),
         reason: z.string().optional(),
         added_by: z.string()
-    });    
+    }).refine((data) => {
+        // At least one of the debt values should be greater than 0
+        return data.player_debt > 0 || data.cristian_debt > 0;
+    }, {
+        message: t('AT_LEAST_ONE_DEBT_REQUIRED'),
+        path: ['player_debt'] // This will show the error on the player_debt field
+    });
 
     const addLocationSchema = z.object({
         location_name: z.string().min(1, { message: t('LOCATION_NAME_REQUIRED') }),

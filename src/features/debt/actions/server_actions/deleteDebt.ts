@@ -78,20 +78,24 @@ export async function deleteDebt({
     }
 
     // Calculate new debt values
-    const newPlayerDebt = (userData.player_debt || 0) - (debt.player_debt || 0);
-    const newCristianDebt = (userData.cristian_debt || 0) - (debt.cristian_debt || 0);
+    const newPlayerDebt = (userData.playerDebt || 0) - (debt.player_debt || 0);
+    const newCristianDebt = (userData.cristianDebt || 0) - (debt.cristian_debt || 0);
 
     // Update the user's debt
     const { data: updatedUser, error: updateError } = await supabase
         .from('user')
         .update({
-            player_debt: newPlayerDebt,
-            cristian_debt: newCristianDebt
+            playerDebt: newPlayerDebt,
+            cristianDebt: newCristianDebt
         })
         .eq('name', debt.player_name)
         .select();
 
     if (updateError) {
+        return { success: false, message: t('USER_DEBT_UPDATE_FAILED') };
+    }
+
+    if (!updatedUser || updatedUser.length === 0) {
         return { success: false, message: t('USER_DEBT_UPDATE_FAILED') };
     }
 

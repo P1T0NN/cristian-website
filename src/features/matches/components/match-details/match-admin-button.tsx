@@ -8,9 +8,13 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 // COMPONENTS
+import { Button } from "@/shared/components/ui/button";
 import {
-    DropdownMenuItem,
-} from "@/shared/components/ui/dropdown-menu";
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/shared/components/ui/tooltip";
 
 // LUCIDE ICONS
 import { ShieldCheck } from "lucide-react";
@@ -49,14 +53,23 @@ export const MatchAdminButton = ({
     };
 
     return (
-        <DropdownMenuItem
-            onClick={handleToggleMatchAdmin}
-            disabled={isPending}
-        >
-            <ShieldCheck className="h-4 w-4 mr-2" />
-            <span>
-                {isMatchAdmin ? t('removeMatchAdmin') : t('addMatchAdmin')}
-            </span>
-        </DropdownMenuItem>
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button 
+                        variant={isMatchAdmin ? "default" : "outline"} 
+                        size="icon"
+                        className={isMatchAdmin ? "bg-purple-600 hover:bg-purple-700 h-10 w-10" : "h-10 w-10"}
+                        onClick={handleToggleMatchAdmin}
+                        disabled={isPending}
+                    >
+                        <ShieldCheck className="h-5 w-5" />
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>{isMatchAdmin ? t('removeMatchAdmin') : t('addMatchAdmin')}</p>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
     );
 };

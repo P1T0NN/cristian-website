@@ -27,6 +27,8 @@ export const getMaxPlayers = (matchType: string) => {
     }
 };
 
+// This function returns the base total places without considering extra spots
+// It's kept for backwards compatibility with other parts of the code
 export const getTotalPlaces = (matchType: string) => {
     switch (matchType) {
         case "F8": return 16;
@@ -36,14 +38,29 @@ export const getTotalPlaces = (matchType: string) => {
     }
 };
 
+// Calculate the effective max players including extra spots
+export const getEffectiveMaxPlayers = (
+    matchType: string,
+    extraSpots: number = 0
+) => {
+    return getMaxPlayers(matchType) + extraSpots;
+};
+
 export const calculateMatchPlaces = (match: {
     matchType: string;
     team1Name: string;
     team2Name: string;
     placesOccupied: number;
+    extraSpotsTeam1?: number;
+    extraSpotsTeam2?: number;
 }) => {
-    const totalPlaces = getTotalPlaces(match.matchType);
-    const placesPerTeam = totalPlaces / 2;
+    const baseTeamSize = getMaxPlayers(match.matchType);
+    const extraSpotsTeam1 = match.extraSpotsTeam1 || 0;
+    const extraSpotsTeam2 = match.extraSpotsTeam2 || 0;
+    
+    // Calculate total places including extra spots
+    const totalPlaces = (baseTeamSize * 2) + extraSpotsTeam1 + extraSpotsTeam2;
+    const placesPerTeam = baseTeamSize; // Base places per team without extras
     
     let occupiedPlaces = match.placesOccupied || 0;
 
@@ -75,7 +92,9 @@ export const getPlacesLeftText = async (
     } else if (placesLeft <= 3) {
         return t('lastPlacesLeft');
     } else {
-        if (isAdmin) {
+        // Always show the exact number of places left for admin
+        // or when there are more than standard number of places (due to extra spots)
+        if (isAdmin || placesLeft > 16) {
             return `${placesLeft} ${t('placesLeft')}`;
         } else {
             return t('available');
@@ -90,9 +109,13 @@ export const getPlacesLeftColor = (placesLeft: number) => {
 export const calculateAvailableSlots = (
     maxPlayers: number,
     currentPlayers: number,
-    blockedSpots: number
+    blockedSpots: number,
+    extraSpots: number = 0
 ): AvailableSlot[] => {
-    const availableSlots = maxPlayers - currentPlayers;
+    // Calculate the effective max players with extra spots
+    const effectiveMaxPlayers = maxPlayers + extraSpots;
+    
+    const availableSlots = effectiveMaxPlayers - currentPlayers;
     
     return Array(availableSlots).fill(null).map((_, index) => ({
         isBlocked: index < blockedSpots
@@ -103,11 +126,14 @@ export const getTeamPlayersText = async (
     currentPlayers: number,
     matchType: string,
     blockedSpots: number = 0,
+    extraSpots: number = 0
 ) => {
     const t = await getTranslations('MatchPage');
 
     const maxPlayers = getMaxPlayers(matchType);
-    const availablePlayers = maxPlayers - blockedSpots;
+    // Add extra spots to the calculation
+    const effectiveMaxPlayers = maxPlayers + extraSpots;
+    const availablePlayers = effectiveMaxPlayers - blockedSpots;
     
     if (availablePlayers <= 0 || currentPlayers >= availablePlayers) {
         return t('teamFull');
@@ -119,10 +145,13 @@ export const getTeamPlayersText = async (
 export const isTeamFull = (
     currentPlayers: number,
     matchType: string,
-    blockedSpots: number = 0
+    blockedSpots: number = 0,
+    extraSpots: number = 0
 ) => {
     const maxPlayers = getMaxPlayers(matchType);
-    const availablePlayers = maxPlayers - blockedSpots;
+    // Add extra spots to the calculation
+    const effectiveMaxPlayers = maxPlayers + extraSpots;
+    const availablePlayers = effectiveMaxPlayers - blockedSpots;
     return availablePlayers <= 0 || currentPlayers >= availablePlayers;
 };
 

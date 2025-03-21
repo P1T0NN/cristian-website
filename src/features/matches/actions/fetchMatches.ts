@@ -21,7 +21,7 @@ interface FetchMatchesParams {
     isAdmin?: boolean;
     playerLevel?: string;
     date?: string;
-    status?: "active" | "pending" | "finished";
+    status?: "active" | "pending" | "finished" | "cancelled";
     isPastMatches?: boolean;
     currentDate?: string;
     currentTime?: string;

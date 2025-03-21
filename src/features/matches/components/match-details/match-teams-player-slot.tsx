@@ -15,7 +15,7 @@ import {
 } from "@/shared/components/ui/tooltip";
 import { ReplacePlayerButton } from "./replace-player-button";
 import { MatchTeamsPlayerSlotEmpty } from "./match-teams-player-slot-empty";
-import { PlayerSlotAdminControls } from "./player-slot-admin-controls";
+import { PlayerSlotAdminActions } from "./player-slot-admin-actions";
 
 // ACTIONS
 import { getUser } from "@/features/auth/actions/verifyAuth";
@@ -67,100 +67,102 @@ export const MatchTeamsPlayerSlot = async ({
     const PlayerContent = () => (
         <div
             className={cn(
-                "flex items-center justify-between p-4 rounded-xl",
+                "flex flex-col p-4 rounded-xl",
                 "transition-colors duration-200",
                 currentUserData.isAdmin && player.userId && "hover:bg-accent cursor-pointer"
             )}
         >
-            <div className="flex items-center space-x-4">
-                <Avatar className={cn(teamColor === "red" ? "bg-red-100 text-red-600" : "bg-blue-100 text-blue-600")}>
-                    <AvatarFallback className="text-lg font-medium">{player?.name?.[0]}</AvatarFallback>
-                </Avatar>
+            <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                    <Avatar className={cn(teamColor === "red" ? "bg-red-100 text-red-600" : "bg-blue-100 text-blue-600")}>
+                        <AvatarFallback className="text-lg font-medium">{player?.name?.[0]}</AvatarFallback>
+                    </Avatar>
 
-                <div>
-                    <div className="flex items-center gap-2 font-medium">
-                        <p>{player?.name}</p>
-                        
-                        {player?.hasMatchAdmin && (
-                            <span className={cn(
-                                "text-xs px-2 py-0.5 rounded-full",
-                                teamColor === "red" 
-                                    ? "bg-red-100/10 text-red-500" 
-                                    : "bg-blue-100/10 text-blue-500"
-                            )}>
-                                {t('organizer')}
-                            </span>
-                        )}
-                        
-                        {player?.substituteRequested && (
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger>
-                                        <UserMinus className="h-4 w-4 text-yellow-500" />
-                                    </TooltipTrigger>
-                                    
-                                    <TooltipContent>
-                                        <p>{t('substituteRequested')}</p>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
-                        )}
-                        
-                        {canAccessAdminControls && player?.hasEnteredWithBalance && (
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger>
-                                        <Wallet className="h-4 w-4 text-emerald-500" />
-                                    </TooltipTrigger>
-                                    
-                                    <TooltipContent>
-                                        <p>{t('enteredWithBalance')}</p>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
-                        )}
-                    </div>
-                    <div className={cn(
-                        "text-sm",
-                        player?.playerPosition?.startsWith('Added by') 
-                            ? "italic text-gray-500"
-                            : teamColor === "red" ? "text-red-600/60" : "text-blue-600/60"
-                    )}>
-                        {/* For temporary players with a position */}
-                        {player?.playerType === 'temporary' && player?.temporaryPlayerPosition ? (
-                            <>
-                                {formatPlayerPositionLocalized(player.temporaryPlayerPosition)} 
-                                <span className="italic text-gray-500 ml-1">({player.playerPosition})</span>
-                            </>
-                        ) : (
-                            /* For regular players or temporary players without a position */
+                    <div>
+                        <div className="flex items-center gap-2 font-medium">
+                            <p>{player?.name}</p>
+                            
+                            {player?.hasMatchAdmin && (
+                                <span className={cn(
+                                    "text-xs px-2 py-0.5 rounded-full",
+                                    teamColor === "red" 
+                                        ? "bg-red-100/10 text-red-500" 
+                                        : "bg-blue-100/10 text-blue-500"
+                                )}>
+                                    {t('organizer')}
+                                </span>
+                            )}
+                            
+                            {player?.substituteRequested && (
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger>
+                                            <UserMinus className="h-4 w-4 text-yellow-500" />
+                                        </TooltipTrigger>
+                                        
+                                        <TooltipContent>
+                                            <p>{t('substituteRequested')}</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            )}
+                            
+                            {canAccessAdminControls && player?.hasEnteredWithBalance && (
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger>
+                                            <Wallet className="h-4 w-4 text-emerald-500" />
+                                        </TooltipTrigger>
+                                        
+                                        <TooltipContent>
+                                            <p>{t('enteredWithBalance')}</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            )}
+                        </div>
+                        <div className={cn(
+                            "text-sm",
                             player?.playerPosition?.startsWith('Added by') 
-                                ? player?.playerPosition 
-                                : formatPlayerPositionLocalized(player?.playerPosition as string)
-                        )}
-                    </div>
-                    {/* Status indicators */}
-                    <div className="flex gap-2 mt-1">
-                        {player?.hasPaid && <span className="text-xs text-green-500">{t("paid")}</span>}
-                        {player?.hasGratis && <span className="text-xs text-blue-500">{t("gratis")}</span>}
-                        {player?.hasDiscount && <span className="text-xs text-yellow-500">{t("discount")}</span>}
+                                ? "italic text-gray-500"
+                                : teamColor === "red" ? "text-red-600/60" : "text-blue-600/60"
+                        )}>
+                            {/* For temporary players with a position */}
+                            {player?.playerType === 'temporary' && player?.temporaryPlayerPosition ? (
+                                <>
+                                    {formatPlayerPositionLocalized(player.temporaryPlayerPosition)} 
+                                    <span className="italic text-gray-500 ml-1">({player.playerPosition})</span>
+                                </>
+                            ) : (
+                                /* For regular players or temporary players without a position */
+                                player?.playerPosition?.startsWith('Added by') 
+                                    ? player?.playerPosition 
+                                    : formatPlayerPositionLocalized(player?.playerPosition as string)
+                            )}
+                        </div>
+                        {/* Status indicators */}
+                        <div className="flex gap-2 mt-1">
+                            {player?.hasPaid && <span className="text-xs text-green-500">{t("paid")}</span>}
+                            {player?.hasGratis && <span className="text-xs text-blue-500">{t("gratis")}</span>}
+                            {player?.hasDiscount && <span className="text-xs text-yellow-500">{t("discount")}</span>}
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            {/* Action buttons */}
+            <div className="flex flex-wrap gap-2 mt-3">
                 {/* Only show replace button if user is not directly playing */}
-                {player?.substituteRequested && id && (player?.userId !== currentUserData.id) && !hasDirectlyJoined &&
-                (
+                {player?.substituteRequested && id && (player?.userId !== currentUserData.id) && !hasDirectlyJoined && (
                     <ReplacePlayerButton 
                         matchIdFromParams={matchIdFromParams as string}
                         playerToReplaceId={id}
                     />
                 )}
                 
+                {/* Admin action buttons */}
                 {canAccessAdminControls && id && (
-                    /* Client Component */
-                    <PlayerSlotAdminControls
+                    <PlayerSlotAdminActions
                         id={id}
                         matchIdFromParams={matchIdFromParams as string}
                         currentUserIsAdmin={currentUserData.isAdmin}

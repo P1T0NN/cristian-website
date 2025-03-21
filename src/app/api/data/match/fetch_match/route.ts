@@ -184,6 +184,8 @@ export const GET = async (request: NextRequest) => {
         hasTeams: match.hasTeams,
         blockSpotsTeam1: match.blockSpotsTeam1,
         blockSpotsTeam2: match.blockSpotsTeam2,
+        extraSpotsTeam1: match.extraSpotsTeam1 || 0,
+        extraSpotsTeam2: match.extraSpotsTeam2 || 0,
         status: match.status,
         isUserInMatch,
         hasDirectlyJoined,

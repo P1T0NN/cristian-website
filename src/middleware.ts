@@ -1,15 +1,14 @@
 // NEXTJS IMPORTS
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-
-// LIBRARIES
-import { format } from 'date-fns';
+import { NextResponse, type NextRequest } from 'next/server';
 
 // CONFIG
 import { PROTECTED_PAGE_ENDPOINTS } from './config';
 
+// UTILS
+import { getCurrentDateString } from '@/shared/utils/dateUtils';
+
 async function redirectToHome(req: NextRequest) {
-    const currentDate = format(new Date(), 'yyyy-MM-dd');
+    const currentDate = getCurrentDateString();
     return NextResponse.redirect(new URL(`${PROTECTED_PAGE_ENDPOINTS.HOME_PAGE}?date=${currentDate}`, req.url));
 }
 

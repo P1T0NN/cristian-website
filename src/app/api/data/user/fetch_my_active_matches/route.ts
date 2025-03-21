@@ -8,6 +8,9 @@ import { supabase } from '@/shared/lib/supabase/supabase';
 // TYPES
 import type { typesMatch } from '@/features/matches/types/typesMatch';
 
+// UTILS
+import { getCurrentDateTimeStrings } from '@/shared/utils/dateUtils';
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const GET = async (request: NextRequest): Promise<NextResponse> => {
     const t = await getTranslations("GenericMessages");
@@ -30,14 +33,15 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
 
     const matchIds = matchPlayers.map(mp => mp.matchId);
 
-    const currentDate = new Date().toISOString().split('T')[0];
+    const { currentDate, currentTime } = getCurrentDateTimeStrings();
 
     const { data: matches, error: matchesError } = await supabase
         .from('matches')
         .select('*')
         .in('id', matchIds)
-        .gte('startsAtDay', currentDate)
-        .order('startsAtDay', { ascending: true });
+        .eq('status', 'active')
+        .gte('date', currentDate)
+        .or(`date.eq.${currentDate},and(time.gte.${currentTime})`);
 
     if (matchesError) {
         return NextResponse.json({ success: false, message: t('ACTIVE_MATCHES_FETCH_FAILED') });

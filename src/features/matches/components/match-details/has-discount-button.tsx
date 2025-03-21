@@ -8,10 +8,19 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 // COMPONENTS
-import { DropdownMenuItem } from "@/shared/components/ui/dropdown-menu";
+import { Button } from "@/shared/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/shared/components/ui/tooltip";
 
 // SERVER ACTIONS
 import { updatePlayerPaymentStatus } from "../../actions/server_actions/updatePlayerPaymentStatus";
+
+// LUCIDE ICONS
+import { Percent } from "lucide-react";
 
 interface HasDiscountButtonProps {
     id: string;
@@ -22,7 +31,7 @@ interface HasDiscountButtonProps {
 export const HasDiscountButton = ({ 
     id, 
     matchIdFromParams,
-    hasDiscount, 
+    hasDiscount
 }: HasDiscountButtonProps) => {
     const t = useTranslations("MatchPage");
     const [isPending, startTransition] = useTransition();
@@ -45,11 +54,23 @@ export const HasDiscountButton = ({
     };
 
     return (
-        <DropdownMenuItem 
-            onClick={handleUpdatePaymentStatus}
-            disabled={isPending}
-        >
-            {hasDiscount ? t("removeDiscount") : t("addDiscount")}
-        </DropdownMenuItem>
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button 
+                        variant={hasDiscount ? "default" : "outline"} 
+                        size="icon"
+                        className={hasDiscount ? "bg-yellow-600 hover:bg-yellow-700 h-10 w-10" : "h-10 w-10"}
+                        onClick={handleUpdatePaymentStatus}
+                        disabled={isPending}
+                    >
+                        <Percent className="h-5 w-5" />
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>{hasDiscount ? t("removeDiscount") : t("addDiscount")}</p>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
     );
 };

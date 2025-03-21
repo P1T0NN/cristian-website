@@ -9,6 +9,7 @@ import { LeaveMatchButton } from "./leave-match-button";
 import { RemoveFriendButton } from "./remove-friend-button";
 import { CancelSubstituteButton } from "./cancel-substitute-button";
 import { BlockSpotsButton } from "./block-spots-button";
+import { AddSpotsButton } from "./add-spots-button";
 import { SubstituteNeededButton } from "./substitute-needed-button";
 import { AdminAddPlayerButton } from "./admin-add-player-button";
 
@@ -52,11 +53,16 @@ export const MatchTeamCard = async ({
     const blockedSpots = teamNumber === 1 
         ? match?.blockSpotsTeam1 || 0 
         : match?.blockSpotsTeam2 || 0;
+    
+    const extraSpots = teamNumber === 1
+        ? match?.extraSpotsTeam1 || 0
+        : match?.extraSpotsTeam2 || 0;
 
     const availableSlots = calculateAvailableSlots(
         maxPlayers,
         players.length,
-        blockedSpots
+        blockedSpots,
+        extraSpots
     );
 
     const hasCurrentUserRequestedSubstitute = Boolean(
@@ -87,12 +93,14 @@ export const MatchTeamCard = async ({
         players.length,
         match?.matchType as string,
         blockedSpots,
+        extraSpots
     );
 
     const teamIsFull = isTeamFull(
         players.length,
         match?.matchType as string,
-        blockedSpots
+        blockedSpots,
+        extraSpots
     );
 
     return (
@@ -125,6 +133,12 @@ export const MatchTeamCard = async ({
                                 maxPlayers={maxPlayers}
                                 currentBlockedSpots={blockedSpots}
                             />
+                            <AddSpotsButton
+                                matchIdFromParams={matchIdFromParams}
+                                teamNumber={teamNumber}
+                                matchType={match?.matchType as string}
+                                currentExtraSpots={extraSpots}
+                            />
                             {!teamIsFull && (
                                 <AdminAddPlayerButton
                                     matchIdFromParams={matchIdFromParams}
@@ -140,13 +154,11 @@ export const MatchTeamCard = async ({
                                 hasCurrentUserRequestedSubstitute ? (
                                     <CancelSubstituteButton 
                                         matchIdFromParams={matchIdFromParams}
-                                        currentUserId={currentUserData.id}
                                         playerType="regular"
                                     />
                                 ) : (
                                     <LeaveMatchButton 
                                         matchIdFromParams={matchIdFromParams}
-                                        currentUserId={currentUserData.id}
                                     />
                                 )
                             )}
@@ -160,13 +172,11 @@ export const MatchTeamCard = async ({
                                 hasFriendRequestedSubstitute ? (
                                     <CancelSubstituteButton 
                                         matchIdFromParams={matchIdFromParams}
-                                        currentUserId={currentUserData.id}
                                         playerType="temporary"
                                     />
                                 ) : (
                                     <RemoveFriendButton 
                                         matchIdFromParams={matchIdFromParams}
-                                        currentUserId={currentUserData.id}
                                     />
                                 )
                             )}
