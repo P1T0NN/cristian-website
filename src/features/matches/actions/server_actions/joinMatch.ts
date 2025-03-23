@@ -128,7 +128,7 @@ export const joinMatch = async ({
         matchId: matchIdFromParams,
         userId: userId,
         teamNumber: teamNumber,
-        hasPaid: hasEnteredWithBalance,
+        hasPaid: false,
         hasEnteredWithBalance: hasEnteredWithBalance,
         playerType: 'regular'
     };
@@ -174,7 +174,7 @@ export const joinMatch = async ({
             userId: userId,
             name: userData.name,
             hasMatchAdmin: false,
-            hasPaid: hasEnteredWithBalance,
+            hasPaid: false,
             hasDiscount: false,
             hasGratis: false,
             hasEnteredWithBalance: hasEnteredWithBalance,

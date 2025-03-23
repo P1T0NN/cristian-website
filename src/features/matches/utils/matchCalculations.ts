@@ -115,7 +115,8 @@ export const calculateAvailableSlots = (
     // Calculate the effective max players with extra spots
     const effectiveMaxPlayers = maxPlayers + extraSpots;
     
-    const availableSlots = effectiveMaxPlayers - currentPlayers;
+    // Ensure we don't have negative available slots
+    const availableSlots = Math.max(0, effectiveMaxPlayers - currentPlayers);
     
     return Array(availableSlots).fill(null).map((_, index) => ({
         isBlocked: index < blockedSpots

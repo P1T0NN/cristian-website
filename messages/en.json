@@ -734,6 +734,7 @@
         "FAILED_TO_FETCH_TEAM": "Failed to fetch team",
         "TEAM_FETCHED": "Team fetched successfully!",
         "TEAM_SEARCH_FAILED": "Failed to search for team",
+        "TEAM_IS_FULL": "Team is full!",
 
         "COLOR_TOGGLE_FAILED": "Failed to switch team colors. Please try again!",
         "COLOR_TOGGLED": "Switched team colors!",
@@ -786,6 +787,8 @@
         "MATCH_LEAVE_FAILED": "Failed to leave match",
         "MATCH_LEFT_SUCCESSFULLY": "Successfully left the match",
         "PLAYER_JOIN_FAILED": "Failed to join as player",
+        "NO_AVAILABLE_SPOTS": "No available spots",
+        "TOO_MANY_PLAYERS": "Too many players",
 
         "BALANCE_UPDATE_FAILED": "Failed to update balance",
         "BALANCE_ADDED": "Balance successfully added",

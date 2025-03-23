@@ -46,23 +46,6 @@ export const adminAddPlayerToMatch = async ({
         return { success: false, message: t('BAD_REQUEST') };
     }
 
-    // Validate player names
-    const validPlayers = players.filter(player => player.name.trim() !== '');
-    if (validPlayers.length === 0) {
-        return { success: false, message: t('BAD_REQUEST') };
-    }
-
-    // Check if user is admin
-    const { data: adminData, error: adminError } = await supabase
-        .from("user")
-        .select("isAdmin")
-        .eq("id", userId)
-        .single();
-
-    if (adminError || !adminData || !adminData.isAdmin) {
-        return { success: false, message: t('UNAUTHORIZED') };
-    }
-
     // Get match data
     const { data: matchData, error: matchError } = await supabase
         .from("matches")
@@ -74,33 +57,60 @@ export const adminAddPlayerToMatch = async ({
         return { success: false, message: t('MATCH_NOT_FOUND') };
     }
 
-    // Calculate max players based on match type
-    let maxPlayers = 16; // Default to F8
-    
-    if (matchData.matchType === 'F7') {
-        maxPlayers = 14;
-    } else if (matchData.matchType === 'F8') {
-        maxPlayers = 16;
-    } else if (matchData.matchType === 'F11') {
-        maxPlayers = 22;
+    // Get current players in the selected team
+    const { data: teamPlayers, error: teamPlayersError } = await supabase
+        .from("match_players")
+        .select("id")
+        .eq("matchId", matchIdFromParams)
+        .eq("teamNumber", teamNumber);
+
+    if (teamPlayersError) {
+        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
+
+    // Calculate max players based on match type and extra spots
+    const baseMaxPlayers = matchData.matchType === 'F7' ? 7 : 
+                           matchData.matchType === 'F8' ? 8 : 
+                           matchData.matchType === 'F11' ? 11 : 8; // Default to F8
+                           
+    // Get the extra spots for the specific team
+    const extraSpots = teamNumber === 1 ? (matchData.extraSpotsTeam1 || 0) : (matchData.extraSpotsTeam2 || 0);
 
     // Get blocked spots for the team
     const blockedSpots = teamNumber === 1 
         ? (matchData.blockSpotsTeam1 || 0) 
         : (matchData.blockSpotsTeam2 || 0);
 
-    // Check if match has enough space for all players
-    const placesOccupied = matchData.placesOccupied || 0;
-    const availableSpots = maxPlayers - blockedSpots - placesOccupied;
-    
-    if (availableSpots < validPlayers.length) {
+    // Calculate available spots in the team
+    const currentTeamPlayers = teamPlayers?.length || 0;
+    const effectiveMaxPlayers = baseMaxPlayers + extraSpots;
+    const availableSpotsInTeam = effectiveMaxPlayers - blockedSpots - currentTeamPlayers;
+
+    // Validate player names
+    const validPlayers = players.filter(player => player.name.trim() !== '');
+    if (validPlayers.length === 0) {
+        return { success: false, message: t('BAD_REQUEST') };
+    }
+
+    // Check if we have enough spots for all players
+    if (availableSpotsInTeam < validPlayers.length) {
         return { 
             success: false, 
             message: validPlayers.length === 1 
                 ? t('MATCH_IS_FULL') 
                 : t('NOT_ENOUGH_SPOTS_FOR_ALL_PLAYERS')
         };
+    }
+
+    // Check if user is admin
+    const { data: adminData, error: adminError } = await supabase
+        .from("user")
+        .select("isAdmin")
+        .eq("id", userId)
+        .single();
+
+    if (adminError || !adminData || !adminData.isAdmin) {
+        return { success: false, message: t('UNAUTHORIZED') };
     }
 
     // Prepare array for inserting multiple players
@@ -124,7 +134,7 @@ export const adminAddPlayerToMatch = async ({
     }
 
     // Update places_occupied in the match
-    const newPlacesOccupied = placesOccupied + validPlayers.length;
+    const newPlacesOccupied = matchData.placesOccupied + validPlayers.length;
     const { data: updateData, error: updateError } = await supabase
         .from("matches")
         .update({ placesOccupied: newPlacesOccupied })

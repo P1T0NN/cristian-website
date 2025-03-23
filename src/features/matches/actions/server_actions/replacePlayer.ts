@@ -114,8 +114,7 @@ export const replacePlayer = async ({
             userId: userId,
             substituteRequested: false,
             playerType: 'regular',
-            hasEnteredWithBalance: hasEnteredWithBalance,
-            hasPaid: hasEnteredWithBalance
+            hasEnteredWithBalance: hasEnteredWithBalance
         })
         .eq("id", playerToReplaceId);
     

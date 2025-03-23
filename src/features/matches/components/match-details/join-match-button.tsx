@@ -39,11 +39,15 @@ export const JoinMatchButton = ({
 
     const handleJoinTeam = (withBalance: boolean) => {
         startTransition(async () => {
+            console.log(`Attempting to join match: ${matchIdFromParams}, team: ${teamNumber}, withBalance: ${withBalance}`);
+            
             const response = await joinMatch({
                 matchIdFromParams,
                 teamNumber,
                 withBalance,
             });
+
+            console.log('Join match response:', response);
 
             if (response.success && response.data) {
                 setOpen(false);

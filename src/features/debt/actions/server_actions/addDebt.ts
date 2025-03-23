@@ -81,6 +81,16 @@ export async function addDebt({
     const newPlayerDebt = (user.playerDebt || 0) + (addDebtData.player_debt || 0);
     const newCristianDebt = (user.cristianDebt || 0) + (addDebtData.cristian_debt || 0);
 
+    console.log('Debug addDebt:', { 
+        userName: addDebtData.player_name,
+        currentPlayerDebt: user.playerDebt, 
+        currentCristianDebt: user.cristianDebt,
+        addingPlayerDebt: addDebtData.player_debt,
+        addingCristianDebt: addDebtData.cristian_debt,
+        newPlayerDebt,
+        newCristianDebt
+    });
+
     // Update users table
     const { data: userUpdateData, error: userUpdateError } = await supabase
         .from('user')
@@ -92,10 +102,12 @@ export async function addDebt({
         .select();
 
     if (userUpdateError) {
+        console.error('Error updating user debt:', userUpdateError);
         return { success: false, message: t('USER_DEBT_UPDATE_FAILED') };
     }
 
     if (!userUpdateData || userUpdateData.length === 0) {
+        console.error('User update returned no data:', { userUpdateData });
         return { success: false, message: t('USER_DEBT_UPDATE_FAILED') };
     }
 

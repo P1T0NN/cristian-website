@@ -66,6 +66,51 @@ export const switchTeam = async ({
     // Calculate new team number
     const newTeamNumber = playerData.teamNumber === 1 ? 2 : 1;
     
+    // Get match data to check team capacity
+    const { data: matchData, error: matchDataError } = await supabase
+        .from("matches")
+        .select("*")
+        .eq("id", matchIdFromParams)
+        .single();
+
+    if (matchDataError) {
+        return { success: false, message: t('MATCH_NOT_FOUND') };
+    }
+
+    // Get current players in the destination team
+    const { data: destinationTeamPlayers, error: teamPlayersError } = await supabase
+        .from("match_players")
+        .select("id")
+        .eq("matchId", matchIdFromParams)
+        .eq("teamNumber", newTeamNumber);
+
+    if (teamPlayersError) {
+        return { success: false, message: t('INTERNAL_SERVER_ERROR') };
+    }
+
+    // Calculate max players based on match type
+    const baseMaxPlayers = matchData.matchType === 'F7' ? 7 : 
+                          matchData.matchType === 'F8' ? 8 : 
+                          matchData.matchType === 'F11' ? 11 : 8; // Default to F8
+
+    // Get extra spots for the destination team
+    const extraSpots = newTeamNumber === 1 ? (matchData.extraSpotsTeam1 || 0) : (matchData.extraSpotsTeam2 || 0);
+
+    // Get blocked spots for the destination team
+    const blockedSpots = newTeamNumber === 1 
+        ? (matchData.blockSpotsTeam1 || 0) 
+        : (matchData.blockSpotsTeam2 || 0);
+
+    // Calculate available spots in the destination team
+    const currentTeamPlayers = destinationTeamPlayers?.length || 0;
+    const effectiveMaxPlayers = baseMaxPlayers + extraSpots;
+    const availableSpotsInTeam = effectiveMaxPlayers - blockedSpots - currentTeamPlayers;
+
+    // Check if destination team has space
+    if (availableSpotsInTeam <= 0) {
+        return { success: false, message: t('TEAM_IS_FULL') };
+    }
+    
     // Update player's team
     const { error: updateError } = await supabase
         .from("match_players")

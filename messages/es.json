@@ -394,7 +394,11 @@
                 "whatsappButton": "WhatsApp",
                 "emailButton": "Enviar Email"
             }
-        }
+        },
+        "noAvailableSpots": "No hay plazas disponibles en este equipo",
+        "availableSpots": "Plazas disponibles",
+        "errorFetchingMatch": "Error al cargar los datos del partido",
+        "errorAddingPlayers": "Error al añadir jugadores"
     },
 
     "EditMatchPage": {
@@ -737,6 +741,7 @@
         "FAILED_TO_FETCH_TEAM": "No se pudo obtener el equipo",
         "TEAM_FETCHED": "¡Equipo obtenido con éxito!",
         "TEAM_SEARCH_FAILED": "No se pudo buscar el equipo",
+        "TEAM_IS_FULL": "No puedes cambiar equipo de jugador, otro equipo esta lleno!",
 
         "COLOR_TOGGLE_FAILED": "No se pudieron cambiar los colores del equipo. ¡Por favor, inténtalo de nuevo!",
         "COLOR_TOGGLED": "¡Colores del equipo cambiados!",
@@ -789,6 +794,8 @@
         "MATCH_LEAVE_FAILED": "No se pudo abandonar el partido",
         "MATCH_LEFT_SUCCESSFULLY": "Has abandonado el partido con éxito",
         "PLAYER_JOIN_FAILED": "No se pudo unir como jugador",
+        "NO_AVAILABLE_SPOTS": "No hay plazas disponibles",
+        "TOO_MANY_PLAYERS": "Demasiados jugadores",
 
         "BALANCE_UPDATE_FAILED": "No se pudo actualizar el saldo",
         "BALANCE_ADDED": "Saldo añadido con éxito",
