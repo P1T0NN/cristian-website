@@ -307,6 +307,11 @@
         "afterAddingSpots": "New Team Size",
         "extraSpots": "Extra Spots",
         "addingSpots": "Adding Spots...",
+        "removeSpots": "Remove Spots",
+        "removeSpotsTitle": "Remove Extra Spots",
+        "removeSpotsDescription": "Remove extra spots from this team. This will decrease the team's capacity.",
+        "removingSpots": "Removing Spots...",
+        "selectSpotsToRemove": "Select number of spots to remove",
         "MatchFAQ": {
             "title": "Frequently Asked Questions",
             "aboutUs": {
@@ -816,6 +821,10 @@
         "MAX_EXTRA_SPOTS_REACHED": "Maximum number of extra spots (3) has already been reached for this team.",
         "SPOTS_ADD_FAILED": "Failed to add extra spots to the team.",
         "EXTRA_SPOTS_ADDED_SUCCESSFULLY": "Extra spots successfully added to the team.",
+        "SPOTS_REMOVE_FAILED": "Failed to remove extra spots from the team.",
+        "EXTRA_SPOTS_REMOVED_SUCCESSFULLY": "Extra spots successfully removed from the team.",
+        "CANNOT_REMOVE_SPOTS_WITH_ACTIVE_PLAYERS": "Cannot remove spots while there are active players using them.",
+        "CANNOT_REMOVE_MORE_THAN_CURRENT": "Cannot remove more spots than currently available.",
 
         "INSUFFICIENT_BALANCE_TRY_CASH": "Insufficient balance. If you want, you can pay with cash.",
 

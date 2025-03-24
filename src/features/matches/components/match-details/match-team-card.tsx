@@ -10,6 +10,7 @@ import { RemoveFriendButton } from "./remove-friend-button";
 import { CancelSubstituteButton } from "./cancel-substitute-button";
 import { BlockSpotsButton } from "./block-spots-button";
 import { AddSpotsButton } from "./add-spots-button";
+import { RemoveSpotsButton } from "./remove-spots-button";
 import { SubstituteNeededButton } from "./substitute-needed-button";
 import { AdminAddPlayerButton } from "./admin-add-player-button";
 
@@ -137,6 +138,11 @@ export const MatchTeamCard = async ({
                                 matchIdFromParams={matchIdFromParams}
                                 teamNumber={teamNumber}
                                 matchType={match?.matchType as string}
+                                currentExtraSpots={extraSpots}
+                            />
+                            <RemoveSpotsButton
+                                matchIdFromParams={matchIdFromParams}
+                                teamNumber={teamNumber}
                                 currentExtraSpots={extraSpots}
                             />
                             {!teamIsFull && (

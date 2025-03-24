@@ -310,6 +310,15 @@
         "afterAddingSpots": "Nuevo Tamaño de Equipo",
         "extraSpots": "Plazas Extra",
         "addingSpots": "Añadiendo Plazas...",
+        "noAvailableSpots": "No hay plazas disponibles en este equipo",
+        "availableSpots": "Plazas disponibles",
+        "errorFetchingMatch": "Error al cargar los datos del partido",
+        "errorAddingPlayers": "Error al añadir jugadores",
+        "removeSpots": "Quitar Plazas",
+        "removeSpotsTitle": "Quitar Plazas Extra",
+        "removeSpotsDescription": "Quita plazas extra de este equipo. Esto disminuirá la capacidad del equipo.",
+        "removingSpots": "Quitando Plazas...",
+        "selectSpotsToRemove": "Selecciona el número de plazas a quitar",
         "MatchFAQ": {
             "title": "Preguntas Frecuentes",
             "aboutUs": {
@@ -394,11 +403,7 @@
                 "whatsappButton": "WhatsApp",
                 "emailButton": "Enviar Email"
             }
-        },
-        "noAvailableSpots": "No hay plazas disponibles en este equipo",
-        "availableSpots": "Plazas disponibles",
-        "errorFetchingMatch": "Error al cargar los datos del partido",
-        "errorAddingPlayers": "Error al añadir jugadores"
+        }
     },
 
     "EditMatchPage": {
@@ -823,6 +828,10 @@
         "MAX_EXTRA_SPOTS_REACHED": "Ya se ha alcanzado el número máximo de plazas extra (3) para este equipo.",
         "SPOTS_ADD_FAILED": "Error al añadir plazas extra al equipo.",
         "EXTRA_SPOTS_ADDED_SUCCESSFULLY": "Plazas extra añadidas con éxito al equipo.",
+        "SPOTS_REMOVE_FAILED": "Error al quitar plazas extra del equipo.",
+        "EXTRA_SPOTS_REMOVED_SUCCESSFULLY": "Plazas extra quitadas con éxito del equipo.",
+        "CANNOT_REMOVE_SPOTS_WITH_ACTIVE_PLAYERS": "No se pueden quitar plazas mientras hay jugadores activos usándolas.",
+        "CANNOT_REMOVE_MORE_THAN_CURRENT": "No se pueden quitar más plazas de las disponibles actualmente.",
 
         "INSUFFICIENT_BALANCE_TRY_CASH": "Saldo insuficiente. Si lo deseas, puedes pagar en efectivo.",
 

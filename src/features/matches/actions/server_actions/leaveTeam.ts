@@ -95,39 +95,7 @@ export const leaveMatch = async ({
     // 2. Player leaving themselves (normal case)
     // 3. Admin removing player (adminOverride = true)
     
-    if (isRemovingFriend) {
-        // Case 1: Removing friend - we need to find the temporary player added by the current user
-        const { data: playersData, error: playersError } = await supabase
-            .from("match_players")
-            .select("*")
-            .eq("matchId", matchIdFromParams)
-            .eq("userId", currentUserId);
-
-        if (playersError || !playersData || playersData.length === 0) {
-            console.error("No players found for this user in this match:", {
-                matchId: matchIdFromParams,
-                userId: currentUserId,
-                error: playersError
-            });
-            return { success: false, message: t('PLAYER_NOT_FOUND') };
-        }
-
-        // Find the temporary player (should only be one)
-        const tempPlayer = playersData.find(p => 
-            p.playerType === 'temporary' && 
-            p.temporaryPlayerName !== null
-        );
-
-        if (!tempPlayer) {
-            console.error("No temporary player found for this user in this match:", {
-                matchId: matchIdFromParams,
-                userId: currentUserId
-            });
-            return { success: false, message: t('PLAYER_NOT_FOUND') };
-        }
-
-        player = tempPlayer;
-    } else if (adminOverride) {
+    if (adminOverride) {
         // Case 3: Admin removing player
         const { data: playerData, error: playerError } = await supabase
             .from("match_players")
@@ -137,15 +105,31 @@ export const leaveMatch = async ({
             .single();
 
         if (playerError || !playerData) {
-            console.error("Player not found for admin removal:", {
-                matchId: matchIdFromParams,
-                playerId: playerId,
-                error: playerError
-            });
             return { success: false, message: t('PLAYER_NOT_FOUND') };
         }
 
         player = playerData;
+    } else if (isRemovingFriend) {
+        // Case 1: Removing friend - we need to find the temporary player added by the current user
+        const { data: playersData, error: playersError } = await supabase
+            .from("match_players")
+            .select("*")
+            .eq("matchId", matchIdFromParams)
+            .eq("userId", currentUserId)
+            .eq("playerType", "temporary");
+
+        if (playersError || !playersData || playersData.length === 0) {
+            return { success: false, message: t('PLAYER_NOT_FOUND') };
+        }
+
+        // Find the temporary player (should only be one)
+        const tempPlayer = playersData[0];
+
+        if (!tempPlayer) {
+            return { success: false, message: t('PLAYER_NOT_FOUND') };
+        }
+
+        player = tempPlayer;
     } else {
         // Case 2: Player leaving themselves
         const { data: playerData, error: playerError } = await supabase
@@ -157,11 +141,6 @@ export const leaveMatch = async ({
             .single();
 
         if (playerError || !playerData) {
-            console.error("Player not found when leaving themselves:", {
-                matchId: matchIdFromParams,
-                userId: currentUserId,
-                error: playerError
-            });
             return { success: false, message: t('PLAYER_NOT_FOUND') };
         }
 
@@ -235,10 +214,6 @@ export const leaveMatch = async ({
         .single();
 
     if (updateError) {
-        console.error("Error updating match places:", {
-            matchId: matchIdFromParams,
-            error: updateError
-        });
         return { success: false, message: t('INTERNAL_SERVER_ERROR') };
     }
 
